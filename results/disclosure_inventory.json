@@ -1,0 +1,1465 @@
+{
+ "provenance": {
+  "script": "disclosure_inventory.py",
+  "script_path": "scripts/disclosure_inventory.py",
+  "source_sha256": "f3187b4f867cc7570b771b0b2a1c6ddde31da7fb66276177cfc66627e6774494",
+  "git_commit": "66b6821cd05b425924b1f197d7090793d1f3bc77",
+  "git_dirty": true
+ },
+ "reviewed_and_accepted": [
+  {
+   "text": "So output size is a confound in that benchmark rather than its content, which is the same thing this paper says about its own budget axis, and the remedy is the same, to declare the axis and vary it. suppinfo The Supporting Information is available free of charge on the ACS Publications website. gra",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "availability section rewritten; each sentence checked and its substance verified present in the body or the SI"
+  },
+  {
+   "text": "The released bank is not the measured bank, and the difference is a courtesy rather than a correction",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "availability section rewritten; each sentence checked and its substance verified present in the body or the SI"
+  },
+  {
+   "text": "What ships is the remaining N . Dropping them from the bank is not the same as not carrying them, and the distinction is checked rather than asserted: of N tracked files, N hold at least one of the N , a trained checkpoint that persists the bank it was built against and the three curated collections",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "availability section rewritten; each sentence checked and its substance verified present in the body or the SI"
+  },
+  {
+   "text": "The train and validation candidate pools are deposited at . The corpus is assembled from ChEMBL , DrugBank , MetXBioDB and the GLORYx reference set , at versions . The corpus is not redistributed as a corpus, and the reason is a limitation of this release rather than an open question",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "availability section rewritten; each sentence checked and its substance verified present in the body or the SI"
+  },
+  {
+   "text": "ChEMBL is released under a ShareAlike licence and DrugBank under a NonCommercial one, and a single derivative drawing on both cannot satisfy each: the non-commercial clause is a restriction ShareAlike forbids adding, and dropping it breaches DrugBank's terms",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "availability section rewritten; each sentence checked and its substance verified present in the body or the SI"
+  },
+  {
+   "text": "The one step that cannot be reproduced is the extraction that selected from the four sources, which is not in the repository and is recorded as such",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "availability section rewritten; each sentence checked and its substance verified present in the body or the SI"
+  },
+  {
+   "text": "Limitations Applying one template once is not the same as one enzymatic step, and two instruments measure the gap",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "Limitations compressed; each flagged sentence located verbatim or reworded in place, substance verified"
+  },
+  {
+   "text": "A depth-two probe run earlier put the lift in the low percent at several times the candidate cost, and no figure from it is quoted here, because its result file names no producer and predates the provenance apparatus the rest of this work is held to",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "Limitations compressed; each flagged sentence located verbatim or reworded in place, substance verified"
+  },
+  {
+   "text": "The spread is measured at this configuration and reported above, so what a headline figure is read against is known; what is not reported is retraining on the full split rather than on the truncated one, under more than N seeds, which is the experiment that would say whether the level as well as the",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "Limitations compressed; each flagged sentence located verbatim or reworded in place, substance verified"
+  },
+  {
+   "text": "Two comparators, BioTransformer and GLORYx, are built on sources this corpus is assembled from, which favours both, and that is not corrected for either",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "Limitations compressed; each flagged sentence located verbatim or reworded in place, substance verified"
+  },
+  {
+   "text": "The criterion sweep cannot price a configuration-aware criterion, because two of its five settings return the identical verdict at every budget: the annotation has no configuration for them to disagree about",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "Limitations compressed; each flagged sentence located verbatim or reworded in place, substance verified"
+  },
+  {
+   "text": "Shuffling emission among the arms of a drug, which preserves every drug's set of emissions and every recall and breaks only their pairing, reproduces the correlation in fewer than one permutation in N . That null holds a drug's emissions fixed but not an arm's, so it cannot say at what level the ass",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "Limitations compressed; each flagged sentence located verbatim or reworded in place, substance verified"
+  },
+  {
+   "text": "It is not the whole story and this paper's argument does not need it to be",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "Limitations compressed; each flagged sentence located verbatim or reworded in place, substance verified"
+  },
+  {
+   "text": "Three populations carry the figures here, and no figure is given without naming one",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "population section compressed and the source list de-duplicated; each flagged sentence located in the reflowed text, and one block the slice boundary had swallowed was restored from HEAD"
+  },
+  {
+   "text": "Registered ranking and timing thresholds are checked here, because a threshold checked on the population whose rule it chose is not a check; three of the ten reported predictions were in the event adjudicated on the comparison set instead, and Table marks which",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "population section compressed and the source list de-duplicated; each flagged sentence located in the reflowed text, and one block the slice boundary had swallowed was restored from HEAD"
+  },
+  {
+   "text": "The apparatus built on top makes every step from the corpus onwards reproducible and cannot make that step so",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "population section compressed and the source list de-duplicated; each flagged sentence located in the reflowed text, and one block the slice boundary had swallowed was restored from HEAD"
+  },
+  {
+   "text": "The one source held on disk says that selection was not blind to chemistry",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "population section compressed and the source list de-duplicated; each flagged sentence located in the reflowed text, and one block the slice boundary had swallowed was restored from HEAD"
+  },
+  {
+   "text": "Between the pairs of MetXBioDB that entered the corpus and those that did not, the transformation-type distributions differ by a total variation distance of N , with a permutation test over N shuffles putting the chance of a distance that large at p= N , and N of the dropped pairs carry a type the k",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "population section compressed and the source list de-duplicated; each flagged sentence located in the reflowed text, and one block the slice boundary had swallowed was restored from HEAD"
+  },
+  {
+   "text": "The second source this repository holds points the same way without settling it: of the GLORYx reference set's N pairs, N are inside the corpus, the distance between the two type distributions is N and N of the dropped pairs carry a type the kept half never shows, but with N typed pairs on one side ",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "population section compressed and the source list de-duplicated; each flagged sentence located in the reflowed text, and one block the slice boundary had swallowed was restored from HEAD"
+  },
+  {
+   "text": "The corpus is assembled from ChEMBL , DrugBank , MetXBioDB and the GLORYx reference set , at versions , and is not redistributed as a corpus: ShareAlike and NonCommercial terms cannot both be satisfied by one derivative, so its licence is . What is released instead is the evaluated test substrates a",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "population section compressed and the source list de-duplicated; each flagged sentence located in the reflowed text, and one block the slice boundary had swallowed was restored from HEAD"
+  },
+  {
+   "text": "Five of the six were handed the substrate exactly as the corpus stores it; MetaTox was not, because the file submitted to the service re-tautomerises the substrate to the natural form for N of the N . The direction is not neutral, since this bank's mined half requires the imidic reactant more often ",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "evaluation middle compressed; the stale five-of-six arm count corrected to the derived macros, the other two reworded in place"
+  },
+  {
+   "text": "SyGMa's deployed scenario composes a phase-one and a phase-two ruleset, BioTransformer is run for one step, MetaTox's depth is not a setting we chose or can read, and a mined template may perform more than one enzymatic edit in a single application: N of this bank's mined templates do (Section )",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "evaluation middle compressed; the stale five-of-six arm count corrected to the derived macros, the other two reworded in place"
+  },
+  {
+   "text": "BioTransformer's step count is also ours to turn and was not swept, a decision taken after the matched-length control had been read and stated as such; MetaTox's depth is neither ours to turn nor readable (Section )",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "evaluation middle compressed; the stale five-of-six arm count corrected to the derived macros, the other two reworded in place"
+  },
+  {
+   "text": "The class-by-class reading says the same thing from the other side: the aggregate advantage is carried by unusual cleavages and by transformations this vocabulary cannot name, and on several classical functionalisations this system is not the best arm and is sometimes beaten by its own cheaper setti",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "conclusions compressed; both flagged sentences kept with minor rewording"
+  },
+  {
+   "text": "What one application of one template bank cannot reach is mostly chemistry the corpus does not contain",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "conclusions compressed; both flagged sentences kept with minor rewording"
+  },
+  {
+   "text": "The margin over MetaTox at k=30 is + N with the interval [+ N , + N ] : it is the only one of the N a family-wise correction over the sweep removes, though not the only lead in this paper that it removes, and the others are named where they are claimed",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "results corrections merged with the duplicate walk-through; the removed sentence's substance kept in the merged text and in the paragraph that carries the three corrections"
+  },
+  {
+   "text": "N of the N were handed the substrate exactly as the corpus stores it; MetaTox was not, its submission file re-tautomerising the substrate to the natural form for N of the N . The direction is not neutral, since this bank's mined half requires the imidic reactant more often than the amide, and the si",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "two sentences recast so they do not open with a lower-case number macro; same content, reordered"
+  },
+  {
+   "text": "N of them were never in the corrected family, which was declared over N comparators, so the correction is reported over the N it covers; of those it removes one, the margin over MetaTox at k=30 , + N [+ N , + N ] . It is not the only lead in this paper the correction removes, and the others are name",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "two sentences recast so they do not open with a lower-case number macro; same content, reordered"
+  }
+ ],
+ "question": "every sentence in which this work concedes something, recorded before a cut so that what a cut costs is visible rather than invisible",
+ "sources": [
+  "paper2/body.tex",
+  "paper2/si.tex",
+  "paper2/grail_jcim.tex"
+ ],
+ "n": 208,
+ "reading": "a disclosure counts as present if it survives in ANY of the sources: moving one to the Supporting Information shortens the manuscript without retracting anything, and deleting one shortens it by retracting something",
+ "disclosures": {
+  "a protocol tells an author what to declare a demonstration on generative metrics does not transfer to recall against an incomplete annotation where the axis that reorders methods is how many candidates each may emit and no analogue of it exists in distributional metrics": {
+   "text": "A protocol tells an author what to declare; a demonstration on generative metrics does not transfer to recall against an incomplete annotation, where the axis that reorders methods is how many candidates each may emit and no analogue of it exists in distributional metrics",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "one system is absent and its absence was not forced deepcyp was not run for the cost of submission its interface taking one substrate at a time section": {
+   "text": "One system is absent and its absence was not forced: DeepCYP was not run for the cost of submission, its interface taking one substrate at a time (Section )",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "the pairs are assembled from chembl drugbank metxbiodb and the gloryx reference set at versions three populations carry the figures here and no figure is given without naming one": {
+   "text": "The pairs are assembled from ChEMBL , DrugBank , MetXBioDB and the GLORYx reference set , at versions . Three populations carry the figures here, and no figure is given without naming one",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "the validation draw is a declared sample of substrates at seed of which are held by both operating modes in a paired comparison registered ranking and timing thresholds are checked here because a threshold checked on the population whose rule it chose is not a check and three of the ten reported predictions were in the event adjudicated on the comparison set instead which table marks": {
+   "text": "The validation draw is a declared sample of N substrates at seed N , of which N are held by both operating modes in a paired comparison; registered ranking and timing thresholds are checked here, because a threshold checked on the population whose rule it chose is not a check, and three of the ten r",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "it is not a random quarter of the test split it is the submission list sent to the comparator that is a web service and how those were drawn is recorded nowhere in this repository which is the same defect the corpus assembly carries": {
+   "text": "It is not a random quarter of the test split: it is the submission list sent to the comparator that is a web service, and how those N were drawn is recorded nowhere in this repository, which is the same defect the corpus assembly carries",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "the corpus files predate this repository s first commit no script in it reads the four sources and the accession field is empty in every record so the apparatus built on top makes every step from the corpus onwards reproducible and cannot make that one so what can be checked instead is a rebuild which scripts verify rebuilt corpus py reports substrate by substrate": {
+   "text": "The corpus files predate this repository's first commit, no script in it reads the four sources, and the accession field is empty in every record, so the apparatus built on top makes every step from the corpus onwards reproducible and cannot make that one so; what can be checked instead is a rebuild",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "the one source held on disk says the selection was not blind to chemistry between the metxbiodb pairs that entered the corpus and those that did not the transformation type distributions differ by a total variation distance of at p over shuffles and of the dropped pairs carry a type the kept half never shows": {
+   "text": "The one source held on disk says the selection was not blind to chemistry: between the MetXBioDB pairs that entered the corpus and those that did not, the transformation-type distributions differ by a total variation distance of N at p= N over N shuffles, and N of the dropped pairs carry a type the ",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "both are columns of the comparison both overlaps are measured in section and neither is corrected for a correction would need a model of how much of a rule set a reference set produced which nothing here supplies": {
+   "text": "Both are columns of the comparison, both overlaps are measured in Section , and neither is corrected for: a correction would need a model of how much of a rule set a reference set produced, which nothing here supplies",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "the remaining three arms are not measured against this corpus and are not thereby cleared metatox and metapredictor publish no development set that could be intersected with it": {
+   "text": "The remaining three arms are not measured against this corpus and are not thereby cleared: MetaTox and MetaPredictor publish no development set that could be intersected with it",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "what this system does not represent nothing in this pipeline is stereochemistry aware": {
+   "text": "What this system does not represent Nothing in this pipeline is stereochemistry-aware",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "for a predictor of metabolite structures that is a restriction on what may be asked of it rather than a technicality sulfoxide and epoxide configuration carry the pharmacology of several drug classes and a system that cannot represent configuration cannot be asked which enantiomer an enzyme makes": {
+   "text": "For a predictor of metabolite structures that is a restriction on what may be asked of it rather than a technicality: sulfoxide and epoxide configuration carry the pharmacology of several drug classes, and a system that cannot represent configuration cannot be asked which enantiomer an enzyme makes",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "the blend of equation is better at the head of the list by at most at a budget of on this population it is indistinguishable from the deployed rule at every budget a lead is claimed at on the validation draw it separates as far as which includes two of them and that reading is in section equation is why deduplication is not a cosmetic step the key under which two products are judged the same decides which scores are combined and changing that key moves the ranking": {
+   "text": "The blend of Equation is better at the head of the list, by at most + N [+ N , + N ] at a budget of N . On this population it is indistinguishable from the deployed rule at every budget a lead is claimed at; on the validation draw it separates as far as N , which includes two of them, and that readi",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "the subsample was fixed when the run was configured and is not a consequence of anything measured here so what the ablations below compare is the value of each stage at that training budget rather than at the split s full size": {
+   "text": "The subsample was fixed when the run was configured and is not a consequence of anything measured here, so what the ablations below compare is the value of each stage at that training budget rather than at the split's full size",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "that is a lower bound because string equality cannot trace a template somebody rewrote": {
+   "text": "That is a lower bound, because string equality cannot trace a template somebody rewrote",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "every constant of or more is indistinguishable from it at budgets of and and the null is stated as the bound it is no such constant differs from the deployed value by more than at fifteen": {
+   "text": "Every constant of N or more is indistinguishable from it at budgets of 5, 15 and 50, and the null is stated as the bound it is: no such constant differs from the deployed value by more than N at fifteen",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "at a budget of it is not a null where k falls short so flatness holds at three of the four budgets and not at all of them section": {
+   "text": "At a budget of 30 it is not a null, where K= N falls N [ N , N ] short, so flatness holds at three of the four budgets and not at all of them (Section )",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "a cap before a fusion is not a filter the fusion ranks over whatever survives so removing a candidate changes the rank every other receives which is why truncation can raise recall rather than only bound it": {
+   "text": "A cap before a fusion is not a filter: the fusion ranks over whatever survives, so removing a candidate changes the rank every other receives, which is why truncation can raise recall rather than only bound it",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "that rule does not transfer to a rank fusion and the reason is structural the worst candidate scores of the best under fusion against under the product because a reciprocal rank sum is a rank statistic without scale": {
+   "text": "That rule does not transfer to a rank fusion, and the reason is structural: the worst candidate scores N of the best under fusion against N under the product, because a reciprocal-rank sum is a rank statistic without scale",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "that figure is not the one table prints which is measured on the validation draw every candidate count in this paper is listed with the stage and the population it belongs to in table because the same words name different quantities at different points of the pipeline": {
+   "text": "That figure is not the one Table prints, which is measured on the validation draw; every candidate count in this paper is listed with the stage and the population it belongs to in Table , because the same words name different quantities at different points of the pipeline",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "registered as prediction p with a criterion of zero lost cells over a grid of five matching criteria by ten budgets and the comparator s own uncapped output of that ladder was fixed with the prediction and is not the nine budgets read everywhere else here it is released with the register and with the grid it was adjudicated on": {
+   "text": "Registered as prediction P4 with a criterion of zero lost cells over a grid of five matching criteria by ten budgets and the comparator's own uncapped output: N of N . That ladder was fixed with the prediction and is not the nine budgets read everywhere else here; it is released with the register an",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "the last is the default because the references neither carry stereochemistry nor distinguish tautomers and because standard identifiers normalise only a subset of tautomers that the annotation carries no stereochemistry is also a limit on what any of these systems can be asked for nothing in this pipeline is stereochemistry aware so sulfoxidation epoxide hydrolysis and most conjugation are predicted as constitutions and not as configurations": {
+   "text": "The last is the default, because the references neither carry stereochemistry nor distinguish tautomers, and because standard identifiers normalise only a subset of tautomers . That the annotation carries no stereochemistry is also a limit on what any of these systems can be asked for: nothing in th",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "the arms did not all meet that choice the same way and the asymmetry belongs here rather than in a sweep": {
+   "text": "The arms did not all meet that choice the same way, and the asymmetry belongs here rather than in a sweep",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "of the arms were handed the substrate as the corpus stores it metatox was not its submission file re tautomerising the substrate to the natural form for of the the direction is not neutral since this bank s mined half requires the imidic reactant more often than the amide and the size of it is measured for every arm that can be re run it raises sygma s recall by at k and metapredictor s by and changes biotransformer s by the whole comparison with every re runnable arm on the drawing a user would submit is table and it moves of the nine verdicts every arm s level falls or rises with the drawing and the division between them does not": {
+   "text": "Of the N arms, N were handed the substrate as the corpus stores it; MetaTox was not, its submission file re-tautomerising the substrate to the natural form for N of the N . The direction is not neutral, since this bank's mined half requires the imidic reactant more often than the amide, and the size",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "biotransformer s step count is also ours to turn and was not swept a decision taken after the matched length control had been read and stated as such section": {
+   "text": "BioTransformer's step count is also ours to turn and was not swept, a decision taken after the matched-length control had been read and stated as such (Section )",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "a claim that the system leads is made for a cell only where that cell s interval excludes zero and where an ordering is not established the table says so": {
+   "text": "A claim that the system leads is made for a cell only where that cell's interval excludes zero, and where an ordering is not established the table says so",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "every difference behind that division with its paired interval is table the table s last column is not a sixth system it is the exhaustive arm s own pool re ranked under the aggregation a selection on validation prefers and it is printed because that selection went against the rule this work released section": {
+   "text": "Every difference behind that division, with its paired interval, is Table . The table's last column is not a sixth system: it is the exhaustive arm's own pool re-ranked under the aggregation a selection on validation prefers, and it is printed because that selection went against the rule this work r",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "the cell at k is one of the three the other aggregation moves table and does not separate under it": {
+   "text": "The cell at k=1 is one of the three the other aggregation moves (Table ), and does not separate under it",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "it is not the lowest arm at the tight budgets where metatox is": {
+   "text": "It is not the lowest arm at the tight budgets, where MetaTox is",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "of those were never in the corrected family which was declared over comparators so the correction is reported over the it covers of those it removes one the margin over metatox at k it is not the only lead in this paper the correction removes and the others are named where they are claimed": {
+   "text": "Of those, N were never in the corrected family, which was declared over N comparators, so the correction is reported over the N it covers; of those it removes one, the margin over MetaTox at k=30 , + N [+ N , + N ] . It is not the only lead in this paper the correction removes, and the others are na",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "the exhaustive arm is not the best arm on of the classes carrying of the references and the classes it trails on are classical ones on the largest functionalisation one oxygen added references it reaches against for the best arm and it is behind on demethylation sulfation methylation and acetylation": {
+   "text": "The exhaustive arm is not the best arm on N of the N classes, carrying N of the N references, and the classes it trails on are classical ones: on the largest functionalisation, one oxygen added, N references, it reaches N against N for the best arm, and it is behind on demethylation, sulfation, meth",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "that is not a coverage limit but a ranking one the wider pool contains candidates the smaller budget never produced and on those classes they displace correct answers out of the window": {
+   "text": "That is not a coverage limit but a ranking one: the wider pool contains candidates the smaller budget never produced, and on those classes they displace correct answers out of the window",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "a nominal budget is not a length and the leads at wide budgets are read where most comparator lists have already ended": {
+   "text": "A nominal budget is not a length, and the leads at wide budgets are read where most comparator lists have already ended",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "it is measured rather than deducted since a correction taken at a fixed budget cannot be subtracted from a margin taken over a comparator s own slot count": {
+   "text": "It is measured rather than deducted, since a correction taken at a fixed budget cannot be subtracted from a margin taken over a comparator's own slot count",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "the correction also moves a cell the other way against the corrected sygma the interactive arm s deficit separates where against the stored drawing it did not": {
+   "text": "The correction also moves a cell the other way: against the corrected SyGMa the interactive arm's deficit separates, N [ N , N ] , where against the stored drawing it did not",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "what the ranking is worth and what did not work re ranking one pool several ways with the pool the matching rule and the budget fixed separates what each learned stage contributes from what the form of their combination contributes no model runs because the pools carry both component scores": {
+   "text": "What the ranking is worth, and what did not work Re-ranking one pool several ways, with the pool, the matching rule and the budget fixed, separates what each learned stage contributes from what the form of their combination contributes; no model runs, because the pools carry both component scores",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "the cell by cell verdicts in the table are read from per comparison intervals with no correction across the grid so the count of budgets at which a verdict moves is the weaker of the two readings and is given as an illustration the range of the margin at one budget is a property of the point estimates and does not depend on any multiplicity convention": {
+   "text": "The cell-by-cell verdicts in the table are read from per-comparison intervals with no correction across the grid, so the count of budgets at which a verdict moves is the weaker of the two readings and is given as an illustration; the range of the margin at one budget is a property of the point estim",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "under of the criteria grail leads at no budget at all and the most any criterion yields is the criterion this paper reports is not the one that flatters it": {
+   "text": "Under N of the N criteria GRAIL leads at no budget at all, and the most any criterion yields is N . The criterion this paper reports is not the one that flatters it",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "the spread is not evenly earned across the five and saying so is not a retreat from reporting it": {
+   "text": "The spread is not evenly earned across the five, and saying so is not a retreat from reporting it",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "an agreement rate near nine in ten is not the size of the effect the margin over that null is and it is two things bound that reading": {
+   "text": "An agreement rate near nine in ten is not the size of the effect; the margin over that null is, and it is N . Two things bound that reading",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "the attribution is what a score cannot supply": {
+   "text": "The attribution is what a score cannot supply",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "which design choices were selected on which population every deployed choice is a registered hypothesis with a threshold and a falsification condition tested where it was not selected table": {
+   "text": "Which design choices were selected on which population Every deployed choice is a registered hypothesis with a threshold and a falsification condition, tested where it was not selected (Table )",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "the remaining six are registered against work this paper does not report and are stated with their thresholds so that a later result on any of them cannot rest on a threshold chosen afterwards": {
+   "text": "The remaining six are registered against work this paper does not report and are stated with their thresholds, so that a later result on any of them cannot rest on a threshold chosen afterwards",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "the remainder divides by the reaction centre change it requires need a transformation type the bank does not hold need a type it holds whose rule did not fire and cannot be typed": {
+   "text": "The remainder divides by the reaction-centre change it requires: N need a transformation type the bank does not hold, N need a type it holds whose rule did not fire, and N cannot be typed",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "that is what the instruments flag rather than a count of such transformations the union includes the locus instrument whose error is unmeasured in both directions section and the registered instrument alone flags a hit on one of those is a single template standing in for several turnovers so is not the share of annotated metabolism one enzymatic step reaches": {
+   "text": "That is what the instruments flag rather than a count of such transformations: the union includes the locus instrument, whose error is unmeasured in both directions (Section ), and the registered instrument alone flags N . A hit on one of those is a single template standing in for several turnovers,",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "all four span references of which is the narrowest margin that separates from zero anywhere in the comparison table so the choice of instrument cannot decide a claim here": {
+   "text": "All four span N references, N of N , which is the narrowest margin that separates from zero anywhere in the comparison table, so the choice of instrument cannot decide a claim here",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "what that answer covers should be said exactly it covers the misses of absent type and not the other plus of the a miss whose type the bank holds and whose rule did not fire is an implementation failure by construction and three of the were recovered by relaxing convention dependent primitives so that arm is not invariant to anything": {
+   "text": "What that answer covers should be said exactly: it covers the N misses of absent type and not the other N plus N of the N . A miss whose type the bank holds and whose rule did not fire is an implementation failure by construction, and three of the N were recovered by relaxing convention-dependent pr",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "discussion where the advantage is and where it is not the comparison does not produce a winner": {
+   "text": "Discussion Where the advantage is, and where it is not The comparison does not produce a winner",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "beyond a short list that setting is the weaker one and the cause is the pool rather than the ranking": {
+   "text": "Beyond a short list that setting is the weaker one, and the cause is the pool rather than the ranking",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "it returns candidates on average against metatox s and at k already of its lists are shorter than the budget a list that has ended cannot gain a hit from a wider window so the deficit grows with k whatever the order within it": {
+   "text": "It returns N candidates on average against MetaTox's N , and at k=20 already N of its N lists are shorter than the budget; a list that has ended cannot gain a hit from a wider window, so the deficit grows with k whatever the order within it",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "so a service answering with thirty or fifty must either run the exhaustive mode which leads metatox at both or raise the rule budget which is the same knob on validation raising it to the whole bank is worth at a budget of thirty and nothing that separates at fifteen section": {
+   "text": "So a service answering with thirty or fifty must either run the exhaustive mode, which leads MetaTox at both, or raise the rule budget, which is the same knob: on validation, raising it to the whole bank is worth + N [+ N , + N ] at a budget of thirty and nothing that separates at fifteen (Section )",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "ordering is not a differentiator either of the comparators order their whole output and this system is one more that does": {
+   "text": "Ordering is not a differentiator either: N of the N comparators order their whole output, and this system is one more that does",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "the established lead is the exhaustive arm s at k and the system is not compared against the wave because that wave cannot be run as released of such systems none ships a runnable metabolite predictor one of them releasing weights whose reaction module was withdrawn and the supporting information says what each is missing": {
+   "text": "The established lead is the exhaustive arm's, at k=30 and 50 . The system is not compared against the 2025--26 wave, because that wave cannot be run as released: of N such systems none ships a runnable metabolite predictor , one of them releasing weights whose reaction module was withdrawn, and the ",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "a rule gate the released checkpoint carries is a third and no figure in this paper was measured under it": {
+   "text": "A rule gate the released checkpoint carries is a third, and no figure in this paper was measured under it",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "that is a bound rather than a point because it is derived from the marginals rather than from a join the paper does not report and section gives both counts it rests on and why they differ": {
+   "text": "That is a bound rather than a point, because it is derived from the marginals rather than from a join the paper does not report, and Section gives both counts it rests on and why they differ",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "whether the same bound binds a predictor that applies no templates at all is not measured here what is measured is that the chemistry is absent from the corpus which is a property of the training data rather than of the method reading it": {
+   "text": "Whether the same bound binds a predictor that applies no templates at all is not measured here; what is measured is that the chemistry is absent from the corpus, which is a property of the training data rather than of the method reading it",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "its assembly cannot be reconstructed and the one source held on disk shows the selection was not blind to chemistry": {
+   "text": "Its assembly cannot be reconstructed, and the one source held on disk shows the selection was not blind to chemistry",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "so the bound says extending the bank by mining this corpus harder cannot close the shortfall because the chemistry is not in it": {
+   "text": "So the bound says: extending the bank by mining this corpus harder cannot close the shortfall, because the chemistry is not in it",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "it does not say what fraction of human metabolism is of a type no corpus contains and it cannot because that would need a corpus whose assembly is recoverable and whose selection is documented": {
+   "text": "It does not say what fraction of human metabolism is of a type no corpus contains, and it cannot, because that would need a corpus whose assembly is recoverable and whose selection is documented",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "the class by class reading says the same from the other side the aggregate advantage is carried by unusual cleavages and by transformations this vocabulary cannot name and on several classical functionalisations this system is not the best arm and is sometimes beaten by its own cheaper setting": {
+   "text": "The class-by-class reading says the same from the other side: the aggregate advantage is carried by unusual cleavages and by transformations this vocabulary cannot name, and on several classical functionalisations this system is not the best arm and is sometimes beaten by its own cheaper setting",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "what one application of one template bank cannot reach is mostly chemistry the corpus does not contain between and of the reference shortfall is of a type the training annotation never holds": {
+   "text": "What one application of one template bank cannot reach is mostly chemistry the corpus does not contain: between N and N of the N -reference shortfall is of a type the training annotation never holds",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "limitations applying one template once is not the same as one enzymatic step": {
+   "text": "Limitations Applying one template once is not the same as one enzymatic step",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "a depth two probe put the lift in the low percent at several times the candidate cost and no figure from it is quoted because its result file names no producer and predates the provenance apparatus the rest of this work is held to": {
+   "text": "A depth-two probe put the lift in the low percent at several times the candidate cost, and no figure from it is quoted, because its result file names no producer and predates the provenance apparatus the rest of this work is held to",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "the spread is measured at this configuration so what a headline figure is read against is known retraining on the full split under more than seeds which would say whether the level as well as the spread moves is not reported section": {
+   "text": "The spread is measured at this configuration, so what a headline figure is read against is known; retraining on the full split under more than N seeds, which would say whether the level as well as the spread moves, is not reported (Section )",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "the register is weaker than its count of confirmations suggests": {
+   "text": "The register is weaker than its count of confirmations suggests",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "p is weaker again and the register is what shows it its threshold was fixed in advance but its population was not and it was adjudicated on the comparison set which is derived from the test split and was recorded afterwards": {
+   "text": "P5 is weaker again, and the register is what shows it: its threshold was fixed in advance but its population was not, and it was adjudicated on the comparison set, which is derived from the test split and was recorded afterwards",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "two comparators biotransformer and gloryx are built on sources this corpus is assembled from which favours both and is not corrected for": {
+   "text": "Two comparators, BioTransformer and GLORYx, are built on sources this corpus is assembled from, which favours both and is not corrected for",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "the deployed configuration is not the best one this work knows of": {
+   "text": "The deployed configuration is not the best one this work knows of",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "stereochemistry and protonation are bounded rather than priced of annotated pairs produce a metabolite carrying a stereogenic element its substrate does not have and of annotated metabolites carry a formal charge but the criterion sweep cannot price a configuration aware criterion because two of its five settings return the identical verdict at every budget the annotation has no configuration for them to disagree about section": {
+   "text": "Stereochemistry and protonation are bounded rather than priced: N of annotated pairs produce a metabolite carrying a stereogenic element its substrate does not have, and N of annotated metabolites carry a formal charge, but the criterion sweep cannot price a configuration-aware criterion, because tw",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "every figure is measured on one corpus assembled from four sources of which the only published reference set is one of the four so a held out split of it is not an independent test of the chemistry": {
+   "text": "Every figure is measured on one corpus assembled from four sources, of which the only published reference set is one of the four, so a held-out split of it is not an independent test of the chemistry",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "shuffling emission among the arms of a drug which preserves every drug s set of emissions and every recall and breaks only their pairing reproduces the correlation in fewer than one permutation in that null holds a drug s emissions fixed but not an arm s so it cannot say at what level the association lives": {
+   "text": "Shuffling emission among the arms of a drug, which preserves every drug's set of emissions and every recall and breaks only their pairing, reproduces the correlation in fewer than one permutation in N . That null holds a drug's emissions fixed but not an arm's, so it cannot say at what level the ass",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "it is not the whole story and this paper s argument does not need it to be ordering the arms by what they emit does not reproduce ordering them by recall one arm returning fewer candidates than another and recovering more": {
+   "text": "It is not the whole story and this paper's argument does not need it to be: ordering the arms by what they emit does not reproduce ordering them by recall, one arm returning fewer candidates than another and recovering more",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "so output size is a confound in that benchmark rather than its content which is the same thing this paper says about its own budget axis and the remedy is the same to declare the axis and vary it suppinfo the supporting information is available free of charge on the acs publications website grail si pdf the corpus and what kind of molecules these are with the splits and their leakage audit the five matching criteria and the comparison s sensitivity to the choice among them the parent drop convention measured per arm every candidate count the paper prints and what each one is precision at every budget every comparison difference with its paired interval at matched list length and under the other aggregation how the substrate is drawn and the drawing s effect where the drawing changes anything the rule bank its mining the provenance of each collection and how much of it is a published rule set verbatim what the rule budget buys and two parameters of the ranking both swept the architecture training and every setting of both learned stages whether the site a prediction names is the site that changed what each method recovers split by transformation class whether the missing chemistry is the corpus s or the bank s and whether template discovery has saturated how much of the annotation is one enzymatic step the sixteen registered predictions including the six not reported here group ranking and its oracle and when a ranking comparison can measure anything the stage ablations the choice of evaluation population the worked example on both drawings runtime methodology comparator versions and digests the evaluation claim checked against an independent benchmark and the provenance and reproduction procedure suppinfo data and software availability source code the deployed checkpoints the released rule bank the split manifest the annotated references every recall figure is measured against the frozen per substrate predictions of every comparator the evaluation harness the provenance sweep and the preregistration with every hypothesis and its outcome are at github com doctawho grail and are available to reviewers at submission": {
+   "text": "So output size is a confound in that benchmark rather than its content, which is the same thing this paper says about its own budget axis, and the remedy is the same, to declare the axis and vary it. suppinfo The Supporting Information is available free of charge on the ACS Publications website. gra",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "the train and validation candidate pools are deposited at the released bank is not the measured bank": {
+   "text": "The train and validation candidate pools are deposited at . The released bank is not the measured bank",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "dropping them from the bank is not the same as not carrying them and of tracked files hold at least one which a check reports rather than the repository asserting otherwise": {
+   "text": "Dropping them from the bank is not the same as not carrying them, and of N tracked files N hold at least one, which a check reports rather than the repository asserting otherwise",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "the corpus whose four sources and versions section names is not redistributed as a corpus sharealike and noncommercial terms cannot both be satisfied by one derivative so its licence is what is released instead is the evaluated test substrates as structures and their annotated metabolites as the descriptors the matching criteria are decided by which lets a reader without those licences recompute every recall figure and every cell of the criterion sweep a check reports zero disagreements between the two readings": {
+   "text": "The corpus, whose four sources and versions Section names, is not redistributed as a corpus: ShareAlike and NonCommercial terms cannot both be satisfied by one derivative, so its licence is . What is released instead is the evaluated test substrates as structures and their annotated metabolites as t",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "releasing the checkpoints is the bar this paper applies to others a system whose weights cannot be obtained cannot be compared against which is why one of the systems of is excluded here": {
+   "text": "Releasing the checkpoints is the bar this paper applies to others: a system whose weights cannot be obtained cannot be compared against, which is why one of the N systems of 2025--26 is excluded here",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "section states what a reader can and cannot rebuild and the one step that cannot be reproduced": {
+   "text": "Section states what a reader can and cannot rebuild, and the one step that cannot be reproduced",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "a single derived work drawing on both cannot satisfy each adding the non commercial clause is a restriction sharealike does not permit and dropping it breaches drugbank s terms": {
+   "text": "A single derived work drawing on both cannot satisfy each: adding the non-commercial clause is a restriction ShareAlike does not permit, and dropping it breaches DrugBank's terms",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the one step of the assembly that cannot be reproduced is the extraction that selected from the four sources it is not in the repository and it is recorded as absent rather than described": {
+   "text": "The one step of the assembly that cannot be reproduced is the extraction that selected from the four sources: it is not in the repository, and it is recorded as absent rather than described",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "no source record is redistributed in the deposit and the licence of the derived corpus is the repository is a separate channel and it is settled the same way by a substitution rather than by an answer to a question that does not resolve": {
+   "text": "No source record is redistributed in the deposit , and the licence of the derived corpus is . The repository is a separate channel and it is settled the same way, by a substitution rather than by an answer to a question that does not resolve",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "what a reader without the source licences loses is not a recall figure or a criterion but the structure level analyses of this document which read the reference itself and those need the corpus that reader already needed": {
+   "text": "What a reader without the source licences loses is not a recall figure or a criterion but the structure-level analyses of this document, which read the reference itself, and those need the corpus that reader already needed",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the assembly cannot therefore be read off code": {
+   "text": "The assembly cannot therefore be read off code",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "this is not the declared standardiser s output run under rdkit releases spanning four years standardize mol returns the amide in of from both the amide and the imidic acid": {
+   "text": "This is not the declared standardiser's output: run under N RDKit releases spanning four years, standardize mol returns the amide in N of N , from both the amide and the imidic acid",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the repair that produced the shipped clean triples ran in the substrate level mode of scripts fix splits py its molecule disjoint mode is a different partition and was not used": {
+   "text": "The repair that produced the shipped clean triples ran in the substrate-level mode of scripts/fix splits.py ; its molecule-disjoint mode is a different partition and was not used",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "there is no split seed the repair is deterministic and draws on no random number generator and the partition it repairs has no producer in this repository": {
+   "text": "There is no split seed: the repair is deterministic and draws on no random number generator, and the partition it repairs has no producer in this repository",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "what a third party can and cannot rebuild": {
+   "text": "What a third party can and cannot rebuild",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "what cannot be reconstructed is the extraction and filtering that selected from them because that step is not in the repository and the data carries no accession to reverse it by": {
+   "text": "What cannot be reconstructed is the extraction and filtering that selected from them, because that step is not in the repository and the data carries no accession to reverse it by",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the median change is heavy atoms and the fifth and ninety fifth percentiles are and but the tails are long in both directions the extremes are and a bank of single template edits is not the natural instrument for either tail and the coverage census in the main text is where that shows": {
+   "text": "The median change is N heavy atoms and the fifth and ninety-fifth percentiles are N and N , but the tails are long in both directions: the extremes are N and + N . A bank of single-template edits is not the natural instrument for either tail, and the coverage census in the main text is where that sh",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "and the annotation is positive unlabelled throughout a pair that does not appear is not a pair that was tested and rejected": {
+   "text": "And the annotation is positive-unlabelled throughout: a pair that does not appear is not a pair that was tested and rejected",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "most other declared choices here are swept and this one was declared and not measured so table measures it": {
+   "text": "Most other declared choices here are swept, and this one was declared and not measured, so Table measures it",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "what that does not establish is an applicability domain": {
+   "text": "What that does not establish is an applicability domain",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "where a method runs out of candidates at the widest budgets the comparison is partly measuring list length rather than ranking and the counts that say by how much are here at every budget rather than only at the one the main text prints": {
+   "text": "Where a method runs out of candidates At the widest budgets the comparison is partly measuring list length rather than ranking, and the counts that say by how much are here at every budget rather than only at the one the main text prints",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "they bear directly on the two leads claimed at k and k an arm that has run out of candidates cannot gain from a wider window so the leads should be weighed against the number of substrates for which that is the case": {
+   "text": "They bear directly on the two leads claimed at k=30 and k=50 : an arm that has run out of candidates cannot gain from a wider window, so the leads should be weighed against the number of substrates for which that is the case",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "which chemistry each method recovers a recall figure aggregates over transformations of very different kinds and a reader deciding whether any of these systems is usable on their compound class cannot read that off one number": {
+   "text": "Which chemistry each method recovers A recall figure aggregates over transformations of very different kinds, and a reader deciding whether any of these systems is usable on their compound class cannot read that off one number",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "that is what the annotation determines the corpus records a substrate and a product not a mechanism so a mechanism cannot be recovered from it without guessing": {
+   "text": "That is what the annotation determines: the corpus records a substrate and a product, not a mechanism, so a mechanism cannot be recovered from it without guessing",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the largest class is not a functionalisation at all but a cleavage losing two or more carbons references and it is where the whole bank pays for its size against for the best comparator": {
+   "text": "The largest class is not a functionalisation at all but a cleavage losing two or more carbons, N references, and it is where the whole bank pays for its size: N against N for the best comparator",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the exhaustive arm is not the best arm on of the classes and on of them it is below the interactive arm which returns a sixth as many candidates": {
+   "text": "The exhaustive arm is not the best arm on N of the N classes, and on N of them it is below the interactive arm, which returns a sixth as many candidates",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "a wider pool cannot lose coverage so what is lost there is position candidates the smaller rule budget never produced are ranked above the correct answer and push it past fifteen": {
+   "text": "A wider pool cannot lose coverage, so what is lost there is position: candidates the smaller rule budget never produced are ranked above the correct answer and push it past fifteen",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "of the metapredictor lists have ended by then of biotransformer s and of metatox s against of the exhaustive arm s the interactive arm s have ended on so a row of that table compares orderings where the lists are still running and lengths where they are not and the two cannot be separated by reading it": {
+   "text": "N of the N MetaPredictor lists have ended by then, N of BioTransformer's and N of MetaTox's, against N of the exhaustive arm's; the interactive arm's have ended on N . So a row of that table compares orderings where the lists are still running and lengths where they are not, and the two cannot be se",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the comparison at matched list length a nominal budget is not a length": {
+   "text": "The comparison at matched list length A nominal budget is not a length",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the two are then read over the same slots on every substrate rather than on average which is what a nominal budget cannot do": {
+   "text": "The two are then read over the same slots on every substrate rather than on average, which is what a nominal budget cannot do",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the interactive arm loses to metatox at matched length by which is the same deficit the main text reports at fixed budgets and is not an artefact of either": {
+   "text": "The interactive arm loses to MetaTox at matched length by N [ N , N ] , which is the same deficit the main text reports at fixed budgets and is not an artefact of either",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "every value below is therefore pessimistic by an unknown amount and the amount is larger for an arm that emits more which flatters the short lists": {
+   "text": "Every value below is therefore pessimistic by an unknown amount, and the amount is larger for an arm that emits more, which flatters the short lists",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the exhaustive mode s lead over metatox at k excludes zero by little and its two unresolved budgets k and k have intervals straddling zero narrowly rather than lying far from it": {
+   "text": "The exhaustive mode's lead over MetaTox at k=30 excludes zero by little, and its two unresolved budgets, k=15 and k=20 , have intervals straddling zero narrowly rather than lying far from it",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "what follows is what the grid does not show on its face": {
+   "text": "What follows is what the grid does not show on its face",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "tanimoto similarity of one on morgan fingerprints is the loosest and it merges structures a fingerprint cannot separate which credits every method with hits it did not earn and credits the comparators with more of them": {
+   "text": "Tanimoto similarity of one on Morgan fingerprints is the loosest, and it merges structures a fingerprint cannot separate, which credits every method with hits it did not earn and credits the comparators with more of them",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "whatever the two ends share it is not strictness and it is not the dialect and the entanglement is stated here as something a reader of the strict column should know rather than as the reason it reads as it does": {
+   "text": "Whatever the two ends share, it is not strictness and it is not the dialect, and the entanglement is stated here as something a reader of the strict column should know rather than as the reason it reads as it does",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the tautomer aware key exists because reproducing a corpus s tautomer is not the question a comparison should be asking and the canonical column is reported because declaring a criterion means printing what it does not only the one whose behaviour suits the argument": {
+   "text": "The tautomer-aware key exists because reproducing a corpus's tautomer is not the question a comparison should be asking, and the canonical column is reported because declaring a criterion means printing what it does, not only the one whose behaviour suits the argument",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "it did not say how the substrate is drawn": {
+   "text": "It did not say how the substrate is drawn",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "amide hydrolysis and amide dealkylation are core phase i chemistry so this is not a corner of the bank": {
+   "text": "Amide hydrolysis and amide N -dealkylation are core phase-I chemistry, so this is not a corner of the bank",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "on that drawing the interactive mode finds of annotated metabolites and the one it finds is produced by mined template whose reactant side requires the exocyclic imine and which cannot fire on the drug as a chemist draws it": {
+   "text": "On that drawing the interactive mode finds N of N annotated metabolites, and the one it finds is produced by mined template N , whose reactant side requires the exocyclic imine and which cannot fire on the drug as a chemist draws it",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the arms did not all meet the same drawing": {
+   "text": "The arms did not all meet the same drawing",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the reasoning is right and the asymmetry it leaves is real and it runs against the arm that took the trouble metatox met the drawing its rules expect and sygma whose published templates are written entirely in the amide notation did not": {
+   "text": "The reasoning is right and the asymmetry it leaves is real, and it runs against the arm that took the trouble: MetaTox met the drawing its rules expect and SyGMa, whose published templates are written entirely in the amide notation, did not",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "carried to the verdicts the drawing moves of arm against comparator cells and it is not a lead the paper claims but a trail the interactive arm against metapredictor at a budget of three which separates under the standardiser s drawing and does not under the corpus s": {
+   "text": "Carried to the verdicts, the drawing moves N of N arm-against-comparator cells, and it is not a lead the paper claims but a trail: the interactive arm against MetaPredictor at a budget of three, which separates under the standardiser's drawing and does not under the corpus's",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the coverage ceiling on this population is under the stored drawing and under the standardiser s a difference of ci which does not separate from zero": {
+   "text": "The coverage ceiling on this population is N under the stored drawing and N under the standardiser's, a difference of N , 95 % CI [ N , N ] , which does not separate from zero",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "giving sygma the natural drawing raises its recall at every wide budget by at k only metatox cannot be re run and it is the one comparator that was handed the natural drawing to begin with": {
+   "text": "Giving SyGMa the natural drawing raises its recall at every wide budget, by + N [ N , N ] at k=30 . Only MetaTox cannot be re-run, and it is the one comparator that was handed the natural drawing to begin with",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "both of this work s arms are rebuilt on the standardiser s output metapredictor and biotransformer are scored from their re runs on the natural drawing and sygma is re run here metatox cannot be moved and is carried unchanged and marked since it is also the one arm that received the natural drawing to begin with": {
+   "text": "Both of this work's arms are rebuilt on the standardiser's output, MetaPredictor and BioTransformer are scored from their re-runs on the natural drawing, and SyGMa is re-run here; MetaTox cannot be moved and is carried unchanged and marked, since it is also the one arm that received the natural draw",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "metatox is the strongest comparator at the budgets this work reads its leads at and it is the one arm the table cannot move so the second verdict row is read against an arm still on its own input": {
+   "text": "MetaTox is the strongest comparator at the budgets this work reads its leads at, and it is the one arm the table cannot move, so the second verdict row is read against an arm still on its own input",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "that matters because it is one of the two comparators the wide budget lead does not survive against so a correction it did not receive would be the one correction running this work s way": {
+   "text": "That matters because it is one of the two comparators the wide-budget lead does not survive against, so a correction it did not receive would be the one correction running this work's way",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "string equality cannot trace a rule that was rewritten so this is a lower bound on borrowing and never an upper one and the templates matching nothing are not thereby shown to be original": {
+   "text": "String equality cannot trace a rule that was rewritten, so this is a lower bound on borrowing and never an upper one, and the N templates matching nothing are not thereby shown to be original",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "sygma s installed distribution records license gpl with no version and ships no licence text which is read here the way a version less gpl offer is conventionally read as any version at the recipient s choice if the upstream repository names a version that version governs and this reading is wrong": {
+   "text": "SyGMa's installed distribution records License: GPL with no version and ships no licence text, which is read here the way a version-less GPL offer is conventionally read, as any version at the recipient's choice; if the upstream repository names a version, that version governs and this reading is wr",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "gloryx s rule file carries no licence text this repository holds": {
+   "text": "GLORYx's rule file carries no licence text this repository holds",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "absorbing a published rule set is ordinary practice and is not the point": {
+   "text": "Absorbing a published rule set is ordinary practice and is not the point",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "that qualifies the claim that a prediction is rule attributable without withdrawing it the rule and the firing atoms are still reported and what is weaker is the rule s own selectivity": {
+   "text": "That qualifies the claim that a prediction is rule-attributable without withdrawing it: the rule and the firing atoms are still reported, and what is weaker is the rule's own selectivity",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "that the model is identical across the points is checked and not assumed because it is the one thing a pool did not record": {
+   "text": "That the model is identical across the points is checked and not assumed, because it is the one thing a pool did not record",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "that is not the whole story and the column for an output budget of thirty makes it plain read there the larger rule budget does buy something because the pool it builds has not run out": {
+   "text": "That is not the whole story, and the column for an output budget of thirty makes it plain: read there, the larger rule budget does buy something, because the pool it builds has not run out",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "of the test references whose transformation type the bank does not hold have a type the training annotation does not hold either the remaining are chemistry the corpus contained and the miner did not carry across": {
+   "text": "Of the N test references whose transformation type the bank does not hold, N , N , have a type the training annotation does not hold either; the remaining N are chemistry the corpus contained and the miner did not carry across",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "that is not an error in either count because a template can reach a product while being typed differently from the pair that product came from": {
+   "text": "That is not an error in either count, because a template can reach a product while being typed differently from the pair that product came from",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "that is what supports the word most and it is a bound rather than a point because the join itself is not reported here": {
+   "text": "That is what supports the word most , and it is a bound rather than a point because the join itself is not reported here",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "of the test references whose type neither the bank nor the training annotation holds has a type this source held and the corpus dropped with bond counts ignored the selection removed chemistry and it did not remove this chemistry": {
+   "text": "Of the N test references whose type neither the bank nor the training annotation holds, N has a type this source held and the corpus dropped, N ; with bond counts ignored, N , N . The selection removed chemistry, and it did not remove this chemistry",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "two of the four sources can be read this way not one and the second is the smaller and the weaker": {
+   "text": "Two of the four sources can be read this way, not one, and the second is the smaller and the weaker",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the same permutation test returns p and does not separate and the reason is the size of the set rather than the size of the effect typed pairs on one side and on the other spread over types leave almost every type a singleton so a shuffled label reaches nearly that distance too": {
+   "text": "The same permutation test returns p= N and does not separate, and the reason is the size of the set rather than the size of the effect: N typed pairs on one side and N on the other spread over N types leave almost every type a singleton, so a shuffled label reaches nearly that distance too",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "what that does not establish is that mining harder would raise the ceiling": {
+   "text": "What that does not establish is that mining harder would raise the ceiling",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "recomputing the fusion from the stored component scores costs no model run so it is swept over values spanning two orders of magnitude on the substrates of the comparison set carrying references": {
+   "text": "Recomputing the fusion from the stored component scores costs no model run, so it is swept over N values spanning two orders of magnitude, on the N substrates of the comparison set carrying N references",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "that is a weaker claim than the one this section used to make and a checkable one": {
+   "text": "That is a weaker claim than the one this section used to make and a checkable one",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "measuring the sweep on the population this paper reports is not the objection section raises against the aggregation blend": {
+   "text": "Measuring the sweep on the population this paper reports is not the objection Section raises against the aggregation blend",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the released pools carry one aggregated score per candidate and not the per template scores a different rule needs so the question cannot be answered from them": {
+   "text": "The released pools carry one aggregated score per candidate and not the per-template scores a different rule needs, so the question cannot be answered from them",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "and this sweep alone cannot move the deployed rule it was run on the comparison set after the comparison so adopting the blend on the strength of it would be selecting a parameter on the population the paper reports which is the one thing this work s own discipline forbids": {
+   "text": "And this sweep alone cannot move the deployed rule: it was run on the comparison set after the comparison, so adopting the blend on the strength of it would be selecting a parameter on the population the paper reports, which is the one thing this work's own discipline forbids",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "there is no published column for this population so the re run cannot be gated on reproducing one it is checked against the curve of section instead which reads the same pools at the whole bank": {
+   "text": "There is no published column for this population, so the re-run cannot be gated on reproducing one; it is checked against the curve of Section instead, which reads the same pools at the whole bank",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the deployed aggregation is not the one a selection on validation would choose for a service answering with a short list on the population where such a choice is legitimate the blend is better through a budget of which includes the budget this paper reads its headline at": {
+   "text": "The deployed aggregation is not the one a selection on validation would choose for a service answering with a short list: on the population where such a choice is legitimate, the blend is better through a budget of N , which includes the budget this paper reads its headline at",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the gate the release applied and the measurement did not one of the settings in that table describes a selection no number here is measured under and it is worth separating from the ones that are": {
+   "text": "The gate the release applied and the measurement did not One of the settings in that table describes a selection no number here is measured under, and it is worth separating from the ones that are",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "a caller who ran under the gate would therefore be running a narrower configuration than any arm reported here and no number in this paper describes it": {
+   "text": "A caller who ran under the gate would therefore be running a narrower configuration than any arm reported here, and no number in this paper describes it",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "how the incomplete annotation is handled an annotated metabolite is a positive and a rule applicable product without an annotation is unlabelled not negative because a missing annotation does not establish that a transformation does not occur the two learned components answer that differently and the released configuration of each is what follows": {
+   "text": "How the incomplete annotation is handled An annotated metabolite is a positive and a rule-applicable product without an annotation is unlabelled, not negative, because a missing annotation does not establish that a transformation does not occur . The two learned components answer that differently, a",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the same silence makes precision pessimistic by a bounded but unknown amount which is why the paper reports it without using it to order systems": {
+   "text": "The same silence makes precision pessimistic by a bounded but unknown amount, which is why the paper reports it without using it to order systems",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "it is not a re ranking of stored scores which is why it is absent rather than deferred it needs a training run at the deployed configuration and a re scoring of every pool from it": {
+   "text": "It is not a re-ranking of stored scores, which is why it is absent rather than deferred; it needs a training run at the deployed configuration and a re-scoring of every pool from it",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "of such matches on the comparison set the reported site touches the change in and lies wholly inside it in the second figure is lower for a reason that is not a failure a template matches its whole pattern which is larger than the part it alters": {
+   "text": "Of N such matches on the comparison set, the reported site touches the change in N and lies wholly inside it in N . The second figure is lower for a reason that is not a failure: a template matches its whole pattern, which is larger than the part it alters",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the corpus records a substrate and a product and no site so the reference centre here is derived the common substructure of the two is computed the substrate atoms it does not cover are taken as changed the substrate atoms carrying a part of the product the substructure does not cover are added and the neighbours of a removed atom with them": {
+   "text": "The corpus records a substrate and a product and no site, so the reference centre here is derived: the common substructure of the two is computed, the substrate atoms it does not cover are taken as changed, the substrate atoms carrying a part of the product the substructure does not cover are added,",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the reading remains that a raw agreement rate near nine in ten is not the size of the effect the size is the margin and it is what a single step is the paper s predictions are single step in the sense that one template is applied once": {
+   "text": "The reading remains that a raw agreement rate near nine in ten is not the size of the effect; the size is the margin, and it is N . What a single step is The paper's predictions are single-step in the sense that one template is applied once",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the reaction centre of the source pair located by the same maximum common substructure route the transformation types use falls in more than one piece for of the mined templates one mined template could not be scored so the denominator throughout this section is and not a centre in two pieces is one event when a bond appears or disappears between them which is what a cleavage or a cyclisation looks like and two independent edits otherwise this instrument counts the pieces and does not separate the two cases": {
+   "text": "The reaction centre of the source pair, located by the same maximum-common-substructure route the transformation types use, falls in more than one piece for N of the N mined templates, N . One mined template could not be scored, so the denominator throughout this section is N and not N . A centre in",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "a rule that performs two edits can reach a metabolite two steps away in one application so the ceiling is not the reach of one enzymatic step and the depth two experiment in the limitations measures a second template application rather than a second enzymatic step": {
+   "text": "A rule that performs two edits can reach a metabolite two steps away in one application, so the ceiling is not the reach of one enzymatic step, and the depth-two experiment in the Limitations measures a second template application rather than a second enzymatic step",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "if a fifth of the mined bank already performs two edits in one application as p finds a second application has little left to discover that the first did not already reach and the observed lift of about is what that predicts rather than a surprise": {
+   "text": "If a fifth of the mined bank already performs two edits in one application, as P10 finds, a second application has little left to discover that the first did not already reach, and the observed lift of about 0.012 is what that predicts rather than a surprise",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "table records the population each was checked on so which is which is on record but recording it after the fact is not the same as fixing it before and for those three it was not fixed before": {
+   "text": "Table records the population each was checked on so which is which is on record, but recording it after the fact is not the same as fixing it before, and for those three it was not fixed before",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "each is stated with its threshold so that a later result on any of them cannot be a threshold chosen after the fact": {
+   "text": "Each is stated with its threshold so that a later result on any of them cannot be a threshold chosen after the fact",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "none is reported in this paper because none was run for it which is a different thing from a prediction that was run and did not hold the three of those are p p and p and they are in table with their measured values": {
+   "text": "None is reported in this paper because none was run for it, which is a different thing from a prediction that was run and did not hold; the three of those are P6, P7 and P8 and they are in Table with their measured values",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "why the oracle is not an upper bound on the signal": {
+   "text": "Why the oracle is not an upper bound on the signal",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "that does not make the draw random it says the three properties most likely to have driven such a draw did not drive this one": {
+   "text": "That does not make the draw random; it says the three properties most likely to have driven such a draw did not drive this one",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "taking it to this population means a second submission of the substrates outside the comparison set it was not made and the reason is the cost of a submission rather than an inability this paper counts two other absences as unforced for the same reason and this one is the third": {
+   "text": "Taking it to this population means a second submission of the substrates outside the comparison set, it was not made, and the reason is the cost of a submission rather than an inability: this paper counts two other absences as unforced for the same reason and this one is the third",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "this section sweeps budgets and table sweeps the four it adds at have no whole test set counterpart so a lead at one of them cannot be followed across the move and is not in this denominator": {
+   "text": "This section sweeps N budgets and Table sweeps N ; the four it adds, at N , have no whole-test-set counterpart, so a lead at one of them cannot be followed across the move and is not in this denominator",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the two are the full and a substrate subset drawn for an earlier evaluation against metatrans which is not a column of the comparison here that subset is named because a population no reader can identify is the defect this section is about": {
+   "text": "The two are the full N and a N -substrate subset drawn for an earlier evaluation against MetaTrans , which is not a column of the comparison here; that subset is named because a population no reader can identify is the defect this section is about",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "two populations is a weak design and we do not offer it as a general claim it is reported because the alternative is to say nothing about a population anyone can see is not random": {
+   "text": "Two populations is a weak design and we do not offer it as a general claim; it is reported because the alternative is to say nothing about a population anyone can see is not random",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the worked example in full the example is reported on both drawings of the substrate because the drawing decides which templates can fire on it and the corpus s drawing is not the one a chemist would use": {
+   "text": "The worked example in full The example is reported on both drawings of the substrate, because the drawing decides which templates can fire on it and the corpus's drawing is not the one a chemist would use",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "to give the registered effects a scale the generator and the filter were retrained under seeds and the whole pipeline re evaluated on the full test split macro recall at a budget of is with a standard deviation of and micro with that study ran at an earlier operating point than the configuration the manuscript reports so its level is not comparable with those tables and whether its spread carries across operating points was assumed rather than shown": {
+   "text": "To give the registered effects a scale, the generator and the filter were retrained under N seeds and the whole pipeline re-evaluated on the full test split: macro recall at a budget of 15 is N with a standard deviation of N , and micro N with N . That study ran at an earlier operating point than th",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the bounded and unbounded arms did not run under the same load": {
+   "text": "The bounded and unbounded arms did not run under the same load",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the arms it is derived between are the bounded and unbounded standardisation arms of this paragraph not the two operating modes so a reader should take it as what the exhaustive mode s median becomes under a comparable load rather than as a measurement of the two modes running side by side which was not made": {
+   "text": "The arms it is derived between are the bounded and unbounded standardisation arms of this paragraph, not the two operating modes, so a reader should take it as what the exhaustive mode's median becomes under a comparable load rather than as a measurement of the two modes running side by side, which ",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "averaged per tool the emission spans a factor of from candidates to no model stands behind that number and no correlation is needed to read it a quantity their design never declares varies twelvefold between the arms whose recall figures are then compared": {
+   "text": "Averaged per tool the emission spans a factor of N , from N candidates to N . No model stands behind that number and no correlation is needed to read it: a quantity their design never declares varies twelvefold between the arms whose recall figures are then compared",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "belong to the arms whose prediction files are not in the deposit so their emission cannot be counted at all are counted from a deposited file but have no recall in the published tables so they enter the spread and not the correlation": {
+   "text": "N belong to the N arms whose prediction files are not in the deposit, so their emission cannot be counted at all; N are counted from a deposited file but have no recall in the published tables, so they enter the spread and not the correlation",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "over the cells carrying both a count and a published recall the rank correlation between recall and log emission is positive within a drug in of a sign is not a result so it is tested shuffling emission among the arms of a drug preserves every drug s set of emissions and every recall in the table and breaks only which arm is paired with which emission": {
+   "text": "Over the N cells carrying both a count and a published recall the rank correlation between recall and log emission is N , positive within a drug in N of N . A sign is not a result, so it is tested: shuffling emission among the arms of a drug preserves every drug's set of emissions and every recall i",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "so the test is a test of pairing within a drug and it cannot separate an effect that lives inside an arm from one that lives between arms": {
+   "text": "So the test is a test of pairing within a drug, and it cannot separate an effect that lives inside an arm from one that lives between arms",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "dropping it leaves over cells at p what this does not establish": {
+   "text": "Dropping it leaves N over N cells at p = N . What this does not establish",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "substrates did not finish the deeper scenario inside a ninety second deadline and keep their deployed lists which can only favour sygma s arm in the comparison rather than harm it": {
+   "text": "N substrates did not finish the deeper scenario inside a ninety-second deadline and keep their deployed lists, which can only favour SyGMa's arm in the comparison rather than harm it",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "a paper arguing that an undeclared emission budget reorders a published table cannot report its own comparison at one budget and call the ordering a property of the systems and the matched length control reaches the same verdict from the other direction by truncating the longer list rather than lengthening the shorter one": {
+   "text": "A paper arguing that an undeclared emission budget reorders a published table cannot report its own comparison at one budget and call the ordering a property of the systems, and the matched-length control reaches the same verdict from the other direction by truncating the longer list rather than len",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "a comparison against a service cannot be made reproducible by the party running the comparison declaring what it can pin and naming what it cannot is the whole of what is available and the shortfall belongs in the record rather than out of it": {
+   "text": "A comparison against a service cannot be made reproducible by the party running the comparison; declaring what it can pin, and naming what it cannot, is the whole of what is available, and the shortfall belongs in the record rather than out of it",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "it is also why the arm cannot be re run here and why the sweep applied to sygma s scenario has no counterpart for it": {
+   "text": "It is also why the arm cannot be re-run here and why the sweep applied to SyGMa's scenario has no counterpart for it",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "that is a weaker provenance than the other four arms have and it is stated rather than smoothed over what is pinned is the submission the returned predictions and the version the service reported and not a binary anyone can re run offline": {
+   "text": "That is a weaker provenance than the other four arms have and it is stated rather than smoothed over: what is pinned is the submission, the returned predictions and the version the service reported, and not a binary anyone can re-run offline",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "that count is every template the jar loads across all its rule databases and is not the one section partitions on the core rule file this repository reads holds of them and of those are in this bank character for character": {
+   "text": "That count is every template the jar loads across all its rule databases and is not the one Section partitions on: the core rule file this repository reads holds N of them, and N of those are in this bank character for character",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "supplying no ranked predictions would not have excluded it since that does not separate it from metapredictor whose list is also unranked and shorter than the budget on nearly every substrate": {
+   "text": "Supplying no ranked predictions would not have excluded it, since that does not separate it from MetaPredictor, whose list is also unranked and shorter than the budget on nearly every substrate",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "it is run at allhuman for one step which is one application of its own rules and the closest counterpart to what this work s arms do it is not a claim that every arm is allowed the same enzymatic depth since sygma s deployed scenario composes a phase one and a phase two ruleset and a mined template may itself perform more than one edit": {
+   "text": "It is run at allHuman for one step, which is one application of its own rules and the closest counterpart to what this work's arms do; it is not a claim that every arm is allowed the same enzymatic depth, since SyGMa's deployed scenario composes a phase-one and a phase-two ruleset and a mined templa",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "its templates are also measured for reach which is a different quantity from its recall on the same substrate subset drawn for the earlier metatrans evaluation section they reach of the references there ci against templates of ours reaching a reach figure and a ranked recall are not the same quantity and they are not placed in one table": {
+   "text": "Its templates are also measured for reach, which is a different quantity from its recall, on the same N -substrate subset drawn for the earlier MetaTrans evaluation (Section ): they reach N of the references there, 95 % CI [ N , N ] , against N templates of ours reaching N . A reach figure and a ran",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "four systems published in could not be run on our split as released": {
+   "text": "Four systems published in 2025--26 could not be run on our split as released",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "a reader who judges it insufficient should read deepcyp s absence as unforced and the same applies to gloryx whose distribution was not sought": {
+   "text": "A reader who judges it insufficient should read DeepCYP's absence as unforced, and the same applies to GLORYx, whose distribution was not sought",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the list is closed by a rule a comparator that could not be obtained is reported as unavailable with its reason is not dropped silently and the list is not extended after the first run": {
+   "text": "The list is closed by a rule: a comparator that could not be obtained is reported as unavailable with its reason, is not dropped silently, and the list is not extended after the first run",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the choice is consequential and the entry point should not make it silently reproducing the census through it under the other presentation gives uncovered references and not that other presentation is not an alternative reading of the bound": {
+   "text": "The choice is consequential and the entry point should not make it silently: reproducing the census through it under the other presentation gives N uncovered references and not N . That other presentation is not an alternative reading of the bound",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "two properties are involved and they are not the same one": {
+   "text": "Two properties are involved and they are not the same one",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the wider sweep is over files and its parts are worth printing since a total is easier to accept than to add up carry no stamp have a producer that has changed since have a producer the sweep cannot identify changed only cosmetically are stamped and current without being pinned and are the pinned files that live under the results directory the total names": {
+   "text": "The wider sweep is over N files and its parts are worth printing, since a total is easier to accept than to add up: N carry no stamp, N have a producer that has changed since, N have a producer the sweep cannot identify, N changed only cosmetically, N are stamped and current without being pinned, an",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "those files support no number in this paper": {
+   "text": "Those files support no number in this paper",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "it also records beside that arm the one it replaced an early dump ranked by the product of the two component scores over a narrower pool which reached at k no number in this paper derives from that column and it is kept rather than deleted so a reader who meets it in an older copy can tell which arm they are looking at": {
+   "text": "It also records, beside that arm, the one it replaced: an early dump ranked by the product of the two component scores over a narrower pool, which reached N at k=50 . No number in this paper derives from that column, and it is kept rather than deleted so a reader who meets it in an older copy can te",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "a pinned producer is not the same as a pinned model": {
+   "text": "A pinned producer is not the same as a pinned model",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the analysis scripts default to it a test refuses any producer of a pinned artifact that names another and the gate over the artifacts the manuscript s numbers come from fails on any that names a checkpoint outside it because a default that is not the deployed setting reproduces something nobody ran": {
+   "text": "The analysis scripts default to it, a test refuses any producer of a pinned artifact that names another, and the gate over the artifacts the manuscript's numbers come from fails on any that names a checkpoint outside it, because a default that is not the deployed setting reproduces something nobody ",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "of the the sweep finds unpinned and whose producer it cannot identify": {
+   "text": "Of the N , the sweep finds N unpinned and N whose producer it cannot identify",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "of the rest predate stamping and are verified by recovering their producer s source from the history rather than from a recorded digest which the sweep labels as inferred that is a weaker check and is counted separately for that reason": {
+   "text": "Of the rest, N predate stamping and are verified by recovering their producer's source from the history rather than from a recorded digest, which the sweep labels as inferred; that is a weaker check and is counted separately for that reason",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "a further are exempt with a stated reason each an output of the checking apparatus itself which cannot verify its own inputs without circularity": {
+   "text": "A further N are exempt with a stated reason, each an output of the checking apparatus itself, which cannot verify its own inputs without circularity",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "remain in the blind spot their producer loading a model and nothing recording which for those the assurance is weaker and is of a different kind that every such producer s default is the deployed pair and a test refuses any that names another": {
+   "text": "N remain in the blind spot, their producer loading a model and nothing recording which; for those the assurance is weaker and is of a different kind, that every such producer's default is the deployed pair and a test refuses any that names another",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "it enumerated pool directories by a filename pattern and reported on whichever ones matched saying nothing about those that did not so four of the thirteen a published number is read from were never examined among them the pool the interactive arm s whole column comes from and both standardised pools": {
+   "text": "It enumerated pool directories by a filename pattern and reported on whichever ones matched, saying nothing about those that did not, so four of the thirteen a published number is read from were never examined -- among them the pool the interactive arm's whole column comes from, and both standardise",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "a check that reports on what it finds and is silent about what is missing cannot fail on the thing that is missing": {
+   "text": "A check that reports on what it finds and is silent about what is missing cannot fail on the thing that is missing",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the train split s clean triple count is where the committed artifact recorded three more three records of train sdf that the rdkit version used here no longer parses which the loader reports and which affect no substrate no annotated pair and no figure in this paper": {
+   "text": "The train split's clean triple count is N where the committed artifact recorded three more: three records of train.sdf that the RDKit version used here no longer parses, which the loader reports and which affect no substrate, no annotated pair and no figure in this paper",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "verification resolves by the recorded source digest which is independent of the commit so the producer is identified regardless what the flag says is that the surrounding tree was not clean not that the producer is unknown": {
+   "text": "Verification resolves by the recorded source digest, which is independent of the commit, so the producer is identified regardless; what the flag says is that the surrounding tree was not clean, not that the producer is unknown",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "a reader gets the checks that a clone can run and is told about the ones it cannot": {
+   "text": "A reader gets the checks that a clone can run, and is told about the ones it cannot",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the files were re materialised from the repository the artifacts that named them re run and a check now compares every tracked file s bytes against the committed ones since a digest that means one thing here and another for a reader is not a guarantee at all": {
+   "text": "The files were re-materialised from the repository, the artifacts that named them re-run, and a check now compares every tracked file's bytes against the committed ones, since a digest that means one thing here and another for a reader is not a guarantee at all",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "none of those artifacts is thereby wrong and each is unverifiable one step back its own producer can be checked and the step that produced its inputs cannot": {
+   "text": "None of those artifacts is thereby wrong, and each is unverifiable one step back: its own producer can be checked and the step that produced its inputs cannot",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the sweep reaches below the top level because most of what a published number is actually made of lives there the candidate pools are written one shard at a time into their own directories and a sweep that did not enter them would leave the files a curve is assembled from outside every check it makes": {
+   "text": "The sweep reaches below the top level because most of what a published number is actually made of lives there: the candidate pools are written one shard at a time into their own directories, and a sweep that did not enter them would leave the files a curve is assembled from outside every check it ma",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "a hand typed pointer cannot nine of them here were wrong at once when the tables were reordered one badly enough to direct a search to the wrong table which is why none is permitted": {
+   "text": "A hand-typed pointer cannot: nine of them here were wrong at once when the tables were reordered, one badly enough to direct a search to the wrong table, which is why none is permitted",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the build runs pdflatex under interaction nonstopmode with its output discarded so an unresolved reference does not stop the compile the page is produced with on it": {
+   "text": "The build runs pdflatex under -interaction=nonstopmode with its output discarded, so an unresolved reference does not stop the compile: the page is produced with ?? on it",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "its pattern once required a numeric page number and so matched nothing in a document whose pages are numbered s s and onward which is how an unresolved pointer reached page s and until recently it was not among the checks the test suite runs which is how a manuscript shipped a pointer printing through a green suite": {
+   "text": "Its pattern once required a numeric page number and so matched nothing in a document whose pages are numbered S1, S2 and onward, which is how an unresolved pointer reached page S10; and until recently it was not among the checks the test suite runs, which is how a manuscript shipped a pointer printi",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "what is released instead is the set of descriptors those criteria are decided by one per reference which is enough for all of them and is not the structure section reproduce from descriptors py rebuilds the whole comparison from them under every criterion reading no corpus structure at any point and its default criterion column matches the one the manuscript prints at every budget": {
+   "text": "What is released instead is the set of descriptors those criteria are decided by, one per reference, which is enough for all N of them and is not the structure (Section ). reproduce from descriptors.py rebuilds the whole comparison from them under every criterion, reading no corpus structure at any ",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the transform is part of the deposit tool and its counts are recorded in the manifest how many substrates went in how many came out how many could not be keyed and how many keys collided because a silent drop there would be a silent loss of population": {
+   "text": "The transform is part of the deposit tool and its counts are recorded in the manifest (how many substrates went in, how many came out, how many could not be keyed and how many keys collided) because a silent drop there would be a silent loss of population",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the tool refuses to build an archive from a pool whose substrates were not keyed and refuses to publish one at all without a licence a zenodo record cannot be withdrawn once published so the last gate before one exists is that it carries nothing that cannot be redistributed refs document": {
+   "text": "The tool refuses to build an archive from a pool whose substrates were not keyed, and refuses to publish one at all without a licence: a Zenodo record cannot be withdrawn once published, so the last gate before one exists is that it carries nothing that cannot be redistributed. refs document",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "achemso amsmath amssymb booktabs graphicx microtype xr si nikita l polomoshnov faculty of bioengineering and bioinformatics lomonosov moscow state university leninskie gory moscow russia nikitapol fbb msu ru anastasia v rudik department of bioinformatics institute of biomedical chemistry pogodinskaya str moscow russia undeclared choices reorder metabolite predictors and the corpus bounds any bank mined from it document abstract published metabolite structure predictors cannot be compared with one another": {
+   "text": "achemso amsmath,amssymb booktabs graphicx microtype xr si Nikita L. Polomoshnov Faculty of Bioengineering and Bioinformatics, Lomonosov Moscow State University, Leninskie Gory 1-73, Moscow 119234, Russia nikitapol@fbb.msu.ru Anastasia V. Rudik Department of Bioinformatics, Institute of Biomedical Ch",
+   "in": [
+    "paper2/grail_jcim.tex"
+   ]
+  },
+  "the comparison does not resolve into an ordering the verdict moves with the matching criterion at of budgets and cutting every arm to the comparator s own list length retires the leads the sweep produces at wide budgets against all but one of the comparators": {
+   "text": "The comparison does not resolve into an ordering: the verdict moves with the matching criterion at N of N budgets, and cutting every arm to the comparator's own list length retires the leads the sweep produces at wide budgets against all but one of the N comparators",
+   "in": [
+    "paper2/grail_jcim.tex"
+   ]
+  }
+ }
+}

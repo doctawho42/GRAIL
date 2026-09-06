@@ -176,6 +176,9 @@ PINNED = {
     "results/val_pool_population.json": "scripts/val_pool_population.py",
     # The measured bank's composition, counted where the bank is because the bank is not shipped.
     "results/bank_composition.json": "scripts/bank_composition.py",
+    # Every sentence in which the work concedes something, recorded so a cut for length cannot
+    # take one out without the decision being made deliberately.
+    "results/disclosure_inventory.json": "scripts/disclosure_inventory.py",
     # the bank the repository ships, which is the measured bank minus what it may not carry
     "results/released_bank.json": "scripts/build_released_bank.py",
     # the one comparator column obtained from a service rather than run here

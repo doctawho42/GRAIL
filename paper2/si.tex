@@ -55,7 +55,9 @@ DrugBank~5.1.10 is released under CC BY-NC 4.0, which forbids commercial use. A 
 work drawing on both cannot satisfy each: adding the non-commercial clause is a restriction
 ShareAlike does not permit, and dropping it breaches DrugBank's terms. MetXBioDB~1.0 is
 distributed with BioTransformer, whose terms require explicit permission for commercial use or
-redistribution.
+redistribution. The one step of the assembly that cannot be reproduced is the extraction
+that selected from the four sources: it is not in the repository, and it is recorded as absent
+rather than described.
 
 What the deposit contains follows from that, and the decision is taken here rather than deferred.
 The candidate structures are produced by applying this work's rule bank and are not corpus
@@ -898,6 +900,36 @@ conditional one, because their substrate is either affected or it is not.
 
 \section{Whether the missing chemistry is the corpus's or the bank's}
 \label{sec:si-typeoverlap}
+
+The shortfall is a property of the corpus the templates are mined from, and this is measured
+directly rather than argued from the bank's coverage. Of the \numTypeoverlapBanklacks{} test
+references whose transformation type the bank does not hold, \numTypeoverlapCorpuslackstoo{},
+\numTypeoverlapCorpussharePct{}, have a type the training annotation does not hold either; the
+remaining \numTypeoverlapMinerslost{} are chemistry the corpus contained and the miner did not
+carry across. Two counts appear in that sentence and they measure different things.
+\numTypeoverlapBanklacks{} counts every test reference whose type the bank does not hold, whether
+or not the bank reaches it. \numCeilingNovel{}, above, counts only those it also fails to reach.
+The gap between them is \numTypeoverlapReached{} references: chemistry of a type the bank does not
+hold that the bank nonetheless reaches. That is not an error in either count, because a template can
+reach a product while being typed differently from the pair that product came from.
+Section~\ref{sec:si-typeoverlap} cross-tabulates a different pair again, whether a type is in the
+bank against whether it is in the training annotation, and its four cells carry no reach dimension
+at all. So the containment of \numTypeoverlapCorpussharePct{} is computed over the
+\numTypeoverlapBanklacks{} references of the first kind and not over the \numCeilingNovel{} of the
+second.
+
+The restricted claim does not need that join, because the marginals bound it. The
+\numCeilingNovel{} lie inside the \numTypeoverlapBanklacks{}, and only
+\numTypeoverlapMinerslost{} of the \numTypeoverlapBanklacks{} carry a type the training annotation
+does hold, so at most \numTypeoverlapMinerslost{} of the \numCeilingNovel{} can:
+\numBoundCorpusabsentmin{} of them at least, \numBoundCorpusabsentsharemin{}, are chemistry the
+corpus does not contain whatever the cross-tabulation would return. Carried to the whole shortfall,
+between \numBoundShortfallsharemin{} and \numBoundShortfallsharemax{} of the
+\numCeilingUncovered{} references one application of this bank fails to reach are of a type the
+training annotation never holds. That is what supports the word \emph{most}, and it is a bound
+rather than a point because the join itself is not reported here. Template discovery from that
+corpus is separately unfinished, its rarefaction curve still climbing, so mining harder would yield
+more templates and could not supply a type the corpus does not contain.
 
 Section~\ref{MS-sec:results} measures that most uncovered references need a transformation type the
 bank does not hold, and the manuscript states that the shortfall is a property of the corpus. Those
@@ -2019,6 +2051,56 @@ applies to GLORYx, whose distribution was not sought. Metabolite-Gen \citep{Chav
 find. The list is closed by a rule: a comparator that could not be obtained is reported as
 unavailable with its reason, is not dropped silently, and the list is not extended after the
 first run.
+
+The hydrogen convention is an argument to the rule-application entry point rather than a
+constant, and its default is the presentation every deployed firing path uses, which is the one the
+paper's figures are measured at. The choice is consequential and the entry point should not make it
+silently: reproducing the census through it under the other presentation gives
+\numHydUncoveredexpanded{} uncovered references and not \numCeilingUncovered{}. That other
+presentation is not an alternative reading of the bound. It expands the substrate's hydrogens
+without completing the templates to match, which Section~\ref{MS-sec:ceiling} disqualifies as an
+incomplete loop rather than a convention; the number is quoted here only to show how far a silent
+default could move a figure. Every call site
+that produced a figure here names the convention it was measured under rather than taking it from
+a default.
+
+Almost every figure printed in this paper reaches the page from a stored result file through a
+generated macro rather than typed; \numProvHandtyped{} measurements do not, they are enumerated
+in the checker rather than covered by a wildcard, and the Supporting Information says which.
+Two properties are involved and they are not the same one. A file is \emph{stamped} when it
+records the script that wrote it and the version of that script; it is \emph{pinned} when it is on
+the list this work maintains of the artifacts a check must find current. \numProvPinned{} files are
+pinned, and \numProvPinnedcurrent{} of them pass the currency check. Of the pinned set,
+\numProvSources{} are the ones this paper's figures are drawn from, and none of those figures comes
+from outside it.
+ The chain from artifact to printed
+macro runs end to end in a clone, which is not where it started
+(Section~\ref{sec:si-prov}).
+
+The wider sweep is over \numProvFiles{} files and its parts are worth printing, since a total is
+easier to accept than to add up: \numProvUnstamped{} carry no stamp, \numProvChanged{} have a
+producer that has changed since, \numProvProducerunknown{} have a producer the sweep cannot
+identify, \numProvCosmetic{} changed only cosmetically, \numProvCurrentunpinned{} are stamped and
+current without being pinned, and \numProvPinnedinresults{} are the pinned files that live under
+the results directory the total names. Those six add to the total. A split manifest pins by
+digest the triple files, the substrate sets, the evaluated test set, the rule bank and every
+third-party artifact, and a verify mode recomputes and names any file that has moved. Candidate
+pools record, by digest, the two checkpoints that scored them; both stages of the released system
+come from one training run, and for the pools frozen before that field existed the run is
+established by reproduction rather than by recollection. The Supporting Information describes the checks and states
+what they do not cover.
+
+Two pinned artifacts are too large to commit: the train and validation candidate pools, which
+hold every candidate the generator produced for every substrate of their population together with
+both component scores, and which are the deposit named above. The repository pins the
+SHA-256 of both the raw file and the uploaded archive in
+\texttt{paper2/\allowbreak zenodo\_\allowbreak manifest.json}, and the deposit script's \texttt{-{}-verify} mode checks a
+download against it, so the deposit is verifiable against the version used here rather than merely
+available.
+
+The guarantee covers the pinned set and not the directory: of \numProvFiles{} files under
+\texttt{results/}, \numProvUnstamped{} carry no stamp and \numProvChanged{} were written by a
+producer that has since changed. Those files support no number in this paper.
 
 \section{Provenance and reproduction}
 \label{sec:si-prov}
