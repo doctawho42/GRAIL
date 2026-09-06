@@ -16,12 +16,13 @@ the corpus in grail_metabolism/data/, which the setup cell below arranges.
 
 Three things about this environment are load-bearing and are checked rather than hoped for.
 
-RDKit's version. The pin is exact, rdkit==2022.9.5, because tautomer canonicalisation is not
-stable across releases and the matching key every recall figure in this paper is scored under is a
-tautomer-canonical InChIKey. A model trained on graphs a different RDKit built is not the model this
-paper reports, even when the training code is identical. Kaggle's image ships a newer one, so the
-pin is installed and then verified; a mismatch stops the run rather than producing a checkpoint
-nobody can compare.
+RDKit's version. The pin is rdkit==2022.9.5 because tautomer canonicalisation is not stable
+across releases and the matching key every recall figure is scored under depends on it. That
+release does not install on Python 3.12, so refusing on it would mean never running this. What the
+difference costs is measured instead, in results/rdkit_version_drift.json: over 3,000 training
+substrates the standardised structure differs on 3 and the matching key on 1. The version that
+actually built the graphs is recorded in the session report, so what a checkpoint was trained under
+is a fact about the artifact rather than a recollection.
 
 NumPy's major version. The stack pins numpy<2 and the images ship 2.x.
 
@@ -41,31 +42,55 @@ import time
 from pathlib import Path
 
 PINS = {"rdkit": "2022.09.5", "numpy_major": 1}
+# What running under a different RDKit costs, measured rather than assumed:
+# results/rdkit_version_drift.json, 3,000 training substrates against 2026.03.6.
+DRIFT = {"artifact": "results/rdkit_version_drift.json", "measured_against": "2026.03.6",
+         "substrates": 3000, "structure_differs": 3, "key_differs": 1}
 
 
-def check_environment() -> None:
-    """Refuse to train under a stack that would not produce a comparable checkpoint."""
+def check_environment() -> dict:
+    """Refuse what cannot be repaired, record what can, and return what the session ran under.
+
+    The pin exists because tautomer canonicalisation moves between releases and the matching key
+    depends on it. It is also unsatisfiable on a platform whose Python is too new for that release,
+    so refusing on it outright would mean never running this at all. What the difference costs is
+    measured instead: on 3,000 training substrates the standardised structure differs on 3 and the
+    matching key on 1. That is small enough to declare and too small to argue about, so a different
+    version is recorded rather than rejected, and the artifact this run produces says which one
+    built its graphs.
+
+    NumPy is different. The stack does not work under 2.x at all, so that stays a refusal.
+    """
     import numpy
     import rdkit
 
-    problems = []
-    if rdkit.__version__ != PINS["rdkit"]:
-        problems.append(
-            f"rdkit is {rdkit.__version__}, not {PINS['rdkit']}. Tautomer canonicalisation is not "
-            f"stable across releases and the matching key depends on it, so a checkpoint trained "
-            f"here would not be comparable with the paper's.")
     if int(numpy.__version__.split(".")[0]) != PINS["numpy_major"]:
-        problems.append(f"numpy is {numpy.__version__}; this stack pins numpy<2.")
-    if problems:
-        raise SystemExit("REFUSING:\n  " + "\n  ".join(problems))
+        raise SystemExit(f"REFUSING: numpy is {numpy.__version__}; this stack pins numpy<2 and "
+                         f"does not run under 2.x.")
+
+    env = {"rdkit": rdkit.__version__, "rdkit_pin": PINS["rdkit"], "numpy": numpy.__version__}
+    if rdkit.__version__ != PINS["rdkit"]:
+        env["rdkit_drift"] = DRIFT
+        print(f"  rdkit {rdkit.__version__}, not the pinned {PINS['rdkit']}. The pinned release "
+              f"does not install on this Python. What the difference costs is measured in "
+              f"{DRIFT['artifact']}: of {DRIFT['substrates']} training substrates the standardised "
+              f"structure differs on {DRIFT['structure_differs']} and the matching key on "
+              f"{DRIFT['key_differs']}. The version is recorded with the run.")
+    else:
+        print(f"  rdkit {rdkit.__version__}, the pinned version")
 
     import torch
     dev = "cuda" if torch.cuda.is_available() else "cpu"
-    print(f"  torch {torch.__version__} on {dev}"
-          + (f" ({torch.cuda.get_device_name(0)})" if dev == "cuda" else ""))
-    if dev == "cpu":
+    env["torch"] = torch.__version__
+    env["device"] = dev
+    if dev == "cuda":
+        env["gpu"] = torch.cuda.get_device_name(0)
+        print(f"  torch {torch.__version__} on {env['gpu']}")
+    else:
+        print(f"  torch {torch.__version__} on cpu")
         print("  NOTE: no GPU visible. This will take a day rather than an hour; turn the "
               "accelerator on before spending a session on it.")
+    return env
 
 
 def main() -> int:
@@ -80,7 +105,7 @@ def main() -> int:
                     help="check the environment and write the config, then stop")
     args = ap.parse_args()
 
-    check_environment()
+    env = check_environment()
 
     # The seed is the only thing that varies between sessions, and it is written into the config
     # rather than passed, so the run records what it was trained under.
@@ -106,8 +131,9 @@ def main() -> int:
     # What the next session needs to know, written where Kaggle keeps outputs.
     report = Path(args.out) / f"seed{args.seed}_session.json"
     report.parent.mkdir(parents=True, exist_ok=True)
-    report.write_text(json.dumps({"seed": args.seed, "exit_code": rc, "seconds": round(float(took), 1),
-                                  "config": str(run_cfg)}, indent=1))
+    report.write_text(json.dumps({"seed": args.seed, "exit_code": rc,
+                                  "seconds": round(float(took), 1),
+                                  "config": str(run_cfg), "environment": env}, indent=1))
     return rc
 
 
