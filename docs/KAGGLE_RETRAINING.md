@@ -21,7 +21,45 @@ party under that party's hosting terms. That is a decision for the authors, not 
 The same decision was made and executed for Modal in July, where the corpus already sits in the
 `grail-data` volume.
 
-## What it costs
+## What it costs: one attempt, measured
+
+A first attempt ran on 2026-09-05 and was stopped after 7.6 hours. What it left in
+`/kaggle/working` is kept under `artifacts/kaggle_seed0_cancelled/` and settles the cost question
+in a direction no estimate here had considered:
+
+| what was there at 7.6 h | |
+|---|---|
+| the run's `config.yaml` | written, as it is at start-up |
+| `checkpoints/`, `reports/` | empty |
+| the cache directory's `meta.json` | complete |
+| the cache's `single_graphs.pt` | **0 bytes** |
+
+**Not one epoch ran.** The whole 7.6 hours went into data preparation: the split was loaded and its
+negatives derived (8,808 substrates, 17,452 products, 303,828 negative pairs, which is what
+`meta.json` records), and the graph file was open and unwritten when the session ended.
+
+That is the measurement the table below could not make, and it inverts the plan. Featurisation is
+CPU work; the GPU takes no part in it. A GPU quota buys nothing against it, and the training
+arithmetic below only starts to apply after a cache exists. **Building the full split's cache takes
+more than 7.6 hours on this platform's CPU and did not finish in that time**, so "build and train in
+one session" may not fit inside the twelve-hour cap at all.
+
+A second obstacle is visible in the same `meta.json`. The cache key carries the corpus files'
+absolute path and `mtime_ns` (`workflows/data.py:150`):
+
+```json
+"path": "/kaggle/input/datasets/polomoshnov/grail-corpus/train.sdf",
+"mtime_ns": 1788629315259498709,
+```
+
+So the natural repair, building the cache in one session and attaching it to later ones as a
+dataset, is not reliable as things stand: if a re-mount reports a different mtime, the key differs
+and the cache misses after all those hours. Making the key content-addressed would fix it and would
+also make caches portable between machines, at the cost of invalidating every existing local cache
+once. That change is not made here, because it belongs to `workflows/data.py`, which every run goes
+through, and it should be made deliberately rather than as a side effect of a platform problem.
+
+## What training costs, once a cache exists
 
 The arithmetic below comes from `artifacts/expandedlabels_multiseed_full5000_seed0/reports/runtime.json`,
 which is the released configuration on this machine's CPU at 5,000 substrates and eight epochs:
@@ -45,17 +83,24 @@ under test, and a per-seed cost cannot be quoted as a single number:
 | 6x | 3.9 h | 1.3 h | 5 to 6 h |
 | early stopping at ~20 epochs, 6x | 1.9 h | 0.7 h | 3 h |
 
-The `data_prepare_seconds: 49` in that table is the trap: it is the time to READ a cache that
-already existed at `artifacts/preprocessed`, not the time to build one. A first Kaggle session pays
-the build, and nothing in this repository has ever measured it.
+The `data_prepare_seconds: 49` in that table is the trap, and it caught this document once already:
+it is the time to READ a cache that already existed at `artifacts/preprocessed`, not the time to
+build one. The attempt above says the build is the dominant cost and the table is the smaller half
+of the problem.
 
-Two constraints follow, and they bind:
+Three constraints follow, and they bind:
 
-- **The session cap is 12 hours.** A batch run that reaches it is killed and its outputs are not
-  saved, so a seed that does not finish leaves nothing behind, including the graph cache.
-- **The quota is 30 GPU hours a week.** At 6 to 12 hours a seed, five seeds do not fit. Either the
-  campaign is three seeds, or the stages are split across sessions, or the epoch budget comes down.
-  Decide that against the first seed's measured cost, not against this table.
+- **The cache build has to be got out of the way first**, and on the one attempt made it did not
+  finish in 7.6 hours. Nothing in the training table applies until it exists.
+- **The session cap is 12 hours**, and the build plus the training has to fit under it unless the
+  cache can be carried between sessions, which the key currently makes unreliable.
+- **The quota is 30 GPU hours a week**, and a session spends it whether or not any of it reaches
+  the GPU. The attempt above spent 7.6 of the 30 entirely on CPU featurisation.
+
+One thing that was assumed here and turns out to be false: a stopped run is not necessarily a total
+loss. Cancelling the attempt left `/kaggle/working` intact and downloadable, which is how its cost
+came to be known at all. What a run that reaches the twelve-hour cap leaves behind has not been
+measured, so do not plan on either answer.
 
 ## Packaging
 

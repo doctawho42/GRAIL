@@ -1,0 +1,41 @@
+{
+  "dataset": {
+    "augment_negatives": false,
+    "max_substrates": null,
+    "pca": false,
+    "sampling_seed": 42,
+    "sdf": {
+      "exists": true,
+      "mtime_ns": 1788629315259498709,
+      "path": "/kaggle/input/datasets/polomoshnov/grail-corpus/train.sdf",
+      "size": 1191859108
+    },
+    "standardize": false,
+    "triples": {
+      "exists": true,
+      "mtime_ns": 1788629287555574820,
+      "path": "/kaggle/input/datasets/polomoshnov/grail-corpus/train_triples_clean.txt",
+      "size": 5316054
+    },
+    "use_clean_splits": true
+  },
+  "label_presentation": "implicit",
+  "preparation": {
+    "include_morgan": false,
+    "include_pair_graphs": false,
+    "include_reaction_labels": true,
+    "include_single_graphs": true,
+    "single_scope": "all_molecules"
+  },
+  "rules": {
+    "count": 7581,
+    "sha256": "40643d60de93f4dbe3b2eb89bd6b744700d7d2cfff9d8a99bd55377cb71eaca2"
+  },
+  "schema_version": 2,
+  "split": "train",
+  "split_stats": {
+    "negatives": 303828,
+    "products": 17452,
+    "substrates": 8808
+  }
+}
