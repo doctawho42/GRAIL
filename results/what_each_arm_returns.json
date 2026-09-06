@@ -2,8 +2,8 @@
  "provenance": {
   "script": "what_each_arm_returns.py",
   "script_path": "scripts/typed_edit/what_each_arm_returns.py",
-  "source_sha256": "1c0f54ab18005648947b27a2c75d2ce40ddfd02be003761c8c228348475fcf7e",
-  "git_commit": "94ba9b985358f7546524164d864029f2e0e9b05e",
+  "source_sha256": "f821bee4d61d6b1c359d5e1fa3cf2b225d473e484702d06228f1ea131f2544c3",
+  "git_commit": "18b5713a5836a2b394ed29790e5f5c1db4cca6ad",
   "git_dirty": true
  },
  "inputs": [
@@ -30,6 +30,12 @@
    "exists": true,
    "sha256_16": "8705f67b31af29f7",
    "bytes": 1528113
+  },
+  {
+   "path": "results/gloryx_service_preds.json",
+   "exists": true,
+   "sha256_16": "61383272c0066045",
+   "bytes": 1605631
   }
  ],
  "question": "which arms return an ordering over their whole output, and which return an attribution with it, read from the files this repository holds",
@@ -120,9 +126,23 @@
    ],
    "from_the_method": "its output names the reaction and the enzyme, and no atom indices",
    "share_carrying_a_score": 0.0
+  },
+  "GLORYx": {
+   "file": "results/gloryx_service_preds.json",
+   "structures_returned": 8732,
+   "structures_carrying_a_score": 0,
+   "score_channel": null,
+   "ordered": true,
+   "ordering_evidence": "GLORYx's predictions on the comparison set, as SMILES, one ranked list per substrate",
+   "names_the_transformation": false,
+   "names_an_enzyme": false,
+   "names_a_site": false,
+   "from_the_method": "a rule set with a priority ranking; the service returns the list in its own order and the frozen file keeps the order, not the score",
+   "share_carrying_a_score": 0.0
   }
  },
  "comparators_that_order_their_whole_output": [
+  "GLORYx",
   "MetaTox",
   "SyGMa"
  ],
@@ -133,5 +153,5 @@
  "comparators_whose_held_output_names_a_transformation_or_a_site": [
   "BioTransformer"
  ],
- "reading": "Ordering is not what separates this work from the incumbent: MetaTox scores every structure it returns and SyGMa orders its list, while MetaPredictor returns an unranked list and BioTransformer's file order is the only order it gives. Attribution is not a differentiator either, since BioTransformer's own output names the reaction and the enzyme. What is unusual is not that a rule and a site are reported but that the site is checked against the atoms that changed."
+ "reading": "Ordering is not what separates this work from the incumbent: MetaTox scores every structure it returns, SyGMa orders its list and GLORYx returns the service's own ranking, while MetaPredictor returns an unranked list and BioTransformer's file order is the only order it gives. Attribution is not a differentiator either, since BioTransformer's own output names the reaction and the enzyme. What is unusual is not that a rule and a site are reported but that the site is checked against the atoms that changed."
 }

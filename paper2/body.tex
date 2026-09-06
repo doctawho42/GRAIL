@@ -524,16 +524,17 @@ that table: the \numSweepWideleadsWord{} cells in which the exhaustive arm leads
 $k=30$ or $k=50$ with the interval excluding zero. One of them does not survive a
 family-wise correction over the sweep, and it is named here rather than three sections later; a
 different control removes more: cut to each comparator's own list length, substrate by substrate,
-only the lead over SyGMa survives of the four, and that is reported below. The margin over MetaTox at
+and of the \numMatchedComparatorsWord{} comparators led against, only the lead over SyGMa survives,
+which is reported below. The margin over MetaTox at
 $k=30$ is $+\numMarginMarginalgap$ with the interval
 $[+\numMarginMarginallo, +\numMarginMarginalhi]$: it is the only one of the
 \numSweepWideleadsWord{} a
 family-wise correction over the sweep removes, though not the only lead in this paper that it
-removes, and the others are named where they are claimed. Two of the
-\numSweepWideleadsWord{} were never in the
-corrected family in any case, being BioTransformer's cells at $k=30$ and $k=50$, which the
-declaration of that family excludes; the correction is reported over the family it was declared
-over and not over the eight. The margin's lower bound is also smaller than the largest drawing
+removes, and the others are named where they are claimed. Of the \numSweepWideleadsWord{},
+\numSweepWideleadsoutsideWord{} were never in the corrected family in any case: the family was declared
+over \numSweepFamilycomparatorsWord{} comparators, and the cells at $k=30$ and $k=50$ against
+BioTransformer and GLORYx fall outside it. The correction is reported over the family it was
+declared over and not over the \numSweepWideleadsinfamilyWord{} it covers. The margin's lower bound is also smaller than the largest drawing
 correction measured on any comparator here, $+\numSygdialectThirty$ for SyGMa at the same budget. The two controls do not remove the
 same cells and neither leaves the MetaTox column standing: the correction removes the cell at
 $k=30$, and the matched-length cut removes the one at $k=50$, where over
@@ -644,8 +645,9 @@ How the per-substrate figures are pooled is a third choice, and it is swept rath
 once. Micro is the ratio of sums and macro the mean of per-substrate recall, which weights a
 substrate carrying one reference like one carrying twelve; every figure in
 Table~\ref{tab:sweep} is micro and the macro grid is
-Table~\ref{SI-tab:si-macro}, whose caption names the eight verdicts of seventy-two that the two
-aggregations disagree on, one of them a lead claimed here. The choice does not rescue the budget
+Table~\ref{SI-tab:si-macro}, whose caption names the \numAggregationMovedWord{} verdicts of
+\numAggregationContrasts{} that the two aggregations disagree on, one of them a lead
+claimed here. The choice does not rescue the budget
 where micro fails to separate:
 at $k = 15$ the exhaustive arm's macro recall is \numMacroBankOneFive{} against MetaTox's
 \numMacroMetatoxOneFive{}, a difference of $+\numMacrogapBankmetatoxOneFive$
@@ -1026,7 +1028,7 @@ reporting one is the norm rather than a contribution. Checking it against the at
 changed, against a null of the same size, is not done anywhere in this literature that we can find,
 and Section~\ref{sec:site} is that check. Ordering is not a
 differentiator either: \numArmreturnOrderingWord{} of the \numComparatorsNWord{} comparators order
-their whole output, with this system a third that does. What is left, and it is the property this
+their whole output, and this system is one more that does. What is left, and it is the property this
 paper rests on, is that every evaluation choice is declared with every cell of the resulting grid
 reported.
 

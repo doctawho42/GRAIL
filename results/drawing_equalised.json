@@ -2,8 +2,8 @@
  "provenance": {
   "script": "drawing_equalised.py",
   "script_path": "scripts/typed_edit/drawing_equalised.py",
-  "source_sha256": "54a296cff3e8ba379dd141a9b53a9371914946b117374f8d75a7f5155a777dd4",
-  "git_commit": "b230ff779d06797009b6e318500166c6ecc66fb0",
+  "source_sha256": "33ef07b05fe3abddc37b7bde038a4ba438c2f4de513d59a836701c3ca39ccf53",
+  "git_commit": "18b5713a5836a2b394ed29790e5f5c1db4cca6ad",
   "git_dirty": true
  },
  "inputs": [
@@ -38,6 +38,12 @@
    "bytes": 1989212
   },
   {
+   "path": "results/gloryx_service_preds.json",
+   "exists": true,
+   "sha256_16": "61383272c0066045",
+   "bytes": 1605631
+  },
+  {
    "path": "results/widepools_k30_std/all.json",
    "exists": true,
    "sha256_16": "2ed15dca98fb544e",
@@ -65,7 +71,8 @@
  "criterion": "tautomer-aware InChIKey, as everywhere else",
  "convention": "parent dropped, pool capped at 100, references looked up under the corpus string in every arm so the two tables are scored against one annotation",
  "arms_that_could_not_be_re_run": [
-  "MetaTox"
+  "MetaTox",
+  "GLORYx"
  ],
  "substrates_the_re_run_does_not_cover": {
   "GRAIL exhaustive": 0,
@@ -153,6 +160,17 @@
    "20": 0.5519,
    "30": 0.6015,
    "50": 0.6271
+  },
+  "GLORYx": {
+   "1": 0.0662,
+   "3": 0.1895,
+   "5": 0.2872,
+   "8": 0.397,
+   "10": 0.4406,
+   "15": 0.5233,
+   "20": 0.5579,
+   "30": 0.5925,
+   "50": 0.606
   }
  },
  "recall_equalised": {
@@ -221,6 +239,17 @@
    "20": 0.5519,
    "30": 0.6015,
    "50": 0.6271
+  },
+  "GLORYx": {
+   "1": 0.0662,
+   "3": 0.1895,
+   "5": 0.2872,
+   "8": 0.397,
+   "10": 0.4406,
+   "15": 0.5233,
+   "20": 0.5579,
+   "30": 0.5925,
+   "50": 0.606
   }
  },
  "verdicts_as_stored": {
@@ -276,21 +305,21 @@
   },
   "15": {
    "ours": "GRAIL exhaustive",
-   "theirs": "MetaTox",
-   "gap": 0.0211,
+   "theirs": "GLORYx",
+   "gap": 0.012,
    "ci95": [
-    -0.0214,
-    0.063
+    -0.0285,
+    0.0516
    ],
    "verdict": "neither"
   },
   "20": {
    "ours": "GRAIL exhaustive",
-   "theirs": "MetaTox",
-   "gap": 0.0346,
+   "theirs": "GLORYx",
+   "gap": 0.0286,
    "ci95": [
-    -0.0044,
-    0.0733
+    -0.0082,
+    0.0659
    ],
    "verdict": "neither"
   },
@@ -368,21 +397,21 @@
   },
   "15": {
    "ours": "GRAIL exhaustive",
-   "theirs": "MetaTox",
-   "gap": 0.0105,
+   "theirs": "GLORYx",
+   "gap": 0.0015,
    "ci95": [
-    -0.0318,
-    0.0512
+    -0.0373,
+    0.0402
    ],
    "verdict": "neither"
   },
   "20": {
    "ours": "GRAIL exhaustive",
-   "theirs": "MetaTox",
-   "gap": 0.0316,
+   "theirs": "GLORYx",
+   "gap": 0.0256,
    "ci95": [
-    -0.0051,
-    0.0686
+    -0.0104,
+    0.0624
    ],
    "verdict": "neither"
   },
@@ -407,7 +436,7 @@
    "verdict": "leads"
   }
  },
- "verdicts_equalised_without_metatox": {
+ "verdicts_equalised_without_the_service_arms": {
   "1": {
    "ours": "GRAIL exhaustive",
    "theirs": "SyGMa",
@@ -499,6 +528,10 @@
    "verdict": "leads"
   }
  },
+ "the_service_arms": [
+  "MetaTox",
+  "GLORYx"
+ ],
  "budgets_whose_verdict_moves": [],
  "reading": "The stored grid is what the paper reports and the equalised grid is what a user submitting a drawing would meet. Where the two agree, the verdict is a property of the systems; where they differ, it is a property of the dialect the comparison was run in. MetaTox's column is unchanged in both, which is the residue this work cannot remove."
 }

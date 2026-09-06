@@ -100,6 +100,33 @@ def metapredictor() -> dict:
     }
 
 
+def gloryx() -> dict:
+    """GLORYx: the service's own ranked list, kept as an order without the score behind it.
+
+    The service ranks by its priority score and the frozen file records the resulting order and
+    not the score, so this arm orders its whole output while carrying no score channel of its own.
+    The two are separate properties and this arm is the case that separates them: reading "ordered"
+    off "every structure carries a score", which is what the fallback below does, would call it
+    unranked and it is not. The artifact's own header says one ranked list per substrate.
+    """
+    blob = json.loads((ROOT / "results/gloryx_service_preds.json").read_text())
+    preds = blob["predictions"]
+    returned = sum(len(v) for v in preds.values())
+    return {
+        "file": "results/gloryx_service_preds.json",
+        "structures_returned": returned,
+        "structures_carrying_a_score": 0,
+        "score_channel": None,
+        "ordered": True,
+        "ordering_evidence": blob["what_this_is"],
+        "names_the_transformation": False,
+        "names_an_enzyme": False,
+        "names_a_site": False,
+        "from_the_method": ("a rule set with a priority ranking; the service returns the list in "
+                            "its own order and the frozen file keeps the order, not the score"),
+    }
+
+
 def biotransformer() -> dict:
     """BioTransformer: the CSV it wrote, whose columns are the attribution channel."""
     path = ROOT / "artifacts/tier2/bt_out.csv"
@@ -161,7 +188,8 @@ def main() -> int:
     args = ap.parse_args()
 
     arms = {"GRAIL": ours(), "MetaTox": metatox(), "SyGMa": sygma(),
-            "MetaPredictor": metapredictor(), "BioTransformer": biotransformer()}
+            "MetaPredictor": metapredictor(), "BioTransformer": biotransformer(),
+            "GLORYx": gloryx()}
     for row in arms.values():
         n = row["structures_returned"]
         row["share_carrying_a_score"] = (round(row["structures_carrying_a_score"] / n, 4)
@@ -185,8 +213,9 @@ def main() -> int:
         "comparators_whose_held_output_names_a_transformation_or_a_site": attributing,
         "reading": (
             "Ordering is not what separates this work from the incumbent: MetaTox scores every "
-            "structure it returns and SyGMa orders its list, while MetaPredictor returns an "
-            "unranked list and BioTransformer's file order is the only order it gives. "
+            "structure it returns, SyGMa orders its list and GLORYx returns the service's own "
+            "ranking, while MetaPredictor returns an unranked list and BioTransformer's file "
+            "order is the only order it gives. "
             "Attribution is not a differentiator either, since BioTransformer's own output names "
             "the reaction and the enzyme. What is unusual is not that a rule and a site are "
             "reported but that the site is checked against the atoms that changed."),

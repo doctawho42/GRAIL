@@ -60,8 +60,15 @@ STORED = {
     "BioTransformer": ["results/biotransformer_allhuman_one_step_preds.json"],
     "SyGMa": ["results/sygma_fulltest_predictions.json"],
     "MetaTox": ["results/metatox_smirks_preds.json"],
+    "GLORYx": ["results/gloryx_service_preds.json"],
 }
 OURS = ("GRAIL exhaustive", "GRAIL interactive")
+# Arms whose predictions this repository holds frozen and cannot regenerate on another drawing:
+# both are web services operated by their authors. MetaTox was declared here and GLORYx was not,
+# so a control that set one aside with a footnote dropped the other without saying so, and the row
+# it dropped is one this work does better on. Derived from the two facts that make an arm
+# un-re-runnable rather than listed, so a third such arm cannot go quietly.
+CANNOT_RERUN = ("MetaTox", "GLORYx")
 
 
 def load_pools(patterns):
@@ -228,9 +235,11 @@ def main() -> int:
             print(f"  SyGMa on the drawn form {i}/{len(subs)} "
                   f"({time.perf_counter() - t0:.0f}s)", flush=True)
     equalised["SyGMa"] = keyed(per)
-    # The one arm that cannot move. Its column is the same numbers as in the stored table, and
-    # saying so in the artifact is the point: the table is equalised in five of six columns.
-    equalised["MetaTox"] = stored["MetaTox"]
+    # The arms that cannot move. Their columns are the same numbers as in the stored table, and
+    # saying so in the artifact is the point: the table is equalised in the columns it can be.
+    for _arm in CANNOT_RERUN:
+        if _arm in stored:
+            equalised[_arm] = stored[_arm]
 
     rng = np.random.default_rng(SEED)
     idx = rng.integers(0, len(subs), (N_BOOT, len(subs)))
@@ -261,7 +270,7 @@ def main() -> int:
     stored_v, equal_v = verdicts(stored), verdicts(equalised)
     # The same grid with MetaTox set aside, since it is the one arm still on its own drawing and a
     # cell read against it is not a cell of an equalised table.
-    equal_v_wo = verdicts(equalised, exclude=("MetaTox",))
+    equal_v_wo = verdicts(equalised, exclude=CANNOT_RERUN)
     moved_cells = [k for k in equal_v if equal_v[k]["verdict"] != stored_v[k]["verdict"]]
 
     report = {
@@ -275,7 +284,7 @@ def main() -> int:
         "criterion": "tautomer-aware InChIKey, as everywhere else",
         "convention": "parent dropped, pool capped at 100, references looked up under the corpus "
                       "string in every arm so the two tables are scored against one annotation",
-        "arms_that_could_not_be_re_run": ["MetaTox"],
+        "arms_that_could_not_be_re_run": [a for a in CANNOT_RERUN if a in stored],
         "substrates_the_re_run_does_not_cover": {name: len([s for s in subs
                                                             if s not in covered[name]])
                                                  for name in DRAWN},
@@ -291,7 +300,8 @@ def main() -> int:
         "recall_equalised": recall(equalised),
         "verdicts_as_stored": stored_v,
         "verdicts_equalised": equal_v,
-        "verdicts_equalised_without_metatox": equal_v_wo,
+        "verdicts_equalised_without_the_service_arms": equal_v_wo,
+        "the_service_arms": list(CANNOT_RERUN),
         "budgets_whose_verdict_moves": moved_cells,
         "reading": (
             "The stored grid is what the paper reports and the equalised grid is what a user "

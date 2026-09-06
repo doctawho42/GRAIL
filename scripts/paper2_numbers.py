@@ -417,6 +417,15 @@ def build():
     _diol = ebc["classes"].get("oxidation, two oxygens added", {})
     n["chem.diol.refs"] = _diol.get("references")
     n["chem.diol.best"] = max(v["15"] for v in _diol["recall"].values()) if _diol else None
+    # How many arms this row is read over, and how many of them recover nothing. Typed as "five of
+    # the six" while the table had seven rows: the sentence counted the arms of an earlier
+    # comparison and the table counted the arms of this one.
+    n["chem.arms"] = len(_diol["recall"]) if _diol else None
+    n["chem.diol.recovernone"] = (
+        sum(1 for v in _diol["recall"].values() if v["15"] == 0) if _diol else None)
+    # Every arm but MetaTox met the substrate as the corpus stores it, which the GLORYx submission
+    # artifact states of itself and the dialect study establishes for the rest.
+    n["chem.drawnstored"] = n["chem.arms"] - 1 if n["chem.arms"] else None
     _other = ebc["classes"].get("other", {})
     n["chem.other.refs"] = _other.get("references")
     n["chem.other.best"] = max(v["15"] for v in _other["recall"].values()) if _other else None
@@ -1137,6 +1146,43 @@ def build():
         if pair.startswith("whole bank - ") and c["gap"] > 0 and c["excludes_zero"])
     n["sweep.widebudgets"] = len(WIDE)
 
+    # How those wide leads split against the family the correction was declared over. The declared
+    # family covers three comparators; the sweep prints five. Which cells the correction can reach
+    # is therefore not the same as which leads exist, and the paragraph that says so used to name
+    # the difference by hand -- as "two", when a fifth comparator made it four.
+    _mult = art("multiplicity.json")
+    _family_comparators = sorted({
+        cell.split(" - ")[1].split(" @ ")[0] for cell in _mult["cells"]})
+    _wide_pairs = [(b, pair) for b in WIDE for pair, c in dep["contrasts"][b].items()
+                   if pair.startswith("whole bank - ") and c["gap"] > 0 and c["excludes_zero"]]
+    _outside = [(b, p) for b, p in _wide_pairs
+                if p.split(" - ")[1] not in _family_comparators]
+    n["sweep.familycomparators"] = len(_family_comparators)
+    n["sweep.wideleadsoutside"] = len(_outside)
+    n["sweep.wideleadsinfamily"] = len(_wide_pairs) - len(_outside)
+    if n["sweep.wideleadsinfamily"] + n["sweep.wideleadsoutside"] != n["sweep.wideleads"]:
+        raise SystemExit("REFUSING: the wide leads do not split into the ones the declared family "
+                         "covers and the ones it does not; the paragraph that reports the split "
+                         "would not add up.")
+    # The comparators whose wide cells the declared family never covered, named rather than
+    # counted, so the sentence cannot name the wrong ones.
+    n["sweep.outsidenames"] = ", ".join(
+        sorted({p.split(" - ")[1] for _b, p in _outside}))
+    # The distinct comparators a wide-budget lead exists against, which is what the matched-length
+    # control is read against. It is five, and was described as four for as long as the fifth
+    # comparator went uncounted.
+    n["matched.comparators"] = len({p.split(" - ")[1] for _b, p in _wide_pairs})
+
+    # How many verdicts the choice of aggregation moves, and over how many contrasts. The SI said
+    # eight of seventy-two beside a table whose own caption said eleven of ninety: the prose was
+    # written when the comparison had one comparator fewer and the caption is generated.
+    _micro, _macro = dep["contrasts"], dep["contrasts_macro"]
+    n["aggregation.contrasts"] = sum(len(v) for v in _macro.values())
+    n["aggregation.moved"] = sum(
+        1 for k, row in _macro.items() for pair, cell in row.items()
+        if pair in _micro.get(k, {})
+        and cell["excludes_zero"] != _micro[k][pair]["excludes_zero"])
+
     # The wide-budget leads with the length taken from the comparator rather than from the
     # experiment. A nominal budget is not a length, and this is the control that separates an
     # ordering result from a list-length one.
@@ -1255,6 +1301,15 @@ def build():
         n[f"armreturn.{tag}returned"] = row["structures_returned"]
         n[f"armreturn.{tag}scored"] = row["structures_carrying_a_score"]
     n["armreturn.ordering"] = len(ret["comparators_that_order_their_whole_output"])
+    # A share whose numerator and denominator were measured over different populations is not a
+    # share. This one was: the ordering count came from an artifact that assessed four comparators
+    # while the denominator counted five, so the sentence divided by an arm nobody had looked at.
+    _assessed = len([a for a in ret["by_arm"] if a != "GRAIL"])
+    if _assessed != n["comparators.n"]:
+        raise SystemExit(
+            f"REFUSING: what_each_arm_returns.json assessed {_assessed} comparators and the "
+            f"comparison has {n['comparators.n']}. A count of how many order their output cannot "
+            f"be reported over a denominator it was not measured against.")
     n["armreturn.attributing"] = len(
         ret["comparators_whose_held_output_names_a_transformation_or_a_site"])
 
@@ -1289,7 +1344,7 @@ def build():
     n["equalised.moved"] = len(eq["budgets_whose_verdict_moves"])
     n["equalised.substrates"] = eq["population"]["n_substrates"]
     n["equalised.movedsubs"] = eq["population"]["substrates_the_standardiser_moves"]
-    _wo = eq.get("verdicts_equalised_without_metatox") or {}
+    _wo = eq.get("verdicts_equalised_without_the_service_arms") or {}
     n["equalised.differswithoutmetatox"] = sum(
         1 for k, v in _wo.items()
         if v["verdict"] != eq["verdicts_equalised"][k]["verdict"])

@@ -77,6 +77,7 @@
 \newcommand{\numAggregationBlendmaxPct}{65\%}  % aggregation.blendmax, as a percentage
 \newcommand{\numAggregationBlendor}{0.35}  % aggregation.blendor
 \newcommand{\numAggregationBlendorPct}{35\%}  % aggregation.blendor, as a percentage
+\newcommand{\numAggregationContrasts}{90}  % aggregation.contrasts
 \newcommand{\numAggregationDeployedrecallThreeZero}{0.6526}  % aggregation.deployedrecall30
 \newcommand{\numAggregationDeployedrecallThreeZeroPct}{65.3\%}  % aggregation.deployedrecall30, as a percentage
 \newcommand{\numAggregationHybridOne}{0.0286}  % aggregation.hybrid1
@@ -203,6 +204,8 @@
 \newcommand{\numAggregationMeanFiveZeroSep}{yes}  % aggregation.mean50.sep
 \newcommand{\numAggregationMeanrecallThreeZero}{0.5985}  % aggregation.meanrecall30
 \newcommand{\numAggregationMeanrecallThreeZeroPct}{59.9\%}  % aggregation.meanrecall30, as a percentage
+\newcommand{\numAggregationMoved}{11}  % aggregation.moved
+\newcommand{\numAggregationMovedWord}{eleven}  % aggregation.moved, spelled
 \newcommand{\numAggregationSeparating}{3}  % aggregation.separating
 \newcommand{\numAggregationSeparatingWord}{three}  % aggregation.separating, spelled
 \newcommand{\numAggregationUnjoined}{358}  % aggregation.unjoined
@@ -382,8 +385,8 @@
 \newcommand{\numArmreturnMetapredictorscoredWord}{none}  % armreturn.metapredictorscored, spelled
 \newcommand{\numArmreturnMetatoxreturned}{10{,}601}  % armreturn.metatoxreturned
 \newcommand{\numArmreturnMetatoxscored}{10{,}601}  % armreturn.metatoxscored
-\newcommand{\numArmreturnOrdering}{2}  % armreturn.ordering
-\newcommand{\numArmreturnOrderingWord}{two}  % armreturn.ordering, spelled
+\newcommand{\numArmreturnOrdering}{3}  % armreturn.ordering
+\newcommand{\numArmreturnOrderingWord}{three}  % armreturn.ordering, spelled
 \newcommand{\numArmreturnSygmareturned}{94{,}571}  % armreturn.sygmareturned
 \newcommand{\numArmreturnSygmascored}{0}  % armreturn.sygmascored
 \newcommand{\numArmreturnSygmascoredWord}{none}  % armreturn.sygmascored, spelled
@@ -674,6 +677,8 @@
 \newcommand{\numChargeSubstrates}{134}  % charge.substrates
 \newcommand{\numChargeTyped}{2{,}597}  % charge.typed
 \newcommand{\numChargeZwitterions}{165}  % charge.zwitterions
+\newcommand{\numChemArms}{7}  % chem.arms
+\newcommand{\numChemArmsWord}{seven}  % chem.arms, spelled
 \newcommand{\numChemBehind}{10}  % chem.behind
 \newcommand{\numChemBehindWord}{ten}  % chem.behind, spelled
 \newcommand{\numChemBehindrefs}{270}  % chem.behindrefs
@@ -714,8 +719,12 @@
 \newcommand{\numChemDemethrefs}{36}  % chem.demethrefs
 \newcommand{\numChemDiolBest}{0.0909}  % chem.diol.best
 \newcommand{\numChemDiolBestPct}{9.1\%}  % chem.diol.best, as a percentage
+\newcommand{\numChemDiolRecovernone}{6}  % chem.diol.recovernone
+\newcommand{\numChemDiolRecovernoneWord}{six}  % chem.diol.recovernone, spelled
 \newcommand{\numChemDiolRefs}{11}  % chem.diol.refs
 \newcommand{\numChemDiolRefsWord}{eleven}  % chem.diol.refs, spelled
+\newcommand{\numChemDrawnstored}{6}  % chem.drawnstored
+\newcommand{\numChemDrawnstoredWord}{six}  % chem.drawnstored, spelled
 \newcommand{\numChemExhaustedBank}{0}  % chem.exhausted.bank
 \newcommand{\numChemExhaustedBankWord}{none}  % chem.exhausted.bank, spelled
 \newcommand{\numChemExhaustedBiotransformer}{220}  % chem.exhausted.biotransformer
@@ -2330,6 +2339,8 @@
 \newcommand{\numMatchedBindsmetatoxWord}{six}  % matched.bindsMetatox, spelled
 \newcommand{\numMatchedBindssygma}{45}  % matched.bindsSygma
 \newcommand{\numMatchedCap}{105}  % matched.cap
+\newcommand{\numMatchedComparators}{5}  % matched.comparators
+\newcommand{\numMatchedComparatorsWord}{five}  % matched.comparators, spelled
 \newcommand{\numMatchedContrasts}{12}  % matched.contrasts
 \newcommand{\numMatchedContrastsWord}{twelve}  % matched.contrasts, spelled
 \newcommand{\numMatchedPastcut}{0}  % matched.pastcut
@@ -2772,19 +2783,19 @@
 \newcommand{\numProvCosmetic}{8}  % prov.cosmetic
 \newcommand{\numProvCosmeticWord}{eight}  % prov.cosmetic, spelled
 \newcommand{\numProvCurrentunpinned}{44}  % prov.currentunpinned
-\newcommand{\numProvFiles}{518}  % prov.files
+\newcommand{\numProvFiles}{519}  % prov.files
 \newcommand{\numProvHandtyped}{37}  % prov.handtyped
-\newcommand{\numProvMacrosbody}{383}  % prov.macrosbody
-\newcommand{\numProvMacrossi}{646}  % prov.macrossi
+\newcommand{\numProvMacrosbody}{391}  % prov.macrosbody
+\newcommand{\numProvMacrossi}{651}  % prov.macrossi
 \newcommand{\numProvNamedinputs}{65}  % prov.namedinputs
 \newcommand{\numProvPartitioncloses}{yes}  % prov.partitioncloses
-\newcommand{\numProvPinned}{114}  % prov.pinned
-\newcommand{\numProvPinnedcurrent}{114}  % prov.pinnedcurrent
-\newcommand{\numProvPinnedinresults}{113}  % prov.pinnedinresults
+\newcommand{\numProvPinned}{115}  % prov.pinned
+\newcommand{\numProvPinnedcurrent}{115}  % prov.pinnedcurrent
+\newcommand{\numProvPinnedinresults}{114}  % prov.pinnedinresults
 \newcommand{\numProvPinnedstale}{0}  % prov.pinnedstale
 \newcommand{\numProvPinnedstaleWord}{none}  % prov.pinnedstale, spelled
 \newcommand{\numProvProducerunknown}{26}  % prov.producerunknown
-\newcommand{\numProvSources}{94}  % prov.sources
+\newcommand{\numProvSources}{95}  % prov.sources
 \newcommand{\numProvSourcesestablished}{1}  % prov.sourcesestablished
 \newcommand{\numProvSourcesestablishedWord}{one}  % prov.sourcesestablished, spelled
 \newcommand{\numProvSourcesexempt}{3}  % prov.sourcesexempt
@@ -2905,7 +2916,7 @@
 \newcommand{\numRelaxRecoveredWord}{three}  % relax.recovered, spelled
 \newcommand{\numRelbankCarriers}{4}  % relbank.carriers
 \newcommand{\numRelbankCarriersWord}{four}  % relbank.carriers, spelled
-\newcommand{\numRelbankCarrierscanned}{1{,}055}  % relbank.carrierscanned
+\newcommand{\numRelbankCarrierscanned}{1{,}057}  % relbank.carrierscanned
 \newcommand{\numRelbankEnvmicro}{2}  % relbank.envmicro
 \newcommand{\numRelbankEnvmicroWord}{two}  % relbank.envmicro, spelled
 \newcommand{\numRelbankEnvmicroonly}{0}  % relbank.envmicroonly
@@ -3235,6 +3246,8 @@
 \newcommand{\numSweepBiotransformerFiveZeroPct}{44.8\%}  % sweep.biotransformer.50, as a percentage
 \newcommand{\numSweepBiotransformerEight}{0.3414}  % sweep.biotransformer.8
 \newcommand{\numSweepBiotransformerEightPct}{34.1\%}  % sweep.biotransformer.8, as a percentage
+\newcommand{\numSweepFamilycomparators}{3}  % sweep.familycomparators
+\newcommand{\numSweepFamilycomparatorsWord}{three}  % sweep.familycomparators, spelled
 \newcommand{\numSweepGxarmOne}{0.0662}  % sweep.gxarm.1
 \newcommand{\numSweepGxarmOnePct}{6.6\%}  % sweep.gxarm.1, as a percentage
 \newcommand{\numSweepGxarmOneZero}{0.4406}  % sweep.gxarm.10
@@ -3289,6 +3302,7 @@
 \newcommand{\numSweepMetatoxFiveZeroPct}{62.7\%}  % sweep.metatox.50, as a percentage
 \newcommand{\numSweepMetatoxEight}{0.3113}  % sweep.metatox.8
 \newcommand{\numSweepMetatoxEightPct}{31.1\%}  % sweep.metatox.8, as a percentage
+\newcommand{\numSweepOutsidenames}{biotransformer, gloryx}  % sweep.outsidenames
 \newcommand{\numSweepSygmaOne}{0.1534}  % sweep.sygma.1
 \newcommand{\numSweepSygmaOnePct}{15.3\%}  % sweep.sygma.1, as a percentage
 \newcommand{\numSweepSygmaOneZero}{0.4556}  % sweep.sygma.10
@@ -3329,6 +3343,10 @@
 \newcommand{\numSweepWidebudgetsWord}{two}  % sweep.widebudgets, spelled
 \newcommand{\numSweepWideleads}{10}  % sweep.wideleads
 \newcommand{\numSweepWideleadsWord}{ten}  % sweep.wideleads, spelled
+\newcommand{\numSweepWideleadsinfamily}{6}  % sweep.wideleadsinfamily
+\newcommand{\numSweepWideleadsinfamilyWord}{six}  % sweep.wideleadsinfamily, spelled
+\newcommand{\numSweepWideleadsoutside}{4}  % sweep.wideleadsoutside
+\newcommand{\numSweepWideleadsoutsideWord}{four}  % sweep.wideleadsoutside, spelled
 \newcommand{\numSygdepthDeployed}{0.5391}  % sygdepth.deployed
 \newcommand{\numSygdepthDeployedPct}{53.9\%}  % sygdepth.deployed, as a percentage
 \newcommand{\numSygdepthEngine}{0.0065}  % sygdepth.engine

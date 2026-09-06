@@ -76,7 +76,17 @@ def si_criterion_sweep():
     # criterion and MetaTox under another -- and a grid that prints only the sign cannot be read
     # without it.
     tag = {"MetaTox": "M", "SyGMa": "S", "MetaPredictor": "P", "BioTransformer": "B",
-           "metatox": "M", "sygma": "S", "metapredictor": "P", "biotransformer": "B"}
+           "GLORYx": "G",
+           "metatox": "M", "sygma": "S", "metapredictor": "P", "biotransformer": "B",
+           "gloryx": "G"}
+    # The legend used to be written by hand beside a map that fell back to a comparator's first
+    # letter, so a comparator added after the legend was written printed a symbol the legend never
+    # defined -- sixteen of forty-five cells carried one -- while the legend went on defining a
+    # symbol no cell used. The fallback is gone and the legend is built from the symbols the grid
+    # actually sets, so neither can happen again.
+    NAMES = {"M": "MetaTox", "S": "SyGMa", "P": "MetaPredictor", "B": "BioTransformer",
+             "G": "GLORYx"}
+    used = set()
     rows, arms_by_k = [], {}
     for c in crits:
         v = d["by_criterion"][c]["verdict_by_budget"]
@@ -87,7 +97,13 @@ def si_criterion_sweep():
             row = m.get(str(k)) or {}
             who = row.get("theirs")
             if who:
-                cell += "\\textsuperscript{" + tag.get(who, who[:1]) + "}"
+                if who not in tag:
+                    raise SystemExit(
+                        f"REFUSING: the criterion grid reads a cell against {who!r} and no "
+                        f"superscript is defined for it. Printing its first letter is what put "
+                        f"an undefined symbol in sixteen cells; add it to tag and NAMES.")
+                used.add(tag[who])
+                cell += "\\textsuperscript{" + tag[who] + "}"
                 arms_by_k.setdefault(str(k), set()).add(row.get("ours", ""))
             cells.append(cell)
         rows.append(f"{short.get(c, c)} & " + " & ".join(cells) + " \\\\")
@@ -104,6 +120,10 @@ def si_criterion_sweep():
                    + " & ".join(arm_label(k) for k in ks) + " \\\\\n")
     moved = d["n_budgets_moving"]
     worst = max(moved, key=lambda c: moved[c])
+    # Only the symbols the grid set, in the order the legend reads best, and every one of them.
+    _in_use = [sym for sym in ("M", "S", "P", "B", "G") if sym in used]
+    LEGEND = ", ".join(f"{sym} for {NAMES[sym]}" for sym in _in_use[:-1])
+    LEGEND += f" and {_in_use[-1]} for {NAMES[_in_use[-1]]}" if len(_in_use) > 1 else ""
     return ("\\begin{table*}[t]\n\\centering\\small\n"
             f"\\begin{{tabular}}{{l{'c' * len(ks)}}}\n\\toprule\n"
             f"criterion & \\multicolumn{{{len(ks)}}}{{c}}{{output budget $k$}} \\\\\n"
@@ -114,8 +134,8 @@ def si_criterion_sweep():
             "paired interval excluding zero, $-$ one where it trails on the same terms, and "
             "$\\cdot$ one where the interval covers zero. Every cell is read from the interval "
             "and never from the point estimate. The superscript names the comparator the cell is "
-            "read against, M for MetaTox, S for SyGMa, P for MetaPredictor and B for "
-            "BioTransformer, and the last row names the GRAIL arm, \\emph{int.} or \\emph{exh.}, "
+            "read against, " + LEGEND + ", and the last row names the GRAIL arm, "
+            "\\emph{int.} or \\emph{exh.}, "
             "with a dash where the better arm is not the same one under all five criteria at "
             "that budget: neither the arm nor the comparator is constant across "
             "the grid, so a sign on its own does not say what was compared with what. The levels "
@@ -142,8 +162,18 @@ def si_criterion_levels():
              "inchikey_tautomer": "tautomer (default)"}
     label = {"GRAIL exhaustive": "GRAIL exh.", "GRAIL interactive": "GRAIL int.",
              "MetaTox": "MetaTox", "SyGMa": "SyGMa", "MetaPredictor": "MetaPred.",
-             "BioTransformer": "BioTrans."}
-    arms = [a for a in label if a in d["by_criterion"][crits[0]]["recall_micro"]]
+             "BioTransformer": "BioTrans.", "GLORYx": "GLORYx"}
+    _present = list(d["by_criterion"][crits[0]]["recall_micro"])
+    # Filtering the label list against the artifact drops an arm the artifact no longer has. It
+    # cannot notice one the artifact has GAINED, and that is the direction this table lost a
+    # comparator in: sixteen cells of the grid it is the evidence for are read against an arm
+    # whose levels appeared nowhere. The unlabelled case now stops the build.
+    _unlabelled = [a for a in _present if a not in label]
+    if _unlabelled:
+        raise SystemExit(
+            f"REFUSING: criterion_sweep.json carries {', '.join(_unlabelled)} and this table has "
+            f"no row label for them, so the grid's evidence would omit an arm the grid uses.")
+    arms = [a for a in label if a in _present]
     rows = []
     for c in crits:
         rec = d["by_criterion"][c]["recall_micro"]
@@ -379,11 +409,20 @@ def si_drawing_equalised():
             f"results/drawing_equalised.json reports two runs disagreeing on substrates the "
             f"drawing does not move: {bad}")
     rec, stored = d["recall_equalised"], d["recall_as_stored"]
-    arms = [a for a in ("GRAIL exhaustive", "GRAIL interactive", "MetaTox", "SyGMa",
-                        "MetaPredictor", "BioTransformer") if a in rec]
+    # Both service arms carry the dagger, and the arms come from the artifact rather than from a
+    # list: this control kept MetaTox with a footnote saying it could not be re-run and dropped
+    # GLORYx, which is in the same position, without saying anything at all.
     label = {"GRAIL exhaustive": "GRAIL exh.", "GRAIL interactive": "GRAIL int.",
-             "MetaTox": "MetaTox$^{\\dagger}$", "SyGMa": "SyGMa",
-             "MetaPredictor": "MetaPred.", "BioTransformer": "BioTrans."}
+             "MetaTox": "MetaTox", "SyGMa": "SyGMa",
+             "MetaPredictor": "MetaPred.", "BioTransformer": "BioTrans.", "GLORYx": "GLORYx"}
+    _unlabelled = [a for a in rec if a not in label]
+    if _unlabelled:
+        raise SystemExit(
+            f"REFUSING: drawing_equalised.json carries {', '.join(_unlabelled)} and this table "
+            f"has no row for them.")
+    frozen = set(d.get("arms_that_could_not_be_re_run") or ())
+    label = {a: (lab + "$^{\\dagger}$" if a in frozen else lab) for a, lab in label.items()}
+    arms = [a for a in label if a in rec]
     ks = sorted((int(k) for k in rec[arms[0]]), key=int)
     mark = {"leads": "$+$", "trails": "$-$", "neither": "$\\cdot$"}
     rows = []
@@ -397,7 +436,7 @@ def si_drawing_equalised():
     for name, grid in (("verdict, as stored", d["verdicts_as_stored"]),
                        ("verdict, equalised", d["verdicts_equalised"]),
                        ("verdict, equalised, MetaTox set aside",
-                        d.get("verdicts_equalised_without_metatox") or {})):
+                        d.get("verdicts_equalised_without_the_service_arms") or {})):
         if not grid:
             continue
         rows.append(f"\\emph{{{name}}} & "
@@ -416,12 +455,13 @@ def si_drawing_equalised():
             "as the declared standardiser draws it, which is the drawing a user submits, on the "
             f"{pop['n_substrates']} substrates of the comparison set; the standardiser changes "
             f"{pop['substrates_the_standardiser_moves']} of them. "
-            "$^{\\dagger}$MetaTox is a web service with no re-run available to us, so its column "
-            "is the same as in Table~\\ref{MS-tab:sweep} and is the one arm still on its own "
-            "input: it received the natural tautomer for part of the submission to begin with, "
-            "which is the asymmetry this table removes from the other five. It is also the "
-            "strongest comparator at the wide budgets, so a verdict read against it is not a "
-            "verdict of an equalised comparison, and the last row is the grid with it set aside. "
+            "$^{\\dagger}$ marks a web service with no re-run available to us: "
+            + " and ".join(sorted(frozen))
+            + ". Those columns are the same as in Table~\\ref{MS-tab:sweep} and are the arms "
+            "still on their own input, which is the asymmetry this table removes from the rest. "
+            "They are also the strongest comparators at several budgets, so a verdict read "
+            "against one of them is not a verdict of an equalised comparison, and the last row is "
+            "the grid with both set aside. "
             "The verdict rows "
             "read the better arm of this work against the strongest comparator at each budget, "
             "$+$ where the paired interval excludes zero in this work's favour, $-$ where it "
@@ -833,15 +873,22 @@ def si_macro():
         return (f"{LONG.get(a, a)} against {who} at $k={k}$, which separates under "
                 + ("micro and not macro" if micro_sep else "macro and not micro"))
     ks = sorted((int(k) for k in macro), key=int)
-    # The fourth comparator arrived after this table was first written and the column was never
-    # added, so a table captioned as the whole comparison under the other aggregation was five
-    # sixths of it. The arms are filtered against the artifact so a later one cannot go missing
-    # the same way.
-    arms = [(key, label) for key, label in
-            (("whole bank", "GRAIL exh."), ("trained budget", "GRAIL int."),
-             ("metatox", "MetaTox"), ("sygma", "SyGMa"), ("metapredictor", "MetaPred."),
-             ("biotransformer", "BioTrans."))
-            if key in macro[str(ks[0])]]
+    # A table captioned as the whole comparison must print the whole comparison. Filtering a
+    # hardcoded list against the artifact, which is what this did, only removes arms the artifact
+    # has dropped; it cannot notice one the artifact has GAINED, and a fifth comparator went
+    # missing here exactly as a fourth had before it. The arms now come FROM the artifact and the
+    # hardcoded part is only how each is spelled, so a new one stops the build instead.
+    LABELS = {"whole bank": "GRAIL exh.", "trained budget": "GRAIL int.",
+              "metatox": "MetaTox", "sygma": "SyGMa", "metapredictor": "MetaPred.",
+              "biotransformer": "BioTrans.", "gloryx": "GLORYx"}
+    present = list(macro[str(ks[0])])
+    unlabelled = [a for a in present if a not in LABELS]
+    if unlabelled:
+        raise SystemExit(
+            f"REFUSING: deployment_table.json carries {', '.join(unlabelled)} and this table has "
+            f"no column heading for them. A table captioned as the whole comparison would print "
+            f"less than the whole comparison.")
+    arms = [(key, LABELS[key]) for key in LABELS if key in present]
     # One block of levels and two of contrasts, the same shape as the micro table so the two can
     # be read against each other. Printing one contrast of eight -- and the one this work wins --
     # is what made the robustness claim uncheckable from the page it was stated on.
@@ -1060,8 +1107,21 @@ def si_intervals():
     mult = art("multiplicity.json")
     con = d["contrasts"]
     ks = sorted((int(k) for k in con), key=int)
-    comps = [("metatox", "MetaTox"), ("sygma", "SyGMa"), ("metapredictor", "MetaPredictor"),
-             ("biotransformer", "BioTransformer")]
+    # The caption says every difference between a GRAIL arm and a comparator, so the columns come
+    # from the artifact rather than from a list written when there were fewer comparators. A
+    # comparator with no heading stops the build: a table that silently prints four of five while
+    # the main text reads a verdict off the fifth is worse than one that does not build.
+    LABELS = {"metatox": "MetaTox", "sygma": "SyGMa", "metapredictor": "MetaPredictor",
+              "biotransformer": "BioTransformer", "gloryx": "GLORYx"}
+    _present = sorted({pair.split(" - ")[1] for row in con.values() for pair in row
+                       if pair.startswith("whole bank - ")} - {"trained budget"})
+    _unlabelled = [c for c in _present if c not in LABELS]
+    if _unlabelled:
+        raise SystemExit(
+            f"REFUSING: deployment_table.json carries contrasts against "
+            f"{', '.join(_unlabelled)} and this table has no column for them, while its caption "
+            f"says it holds every difference between a GRAIL arm and a comparator.")
+    comps = [(key, LABELS[key]) for key in LABELS if key in _present]
 
     def trim(x):
         """+0.0496 -> +.050, so a cell is a number and not a paragraph."""
@@ -1090,8 +1150,11 @@ def si_intervals():
         blocks.append(f"\\multicolumn{{{len(comps) + 1}}}{{l}}{{\\emph{{GRAIL {label}}} minus}}"
                       " \\\\\n" + "\n".join(rows))
     head = " & ".join(lab for _, lab in comps)
-    return ("\\begin{table}[h]\n\\centering\\footnotesize\n"
-            "\\setlength{\\tabcolsep}{3pt}\n"
+    # A fifth comparator column put this 78 pt over the measure at \footnotesize. The type and
+    # the column padding come down rather than a column coming out: the caption says the table
+    # holds every difference between a GRAIL arm and a comparator, and it has to.
+    return ("\\begin{table}[h]\n\\centering\\scriptsize\n"
+            "\\setlength{\\tabcolsep}{2.5pt}\n"
             "\\begin{tabular}{r" + "l" * len(comps) + "}\n\\toprule\n"
             f"$k$ & {head} \\\\\n\\midrule\n"
             + "\n\\midrule\n".join(blocks)
