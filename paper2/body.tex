@@ -16,7 +16,12 @@ templates and enumerate the products of applying them. Sequence-to-sequence syst
 MetaTrans \citep{Litsa_2020} and MetaPredictor \citep{Zhu_2024}, treat the problem as translation.
 Recent work extends both lines: a chemical language model \citep{Larsson_2025}, a mechanistically
 informed graph framework \citep{Zhou_2025}, a server predicting pathway, site and product together
-\citep{Zhou_2026}, and a preprint predicting all three jointly \citep{Chavan_2026}.
+\citep{Zhou_2026}, and a preprint predicting all three jointly \citep{Chavan_2026}. The two
+families are used for different reasons. A template names the transformation it applied and the
+atoms it acted on, so a chemist can see why a structure was proposed and reject it on mechanistic
+grounds; that is what makes rule-based systems usable in a discovery workflow, where a prediction
+has to be defended to a medicinal chemist rather than only scored. A sequence model is not built to
+say that, and is expected instead to reach chemistry no template bank encodes.
 
 What is missing is not another predictor but a way to tell these apart. The usual measure is
 recall: the fraction of the metabolites recorded for a compound that a system returns. That
