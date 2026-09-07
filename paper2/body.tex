@@ -509,11 +509,21 @@ not the training. Retraining both stages under \numSpreadSeedsWord{} seeds at th
 The argument this paper opens with is that a recall figure depends on evaluation choices this
 literature leaves unstated. It is an argument about published numbers, and it applies to ours. The whole comparison is recomputed under each of the \numCritCriteria{} declared criteria, holding
 the population, the arms, the ranking and the parent-drop convention fixed. The verdict moves at up
-to \numCritMovedMax{} of \numCritBudgets{} budgets (Table~\ref{tab:criterion}). Neither the arm
+to \numCritMovedMax{} of \numCritBudgets{} budgets (Figure~\ref{fig:criterion}). Neither the arm
 nor the comparator is constant across that grid, so a sign in it does not on its own say what was
 compared with what; the last row names the arm and the superscripts name the comparator.
 
-\input{table_criterion}
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{fig_criterion}
+\caption{The verdict of the comparison under each declared matching criterion. $+$ marks a budget
+where GRAIL's better arm leads the strongest comparator with the paired interval excluding zero,
+$-$ one where it trails on the same terms, and $\cdot$ one where the interval covers zero. The
+superscript names the comparator the cell is read against, M for MetaTox, S for SyGMa, P for
+MetaPredictor and G for GLORYx. The row beneath names the GRAIL arm, \emph{int.} or \emph{exh.},
+with a dash where the better arm is not the same one under all five criteria at that budget.}
+\label{fig:criterion}
+\end{figure*}
 
 At $k=15$ the margin between GRAIL's better arm and the strongest comparator runs from
 $\numCritWorstOneFive$ under \numCritWorstOneFiveName{} to $+\numCritBestOneFive$ under

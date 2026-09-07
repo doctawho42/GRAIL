@@ -167,7 +167,7 @@ any application of the rule bank could reach at
 all, and the census of the chemistry the remainder needs. The validation draw is a declared
 sample of 300 substrates on which the registered
 ranking and timing thresholds are checked, because a threshold checked on the population that
-chose the setting it tests is not a check; Table 7
+chose the setting it tests is not a check; Table 6
 records the population each prediction was in
 the event checked on, and Section S25 states
 that all but one of the ten fixed a threshold in
@@ -244,7 +244,7 @@ size. Every setting is in Section S21.
 Each design choice below is given with the measurement that decided it and the prediction it
 was registered as; those predictions, each with
 a threshold and a falsification condition fixed
-before the check, are the register (Table 7).
+before the check, are the register (Table 6).
 GRAIL predicts in three stages, each separately inspectable. A generator scores every
 rule in a bank of 7,581 reaction templates, written as SMIRKS transformation patterns, against
 the substrate. The selected rules are then applied with RDKit 2022.09.5, and their products
@@ -336,7 +336,7 @@ this corpus is not finished.
 raise recall rather than only bound it. The cap
 raises recall by +0.0260 [+0.0033, +0.0469] and
 takes the mean pool from 669.9 candidates to
-98 (P2, Table 7). The value was fixed by a
+98 (P2, Table 6). The value was fixed by a
 stated principle rather than by a search. The
 cap must be at least twice the widest output
 budget reported, so that the widest column is
@@ -388,7 +388,7 @@ trained, which is a fact about how the run was
 configured and not an argument for the number,
 so the curve either side of it is measured on validation (Section S16). What the difference buys
 was fixed in advance as prediction P3 and, on
-validation, came in under its ceiling (Table 7).
+validation, came in under its ceiling (Table 6).
 On the comparison set the same quantity is
 +0.0556, past the ceiling. The discrepancy is
 reported rather than resolved and it has a reading: at k ≤ 10 the whole bank buys nothing
@@ -527,7 +527,7 @@ that the cap sets its length on most substrates.
 That cap is a parameter of this system, it is
 declared, and it applies to that arm and not to
 the comparators. It was registered as prediction
-P4 and confirmed (Table 7); its budget ladder
+P4 and confirmed (Table 6); its budget ladder
 was fixed with the prediction and is not the one
 read elsewhere here.
 
@@ -1409,7 +1409,7 @@ about published numbers, and it applies to ours.
 The whole comparison is recomputed under each
 of the 5 declared criteria, holding the population, the arms, the ranking and the parent-drop
 convention fixed. The verdict moves at up to
-6 of 9 budgets (Table 5). Neither the arm nor
+6 of 9 budgets (Figure 2). Neither the arm nor
 the comparator is constant across that grid, so
 a sign in it does not on its own say what was
 compared with what; the last row names the
@@ -1430,22 +1430,211 @@ the references carry no stereochemistry and do
 not distinguish tautomers, not because of what
 12
 
-Table 5: The verdict of the comparison under each declared matching
-criterion.
-criterion
+GRAIL trails
 
-output budget k
+canonical SMILES equality
+
+–
+
+the full InChIKey
+
+–
+
+InChIKey, no stereo
+
+–
+
+Tanimoto = 1
+
+–
+
+tautomer-aware key (default)
+
+–
+
+GRAIL arm
+
+S
+
+S
+
+S
+
+S
+
+S
+
+S
+
+–
+
+S
+
+–
+
+S
+
+–
+
+S
+
+–
+
+S
+
+–
+
+S
+
+–
+
+S
+
+–
+
+S
+
+–
+
+S
+
+–
+
+S
+
+–
+
+int.
+
+int.
+
+int.
+
 1
 
 3
 
 5
 
+GRAIL leads
+
+neither separates
+
+–
+·
+·
+–
+·
+
+P
+
+S
+
+P
+
+P
+
+P
+
+exh.
+
+P
+
+–
+
+S
+
+·
+
+P
+
+·
+
+P
+
+–
+
+P
+
+·
+–
+
+–
+·
+·
+–
+·
+
+G
+
+G
+
+G
+
+G
+
+G
+
+exh.
+
 8
-
 10
-
 15
+candidates a system may return, k
+
+–
++
+·
+–
+·
+
+G
+
+G
+
+G
+
+G
+
+G
+
+–
++
++
+–
++
+
+G
+
+G
+
+G
+
+G
+
+M
+
+–
++
++
+–
++
+
+G
+
+M
+
+M
+
+G
+
+M
+
+exh.
+
+exh.
+
+exh.
 
 20
 
@@ -1453,93 +1642,12 @@ output budget k
 
 50
 
-canonical
-InChIKey
-InChIKey, no stereo
-Tanimoto = 1
-tautomer (default)
-
-−S
-−S
-−S
-−S
-−S
-
-−S
-−S
-−S
-−S
-−S
-
-−S
-−S
-−S
-−S
-−S
-
-−P
-·S
-·P
-−P
-·P
-
-−P
-·S
-·P
-−P
-·P
-
-−G
-·G
-·G
-−G
-·G
-
-−G
-+G
-·G
-−G
-·G
-
-−G
-+G
-+G
-−G
-+M
-
-−G
-+M
-+M
-−G
-+M
-
-GRAIL arm
-
-int.
-
-int.
-
-int.
-
-exh.
-
-–
-
-exh.
-
-exh.
-
-exh.
-
-exh.
-
-+ marks a budget where GRAIL’s better arm leads the strongest comparator with the
-paired interval excluding zero, − one where it trails on the same terms, and · one where
-the interval covers zero. The superscript names the comparator the cell is read against,
-M for MetaTox, S for SyGMa, P for MetaPredictor and G for GLORYx, and the last
-row names the GRAIL arm, int. or exh., with a dash where the better arm is not the
-same one under all five criteria at that budget.
-
+Figure 2: The verdict of the comparison under each declared matching criterion. + marks a budget
+where GRAIL’s better arm leads the strongest comparator with the paired interval excluding zero,
+− one where it trails on the same terms, and · one where the interval covers zero. The superscript
+names the comparator the cell is read against, M for MetaTox, S for SyGMa, P for MetaPredictor
+and G for GLORYx. The row beneath names the GRAIL arm, int. or exh., with a dash where the
+better arm is not the same one under all five criteria at that budget.
 templates whose provenance would guarantee
 it. The exhaustive arm is not audited this way,
 because it applies the whole bank rather than a
@@ -1554,6 +1662,7 @@ rule (Section S15).
 
 3.5
 
+it illustrates is the one the bank is weakest on.
 At the reported budget the exhaustive arm recovers none of the comparison set’s 5 annotated
 deaminations and the best comparator recovers
 most of them (Table 4). The division the sweep
@@ -1571,12 +1680,12 @@ so the part of the bank with no expert provenance is what carries this molecule;
 finds the deamination instead, and later in the
 list (Section S14). Which templates carry a
 molecule is itself a function of how the molecule
-is drawn, and Figure 2 shows both.
+is drawn, and Figure 3 shows both.
 
 A worked example
 
 Gemcitabine is annotated in the corpus with four
-metabolites: the deamination to dFdU that inactivates it, and the three sequential 5′ phosphorylations that activate it. Figure 2 and Table 6
+metabolites: the deamination to dFdU that inactivates it, and the three sequential 5′ phosphorylations that activate it. Figure 3 and Table 5
 are what the deployed configuration returns for
 it, with the transformation behind every hit.
 The interactive mode’s budget never selects
@@ -1588,15 +1697,6 @@ rank 20. That last figure is past the budget this
 paper reports: three of the four are recovered
 only beyond k = 15, so at the reported budget
 this molecule is one hit and not four. The class
-it illustrates is the one the bank is weakest on.
-
-3.6
-
-Which design choices were selected on which population
-
-Every deployed choice is a registered hypothesis
-with a threshold and a falsification condition,
-tested where it was not selected (Table 7). Ten
 13
 
 where the four annotated metabolites land,
@@ -1658,10 +1758,37 @@ rank in the returned list
 
 100
 
-Figure 2: The worked example. Left: the substrate as a chemist draws it, with each atom a
+Figure 3: The worked example. Left: the substrate as a chemist draws it, with each atom a
 firing rule reported shaded in the colour of its transformation. Right: the rank of each of the four
 annotated metabolites in each arm’s returned list, every returned candidate drawn as a tick, under
 both drawings of the substrate.
+
+3.6
+
+3.7
+
+Which design choices were selected on which population
+
+Runtime
+
+The binding constraint is product standardisation, run once per product of every template;
+three other candidates were tested and rejected
+by measurement (Section S32).
+Two registered predictions followed. Standardising only the survivors (P8) freed recall but
+missed its registered speed-up threshold (Table 6). Adding a tautomer enumeration budget
+of 200 (P9) passes both halves, taking the median from 49.85 s to 5.28 s against a registered
+target below ten, at a recall loss of −0.0015
+against a cap of 0.01.
+Cost is reported at the tail as well as at the
+median, because a service is used at both. The
+interactive mode’s tail is far heavier than its
+median (Table 1), so a service answering a web
+form should impose a deadline and fall back
+rather than size itself on the median.
+
+Every deployed choice is a registered hypothesis
+with a threshold and a falsification condition,
+tested where it was not selected (Table 6). Ten
 of the sixteen registered are checked here. Six
 are confirmed and three failed, each on the falsification condition it was written with; the tenth
 was measured rather than adjudicated, because
@@ -1673,29 +1800,9 @@ chosen afterwards. Section 5 states which of
 the seven confirmations a stricter reading leaves
 undecided.
 
-3.7
-
-Two registered predictions followed. Standardising only the survivors (P8) freed recall but
-missed its registered speed-up threshold (Table 7). Adding a tautomer enumeration budget
-of 200 (P9) passes both halves, taking the median from 49.85 s to 5.28 s against a registered
-target below ten, at a recall loss of −0.0015
-against a cap of 0.01.
-Cost is reported at the tail as well as at the
-median, because a service is used at both. The
-interactive mode’s tail is far heavier than its
-median (Table 1), so a service answering a web
-form should impose a deadline and fall back
-rather than size itself on the median.
-
-Runtime
-
-The binding constraint is product standardisation, run once per product of every template;
-three other candidates were tested and rejected
-by measurement (Section S32).
-
 14
 
-Table 6: The four annotated metabolites of gemcitabine and the
+Table 5: The four annotated metabolites of gemcitabine and the
 rank each is returned at by the two operating modes, with the
 bank template that produced it.
 interactive
@@ -1808,7 +1915,7 @@ which matters for how the number reads. The
 
 15
 
-Table 7: Every deployed choice as a prediction fixed before it was checked: what was fixed, the
+Table 6: Every deployed choice as a prediction fixed before it was checked: what was fixed, the
 threshold, the value measured, the population it was checked on, and what the check returned.
 what was fixed
 
@@ -1961,7 +2068,7 @@ not invariant to anything.
 
 The tail holds at every granularity at which
 a type still determines a product and collapses
-only where it stops doing so (Table 8, Figure 4).
+only where it stops doing so (Table 7, Figure 5).
 What the table does not make definition-free is
 the share itself: 87.2% is read under our own
 definition of a type, and a coarser one collapses
@@ -2048,7 +2155,7 @@ me
 
 exhaustive
 
-Figure 3: Left: generator seconds against substrate size at the whole bank, both axes logarithmic,
+Figure 4: Left: generator seconds against substrate size at the whole bank, both axes logarithmic,
 with the substrates that did not finish inside the 600-second deadline drawn on the dashed line
 marking it. Right: wall-clock seconds per substrate for each operating mode on the validation
 split, log scale; the first four bars are the interactive mode’s median, mean, ninetieth percentile and
@@ -2101,7 +2208,7 @@ The two modes are two settings of one rule budget, and which to run is decided b
 the service answers at rather than by a default.
 Below about ten candidates the interactive mode
 is the right setting and the faster of the two by
-the margin Figure 3 reports;
+the margin Figure 4 reports;
 Beyond a short list that setting is the weaker
 one, and the cause is the pool rather than the
 ranking. It returns far fewer candidates than
@@ -2113,7 +2220,7 @@ excluding zero (Tables S8 and S12). A service
 
 17
 
-Table 8: The novel-type gap against the definition of a type.
+Table 7: The novel-type gap against the definition of a type.
 definition of a type
 
 types
@@ -2217,7 +2324,7 @@ bond
 count
 44 types
 
-Figure 4: Left: where the 475 uncovered references go, and how many of them a library of 42,554
+Figure 5: Left: where the 475 uncovered references go, and how many of them a library of 42,554
 synthetic templates could supply. Right: the share of the novel-type gap sitting in types seen exactly
 once, against four definitions of a type; the label above each bar is that share and the count under
 each tick is how many distinct types the definition yields. The hatched bars are the definitions
@@ -2370,7 +2477,7 @@ and the register is what shows it: its threshold
 was fixed in advance but its population was not,
 and it was adjudicated on the comparison set,
 which is derived from the test split and was
-recorded afterwards. Table 7 calls that a measurement rather than a confirmation, which is
+recorded afterwards. Table 6 calls that a measurement rather than a confirmation, which is
 why it is not one of the six. P3’s threshold is
 in any case a property of the budget requested
 rather than of the system.

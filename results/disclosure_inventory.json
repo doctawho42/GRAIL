@@ -3,7 +3,7 @@
   "script": "disclosure_inventory.py",
   "script_path": "scripts/disclosure_inventory.py",
   "source_sha256": "7178c28f48f37a1fa08c5afd3e14e375980532953fb019937a2ae63c28f9bcf7",
-  "git_commit": "95972ee3b655703c1801deaf3592527d125e0ec5",
+  "git_commit": "a604ec1dbf18fb248136cc65caf1481065c8dd14",
   "git_dirty": true
  },
  "reviewed_and_accepted": [
@@ -314,6 +314,13 @@
     "paper2/si.tex"
    ],
    "reason": "a figure placed after the rule-budget section's opening paragraph re-keys the sentence that followed it; the sentence is unchanged at si.tex:908"
+  },
+  {
+   "text": "The superscript names the comparator the cell is read against, M for MetaTox, S for SyGMa, P for MetaPredictor and G for GLORYx, and the last row names the GRAIL arm, int. or exh. , with a dash where the better arm is not the same one under all five criteria at that budget. tablenotes threeparttable",
+   "was_in": [
+    "paper2/table_criterion.tex"
+   ],
+   "reason": "the criterion verdict grid became a figure; its caption carries the same legend and the same statement that neither the arm nor the comparator is constant across the grid, and the table it replaced is no longer generated"
   }
  ],
  "question": "every sentence in which this work concedes something, recorded before a cut so that what a cut costs is visible rather than invisible",
@@ -349,7 +356,6 @@
   "paper2/table_sweep.tex",
   "paper2/si_table_matched.tex",
   "paper2/si_table_chemistry.tex",
-  "paper2/table_criterion.tex",
   "paper2/table_case.tex",
   "paper2/table_hypotheses.tex",
   "paper2/table_grain.tex"
@@ -1485,6 +1491,12 @@
     "paper2/body.tex"
    ]
   },
+  "the row beneath names the grail arm int or exh with a dash where the better arm is not the same one under all five criteria at that budget figure at k the margin between grail s better arm and the strongest comparator runs from under to under that is a range of and the sign of the conclusion changes with it": {
+   "text": "The row beneath names the GRAIL arm, int. or exh. , with a dash where the better arm is not the same one under all five criteria at that budget. figure* At k=15 the margin between GRAIL's better arm and the strongest comparator runs from N under N to + N under N . That is a range of N , and the sign",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
   "the criterion this paper reports is not the one that flatters it": {
    "text": "The criterion this paper reports is not the one that flatters it",
    "in": [
@@ -1759,12 +1771,6 @@
    "text": "table* [t] threeparttable Micro recall at a budget of 15 within each transformation class, on the comparison set's 665 annotated references; leading zeros are dropped. tablenotes [flushleft] A class is a change in molecular formula, so it groups mechanisms the annotation does not separate. marks the",
    "in": [
     "paper2/si_table_chemistry.tex"
-   ]
-  },
-  "the superscript names the comparator the cell is read against m for metatox s for sygma p for metapredictor and g for gloryx and the last row names the grail arm int or exh with a dash where the better arm is not the same one under all five criteria at that budget tablenotes threeparttable table": {
-   "text": "The superscript names the comparator the cell is read against, M for MetaTox, S for SyGMa, P for MetaPredictor and G for GLORYx, and the last row names the GRAIL arm, int. or exh. , with a dash where the better arm is not the same one under all five criteria at that budget. tablenotes threeparttable",
-   "in": [
-    "paper2/table_criterion.tex"
    ]
   },
   "table t threeparttable every deployed choice as a prediction fixed before it was checked what was fixed the threshold the value measured the population it was checked on and what the check returned tablenotes flushleft p s figure is a speed up factor p s a median in seconds and p s a share of the mined bank the rest are differences in micro recall at a budget of marks the three whose threshold was fixed in advance but whose population was not": {

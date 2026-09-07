@@ -144,7 +144,7 @@ def si_criterion_sweep():
 def si_criterion_levels():
     """The recall the verdict grid is read from, arm by arm, criterion by criterion.
 
-    Table~\\ref{MS-tab:criterion} prints a sign per cell and the manuscript says all five
+    Figure~\\ref{MS-fig:criterion} prints a sign per cell and the manuscript says all five
     criteria are reported for every comparison. They were not: only the verdicts were, so a
     reader could see that a sign moves and not how far the level moves with it, nor whether the
     arms reorder. This is the evidence behind that grid.
@@ -195,7 +195,7 @@ def si_criterion_levels():
             "\\caption{Micro recall for every arm at every budget under each of the five declared "
             "matching criteria, on the "
             f"{d['population']['n']} substrates of the comparison set. "
-            "Table~\\ref{MS-tab:criterion} reads its verdicts from these numbers: a cell there is "
+            "Figure~\\ref{MS-fig:criterion} reads its verdicts from these numbers: a cell there is "
             "the better arm of this work against the strongest comparator at that budget, with "
             "the paired interval, so a sign can move either because a level moved or because the "
             "arms reordered, and both are visible here. Ranking is settled before the key is "
@@ -1380,7 +1380,7 @@ def generators():
                      ("si_table_population_list", si_population_list),
                      ("si_table_worked_structures", si_worked_structures),
                      ("si_table_equalised", si_drawing_equalised),
-                     ("table_criterion", si_criterion_sweep))
+                     )
 
 
 if __name__ == "__main__":

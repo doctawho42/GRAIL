@@ -190,7 +190,7 @@ The validation draw is a declared sample of 300 substrates at seed 0, of which 2
 by both operating modes in a paired comparison; registered ranking and timing thresholds
 are checked here, because a threshold checked on the population that chose the setting it
 tests is not a check, and three of the ten reported predictions were in the event adjudicated
-on the comparison set instead, which Table 7 marks.
+on the comparison set instead, which Table 6 marks.
 
 S6
 
@@ -1728,13 +1728,13 @@ S13
 
 Sensitivity of the comparison to the matching criterion
 
-The verdict grid itself is Table 5 of the manuscript, since it is the evidence the paper’s title
+The verdict grid itself is Figure 2 of the manuscript, since it is the evidence the paper’s title
 advertises and belongs where the argument is made. The levels it is read from are Table S13:
 every arm at every budget under every criterion, which is what separates a sign that moved
 because a level moved from one that moved because the arms reordered. What follows is
 what the grid does not show on its face.
 The paper argues that a recall figure depends on evaluation choices that this literature
-leaves unstated. The argument is made about published numbers, and Table 5 applies it to
+leaves unstated. The argument is made about published numbers, and Figure 2 applies it to
 our own: the same comparison, the same population, the same ranking, the same parent-drop
 convention, with only the criterion moving.
 Ranking is settled before any key is taken, so the criterion changes what counts as a hit
@@ -1763,10 +1763,10 @@ property of the strict column rather than the reason it reads as it does. The ta
 key exists because reproducing a corpus’s tautomer is not the question a comparison should
 be asking, and the canonical column is reported because declaring a criterion means printing
 what it does, not only the one whose behaviour suits the argument.
-The reference row of Table 5 reproduces the verdicts of the main text’s comparison exactly,
-though it is computed by a different script from the same frozen predictions. The number
-of references differs by one between criteria, at 665 for three of them and one fewer for two,
-and the two cases have different causes. Under the first block of the InChIKey, the thiol
+The reference row of Figure 2 reproduces the verdicts of the main text’s comparison
+exactly, though it is computed by a different script from the same frozen predictions. The
+number of references differs by one between criteria, at 665 for three of them and one fewer for
+two, and the two cases have different causes. Under the first block of the InChIKey, the thiol
 and thiolate annotated for butyrylthiocholine merge, because that block is the skeleton hash
 and carries neither the protonation layer nor stereochemistry; the full InChIKey separates
 them in its final character. Under Tanimoto similarity of one, two of the carboxychromanol
@@ -2845,7 +2845,7 @@ The register has one weakness, stated here. Only P10 fixes its adjudicating popu
 part of the pre-specification. The nine before it name a threshold and a falsification condition
 and leave the population implicit, and three of them, P5, P6 and P7, were in the event
 adjudicated on the comparison set, which is derived from the test split, while the rest were
-adjudicated on validation. Table 7 records the population each was checked on so which is
+adjudicated on validation. Table 6 records the population each was checked on so which is
 which is on record, but recording it after the fact is not the same as fixing it before, and for
 those three it was not fixed before. The register’s later entries do fix it.
 
@@ -2858,7 +2858,7 @@ abstention; H4, a ranked prediction of intervention sizes; H5, the same null out
 and H6, a negative control on graph automorphism. Each is stated with its threshold so that
 a later result on any of them cannot be a threshold chosen after the fact. None is reported in
 this paper because none was run for it, which is a different thing from a prediction that was
-run and did not hold; the three of those are P6, P7 and P8 and they are in Table 7 with
+run and did not hold; the three of those are P6, P7 and P8 and they are in Table 6 with
 their measured values.
 Registered as prediction P4 with a criterion of zero lost cells over a grid of five matching
 criteria by ten budgets and the comparator’s own uncapped output: 0 of 55. That ladder was
@@ -4521,7 +4521,7 @@ GLORYx
 0.4481
 0.6060
 
-Table 5 reads its verdicts from these numbers: a cell there is the better arm
+Figure 2 reads its verdicts from these numbers: a cell there is the better arm
 of this work against the strongest comparator at that budget, with the paired
 interval, so a sign can move either because a level moved or because the arms
 reordered, and both are visible here. Ranking is settled before the key is taken,

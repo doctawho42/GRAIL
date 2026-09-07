@@ -482,6 +482,102 @@ def fig_case():
     plt.close(fig)
 
 
+def fig_criterion():
+    """The verdict grid the manuscript used to print as a table of signs.
+
+    Table and figure carried the same nine by five grid, and the table read as arithmetic while
+    the picture reads as a shape: two rows that never leave the trailing colour whatever the
+    budget, three that cross once the list is long enough, and one column where the arm being
+    compared is not even the same under all five criteria. That shape is the paper's claim.
+
+    Everything here comes from the artifact's own verdicts rather than from a second reading of
+    the recall values, so the figure cannot disagree with the sweep it draws.
+    """
+    d = art("criterion_sweep.json")
+    order = ["canonical", "inchikey", "inchi_no_stereo", "tanimoto1", "inchikey_tautomer"]
+    label = {"canonical": "canonical SMILES equality", "inchikey": "the full InChIKey",
+             "inchi_no_stereo": "InChIKey, no stereo", "tanimoto1": "Tanimoto $=1$",
+             "inchikey_tautomer": "tautomer-aware key (default)"}
+    missing = [c for c in order if c not in d["by_criterion"]]
+    extra = [c for c in d["by_criterion"] if c not in order]
+    if missing or extra:
+        raise SystemExit(f"criterion_sweep.json and this figure disagree on the criteria: "
+                         f"missing {missing}, undrawn {extra}")
+
+    budgets = sorted((int(k) for k in d["by_criterion"][order[0]]["verdict_by_budget"]), key=int)
+    CODE = {"trails": -1, "neither": 0, "leads": 1}
+    SIGN = {-1: "\u2013", 0: "\u00b7", 1: "+"}
+    # One letter per comparator, and a name the figure cannot draw is a refusal rather than a
+    # blank cell: the grid is read against a different comparator in almost every column.
+    LETTER = {"MetaTox": "M", "SyGMa": "S", "MetaPredictor": "P", "GLORYx": "G",
+              "BioTransformer": "B"}
+
+    grid, marks = [], []
+    for crit in order:
+        v = d["by_criterion"][crit]["verdict_by_budget"]
+        m = d["by_criterion"][crit]["margin_by_budget"]
+        bad = {x for x in v.values()} - set(CODE)
+        if bad:
+            raise SystemExit(f"criterion_sweep.json records verdicts this figure cannot draw: "
+                             f"{sorted(bad)}")
+        unknown = {m[str(b)]["theirs"] for b in budgets} - set(LETTER)
+        if unknown:
+            raise SystemExit(f"criterion_sweep.json names comparators this figure has no letter "
+                             f"for: {sorted(unknown)}")
+        grid.append([CODE[v[str(b)]] for b in budgets])
+        marks.append([LETTER[m[str(b)]["theirs"]] for b in budgets])
+
+    # The arm under comparison, taken per budget across the five criteria. Where they disagree the
+    # cell says so rather than picking one, because a sign read against a different arm is a
+    # different comparison.
+    arms = []
+    for b in budgets:
+        ours = {d["by_criterion"][c]["margin_by_budget"][str(b)]["ours"] for c in order}
+        arms.append("exh." if ours == {"GRAIL exhaustive"}
+                    else "int." if ours == {"GRAIL interactive"} else "\u2013")
+
+    import numpy as np
+    from matplotlib.colors import ListedColormap
+
+    fig, ax = plt.subplots(figsize=(W * 2.06, 2.35))
+    cmap = ListedColormap(["#C7DCEA", "#F2F2F0", "#EBCDB4"])
+    ax.imshow(np.array(grid), cmap=cmap, vmin=-1, vmax=1, aspect="auto")
+    for r, row in enumerate(grid):
+        for c, v in enumerate(row):
+            ax.text(c - 0.10, r, SIGN[v], ha="center", va="center", fontsize=8, color=INK)
+            ax.text(c + 0.17, r - 0.20, marks[r][c], ha="center", va="center",
+                    fontsize=5.6, color=INK_MUTED)
+    ax.set_xticks(range(len(budgets)))
+    ax.set_xticklabels([str(b) for b in budgets], fontsize=7)
+    ax.set_yticks(range(len(order)))
+    ax.set_yticklabels([label[c] for c in order], fontsize=7)
+    ax.set_xlabel("candidates a system may return, $k$", fontsize=7, labelpad=2.0)
+    for spine in ax.spines.values():
+        spine.set_visible(False)
+    ax.tick_params(length=0, pad=2.0)
+
+    # The arm row sits under the grid rather than inside it: it is not a verdict.
+    for c, a in enumerate(arms):
+        ax.text(c, len(order) - 0.30, a, ha="center", va="top", fontsize=6.4, color=INK_MUTED,
+                transform=ax.transData)
+    ax.text(-0.6, len(order) - 0.30, "GRAIL arm", ha="right", va="top", fontsize=6.4,
+            color=INK_MUTED)
+    ax.set_ylim(len(order) - 0.05, -1.45)
+
+    # The key sits above the grid: below it there is the arm row, the tick labels and the axis
+    # label already, and a key placed there printed across the axis label.
+    key = [("#C7DCEA", "GRAIL trails"), ("#F2F2F0", "neither separates"), ("#EBCDB4", "GRAIL leads")]
+    for i, (col, lab) in enumerate(key):
+        ax.add_patch(plt.Rectangle((0.9 + i * 2.6, -1.32), 0.30, 0.26,
+                                   facecolor=col, edgecolor="none", clip_on=False))
+        ax.text(1.32 + i * 2.6, -1.19, lab, ha="left", va="center",
+                fontsize=6.4, color=INK_MUTED, clip_on=False)
+    save(fig, "fig_criterion")
+    plt.close(fig)
+    return {"budgets": budgets, "arms": arms,
+            "leads": {c: g.count(1) for c, g in zip(order, grid)}}
+
+
 def fig_toc():
     """The graphic for the table of contents: the thesis, not the system.
 
@@ -755,6 +851,7 @@ if __name__ == "__main__":
     fig_ceiling()
     fig_cost()
     fig_case()
+    crit = fig_criterion()
     toc = fig_toc()
     sib = fig_si_budget()
     sir = fig_si_rarefaction()
@@ -762,6 +859,7 @@ if __name__ == "__main__":
     (OUT / "figures.sha256").write_text(digest() + "\n")
     print("  fig_sweep.pdf, fig_ceiling.pdf, fig_cost.pdf, fig_case.pdf")
     print(f"  fig_toc.tif, fig_toc.eps, fig_toc.pdf  {toc[0]}x{toc[1]} in at {toc[2]} dpi, RGB")
+    print(f"  fig_criterion  arms {crit['arms']}, leads per criterion {crit['leads']}")
     print("  fig_si_budget, fig_si_rarefaction, fig_si_external (Supporting Information)")
     print(f"    the budget curve crosses: at k=1 {sib[1][0]:.4f} -> {sib[1][-1]:.4f}, "
           f"at k=50 {sib[50][0]:.4f} -> {sib[50][-1]:.4f}")
