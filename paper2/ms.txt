@@ -623,21 +623,20 @@ grid is 0.0030 and no cell separates from zero
 Every interval in this paper is a percomparison 95% interval with no family-wise
 adjustment. Both readings are reported. Treating the sweep as one family of 54 tests, two
 arms against the three comparators the family
-was declared over at every budget, and applying
-Holm’s correction to bootstrap p-values from the
-same resamples, 22 of the 33 cells that separate
-per comparison still separate; the eleven that do
-not are marked in Table S12. Of those, four are
-leads, and every one of the four is a lead this
-paper claims somewhere: the exhaustive arm
-over MetaTox at k = 30, over SyGMa and over
-MetaPredictor at k = 15, and the interactive
-arm over MetaTox at k = 10. Each is marked
-where it is claimed. Two comparators were
-obtained after that family was fixed, so their
-contrasts are reported with their own intervals
-and are not folded into a correction declared
-without them (Section S34).
+was declared over at each of the nine budgets,
+and applying Holm’s correction to bootstrap
+p-values from the same resamples, 22 of the 33
+cells that separate per comparison still separate;
+the eleven that do not are marked in Table S12.
+Of those, four are leads, and every one of the
+four is a lead this paper claims somewhere: the
+exhaustive arm over MetaTox at k = 30, over
+SyGMa and over MetaPredictor at k = 15, and
+the interactive arm over MetaTox at k = 10.
+Each is marked where it is claimed. Two comparators were obtained after that family was
+fixed, so their contrasts are reported with their
+own intervals and are not folded into a correction
+declared without them (Section S34).
 That leaves the obvious objection, which is
 that this paper prints more contrasts than the
 family covers, and it is answered by measurement rather than by the declaration. Applying
@@ -894,7 +893,10 @@ two of the three pointing the other way. What
 the sweep shows at k = 50 against those three is
 a statement about how much each system emits,
 and this paper’s own argument requires it to be
-called that.
+called that. The same confound is measured in
+an independent benchmark of this class of tool,
+where it runs the same way; that reading is in
+Section 5.
 Three corrections apply to the wide-budget
 leads and it is worth carrying them through in
 one place. Under a family-wise correction over
@@ -912,11 +914,11 @@ moves a cell the other way: against the corrected
 SyGMa the interactive arm’s deficit separates,
 −0.0511 [−0.0898, −0.0125], where against the
 stored drawing it did not. What is left after
-all three is one wide-budget lead: the exhaustive arm over SyGMa, an ordering result on a
-comparator whose own rules are largely inside
 10
 
-this bank. That lead also survives the one test
+all three is one wide-budget lead: the exhaustive arm over SyGMa, an ordering result on a
+comparator whose own rules are largely inside
+this bank. That lead also survives the one test
 the comparator’s own settings allow. SyGMa’s
 scenario is its emission knob, and running it
 deeper takes its mean output from 73 candidates to 526.1, five times what the exhaustive
@@ -936,12 +938,12 @@ The advantage is at depth rather than at the
 head of the list. MetaPredictor is flat from
 k = 15 because 273 of its 291 lists are shorter
 than that budget, and SyGMa gains little between k = 15 and k = 50; GRAIL’s exhaustive
-mode keeps rising because it keeps having candidates. Where a method runs out the budget
-has stopped measuring ranking, and the counts
-are reported for every arm: at k = 50, 291 of
-MetaPredictor’s lists, 291 of BioTransformer’s,
-270 of GLORYx’s, 134 of SyGMa’s, 249 of MetaTox’s, 282 of the interactive arm’s and 2 of the
-exhaustive arm’s are shorter than the budget.
+mode keeps rising because it keeps having candidates. Where a method runs out the budget has
+stopped measuring ranking, and the counts are
+reported for every arm. At k = 50, of 291 substrates, the lists shorter than the budget number
+291 for MetaPredictor, 291 for BioTransformer,
+270 for GLORYx, 134 for SyGMa, 249 for MetaTox, 282 for the interactive arm and 2 for the
+exhaustive one.
 Reading MetaPredictor’s flatness off its list
 length infers the cause; its beam is the knob
 that tests that, and turning it up is the question
@@ -954,10 +956,10 @@ what a user gets and the wide one is what the
 comparator can do. The verdict is the one the
 matched-length control reaches by truncating
 the longer list, arrived at here by lengthening
+
 the shorter one.
 Against MetaTox alone, the incumbent web
 service this work set out to replace, the exhaustive mode leads at all nine budgets and separates
-
 at seven, and none of those seven survives the
 matched-length control. It is also the one comparator whose arm one of its own authors has
 read, since its first author 5 is a co-author here.
@@ -997,13 +999,13 @@ separates from a baseline this literature does not
 report, and which every learned ranker over (substrate, candidate) pairs competes with whether
 or not it is reported: similarity to the substrate,
 which needs no training and no labels. The
-fusion beats it by +0.2947 [+0.2484, +0.3455]
+11
+
+fusion beats it by +0.2947 [+0.2484, +0.3455]
 at every budget on both populations. The
 substrate-specific part of the rule choice is worth
 less than either. Against the same number of
-11
-
-applicable rules picked by training frequency
+applicable rules picked by training frequency
 it gains +0.0346 [+0.0137, +0.0569]: small at
 every budget, and separating at all of them. It
 is reported as that rather than as the stage’s
@@ -1036,6 +1038,10 @@ test.
 
 3.3
 
+of 9 budgets (Table 5).
+At k = 15 the margin between GRAIL’s better
+arm and the strongest comparator runs from
+−0.1009 under canonical SMILES equality to
 +0.0346 under the full InChIKey. That is a range
 of 0.1355, and the sign of the conclusion changes
 with it. That range is the claim. The cellby-cell verdicts in the table are read from percomparison intervals with no correction across
@@ -1090,10 +1096,6 @@ about published numbers, and it applies to ours.
 The whole comparison is recomputed under each
 of the 5 declared criteria, holding the population, the arms, the ranking and the parent-drop
 convention fixed. The verdict moves at up to 6
-of 9 budgets (Table 5).
-At k = 15 the margin between GRAIL’s better
-arm and the strongest comparator runs from
-−0.1009 under canonical SMILES equality to
 12
 
 3.4
@@ -1853,12 +1855,13 @@ this class of tool 14 ; measuring a system here
 on one is not possible from what that benchmark publishes, because its reference structures
 appear only as drawings. Until it is, the comparison establishes an ordering within a corpus
 and not a ranking of the methods.
-The claim about evaluation is a different matter, and it is checked outside this corpus. Those
-authors deposited the prediction files their tools
-returned, so what each emitted is counted rather
-than inferred. Counted, the axis their design
-leaves undeclared spans a factor of 11.9 across
-11 drugs, from 15.8 candidates per drug to 187.3:
+The claim about evaluation is a different matter, and it is checked outside this corpus. Gao
+et al. 14 deposited the prediction files the six
+predictors they benchmarked returned, so what
+each emitted is counted rather than inferred.
+Counted, across their 11 drugs the axis that
+benchmark leaves undeclared spans a factor of
+11.9, from 15.8 candidates per drug to 187.3:
 an undeclared quantity varying twelvefold between the arms of a comparison is part of what
 the comparison measures. The arms that emit
 more score higher. Over the 40 cells of the 66cell grid carrying both a count and a published
@@ -1878,10 +1881,10 @@ and drug effects from both sides leaves 0.1891:
 the association is mostly between the arms and
 does not vanish inside them, and between the
 arms is in any case the level a benchmark orders
-at. The axis is counted from the deposited
 20
 
-files and not reconstructed from recall, which
+at. The axis is counted from the deposited
+files and not reconstructed from recall, which
 matters, since recall would otherwise enter the
 axis by construction (Section S33). It is not
 the whole story and this paper’s argument does
@@ -1896,6 +1899,7 @@ the same, to declare the axis and vary it.
 
 6
 
+unusual cleavages and by transformations this
 vocabulary cannot name, and on several classical functionalisations this system is not the best
 arm and is sometimes beaten by its own cheaper
 setting. Reporting the grid is what makes the
@@ -1940,7 +1944,6 @@ of the wide-budget leads is an ordering result
 and the rest are statements about emission. The
 class-by-class reading says the same from the
 other side: the aggregate advantage is carried by
-unusual cleavages and by transformations this
 
 Supporting
 Available
@@ -1967,10 +1970,10 @@ what each method recovers split by transformation class; whether the missing che
 corpus’s or the bank’s, and whether template
 discovery has saturated; how much of the annotation is one enzymatic step; the sixteen registered predictions including the six not reported
 here; group ranking and its oracle, and when a
-ranking comparison can measure anything; the
 21
 
-stage ablations; the choice of evaluation population; the worked example on both drawings;
+ranking comparison can measure anything; the
+stage ablations; the choice of evaluation population; the worked example on both drawings;
 runtime methodology; comparator versions and
 digests; the evaluation claim checked against
 an independent benchmark; and the provenance
@@ -1978,6 +1981,7 @@ and reproduction procedure.
 
 7
 
+structures and their annotated metabolites as
 the descriptors the matching criteria are decided
 by, which lets a reader without those licences recompute every recall figure and every cell of the
 criterion sweep; a check reports zero disagreements between the two readings. Releasing the
@@ -2012,7 +2016,6 @@ The corpus, whose four sources and versions
 Section 2.1 names, is not redistributed as a corpus: ShareAlike and NonCommercial terms cannot both be satisfied by one derivative, so its
 licence is settled by not redistributing them: the
 deposit carries no source structure. What is released instead is the evaluated test substrates as
-structures and their annotated metabolites as
 
 8
 

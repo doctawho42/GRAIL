@@ -421,7 +421,8 @@ favour one over another. It does not: the largest effect on recall anywhere in t
 
 Every interval in this paper is a per-comparison 95\% interval with no family-wise adjustment.
 Both readings are reported. Treating the sweep as one family of \numHolmTests{} tests, two
-arms against the three comparators the family was declared over at every budget, and applying
+arms against the three comparators the family was declared over at each of the
+\numCritBudgetsWord{} budgets, and applying
 Holm's correction to bootstrap $p$-values from the same resamples, \numHolmSurviving{} of the
 \numHolmSeparating{} cells that separate per comparison still separate; the \numHolmChangedWord{} that do not are marked in
 Table~\ref{SI-tab:si-intervals}. Of those, \numHolmLeadsremovedWord{} are leads, and every one of the
@@ -561,7 +562,9 @@ survives: $+\numMatchedBankmetatox$ against MetaTox, $\numMatchedBankmetapredict
 MetaPredictor and $\numMatchedBankbiotransformer$ against BioTransformer, every interval
 covering zero and two of the three pointing the other way. What the sweep shows at $k=50$
 against those three is a statement about how much each system emits, and this paper's own
-argument requires it to be called that.
+argument requires it to be called that. The same confound is measured in an independent benchmark
+of this class of tool, where it runs the same way; that reading is in
+Section~\ref{sec:limitations}.
 
 Three corrections apply to the wide-budget leads and it is worth carrying them through in one
 place.
@@ -596,12 +599,12 @@ The advantage is at depth rather than at the head of the list. MetaPredictor is 
 because \numShortMetapredictorOneFive{} of its \numPopulationN{} lists are shorter than that
 budget, and SyGMa gains little between $k=15$ and $k=50$; GRAIL's exhaustive mode keeps rising
 because it keeps having candidates. Where a method runs out the budget has stopped measuring
-ranking, and the counts are reported for every arm: at $k=50$,
-\numShortMetapredictorFiveZero{} of MetaPredictor's lists,
-\numShortBiotransformerFiveZero{} of BioTransformer's, \numShortGxarmFiveZero{} of GLORYx's,
-\numShortSygmaFiveZero{} of SyGMa's,
-\numShortMetatoxFiveZero{} of MetaTox's, \numShortTrainedFiveZero{} of the interactive arm's and
-\numShortBankFiveZero{} of the exhaustive arm's are shorter than the budget.
+ranking, and the counts are reported for every arm. At $k=50$, of
+\numPopulationN{} substrates, the lists shorter than the budget number
+\numShortMetapredictorFiveZero{} for MetaPredictor, \numShortBiotransformerFiveZero{} for
+BioTransformer, \numShortGxarmFiveZero{} for GLORYx, \numShortSygmaFiveZero{} for SyGMa,
+\numShortMetatoxFiveZero{} for MetaTox, \numShortTrainedFiveZero{} for the interactive arm and
+\numShortBankFiveZero{} for the exhaustive one.
 
 Reading MetaPredictor's flatness off its list length infers the cause; its beam is the knob that
 tests that, and turning it up is the question this work asks of other papers. At a wider beam its mean
@@ -1132,11 +1135,12 @@ identifications from radiolabelled human ADME studies, already used to benchmark
 publishes, because its reference structures appear only as drawings. Until it is, the comparison
 establishes an ordering within a corpus and not a ranking of the methods.
 
-The claim about evaluation is a different matter, and it is checked outside this corpus. Those
-authors deposited the prediction files their tools returned, so what each emitted is counted rather
-than inferred. Counted, the axis their design leaves undeclared spans a factor of
-\numExtbudgetRatio{} across \numExtbudgetDrugs{} drugs, from \numExtbudgetNarrowest{} candidates
-per drug to \numExtbudgetWidest{}: an undeclared quantity varying twelvefold between the arms of a
+The claim about evaluation is a different matter, and it is checked outside this corpus.
+\citet{Gao_2026} deposited the prediction files the \numExtbudgetArmsWord{} predictors they
+benchmarked returned, so what each emitted is counted rather than inferred. Counted, across their
+\numExtbudgetDrugs{} drugs the axis that benchmark leaves undeclared spans a factor of
+\numExtbudgetRatio{}, from \numExtbudgetNarrowest{} candidates per drug to
+\numExtbudgetWidest{}: an undeclared quantity varying twelvefold between the arms of a
 comparison is part of what the comparison measures. The arms that emit more score higher. Over the
 \numExtbudgetCountedcells{} cells of the \numExtbudgetGrid{}-cell grid carrying both a count and a
 published recall the rank correlation is $\numExtbudgetRho$, positive within a drug in

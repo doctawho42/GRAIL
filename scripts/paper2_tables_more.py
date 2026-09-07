@@ -155,6 +155,10 @@ def hypotheses():
         "H8": "failed", "H14": "failed", "H13": "failed",
         "H15": "confirmed", "H16": "confirmed",
     }
+    _WORDS = {0: 'none', 1: 'one', 2: 'two', 3: 'three', 4: 'four', 5: 'five',
+              6: 'six', 7: 'seven', 8: 'eight', 9: 'nine', 10: 'ten'}
+    # The caption says how many rows carry the mark, so it counts the rows that do.
+    _dagger_word = _WORDS[sum(1 for _h in H if '\\dagger' in _h[4])]
     rows = []
     for i, (h, what, thr, key, pop) in enumerate(H, 1):
         v = n[key]
@@ -171,7 +175,7 @@ def hypotheses():
             "was fixed, the threshold, the value measured, the population it was checked on, and "
             "what the check returned. P8's figure is a speed-up "
             "factor, P9's a median in seconds and P10's a share of the mined bank; the rest are "
-            "differences in micro recall at a budget of 15. $^{\\dagger}$ marks the three whose "
+            f"differences in micro recall at a budget of 15. $^{{\\dagger}}$ marks the {_dagger_word} whose "
             "threshold was fixed in advance but whose population was not: they were adjudicated "
             "on the comparison set, which was recorded afterwards. Where the verdict says the "
             "threshold falls inside the interval, what the data establish is that the effect "

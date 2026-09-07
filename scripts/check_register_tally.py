@@ -11,7 +11,9 @@ the numbers gate cannot see a spelled-out word, and nothing else read the table.
 The tally is a hand-typed word rather than a macro, because the adjudication lives in the table's
 generator rather than in the number chain, and wiring the generator into the chain would create an
 ordering the repository does not otherwise enforce. This is the compensating control: it reads the
-generated table, counts the verdict column, reads the two sentences, and refuses when they differ.
+generated table, counts the verdict column and the marked rows, reads the sentences that state
+those counts, and refuses when they differ. The marked rows are here because the population section
+counts them a hundred lines before the table, which is the same exposure with a longer fuse.
 
     python scripts/check_register_tally.py
     python scripts/check_register_tally.py --self-test   # the check fails on a wrong count
@@ -42,10 +44,14 @@ def tally(table_tex: str) -> dict:
     """What the table's own verdict column says, one row at a time."""
     body = table_tex.split("\\midrule")[1].split("\\bottomrule")[0]
     rows = [r.strip() for r in body.split("\\\\") if r.strip()]
-    out = {"rows": len(rows), "confirmed": 0, "failed": 0, "other": 0}
+    out = {"rows": len(rows), "confirmed": 0, "failed": 0, "other": 0, "daggered": 0}
     for r in rows:
         cells = [c.strip() for c in r.split("&")]
         verdict = cells[-2].lower()
+        # The population column carries the mark for a prediction adjudicated on a population
+        # fixed after the result was visible. The manuscript counts those marks too.
+        if "\\dagger" in r:
+            out["daggered"] += 1
         # The first word of the cell is the verdict; the rest qualifies it. "confirmed on
         # validation" is a confirmation and "measured, not adjudicated in advance" is not, and a
         # cell that begins with neither word is counted separately rather than guessed at.
@@ -66,6 +72,10 @@ CLAIMS = (
      re.compile(rf"({NUM})\s+are\s+confirmed\s+and\s+({NUM})\s+failed", re.I)),
     ("of_the_confirmed",
      re.compile(rf"({NUM})\s+of\s+the\s+({NUM})\s+confirmed\s+predictions", re.I)),
+    # The population section counts the rows the table marks, a hundred lines before the table.
+    ("adjudicated_after",
+     re.compile(rf"({NUM})\s+of\s+the\s+({NUM})\s+reported\s+predictions\s+were\s+in\s+the\s+"
+                rf"event\s+adjudicated", re.I)),
 )
 
 
@@ -97,6 +107,14 @@ def check(table_tex: str, body_tex: str) -> list:
         if said_f != t["failed"]:
             bad.append(f"the manuscript says {said_f} failed and the table's verdict column says "
                        f"{t['failed']}")
+    if "adjudicated_after" in c:
+        said_n, said_of = c["adjudicated_after"]
+        if said_n != t["daggered"]:
+            bad.append(f"the manuscript says {said_n} predictions were adjudicated on a population "
+                       f"fixed afterwards and the table marks {t['daggered']}")
+        if said_of != t["rows"]:
+            bad.append(f"the manuscript says {said_of} predictions are reported and the table has "
+                       f"{t['rows']} rows")
     if "of_the_confirmed" in c and c["of_the_confirmed"][1] != t["confirmed"]:
         bad.append(f"the manuscript says '{c['of_the_confirmed'][0]} of the "
                    f"{c['of_the_confirmed'][1]} confirmed predictions' and the table's verdict "
@@ -135,7 +153,7 @@ def main() -> int:
 
     t = tally(table_tex)
     print(f"  Table~\\ref{{tab:hyp}}: {t['rows']} rows, {t['confirmed']} confirmed, "
-          f"{t['failed']} failed, {t['other']} neither")
+          f"{t['failed']} failed, {t['other']} neither, {t['daggered']} marked")
     bad = check(table_tex, body_tex)
     if bad:
         print("\nREFUSING: the manuscript's count of the register disagrees with the register:",
