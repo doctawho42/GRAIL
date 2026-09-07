@@ -208,12 +208,12 @@ at all, and the census of the chemistry the remainder needs. The validation draw
 which 293 are held by both operating modes
 in a paired comparison; registered ranking and
 timing thresholds are checked here, because a
-threshold checked on the population whose rule
-it chose is not a check, and three of the ten reported predictions were in the event adjudicated
-on the comparison set instead, which Table 7
-marks. The comparison set is the 291 substrates
-every method has an entry for, carrying 665
-references, and every comparison against a published predictor is measured on it.
+threshold checked on the population that chose
+the setting it tests is not a check, and three of
+the ten reported predictions were in the event adjudicated on the comparison set instead, which
+Table 7 marks. The comparison set is the 291
+substrates every method has an entry for, carrying 665 references, and every comparison against
+a published predictor is measured on it.
 That third population has a defect worth stating before any number is read on it. It is not
 a random quarter of the test split: it is the
 submission list sent to the comparator that is
@@ -748,11 +748,9 @@ is not the only lead in this paper the correction removes, and the others are na
 they are claimed. The second control, matched
 length, removes more: of the five comparators
 led against, only the lead over SyGMa survives it.
-The margin’s lower bound is also smaller than
-the largest drawing correction measured on any
-comparator here, +0.0195 for SyGMa at the
-same budget. The two controls do not remove
-the same cells and neither leaves the MetaTox
+That MetaTox margin’s lower bound, +0.0175,
+is also smaller than the largest drawing correction measured on any comparator here, +0.0195
+for SyGMa at the same budget. The two controls do not remove the same cells and neither
 
 leads
 
@@ -829,11 +827,11 @@ at k = 1, 3 and 5, where SyGMa leads: 0.1053
 against SyGMa’s 0.1534 at k = 1. Two of those
 three, at 3 and 5, do not survive the familywise correction either. That is marked in Ta9
 
-column standing: the correction removes the cell
-at k = 30, and the matched-length cut removes
-the one at k = 50, where over 33.23 slots the
-difference is +0.0015 [−0.0309, +0.0349]. The
-lead over SyGMa is the one that survives both.
+leaves the MetaTox column standing: the correction removes the cell at k = 30, and the
+matched-length cut removes the one at k = 50,
+where over 33.23 slots the difference is +0.0015
+[−0.0309, +0.0349]. The lead over SyGMa is the
+one that survives both.
 A recall figure aggregates over transformations
 of very different kinds, so the comparison is also
 read by chemistry (Table 4). That table is read
@@ -873,8 +871,8 @@ advantage is carried by unusual cleavages and by
 the unnamed residue. The exhaustive arm is also
 below the interactive one on 5 classes, demethylation among them (0.8333 against 0.9167 on 36
 references). That is not a coverage limit but a
-ranking one: the wider pool contains candidates
 
+ranking one: the wider pool contains candidates
 the smaller budget never produced, and on those
 classes they displace correct answers out of the
 window.
@@ -913,10 +911,10 @@ be subtracted from a margin taken over a comparator’s own slot count. The corr
 moves a cell the other way: against the corrected
 SyGMa the interactive arm’s deficit separates,
 −0.0511 [−0.0898, −0.0125], where against the
-stored drawing it did not. What is left after
 10
 
-all three is one wide-budget lead: the exhaustive arm over SyGMa, an ordering result on a
+stored drawing it did not. What is left after
+all three is one wide-budget lead: the exhaustive arm over SyGMa, an ordering result on a
 comparator whose own rules are largely inside
 this bank. That lead also survives the one test
 the comparator’s own settings allow. SyGMa’s
@@ -955,8 +953,8 @@ rows are reported, because the deployed one is
 what a user gets and the wide one is what the
 comparator can do. The verdict is the one the
 matched-length control reaches by truncating
-the longer list, arrived at here by lengthening
 
+the longer list, arrived at here by lengthening
 the shorter one.
 Against MetaTox alone, the incumbent web
 service this work set out to replace, the exhaustive mode leads at all nine budgets and separates
@@ -998,10 +996,10 @@ alone, from the filter’s alone and from their product, by +0.1083, +0.1459 and
 separates from a baseline this literature does not
 report, and which every learned ranker over (substrate, candidate) pairs competes with whether
 or not it is reported: similarity to the substrate,
-which needs no training and no labels. The
 11
 
-fusion beats it by +0.2947 [+0.2484, +0.3455]
+which needs no training and no labels. The
+fusion beats it by +0.2947 [+0.2484, +0.3455]
 at every budget on both populations. The
 substrate-specific part of the rule choice is worth
 less than either. Against the same number of
@@ -1038,12 +1036,13 @@ test.
 
 3.3
 
+convention fixed. The verdict moves at up to 6
 of 9 budgets (Table 5).
 At k = 15 the margin between GRAIL’s better
 arm and the strongest comparator runs from
-−0.1009 under canonical SMILES equality to
-+0.0346 under the full InChIKey. That is a range
-of 0.1355, and the sign of the conclusion changes
+−0.1009 under a Tanimoto of one to +0.0346
+under the full InChIKey. That is a range of
+0.1355, and the sign of the conclusion changes
 with it. That range is the claim. The cellby-cell verdicts in the table are read from percomparison intervals with no correction across
 the grid. The count of budgets at which a verdict
 moves is therefore the weaker of the two readings,
@@ -1054,11 +1053,11 @@ convention. Under two of the 5 criteria GRAIL
 leads at no budget at all, and the most any
 criterion yields is three.
 The criterion this paper reports is not the one
-that flatters it. Ordered by how many budgets
-each yields a lead, the tautomer-aware key sits
-4 of 5: it gives two against the three available,
-so the reported criterion is nearer the bottom of
-that order than the top. It was chosen because
+that flatters it. The tautomer-aware key yields
+a lead at two budgets against the three that the
+full InChIKey yields, so a stricter identifier than
+the one reported here would have produced one
+more lead than it does. It was chosen because
 the references carry no stereochemistry and do
 not distinguish tautomers, not because of what
 it returns.
@@ -1084,7 +1083,6 @@ the criterion changes what counts as a hit and
 never what is ranked. A single cell from this
 grid, reported without its criterion, would have
 supported almost any claim about which system
-is better.
 
 How much of the verdict is
 the criterion
@@ -1095,10 +1093,14 @@ literature leaves unstated. It is an argument
 about published numbers, and it applies to ours.
 The whole comparison is recomputed under each
 of the 5 declared criteria, holding the population, the arms, the ranking and the parent-drop
-convention fixed. The verdict moves at up to 6
 12
 
-3.4
+is better.
+
+3.4
+
+tion comes from the learned stages rather than
+from the rule.
 
 Whether the named site is
 the site that changed
@@ -1141,7 +1143,6 @@ so the part of the bank with no expert provenance is what carries this molecule;
 found instead by a curated template, rule 251,
 and at rank 32 rather than 18. Which templates
 carry a molecule is itself a function of how the
-molecule is drawn, and Figure 2 shows both.
 
 Every prediction names the transformation rule
 that produced it and the site at which it fired. A
@@ -1181,9 +1182,7 @@ also depends on the template. 10.8% of the
 parseable templates have three reactant atoms
 or fewer, and 11 of the twenty highest-ranked
 candidates in the worked example come from
-templates that small, where the site discrimination comes from the learned stages rather than
-from the rule.
-13
+templates that small, where the site discrimina13
 
 where the four annotated metabolites land,
 under each drawing of the substrate
@@ -1248,6 +1247,9 @@ Figure 2: The worked example. Left: the substrate as a chemist draws it, with ea
 firing rule reported shaded in the colour of its transformation. Right: the rank of each of the four
 annotated metabolites in each arm’s returned list, every returned candidate drawn as a tick, under
 both drawings of the substrate.
+molecule is drawn, and Figure 2 shows both.
+
+undecided.
 
 3.6
 
@@ -1257,20 +1259,18 @@ Which design choices were selected on which population
 
 Runtime
 
-Standardisation is the binding constraint (Figure 3). Three other explanations were tested and
-rejected by measurement: the filter’s maximumcommon-substructure step, rule application, and
-substrate size as an axis. The cause was product standardisation, at 13.9 times the remaining
-work, run once per product of every template;
-a cache had concealed it, a repeated substrate
-running many times faster.
+Standardisation is the binding constraint (Section S32). Three other explanations were
+tested and rejected by measurement: the filter’s maximum-common-substructure step, rule
+application, and substrate size as an axis, which
+Figure 3 plots against generator seconds. The
+cause was product standardisation, at 13.9 times
+the remaining work, run once per product of
+every template; a cache had concealed it, a repeated substrate running many times faster.
 Two registered predictions followed. Moving
 standardisation to surviving candidates (P8)
 freed recall but failed on time, 2.95× against a
 registered 10×: removing most of the work does
 not remove most of the time once the remainder
-is the new majority. Adding a tautomer enumeration budget of 200 (P9) passes both halves,
-taking the median from 49.85 s to 5.28 s against
-a registered target below ten, at a recall loss of
 
 Every deployed choice is a registered hypothesis
 with a threshold and a falsification condition,
@@ -1284,8 +1284,6 @@ are stated with their thresholds, so that a later
 result on any of them cannot rest on a threshold
 chosen afterwards. Section 5 states which of
 the seven confirmations a stricter reading leaves
-undecided.
-
 14
 
 231.01
@@ -1360,6 +1358,9 @@ with the substrates that did not finish inside the 600-second deadline drawn on 
 marking it. Right: wall-clock seconds per substrate for each operating mode on the validation
 split, log scale; the first four bars are the interactive mode’s median, mean, ninetieth percentile and
 slowest substrate, the fifth the exhaustive mode’s median.
+is the new majority. Adding a tautomer enumeration budget of 200 (P9) passes both halves,
+taking the median from 49.85 s to 5.28 s against
+a registered target below ten, at a recall loss of
 −0.0015 against a cap of 0.01. The two arms
 ran under different machine loads; correcting
 for that puts the median at 9.12 s, still below
@@ -1375,17 +1376,41 @@ times it.
 
 3.8
 
-moves with the instrument. It carries no resampling interval: it is a census of this population
-under one instrument, and the census keeps its
-counters per shard rather than per substrate, so
-what is reported beside it is the spread across
-instruments and not across resamples. The remainder divides by the reaction-centre change
-it requires: 337 need a transformation type the
-bank does not hold, 98 need a type it holds
-whose rule did not fire, and 40 cannot be typed.
+with hydrogens implicit; a loop and a hydrogen
+convention together are the instrument, and the
+bound moves with it. A second loop, which
+audits both conventions from one code path,
+counts 477 under that same convention, and
+four counts of this bound exist in all. They are
+set out below rather than left for a reader to
+discover, because the number the rest of this
+section is about is the one that moves with the
+instrument. It carries no resampling interval:
+it is a census of this population under one instrument, and the census keeps its counters per
+shard rather than per substrate, so what is reported beside it is the spread across instruments
+and not across resamples. The remainder divides by the reaction-centre change it requires:
+337 need a transformation type the bank does
+not hold, 98 need a type it holds whose rule did
+not fire, and 40 cannot be typed. Those 337 are
+0.7095 of the 475, the upper end of the bound
+this paper states on how much of the shortfall is
+chemistry the corpus never contains; the lower
+end, 0.6253, is derived from the marginals and
+both counts are in Section S18.
 The coverage figure is what orients the two
 directions this work could go next, so it is worth
-putting beside the recall. On the comparison set
+
+The ceiling, and how much of
+it is the corpus
+
+Applying the whole bank to every test substrate
+recovers 0.8171 of references in one step, under
+the same tautomer-aware matching criterion the
+comparison defaults to and on the same evaluated test set, leaving 475 uncovered. That count
+is measured through the firing loop a caller runs,
+15
+
+putting beside the recall. On the comparison set
 the ceiling is 0.8105 and the exhaustive arm at a
 budget of fifty reaches 0.7023, which is 86.7% of
 what the bank can reach. The headroom a better
@@ -1398,22 +1423,7 @@ of one template and not one enzymatic step,
 which matters for how the number reads. The
 annotation itself is not all single steps: applying the composite instruments to the references
 rather than to the templates, 404 of the 2,575
-
-The ceiling, and how much of
-it is the corpus
-
-Applying the whole bank to every test substrate
-recovers 0.8171 of references in one step, under
-the same tautomer-aware matching criterion the
-comparison defaults to and on the same evaluated test set, leaving 475 uncovered. A second
-loop measuring the same hydrogen convention
-counts 477, and four counts of this bound exist
-in all; they are set out below rather than left
-for a reader to discover, because the number
-the rest of this section is about is the one that
-15
-
-pairs those instruments can type, 15.7%, are
+pairs those instruments can type, 15.7%, are
 flagged as reached in more than one turnover
 and recorded by the corpus as one pair. That is
 what the instruments flag rather than a count
@@ -1437,25 +1447,27 @@ both conventions from one code path, implicit
 hydrogens leave 477 uncovered and hydrogens
 made explicit with the templates completed to
 match leave 469. Choosing the convention per
-template, which no caller can request, leaves 460.
-A fourth arm, hydrogens made explicit without
-completing the templates, is an incomplete loop
-rather than a convention and reaches only 688;
+template, which no caller can request, leaves
+460. A fourth arm, hydrogens made explicit
+without completing the templates, is an incomplete loop rather than a convention and leaves
+688 uncovered, more than any of the other three;
 the instrument’s own record excludes it.
 The first two are the same convention measured through two different loops, and they disagree by two references because the two loops
-clean products differently. All four span 17 references, 24.2% of 0.0271, which is the narrowest
-margin that separates from zero anywhere in
-the comparison table, so the choice of instrument cannot decide a claim here. The residual dependence of the bound on the convention, measured per template, is 0.0035, 95% CI
-[0.0015, 0.0058], an interval excluding zero: the
-bound is convention-dependent, by 9 references
-in 2,597.
+clean products differently. All four span 17 ref-
+
+erences of 2,597, which is 0.0065 of recall and
+so 24.2% of 0.0271, the narrowest margin that
+separates from zero anywhere in the comparison table, so the choice of instrument cannot
+decide a claim here. The residual dependence
+of the bound on the convention, measured per
+template, is 0.0035, 95% CI [0.0015, 0.0058], an
+interval excluding zero: the bound is conventiondependent, by 9 references in 2,597.
 Relaxing the convention-dependent primitives
 in the templates recovers three of the 98, moving
 the ceiling by +0.0012. An informal estimate
 made before the run put it at about eight; that
 estimate is not one of the registered predictions
 and the register says so, so the gap between eight
-
 and three is reported and carries no verdict.
 The 337 misses of absent type collapse into
 312 distinct types, of which 294 occur once and
@@ -1487,13 +1499,6 @@ largest reaction library we hold. Typing 42,554
 retrosynthetic templates 32,33 in the metabolic direction gives 9,885 types, of which 14 are among
 the 312 missing, carrying 18 of the 337 misses.
 The control that makes this readable: bank and
-library share 308 types, so the two vocabularies
-do intersect and the reading is not of two incomparable formalisms. It is a thin intersection,
-308 of the bank’s 4,417 types, and it establishes
-commensurability rather than measuring it; a
-larger shared vocabulary would make the 14 a
-tighter statement than it is.
-
 16
 
 337
@@ -1564,6 +1569,12 @@ synthetic templates could supply. Right: the share of the novel-type gap sitting
 once, against four definitions of a type; the label above each bar is that share and the count under
 each tick is how many distinct types the definition yields. The hatched bars are the definitions
 under which a type still names a transformation, so the distinction does not rest on colour.
+library share 308 types, so the two vocabularies
+do intersect and the reading is not of two incomparable formalisms. It is a thin intersection,
+308 of the bank’s 4,417 types, and it establishes
+commensurability rather than measuring it; a
+larger shared vocabulary would make the 14 a
+tighter statement than it is.
 
 4
 
@@ -1574,6 +1585,15 @@ Discussion
 Where the advantage is, and
 where it is not
 
+recovers more of the annotated metabolites than
+any other method here, including two published
+since. A chemist reading a short list is working
+at exactly those budgets. That a rule set of
+this size is not beaten at the head of the list by
+any of the systems here, two of them released
+since, is worth stating plainly. It is visible only
+because the budget is swept. At a budget of fifty
+the same table has this work’s exhaustive arm
 ahead of SyGMa by +0.191, and ahead of every
 comparator by at least +0.0752: the ordering
 at the head of the list reverses.
@@ -1599,15 +1619,6 @@ The first half of that is a result about the field
 and not about this system. SyGMa is the oldest
 and by far the smallest method in the comparison, 175 published rules against this bank’s
 7,581, and at every budget of five or fewer it
-recovers more of the annotated metabolites than
-any other method here, including two published
-since. A chemist reading a short list is working
-at exactly those budgets. That a rule set of
-this size is not beaten at the head of the list by
-any of the systems here, two of them released
-since, is worth stating plainly. It is visible only
-because the budget is swept. At a budget of fifty
-the same table has this work’s exhaustive arm
 
 4.2
 
@@ -1618,7 +1629,9 @@ the service answers at rather than by a default.
 Below about ten candidates the interactive mode
 is the right setting and the faster of the two by
 the margin Figure 3 reports; against MetaTox it
-even leads at k = 10, +0.0451 [0.0031, 0.0860],
+17
+
+even leads at k = 10, +0.0451 [0.0031, 0.0860],
 one of the four leads the family-wise correction
 removes.
 Beyond a short list that setting is the weaker
@@ -1627,10 +1640,6 @@ ranking. It returns 15.6 candidates on average
 against MetaTox’s 33.6, and at k = 20 already
 237 of its 291 lists are shorter than the budget; a
 list that has ended cannot gain a hit from a wider
-17
-
-4.4
-
 window, so the deficit grows with k whatever the
 order within it. It trails MetaTox at every budget above fifteen, −0.1113 [−0.1523, −0.0706] at
 30 and −0.1368 [−0.1846, −0.0917] at 50, both
@@ -1655,6 +1664,13 @@ and it is why the next property matters more
 than the recall figure does.
 
 4.3
+
+order their whole output, and this system is one
+more that does. What is left, and it is the property this paper rests on, is that every evaluation
+choice is declared with every cell of the resulting
+grid reported.
+
+4.4
 
 What the numbers do not
 support
@@ -1692,7 +1708,6 @@ discipline doing its work, or as a measure of
 how easily an undeclared setting survives even
 in a paper whose subject is undeclared settings.
 The second reading is why the first is worth
-reporting.
 
 What is and is not distinctive
 
@@ -1704,23 +1719,21 @@ type and a site of metabolism 5 , so reporting one
 is the norm rather than a contribution. Checking it against the atoms that actually changed,
 against a null of the same size, is not done anywhere in this literature that we can find, and
 Section 3.4 is that check. Ordering is not a differentiator either: three of the five comparators
-order their whole output, and this system is one
-more that does. What is left, and it is the property this paper rests on, is that every evaluation
-choice is declared with every cell of the resulting
-grid reported.
-
 18
 
-4.5
+reporting.
 
-The ceiling bounds this formulation, not the task
+4.5
 
-pus is assembled from the four sources this field
+tion is documented. What makes the narrower
+statement worth having anyway is that this corpus is assembled from the four sources this field
 trains on, so a bank mined from any of them
 inherits the same absence unless the assembly is
 changed. The claim is about a training corpus
 and about the practice of mining it, not about
 metabolism.
+
+The ceiling bounds this formulation, not the task
 
 The shortfall is a property of the corpus the
 templates are mined from, and it is measured
@@ -1760,8 +1773,7 @@ close the shortfall, because the chemistry is not
 in it. It does not say what fraction of human
 metabolism is of a type no corpus contains, and
 it cannot, because that would need a corpus
-whose assembly is recoverable and whose selection is documented. What makes the narrower
-statement worth having anyway is that this cor-
+whose assembly is recoverable and whose selec-
 
 5
 
@@ -1794,11 +1806,11 @@ The register is weaker than its count of confirmations suggests. Three of the si
 predictions clear the falsification condition as
 written, which compares a point estimate to a
 threshold, and not the stricter reading that asks
-the whole interval to clear it. P1 and P2 have
-their threshold inside their own interval, and
 19
 
-so does P5. What the data establish for those
+the whole interval to clear it. P1 and P2 have
+their threshold inside their own interval, and
+so does P5. What the data establish for those
 three is that the effect exceeds zero, not that it
 exceeds the registered bar. P5 is weaker again,
 and the register is what shows it: its threshold
@@ -1830,21 +1842,23 @@ validation draw at every budget from one to 20,
 with the interval excluding zero, which includes
 the budget the headline is read at (Section S20).
 The release keeps the noisy-or because every
-number here is measured under it and switching would leave the paper describing a system
-nobody ran; the choice is a parameter rather
-than a retraining, so a reader who prefers the
-blend can make it. GLORYx is the one arm
-not run on this machine: the models it needs
-are not distributed with its source, so its column comes from the service its authors operate
-(Section S34). Stereochemistry and protonation
-are bounded rather than priced. 36.1% of annotated pairs produce a metabolite carrying a
-stereogenic element its substrate does not have,
+number here is measured under it and switching
+would leave the paper describing a system nobody ran; the choice is a parameter rather than a
+retraining, so a reader who prefers the blend can
+make it. GLORYx is the one arm not run on this
+machine: the models it needs are not distributed
+with its source, so its column comes from the
+service its authors operate (Section S34). Stereochemistry and protonation are bounded rather
+than priced. 36.1% of annotated pairs produce
 
-and 7.8% of annotated metabolites carry a formal charge. The criterion sweep cannot price a
-configuration-aware criterion, because two of its
-five settings return the identical verdict at every
-budget: the annotation has no configuration for
-them to disagree about (Section S13).
+a metabolite carrying a stereogenic element its
+substrate does not have, and 7.8% of annotated
+metabolites carry a formal charge. The criterion sweep cannot price a configuration-aware
+criterion, because no reference in this corpus
+carries a configuration for one to read. What
+separates the two settings that differ in that
+layer, on this annotation, is protonation and not
+stereochemistry (Section S13).
 No measurement of a system here is external. Every figure is measured on one corpus
 assembled from four sources, of which the only
 published reference set is one of the four, so a
@@ -1878,12 +1892,12 @@ That null holds a drug’s emissions fixed but
 not an arm’s, so it cannot say at what level the
 association lives. Removing the additive arm
 and drug effects from both sides leaves 0.1891:
-the association is mostly between the arms and
-does not vanish inside them, and between the
-arms is in any case the level a benchmark orders
 20
 
-at. The axis is counted from the deposited
+the association is mostly between the arms and
+does not vanish inside them, and between the
+arms is in any case the level a benchmark orders
+at. The axis is counted from the deposited
 files and not reconstructed from recall, which
 matters, since recall would otherwise enter the
 axis by construction (Section S33). It is not
@@ -1899,6 +1913,9 @@ the same, to declare the axis and vary it.
 
 6
 
+and the rest are statements about emission. The
+class-by-class reading says the same from the
+other side: the aggregate advantage is carried by
 unusual cleavages and by transformations this
 vocabulary cannot name, and on several classical functionalisations this system is not the best
 arm and is sometimes beaten by its own cheaper
@@ -1941,9 +1958,6 @@ leader depending on decisions its author never
 had to state. Held to the stricter test the same
 argument demands, every arm cut to the comparator’s own list length on every substrate, one
 of the wide-budget leads is an ordering result
-and the rest are statements about emission. The
-class-by-class reading says the same from the
-other side: the aggregate advantage is carried by
 
 Supporting
 Available
@@ -1968,11 +1982,11 @@ both swept; the architecture, training and every setting of both learned stages;
 site a prediction names is the site that changed;
 what each method recovers split by transformation class; whether the missing chemistry is the
 corpus’s or the bank’s, and whether template
-discovery has saturated; how much of the annotation is one enzymatic step; the sixteen registered predictions including the six not reported
-here; group ranking and its oracle, and when a
-21
+discovery has saturated; how much of the anno21
 
-ranking comparison can measure anything; the
+tation is one enzymatic step; the sixteen registered predictions including the six not reported
+here; group ranking and its oracle, and when a
+ranking comparison can measure anything; the
 stage ablations; the choice of evaluation population; the worked example on both drawings;
 runtime methodology; comparator versions and
 digests; the evaluation claim checked against
@@ -1981,6 +1995,8 @@ and reproduction procedure.
 
 7
 
+licence is settled by not redistributing them: the
+deposit carries no source structure. What is released instead is the evaluated test substrates as
 structures and their annotated metabolites as
 the descriptors the matching criteria are decided
 by, which lets a reader without those licences recompute every recall figure and every cell of the
@@ -2005,7 +2021,7 @@ redistribution with attribution and reserves permission for commercial use, so t
 drops them as a courtesy rather than an obligation and 6,970 ship. The removal is free: every
 reference those templates reach is reached by another in the bank. Dropping them from the bank
 is not the same as not carrying them, and of
-1,066 tracked files four hold at least one, which
+1,067 tracked files four hold at least one, which
 a check reports rather than the repository asserting otherwise. The repository’s licence is the
 GNU General Public License, version 3, which
 is what the GPL and LGPL templates the bank
@@ -2014,8 +2030,6 @@ GPL templates permit rather than a preference,
 and NOTICE.md carries the decisions file by file.
 The corpus, whose four sources and versions
 Section 2.1 names, is not redistributed as a corpus: ShareAlike and NonCommercial terms cannot both be satisfied by one derivative, so its
-licence is settled by not redistributing them: the
-deposit carries no source structure. What is released instead is the evaluated test substrates as
 
 8
 
@@ -2043,12 +2057,15 @@ is stated in the Supporting Information.
 
 References
 (1) Ridder, L.; Wagener, M. SyGMa: Combining Expert Knowledge and Empirical
-Scoring in the Prediction of Metabolites.
-ChemMedChem 2008, 3, 821–832.
-
 22
 
-(2) Djoumbou-Feunang, Y.; Fiamoncini, J.;
+Scoring in the Prediction of Metabolites.
+ChemMedChem 2008, 3, 821–832.
+
+model for drug metabolite prediction. Artificial Intelligence in the Life Sciences
+2025, 8, 100142.
+
+(2) Djoumbou-Feunang, Y.; Fiamoncini, J.;
 Gil-de-la Fuente, A.; Greiner, R.; Manach, C.; Wishart, D. S. BioTransformer:
 a comprehensive computational tool for
 small molecule metabolism prediction and
@@ -2057,11 +2074,6 @@ metabolite identification. Journal of Cheminformatics 2019, 11 .
 (9) Zhou, Y.; Jiang, D.; Wei, X.; Yi, J.;
 Wang, Y.; Deng, Y.; Cao, D. DeepMetab:
 a comprehensive and mechanistically informed graph learning framework for endto-end drug metabolism prediction. Chemical Science 2025, 16, 18884–18902.
-(10) Zhou, Y.; Yang, S.; Wang, X.; He, Y.;
-Tian, Y.; Yi, J.; Wang, Y.; Deng, Y.;
-Jiang, D.; Cao, D. DeepCYP: an integrated deep learning web server for the
-holistic “pathway-site product” prediction
-of CYP450 metabolism. Nucleic Acids Research 2026, 54, W22–W32.
 
 (3) de Bruyn Kops, C.; Stork, C.; Šı́cho, M.;
 Kochev, N.; Svozil, D.; Jeliazkova, N.;
@@ -2071,15 +2083,20 @@ Metabolites Based on Predicted Sites of
 Metabolism. Frontiers in Chemistry 2019,
 7, 402.
 
-(11) Chavan, S. Metabolite-Gen: Joint Prediction of Sites of Metabolism, Reaction
-Class, and Metabolite Structures Using
-Graph Neural Networks. 2026; ChemRxiv
-preprint, posted 6 May 2026.
+(10) Zhou, Y.; Yang, S.; Wang, X.; He, Y.;
+Tian, Y.; Yi, J.; Wang, Y.; Deng, Y.;
+Jiang, D.; Cao, D. DeepCYP: an integrated deep learning web server for the
+holistic “pathway-site product” prediction
+of CYP450 metabolism. Nucleic Acids Research 2026, 54, W22–W32.
 
 (4) de Bruyn Kops, C.; Šı́cho, M.; Mazzolari, A.; Kirchmair, J. GLORYx: Prediction of the Metabolites Resulting from
 Phase 1 and Phase 2 Biotransformations
 of Xenobiotics. Chemical Research in Toxicology 2021, 34, 286–299.
 
+(11) Chavan, S. Metabolite-Gen: Joint Prediction of Sites of Metabolism, Reaction
+Class, and Metabolite Structures Using
+Graph Neural Networks. 2026; ChemRxiv
+preprint, posted 6 May 2026.
 (12) Boyce, M.; Meyer, B.; Grulke, C.;
 Lizarraga, L.; Patlewicz, G. Comparing
 the performance and coverage of selected
@@ -2095,6 +2112,8 @@ Lagunin, A. A.; Filimonov, D. A.;
 Poroikov, V. V. MetaTox: Web Application for Predicting Structure and Toxicity of Xenobiotics’ Metabolites. Journal of
 Chemical Information and Modeling 2017,
 57, 638–642.
+(6) Litsa, E. E.; Das, P.; Kavraki, L. E. Prediction of drug metabolites using neural machine translation. Chemical Science 2020,
+11, 12777–12788.
 
 (13) Scholz, V.-A.; Stork, C.; Frericks, M.;
 Kirchmair, J. Computational prediction
@@ -2102,32 +2121,29 @@ of the metabolites of agrochemicals formed
 in rats. Science of The Total Environment
 2023, 895, 165039.
 
-(6) Litsa, E. E.; Das, P.; Kavraki, L. E. Prediction of drug metabolites using neural machine translation. Chemical Science 2020,
-11, 12777–12788.
+(7) Zhu, K.; Huang, M.; Wang, Y.; Gu, Y.;
+Li, W.; Liu, G.; Tang, Y. MetaPredictor: in silico prediction of drug metabolites based on deep language models with
+prompt engineering. Briefings in Bioinformatics 2024, 25 .
 
 (14) Gao, L.; Yan, S.; Feng, K.; Liu, H.;
 Zhang, Z.; Diao, X. Benchmarking In Silico
 Metabolite Prediction Tools against Human Radiolabeled ADME Data for SmallMolecule Drugs. Journal of Chemical Information and Modeling 2026, 66, 2918–2928.
 
-(7) Zhu, K.; Huang, M.; Wang, Y.; Gu, Y.;
-Li, W.; Liu, G.; Tang, Y. MetaPredictor: in silico prediction of drug metabolites based on deep language models with
-prompt engineering. Briefings in Bioinformatics 2024, 25 .
-
-(15) Ash, J. R.; Wognum, C.; Rodrı́guezPérez, R.; Aldeghi, M.; Cheng, A. C.;
-Clevert, D.-A.; Engkvist, O.; Fang, C.;
-Price, D. A.; Hughes-Oliver, J. M.; Walters, W. P. Practically Significant Method
-Comparison Protocols for Machine Learning in Small Molecule Drug Discovery.
-
 (8) Larsson, S.; Carlsson, M.; Beckmann, R.;
 Miljković, F.; Mercado, R. LAGOM:
 A transformer-based chemical language
-model for drug metabolite prediction. Artificial Intelligence in the Life Sciences
-2025, 8, 100142.
+
+(15) Ash, J. R.; Wognum, C.; Rodrı́guezPérez, R.; Aldeghi, M.; Cheng, A. C.;
+Clevert, D.-A.; Engkvist, O.; Fang, C.;
 
 23
 
-Journal of Chemical Information and Modeling 2025, 65, 9398–9411.
+Price, D. A.; Hughes-Oliver, J. M.; Walters, W. P. Practically Significant Method
+Comparison Protocols for Machine Learning in Small Molecule Drug Discovery.
+Journal of Chemical Information and Modeling 2025, 65, 9398–9411.
 
+(24) Cormack, G. V.; Clarke, C. L. A.;
+Buettcher, S. Reciprocal rank fusion outperforms condorcet and individual rank
 learning methods. Proceedings of the 32nd
 International ACM SIGIR Conference on
 Research and Development in Information
@@ -2206,11 +2222,6 @@ V2. Journal of Chemical Information and
 Modeling 2020, 60, 1253–1275.
 
 (31) Jacob, R. A.; Mazzolari, A.; Kirchmair, J. Automated Annotation of Sites of
-Metabolism from Biotransformation Data.
-Journal of Chemical Information and Modeling 2025, 65, 7065–7080.
-
-(24) Cormack, G. V.; Clarke, C. L. A.;
-Buettcher, S. Reciprocal rank fusion outperforms condorcet and individual rank
 24
 
 Table 1: The two operating modes: rules applied, candidates returned and wall-clock time.
@@ -2252,6 +2263,8 @@ The interactive mode’s own slowest substrate,
 answering a form should impose a deadline and
 fall back rather than assume the median.
 
+Metabolism from Biotransformation Data.
+Journal of Chemical Information and Modeling 2025, 65, 7065–7080.
 (32) Maziarz, K.; Tripp, A.; Liu, G.; Stanley, M.; Xie, S.; Gaiński, P.; Seidl, P.;
 Segler, M. H. S. Re-evaluating retrosynthesis algorithms with Syntheseus. Faraday
 Discussions 2025, 256, 568–586.

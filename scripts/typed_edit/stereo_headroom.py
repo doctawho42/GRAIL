@@ -2,10 +2,18 @@
 """How much of the annotation a configuration-aware criterion could distinguish at all.
 
 The manuscript states that its sweep over matching criteria bounds what a stereochemistry-aware
-criterion would cost. It cannot. Two of the five criteria differ only in the stereochemistry layer
-and they return the identical verdict at every budget, for the reason the sweep itself gives: no
-reference in this corpus carries stereochemistry, so the axis has no variation on it to measure. A
-sweep in which the stereo-sensitive and stereo-blind settings cannot disagree bounds nothing.
+criterion would cost. It cannot, for the reason the sweep itself gives: no reference in this
+corpus carries stereochemistry, so the axis has no variation on it to measure, and a sweep whose
+settings cannot disagree about configuration bounds nothing about configuration.
+
+What this docstring said before, and what the manuscript printed from it, was that two of the five
+criteria differ only in the stereochemistry layer and return the identical verdict at every budget.
+Both halves are wrong. The full InChIKey and its first block differ at an output budget of
+twenty and again in reference count, and the SI traces that difference to a thiol and thiolate
+merging under the skeleton hash, which is protonation. The first block is charge- and
+isotope-blind as well as stereo-blind, so the two do not differ only in that layer. The pairs that
+are identical at every budget are canonical SMILES equality with a Tanimoto of one, and the
+stereo-blind first block with the tautomer-aware key.
 
 What can be bounded is the size of the question. A configuration-aware criterion can only
 distinguish a prediction from a reference where the reference has a configuration to carry, so the

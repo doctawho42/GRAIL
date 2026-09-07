@@ -3,7 +3,7 @@
   "script": "disclosure_inventory.py",
   "script_path": "scripts/disclosure_inventory.py",
   "source_sha256": "f3187b4f867cc7570b771b0b2a1c6ddde31da7fb66276177cfc66627e6774494",
-  "git_commit": "b171c72d15eec8af66f2fcb440d87fdd4156c657",
+  "git_commit": "943e96a82d5cdcad240f9f5f739df6bbd7e8d861",
   "git_dirty": true
  },
  "reviewed_and_accepted": [
@@ -335,6 +335,27 @@
     "paper2/body.tex"
    ],
    "reason": "reworded while resolving referents in the eight-lens readability pass: 'this population' names the comparison set, 'that rule' names the emission rule, 'the rule this work released' names the aggregation, and the pronoun whose subject was BioTransformer names it"
+  },
+  {
+   "text": "The validation draw is a declared sample of N substrates at seed N , of which N are held by both operating modes in a paired comparison; registered ranking and timing thresholds are checked here, because a threshold checked on the population whose rule it chose is not a check, and three of the ten r",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "two rewordings and one correction: the validation-draw sentence drops a fifth sense of 'rule', the four-instrument sentence prints the intermediate the conversion needed, and the criterion-sweep limitation keeps its claim while replacing a false reason (the two settings returning the identical verdict are canonical and Tanimoto, not the stereo pair, which differs at k=20) with the true one, that no reference in this corpus carries a configuration at all"
+  },
+  {
+   "text": "All four span N references, N of N , which is the narrowest margin that separates from zero anywhere in the comparison table, so the choice of instrument cannot decide a claim here",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "two rewordings and one correction: the validation-draw sentence drops a fifth sense of 'rule', the four-instrument sentence prints the intermediate the conversion needed, and the criterion-sweep limitation keeps its claim while replacing a false reason (the two settings returning the identical verdict are canonical and Tanimoto, not the stereo pair, which differs at k=20) with the true one, that no reference in this corpus carries a configuration at all"
+  },
+  {
+   "text": "The criterion sweep cannot price a configuration-aware criterion, because two of its five settings return the identical verdict at every budget: the annotation has no configuration for them to disagree about (Section )",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "two rewordings and one correction: the validation-draw sentence drops a fifth sense of 'rule', the four-instrument sentence prints the intermediate the conversion needed, and the criterion-sweep limitation keeps its claim while replacing a false reason (the two settings returning the identical verdict are canonical and Tanimoto, not the stereo pair, which differs at k=20) with the true one, that no reference in this corpus carries a configuration at all"
   }
  ],
  "question": "every sentence in which this work concedes something, recorded before a cut so that what a cut costs is visible rather than invisible",
@@ -364,8 +385,8 @@
     "paper2/body.tex"
    ]
   },
-  "the validation draw is a declared sample of substrates at seed of which are held by both operating modes in a paired comparison registered ranking and timing thresholds are checked here because a threshold checked on the population whose rule it chose is not a check and three of the ten reported predictions were in the event adjudicated on the comparison set instead which table marks": {
-   "text": "The validation draw is a declared sample of N substrates at seed N , of which N are held by both operating modes in a paired comparison; registered ranking and timing thresholds are checked here, because a threshold checked on the population whose rule it chose is not a check, and three of the ten r",
+  "the validation draw is a declared sample of substrates at seed of which are held by both operating modes in a paired comparison registered ranking and timing thresholds are checked here because a threshold checked on the population that chose the setting it tests is not a check and three of the ten reported predictions were in the event adjudicated on the comparison set instead which table marks": {
+   "text": "The validation draw is a declared sample of N substrates at seed N , of which N are held by both operating modes in a paired comparison; registered ranking and timing thresholds are checked here, because a threshold checked on the population that chose the setting it tests is not a check, and three ",
    "in": [
     "paper2/body.tex"
    ]
@@ -628,8 +649,8 @@
     "paper2/body.tex"
    ]
   },
-  "all four span references of which is the narrowest margin that separates from zero anywhere in the comparison table so the choice of instrument cannot decide a claim here": {
-   "text": "All four span N references, N of N , which is the narrowest margin that separates from zero anywhere in the comparison table, so the choice of instrument cannot decide a claim here",
+  "all four span references of which is of recall and so of the narrowest margin that separates from zero anywhere in the comparison table so the choice of instrument cannot decide a claim here": {
+   "text": "All four span N references of N , which is N of recall and so N of N , the narrowest margin that separates from zero anywhere in the comparison table, so the choice of instrument cannot decide a claim here",
    "in": [
     "paper2/body.tex"
    ]
@@ -754,8 +775,8 @@
     "paper2/body.tex"
    ]
   },
-  "the criterion sweep cannot price a configuration aware criterion because two of its five settings return the identical verdict at every budget the annotation has no configuration for them to disagree about section": {
-   "text": "The criterion sweep cannot price a configuration-aware criterion, because two of its five settings return the identical verdict at every budget: the annotation has no configuration for them to disagree about (Section )",
+  "the criterion sweep cannot price a configuration aware criterion because no reference in this corpus carries a configuration for one to read": {
+   "text": "The criterion sweep cannot price a configuration-aware criterion, because no reference in this corpus carries a configuration for one to read",
    "in": [
     "paper2/body.tex"
    ]

@@ -967,8 +967,13 @@ def build():
     n["headroom.share"] = round(dep["recall_micro"]["50"]["whole bank"] / _ds, 4)
 
     # What a configuration-aware matching criterion could distinguish at all, which the criterion
-    # sweep cannot bound: two of its five settings differ only in the stereochemistry layer and
-    # return the identical verdict at every budget, because the annotation carries none.
+    # sweep cannot bound, because no reference in this corpus carries a configuration for one to
+    # read. An earlier reading of this said the two settings differing in the stereochemistry
+    # layer return the identical verdict at every budget, and the manuscript printed it. They do
+    # not: the full InChIKey leads at k=20 where its first block does not, and what separates them
+    # on this annotation is protonation, one thiol and thiolate. The two settings that ARE
+    # identical at every budget are canonical SMILES equality and a Tanimoto of one, neither of
+    # which is configuration-aware.
     sh = art("stereo_headroom.json")
     n["stereo.pairs"] = sh["population"]["typed"]
     n["stereo.centre"] = sh["references_gaining_a_tetrahedral_centre"]
@@ -1652,14 +1657,33 @@ def build():
     lead = {c: sum(1 for k in KSW
                    if cs["by_criterion"][c]["verdict_by_budget"][str(k)] == "leads")
             for c in cs["criteria"]}
-    order = sorted(cs["criteria"], key=lambda c: lead[c])
-    gaps = sorted(cs["by_criterion"][c]["margin_by_budget"]["15"]["gap"] for c in cs["criteria"])
+    # How each criterion is named in prose, so a number carrying a criterion's value can carry
+    # its name too. Sorting the values and dropping the labels is how the extreme margin at a
+    # budget came to be attributed in the manuscript to the wrong criterion: the lowest gap at
+    # fifteen is Tanimoto's and the text called it canonical SMILES equality.
+    CRIT_NAME = {"canonical": "canonical SMILES equality",
+                 "inchikey": "the full InChIKey",
+                 "inchi_no_stereo": "the stereochemistry-blind first block",
+                 "tanimoto1": "a Tanimoto of one",
+                 "inchikey_tautomer": "the tautomer-aware key"}
+    _unnamed = [c for c in cs["criteria"] if c not in CRIT_NAME]
+    if _unnamed:
+        raise SystemExit(f"criterion_sweep.json carries a criterion with no prose name here: "
+                         f"{', '.join(_unnamed)}")
+    _g15 = {c: cs["by_criterion"][c]["margin_by_budget"]["15"]["gap"] for c in cs["criteria"]}
+    _worst = min(_g15, key=_g15.get)
+    _best = max(_g15, key=_g15.get)
     n["crit.budgets"] = len(KSW)
     n["crit.criteria"] = len(cs["criteria"])
     n["crit.leads_default"] = lead[cs["reference_criterion"]]
     n["crit.leads_best"] = max(lead.values())
     n["crit.never_leads"] = sum(1 for c in lead if lead[c] == 0)
-    n["crit.default_rank"] = order.index(cs["reference_criterion"]) + 1
+    # No rank is emitted for the reported criterion. One was, computed from a fewest-leads-first
+    # sort, and the manuscript read it as a most-leads-first position: it said the reported key
+    # "sits 4 of 5 ... nearer the bottom of that order than the top" when 4 in that order is the
+    # second most permissive of the five. The two criteria at the top of the lead count are also
+    # tied, so the position was decided by the artifact's list order and not by the data. The lead
+    # counts below say what the rank was meant to say and cannot be read backwards.
 
     # The sweep's spread is driven by two criteria the paper itself declines to defend as defaults:
     # canonical SMILES equality tests whether two pipelines standardise alike, and Tanimoto of one
@@ -1677,9 +1701,12 @@ def build():
         if any(cs["by_criterion"][c]["verdict_by_budget"][str(k)] == "trails" for c in defensible))
     n["crit.leads_under_no_indefensible"] = sum(
         1 for c in cs["criteria"] if c not in DEFENSIBLE and lead[c] == 0)
-    n["crit.swing15"] = round(gaps[-1] - gaps[0], 4)
-    n["crit.worst15"] = gaps[0]
-    n["crit.best15"] = gaps[-1]
+    n["crit.swing15"] = round(_g15[_best] - _g15[_worst], 4)
+    n["crit.worst15"] = _g15[_worst]
+    n["crit.best15"] = _g15[_best]
+    n["crit.worst15name"] = CRIT_NAME[_worst]
+    n["crit.best15name"] = CRIT_NAME[_best]
+    n["crit.leadsbestname"] = CRIT_NAME[max(lead, key=lead.get)]
     n["crit.moved_max"] = max(cs["n_budgets_moving"].values())
 
     # the worked example, both arms
