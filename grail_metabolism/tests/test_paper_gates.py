@@ -54,6 +54,12 @@ GATES = [
     # the ignore rules name what the repository deposits, instead of being overridden by a
     # flag 372 times, which is how a released artifact goes missing from a release
     ("sync_tracked_artifacts.py", ["--check"]),
+    # The prose counts the register's verdicts. One verdict cell was weakened from a confirmation
+    # to a measurement and the two sentences that count confirmations were not, so the manuscript
+    # said seven where its own table said six, a page apart, and no gate could see it because a
+    # spelled-out word is invisible to the numbers gate.
+    ("check_register_tally.py", []),
+    ("check_register_tally.py", ["--self-test"]),
 ]
 
 

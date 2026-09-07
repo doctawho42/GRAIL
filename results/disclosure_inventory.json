@@ -3,7 +3,7 @@
   "script": "disclosure_inventory.py",
   "script_path": "scripts/disclosure_inventory.py",
   "source_sha256": "f3187b4f867cc7570b771b0b2a1c6ddde31da7fb66276177cfc66627e6774494",
-  "git_commit": "892692baa5ace8cd363d804d403fee61a6f78541",
+  "git_commit": "b171c72d15eec8af66f2fcb440d87fdd4156c657",
   "git_dirty": true
  },
  "reviewed_and_accepted": [
@@ -300,6 +300,41 @@
     "paper2/body.tex"
    ],
    "reason": "reworded in the readability pass, each still present: the ablations pointer now names the SI section instead of saying 'below', 'a budget of 30' is now 'an output budget of 30' because two different budgets take that value, the matched-length control is glossed where it is first named, and the output-size sentence moved only because the SI listing was relocated to the back matter"
+  },
+  {
+   "text": "N of the N MetaPredictor lists have ended by then, N of BioTransformer's and N of MetaTox's, against N of the exhaustive arm's; the interactive arm's have ended on N . So a row of that table compares orderings where the lists are still running and lengths where they are not, and the two cannot be se",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "the SI's short-list enumeration was completed from five arms to all seven, adding GLORYx and SyGMa; the sentence is reworded, not retracted"
+  },
+  {
+   "text": "The blend of Equation is better at the head of the list, by at most + N [+ N , + N ] at a budget of N . On this population it is indistinguishable from the deployed rule at every budget a lead is claimed at; on the validation draw it separates as far as N , which includes two of them, and that readi",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "reworded while resolving referents in the eight-lens readability pass: 'this population' names the comparison set, 'that rule' names the emission rule, 'the rule this work released' names the aggregation, and the pronoun whose subject was BioTransformer names it"
+  },
+  {
+   "text": "That rule does not transfer to a rank fusion, and the reason is structural: the worst candidate scores N of the best under fusion against N under the product, because a reciprocal-rank sum is a rank statistic without scale",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "reworded while resolving referents in the eight-lens readability pass: 'this population' names the comparison set, 'that rule' names the emission rule, 'the rule this work released' names the aggregation, and the pronoun whose subject was BioTransformer names it"
+  },
+  {
+   "text": "Every difference behind that division, with its paired interval, is Table . The table's last column is not a sixth system: it is the exhaustive arm's own pool re-ranked under the aggregation a selection on validation prefers, and it is printed because that selection went against the rule this work r",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "reworded while resolving referents in the eight-lens readability pass: 'this population' names the comparison set, 'that rule' names the emission rule, 'the rule this work released' names the aggregation, and the pronoun whose subject was BioTransformer names it"
+  },
+  {
+   "text": "It is not the lowest arm at the tight budgets, where MetaTox is",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "reworded while resolving referents in the eight-lens readability pass: 'this population' names the comparison set, 'that rule' names the emission rule, 'the rule this work released' names the aggregation, and the pronoun whose subject was BioTransformer names it"
   }
  ],
  "question": "every sentence in which this work concedes something, recorded before a cut so that what a cut costs is visible rather than invisible",
@@ -308,7 +343,7 @@
   "paper2/si.tex",
   "paper2/grail_jcim.tex"
  ],
- "n": 210,
+ "n": 211,
  "reading": "a disclosure counts as present if it survives in ANY of the sources: moving one to the Supporting Information shortens the manuscript without retracting anything, and deleting one shortens it by retracting something",
  "disclosures": {
   "a protocol tells an author what to declare a demonstration on generative metrics does not transfer to recall against an incomplete annotation where the axis that reorders methods is how many candidates each may emit and no analogue of it exists in distributional metrics": {
@@ -371,8 +406,8 @@
     "paper2/body.tex"
    ]
   },
-  "the blend of equation is better at the head of the list by at most at a budget of on this population it is indistinguishable from the deployed rule at every budget a lead is claimed at on the validation draw it separates as far as which includes two of them and that reading is in section equation is why deduplication is not a cosmetic step the key under which two products are judged the same decides which scores are combined and changing that key moves the ranking": {
-   "text": "The blend of Equation is better at the head of the list, by at most + N [+ N , + N ] at a budget of N . On this population it is indistinguishable from the deployed rule at every budget a lead is claimed at; on the validation draw it separates as far as N , which includes two of them, and that readi",
+  "the blend of equation is better at the head of the list by at most at a budget of on the comparison set it is indistinguishable from the deployed aggregation at every budget a lead is claimed at on the validation draw it separates out to an output budget of which takes in two of the budgets a lead is claimed at and that reading is in section equation is why deduplication is not a cosmetic step the key under which two products are judged the same decides which scores are combined and changing that key moves the ranking": {
+   "text": "The blend of Equation is better at the head of the list, by at most + N [+ N , + N ] at a budget of N . On the comparison set it is indistinguishable from the deployed aggregation at every budget a lead is claimed at; on the validation draw it separates out to an output budget of N , which takes in ",
    "in": [
     "paper2/body.tex"
    ]
@@ -419,8 +454,8 @@
     "paper2/body.tex"
    ]
   },
-  "that rule does not transfer to a rank fusion and the reason is structural the worst candidate scores of the best under fusion against under the product because a reciprocal rank sum is a rank statistic without scale": {
-   "text": "That rule does not transfer to a rank fusion, and the reason is structural: the worst candidate scores N of the best under fusion against N under the product, because a reciprocal-rank sum is a rank statistic without scale",
+  "that emission rule does not transfer to a rank fusion and the reason is structural the worst candidate scores of the best under fusion against under the product because a reciprocal rank sum is a rank statistic without scale": {
+   "text": "That emission rule does not transfer to a rank fusion, and the reason is structural: the worst candidate scores N of the best under fusion against N under the product, because a reciprocal-rank sum is a rank statistic without scale",
    "in": [
     "paper2/body.tex"
    ]
@@ -467,8 +502,8 @@
     "paper2/body.tex"
    ]
   },
-  "every difference behind that division with its paired interval is table the table s last column is not a sixth system it is the exhaustive arm s own pool re ranked under the aggregation a selection on validation prefers and it is printed because that selection went against the rule this work released section": {
-   "text": "Every difference behind that division, with its paired interval, is Table . The table's last column is not a sixth system: it is the exhaustive arm's own pool re-ranked under the aggregation a selection on validation prefers, and it is printed because that selection went against the rule this work r",
+  "every difference behind that division with its paired interval is table the table s last column is not a sixth system it is the exhaustive arm s own pool re ranked under the aggregation a selection on validation prefers and it is printed because that selection went against the aggregation this work released section": {
+   "text": "Every difference behind that division, with its paired interval, is Table . The table's last column is not a sixth system: it is the exhaustive arm's own pool re-ranked under the aggregation a selection on validation prefers, and it is printed because that selection went against the aggregation this",
    "in": [
     "paper2/body.tex"
    ]
@@ -479,8 +514,8 @@
     "paper2/body.tex"
    ]
   },
-  "it is not the lowest arm at the tight budgets where metatox is": {
-   "text": "It is not the lowest arm at the tight budgets, where MetaTox is",
+  "biotransformer is not the lowest arm at the tight budgets where metatox is and it is the arm a reader of the rule bank should look at hardest because it supplies of this bank s templates": {
+   "text": "BioTransformer is not the lowest arm at the tight budgets, where MetaTox is, and it is the arm a reader of the rule bank should look at hardest, because it supplies N of this bank's templates",
    "in": [
     "paper2/body.tex"
    ]
@@ -565,6 +600,12 @@
   },
   "which design choices were selected on which population every deployed choice is a registered hypothesis with a threshold and a falsification condition tested where it was not selected table": {
    "text": "Which design choices were selected on which population Every deployed choice is a registered hypothesis with a threshold and a falsification condition, tested where it was not selected (Table )",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "six are confirmed and three failed each on the falsification condition it was written with the tenth was measured rather than adjudicated because its threshold was fixed in advance and its population was not": {
+   "text": "Six are confirmed and three failed, each on the falsification condition it was written with; the tenth was measured rather than adjudicated, because its threshold was fixed in advance and its population was not",
    "in": [
     "paper2/body.tex"
    ]
@@ -911,8 +952,8 @@
     "paper2/si.tex"
    ]
   },
-  "of the metapredictor lists have ended by then of biotransformer s and of metatox s against of the exhaustive arm s the interactive arm s have ended on so a row of that table compares orderings where the lists are still running and lengths where they are not and the two cannot be separated by reading it": {
-   "text": "N of the N MetaPredictor lists have ended by then, N of BioTransformer's and N of MetaTox's, against N of the exhaustive arm's; the interactive arm's have ended on N . So a row of that table compares orderings where the lists are still running and lengths where they are not, and the two cannot be se",
+  "of the metapredictor lists have ended by then of biotransformer s of gloryx s of metatox s and of sygma s against of the exhaustive arm s the interactive arm s have ended on so a row of that table compares orderings where the lists are still running and lengths where they are not and the two cannot be separated by reading it": {
+   "text": "N of the N MetaPredictor lists have ended by then, N of BioTransformer's, N of GLORYx's, N of MetaTox's and N of SyGMa's, against N of the exhaustive arm's; the interactive arm's have ended on N . So a row of that table compares orderings where the lists are still running and lengths where they are ",
    "in": [
     "paper2/si.tex"
    ]

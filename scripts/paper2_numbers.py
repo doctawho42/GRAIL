@@ -458,12 +458,11 @@ def build():
     # Which arms have nothing left to add at the budget the class table is read at, which is what
     # makes that table a comparison of lengths as much as of orderings.
     _short = art("deployment_table.json")["substrates_whose_list_is_shorter_than_the_budget"]["15"]
-    n["chem.exhausted.metapredictor"] = _short["metapredictor"]
-    n["chem.exhausted.biotransformer"] = _short["biotransformer"]
-    n["chem.exhausted.metatox"] = _short["metatox"]
-    n["chem.exhausted.sygma"] = _short["sygma"]
-    n["chem.exhausted.bank"] = _short["whole bank"]
-    n["chem.exhausted.interactive"] = _short["trained budget"]
+    # Named from the artifact rather than one line per arm, for the same reason: the six lines
+    # this replaced were written when there were six arms.
+    _SHORT_NAME = {"whole bank": "bank", "trained budget": "interactive"}
+    for _k, _v in _short.items():
+        n[f"chem.exhausted.{_SHORT_NAME.get(_k, _k)}"] = _v
     # The class the case study illustrates, which is also the one this bank is weakest on. It is
     # printed here so the case cannot be read as representative of the class it belongs to.
     _deam = ebc["classes"].get("deamination", {})
@@ -980,8 +979,13 @@ def build():
     # The classes where this system is not the best arm, which the main text reported only where
     # it was. The names and the margins come from the artifact rather than from a reading of it.
     ch = art("error_by_chemistry.json")["classes"]
-    _arms = ("GRAIL exhaustive", "GRAIL interactive", "metatox", "sygma", "metapredictor",
-             "biotransformer")
+    # Every arm the artifact scores, read from the artifact. A list of names written out beside
+    # an artifact goes stale the next time the artifact gains a column, and this one did: "the
+    # best arm" was the best of six while the table printed seven, so the class where this system
+    # is furthest behind reported a gap of 0.0214 where the printed table showed 0.0571.
+    _arms = tuple(next(iter(ch.values()))["recall"])
+    for _need in ("GRAIL exhaustive", "GRAIL interactive"):
+        assert _need in _arms, f"error_by_chemistry.json does not score {_need}"
     _behind, _int_ahead = [], []
     for _name, _e in ch.items():
         _r = {a: _e["recall"][a]["15"] for a in _arms}

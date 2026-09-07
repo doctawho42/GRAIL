@@ -640,16 +640,27 @@ def si_chemistry():
     _dep = art("deployment_table.json")
     short = _dep["substrates_whose_list_is_shorter_than_the_budget"]["15"]
     n_subs = _dep["population"]["n"]
-    # Every arm, and the count of those past half rather than an adjective. An earlier draft of
-    # this caption said four of six run out "on most substrates" when two of the four run out on
-    # 34 and 15 of 291, and left out the interactive arm, which runs out on 181.
-    ORDER = [("whole bank", "the exhaustive arm"), ("trained budget", "the interactive arm"),
-             ("metatox", "MetaTox"), ("sygma", "SyGMa"),
-             ("metapredictor", "MetaPredictor"), ("biotransformer", "BioTransformer")]
-    exhausted = ", ".join(f"{lab} on {short[k]}" for k, lab in ORDER if k in short)
+    # Every arm, and the count of those past half rather than an adjective. The enumeration is
+    # derived from the table's own columns instead of being kept as a second list beside them. An
+    # earlier draft said four of six run out "on most substrates" when two of the four run out on
+    # 34 and 15 of 291, and left out the interactive arm, which runs out on 181; that was repaired
+    # by writing the arms out here, and the list went stale again the next time the table gained a
+    # comparator, so the caption read "Three of the 7" while naming six. A caption that counts the
+    # columns has to read the columns.
+    DEPLOY_KEY = {"GRAIL exhaustive": "whole bank", "GRAIL interactive": "trained budget"}
+    LONG = {"GRAIL exhaustive": "the exhaustive arm", "GRAIL interactive": "the interactive arm",
+            "metatox": "MetaTox", "sygma": "SyGMa", "metapredictor": "MetaPredictor",
+            "biotransformer": "BioTransformer", "gloryx": "GLORYx"}
+    ORDER = [(DEPLOY_KEY.get(k, k), LONG[k]) for k, _ in arms]
+    _no_count = [lab for k, lab in ORDER if k not in short]
+    if _no_count:
+        raise SystemExit("deployment_table.json carries no short-list count for a column this "
+                         f"table prints: {', '.join(_no_count)}")
+    exhausted = ", ".join(f"{lab} on {short[k]}" for k, lab in ORDER)
     exhausted += f", of {n_subs}"
-    WORDS = {0: "None", 1: "One", 2: "Two", 3: "Three", 4: "Four", 5: "Five", 6: "Six"}
-    most_word = WORDS[sum(1 for k, _ in ORDER if k in short and short[k] * 2 > n_subs)]
+    WORDS = {0: "None", 1: "One", 2: "Two", 3: "Three", 4: "Four", 5: "Five", 6: "Six",
+             7: "Seven", 8: "Eight"}
+    most_word = WORDS[sum(1 for k, _ in ORDER if short[k] * 2 > n_subs)]
     return ("\\begin{table*}[t]\n\\centering\\scriptsize\n"
             # the column spec follows the arm list rather than being written out, so adding
             # an arm cannot leave the table one column narrower than its own header

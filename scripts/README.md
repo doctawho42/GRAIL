@@ -7,7 +7,7 @@ groups below are what those docstrings sort into.
 
 ## The three groups
 
-**Gates (11).** Checks that hold the manuscripts to their artifacts, run by
+**Gates (12).** Checks that hold the manuscripts to their artifacts, run by
 `grail_metabolism/tests/test_paper_gates.py` and therefore by `make test`. Each one refuses rather
 than warns, and each was written because something got past its absence. The important ones:
 
@@ -20,6 +20,7 @@ than warns, and each was written because something got past its absence. The imp
 | `check_licence_files.py` | a licence file that describes a different distribution from the one in the tree |
 | `check_prereg.py` | a claimed effect with no registered hypothesis behind it |
 | `sync_tracked_artifacts.py` | ignore rules that no longer match what the repository deposits |
+| `check_register_tally.py` | a count of the register's confirmations that the register's own verdict column does not carry |
 
 **Producers (102).** Each writes exactly one artifact under `results/`, stamps it with the digest of
 the script that wrote it, and is named in `audit_artifact_provenance.py`. Most live in

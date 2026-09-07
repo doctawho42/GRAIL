@@ -54,7 +54,10 @@ def pct(v) -> str:
 # decimals: 0.5430 read against 0.4768, not 0.543. Recalls of a four-reference case study
 # are deliberately not in here, where four decimals would be precision the count cannot
 # carry.
-MEASURED = re.compile(r"(?:gap|diff|effect|lo|hi|stored|drawn|coverage|bank|other)\d*$")
+# A recall level keeps four decimals whichever side of a comparison it is on. "best" was
+# missing, so the arm a class is compared against printed 0.7643 while its own recall
+# printed 0.7429 and nobody could see the rule was one-sided until a value landed on 0.8.
+MEASURED = re.compile(r"(?:gap|diff|effect|lo|hi|stored|drawn|coverage|bank|other|best)\d*$")
 # A rule index is a name, not a quantity: "template 4,913" is wrong the way "page 1,024" is.
 INDEX = re.compile(r"(?:rule|rulehit|deamrule|ruleid|index)$")
 

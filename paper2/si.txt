@@ -1367,9 +1367,10 @@ uncertainty. No intervals are quoted for them and none should be read into the o
 row with five references in it.
 A budget of fifteen is where that table is read, and at fifteen the seven arms are not
 emitting the same amount. 273 of the 291 MetaPredictor lists have ended by then, 220 of
-BioTransformer’s and 34 of MetaTox’s, against 0 of the exhaustive arm’s; the interactive
-arm’s have ended on 181. So a row of that table compares orderings where the lists are still
-running and lengths where they are not, and the two cannot be separated by reading it.
+BioTransformer’s, 48 of GLORYx’s, 34 of MetaTox’s and 15 of SyGMa’s, against 0 of the
+exhaustive arm’s; the interactive arm’s have ended on 181. So a row of that table compares
+orderings where the lists are still running and lengths where they are not, and the two cannot
+be separated by reading it.
 The same control the pooled comparison uses answers this per class. Each comparator’s
 own per-substrate list length becomes the budget for this work’s two arms as well, under
 the construction of Section S9, and the result is Table S9. The largest class moves the way
@@ -1389,7 +1390,6 @@ budget was introduced to control, and a difference read there is partly a differ
 much each system emits. Table S8 gives the exhaustion rates; this gives the comparison with
 the length removed as a variable.
 The design is deliberately hostile to this work. On each substrate both arms are cut to
-the number of candidates that comparator returned on that substrate: where MetaPredictor
 
 S17
 
@@ -1599,6 +1599,7 @@ glycine conjugation†
 .00
 .67
 
+the number of candidates that comparator returned on that substrate: where MetaPredictor
 returns two, the exhaustive arm is allowed two. The two are then read over the same slots on
 every substrate rather than on average, which is what a nominal budget cannot do.
 One bound on that length is this work’s and has to be declared, because a slot count is a
@@ -1612,11 +1613,11 @@ everywhere, MetaPredictor and BioTransformer. What it costs the comparators is m
 rather than assumed: every contrast in Table 3 is identical with the cut removed, to four
 decimal places, because SyGMa places none of the annotated metabolites past that rank, on
 any substrate where its list runs longer.
-The result splits the wide-budget leads in two. Against SyGMa the exhaustive arm
 
 S18
 
-keeps +0.182 [+0.1446, +0.2208] over 58.37 slots, which is an ordering result and the largest
+The result splits the wide-budget leads in two. Against SyGMa the exhaustive arm
+keeps +0.182 [+0.1446, +0.2208] over 58.37 slots, which is an ordering result and the largest
 margin that survives this control. Larger differences are printed elsewhere in these documents,
 at nominal budgets where list length is not held; those are the ones this control exists
 to discount, so the comparison is between the margins in this table and not with them.
@@ -1644,11 +1645,11 @@ The choice moves eleven verdicts of the 90 contrasts computed under both, and th
 caption names each. Three of them are cells the main text states: the exhaustive arm’s lead
 over MetaPredictor at a budget of fifteen and BioTransformer’s trail at a budget of one, both
 of which separate under micro and not under macro, and the interactive arm’s trail against
-MetaTox at twenty, which does the same. The wide budgets the paper reads its leads at are
 
 S19
 
-unaffected. It also moves the levels, upward for every arm but one, because substrates with
+MetaTox at twenty, which does the same. The wide budgets the paper reads its leads at are
+unaffected. It also moves the levels, upward for every arm but one, because substrates with
 few references are easier and count for more under this aggregation; BioTransformer is the
 exception and its macro recall is the lower of the two at the widest budgets. A reader who
 suspects the aggregation was chosen to suit the result can read which way each moved cell

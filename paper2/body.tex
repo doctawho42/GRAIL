@@ -180,13 +180,13 @@ p(c) = 1 - \prod_{r \in R(c)} \left( 1 - p_r \right),
 \end{equation}
 so evidence from independent rules accumulates rather than competing. The independence is an
 assumption this bank does not satisfy, since it holds published rule sets verbatim and the mined
-half is full of near-duplicates. What that costs is swept over the four rules the
-implementation offers (Section~\ref{SI-sec:si-knobs}). The blend of Equation~\ref{SI-eq:blend} is
+half is full of near-duplicates. What that costs is swept over the four aggregation rules
+the implementation offers (Section~\ref{SI-sec:si-knobs}). The blend of Equation~\ref{SI-eq:blend} is
 better at the head of the list, by at most $+\numAggCmpHybridMax$ $[+\numAggCmpHybridMaxLo,
-+\numAggCmpHybridMaxHi]$ at a budget of \numAggCmpHybridMaxkWord{}. On this population it is
-indistinguishable from the deployed rule at every budget a lead is claimed at; on the validation
-draw it separates as far as \numAggValHybridSepto{}, which includes two of them, and that reading
-is in Section~\ref{sec:limitations}. Equation~\ref{eq:noisyor}
++\numAggCmpHybridMaxHi]$ at a budget of \numAggCmpHybridMaxkWord{}. On the comparison set it is
+indistinguishable from the deployed aggregation at every budget a lead is claimed at; on the
+validation draw it separates out to an output budget of \numAggValHybridSepto{}, which takes in
+two of the budgets a lead is claimed at, and that reading is in Section~\ref{sec:limitations}. Equation~\ref{eq:noisyor}
 is why deduplication is not a cosmetic step: the key under which two products are judged the same
 decides which scores are combined, and changing that key moves the ranking. Tautomers are the
 hard case, and their treatment is not settled by the standard identifiers \citep{Dhaked_2020}.
@@ -276,7 +276,7 @@ fusion ranks over whatever survives, so removing a candidate changes the rank ev
 and truncation can therefore raise recall rather than only bound it. It was registered as
 prediction P2 with a threshold of $+\numHNineThreshold$ and measured $+\numHNineDiff$
 $[+\numHNineLo, +\numHNineHi]$, taking the mean pool from \numHNinePoolBefore{} to
-\numHNinePoolAfter{}. The value was fixed by a rule rather than by a search. The cap must be at
+\numHNinePoolAfter{}. The value was fixed by a stated principle rather than by a search. The cap must be at
 least twice the widest output budget reported, so that the widest column is never simply the whole pool,
 and 100 is the smallest round number that satisfies it.
 
@@ -303,10 +303,10 @@ $[\numHOneZeroLo, +\numHOneZeroHi]$, taking the mean pool on that draw from
 On the comparison set the same quantity is $+\numHOneZeroComparison$, past the ceiling. The
 discrepancy is reported rather than resolved and it has a reading: at $k \le 10$ the whole bank
 buys nothing on either population, and from $k=15$ it buys more the wider the budget, because the
-interactive arm runs out of candidates. The threshold is therefore a property of the budget
+interactive arm runs out of candidates. P3's ceiling is therefore a property of the output budget
 requested rather than of the system, and so is the deployed rule budget. Read at an output budget
-of fifteen the curve is flat past \numBudgetDeployed{}, which is where the trained value happens
-to sit; read at thirty it is not, and the whole bank gains $+\numBudgetKSevenFiveEightOneGapthirty$
+of fifteen the curve is flat past a rule budget of \numBudgetDeployed{}, which is where the
+trained value happens to sit; read at an output budget of thirty it is not, and the whole bank gains $+\numBudgetKSevenFiveEightOneGapthirty$
 $[+\numBudgetKSevenFiveEightOneLothirty, +\numBudgetKSevenFiveEightOneHithirty]$ over the
 deployed budget on the same substrates, an interval excluding zero. The curve is swept to the
 whole bank and not merely past the deployed value, so the exhaustive mode is a point on it rather
@@ -316,10 +316,10 @@ Discussion's question rather than this section's.
 \subsection{Emission}
 
 Under the product combination the system emitted candidates scoring within $\alpha =
-\numEmitAlpha$ of the leader. That rule does not transfer to a rank fusion, and the reason is
+\numEmitAlpha$ of the leader. That emission rule does not transfer to a rank fusion, and the reason is
 structural: the worst candidate scores $\numEmitFusionmedian$ of the best under fusion against
 $\numEmitProductmedian$ under the product, because a reciprocal-rank sum is a rank statistic
-without scale. At that $\alpha$ the rule admits $\numEmitByfusion$ candidates from a pool of
+without scale. At that $\alpha$ the emission rule admits $\numEmitByfusion$ candidates from a pool of
 $\numEmitPool$ on the comparison set, truncating nothing. The deployed emission is therefore $\hat{C}(s)$ itself, ordered by fusion and truncated by no
 threshold, so $|\hat{Y}_s| = |\hat{C}(s)|$. For the interactive mode that length is set by the
 rule budget and the substrate's chemistry, and its mean of \numEmittedTrained{} on the comparison
@@ -338,7 +338,7 @@ adjudicated on.
 \subsection{Evaluation}
 \label{sec:evaluation}
 
-The rule deciding when a predicted structure counts as one of the references is the
+What decides when a predicted structure counts as one of the references is the
 \emph{matching criterion}. It is treated here as a declared axis with five settings: canonical
 SMILES equality, the full InChIKey, its stereochemistry-blind first block, Tanimoto similarity of
 one over Morgan fingerprints, and a tautomer-aware key that canonicalises tautomers on both
@@ -350,7 +350,8 @@ for: nothing in this pipeline is stereochemistry-aware, so sulfoxidation, epoxid
 most conjugation are predicted as constitutions and not as configurations. All five are reported for every
 comparison, with the levels behind every verdict in Table~\ref{SI-tab:si-criterion-levels}.
 
-A third choice sits behind both: how the substrate itself is drawn. Templates are matched against
+A third choice sits behind both declared axes, the matching criterion and the output budget:
+how the substrate itself is drawn. Templates are matched against
 the structure the corpus stores, and that corpus draws amides as imidic acids, so the choice is not
 neutral. It is a deployment question and not only an evaluation one, because a user submits the
 drawing a chemist would make: given gemcitabine as a chemist draws it, the interactive mode returns
@@ -471,8 +472,9 @@ substrates of the comparison set. Read against the strongest comparator at each 
 in three rather than resolving into an ordering. Every difference behind that division, with its paired interval, is
 Table~\ref{SI-tab:si-intervals}. The table's last column is not a sixth system: it is the
 exhaustive arm's own pool re-ranked under the aggregation a selection on validation prefers, and
-it is printed because that selection went against the rule this work released
-(Section~\ref{SI-sec:si-aggregation}). Every other number in this paper is the released rule's.
+it is printed because that selection went against the aggregation this work released
+(Section~\ref{SI-sec:si-aggregation}). Every other number in this paper is the released
+aggregation's.
 
 GRAIL trails with the interval excluding zero at $k=1$, $3$ and $5$, where SyGMa leads:
 \numSweepTrainedOne{} against SyGMa's \numSweepSygmaOne{} at $k=1$. Two of those three, at $3$ and $5$, do
@@ -487,8 +489,8 @@ comparator with the interval excluding zero at $k=30$ and $k=50$. BioTransformer
 arm with the interval excluding zero at $k=1$ and from $k=8$ upward, and is indistinguishable from
 it at $3$ and $5$; the pattern is not monotone in the budget and is reported as it falls. The
 cell at $k=1$ is one of the three the other aggregation moves
-(Table~\ref{SI-tab:si-macro}), and does not separate under it. It is not
-the lowest arm at the tight budgets, where MetaTox is. It is the arm a reader of
+(Table~\ref{SI-tab:si-macro}), and does not separate under it. BioTransformer is not
+the lowest arm at the tight budgets, where MetaTox is, and it is the arm a reader of
 the rule bank should look at hardest, because it supplies
 \numThirdpartyBiotransformerShipped{} of this bank's templates. Held to BioTransformer's own list length the exhaustive arm does not lead it at all: the
 difference is
@@ -498,7 +500,7 @@ separates the two at a wide budget is how much each emits
 
 \input{si_table_matched}
  The corrections that follow are about the sweep rather than
-about that table: the \numSweepWideleadsWord{} cells in which the exhaustive arm leads a comparator
+about the matched-length table above (Table~\ref{tab:si-matched}): the \numSweepWideleadsWord{} cells in which the exhaustive arm leads a comparator
 at $k=30$ or $k=50$ with the interval excluding zero. Of those, \numSweepWideleadsoutsideWord{} were
 never in the corrected family, which was declared over \numSweepFamilycomparatorsWord{}
 comparators, so the correction is reported over the \numSweepWideleadsinfamilyWord{} it covers; of
@@ -561,7 +563,8 @@ covering zero and two of the three pointing the other way. What the sweep shows 
 against those three is a statement about how much each system emits, and this paper's own
 argument requires it to be called that.
 
-Three corrections apply to those two cells and it is worth carrying them through in one place.
+Three corrections apply to the wide-budget leads and it is worth carrying them through in one
+place.
 Under a family-wise correction over the sweep the $k=30$ margin against MetaTox does not survive
 and the rest do. Under matched list length the margins against MetaTox and MetaPredictor vanish
 and the one against SyGMa does not. And SyGMa met the corpus's drawing rather than the one the
@@ -595,12 +598,13 @@ budget, and SyGMa gains little between $k=15$ and $k=50$; GRAIL's exhaustive mod
 because it keeps having candidates. Where a method runs out the budget has stopped measuring
 ranking, and the counts are reported for every arm: at $k=50$,
 \numShortMetapredictorFiveZero{} of MetaPredictor's lists,
-\numShortBiotransformerFiveZero{} of BioTransformer's, \numShortSygmaFiveZero{} of SyGMa's,
+\numShortBiotransformerFiveZero{} of BioTransformer's, \numShortGxarmFiveZero{} of GLORYx's,
+\numShortSygmaFiveZero{} of SyGMa's,
 \numShortMetatoxFiveZero{} of MetaTox's, \numShortTrainedFiveZero{} of the interactive arm's and
 \numShortBankFiveZero{} of the exhaustive arm's are shorter than the budget.
 
-Reading that flatness off list length infers the cause; MetaPredictor's beam is the knob that tests
-it, and turning it up is the question this work asks of other papers. At a wider beam its mean
+Reading MetaPredictor's flatness off its list length infers the cause; its beam is the knob that
+tests that, and turning it up is the question this work asks of other papers. At a wider beam its mean
 output rises from \numMpbeamDeployedemitted{} candidates to \numMpbeamWideemitted{}, and the margin
 at thirty falls but still excludes zero, $+\numMpbeamWideThreeZeroGap$
 $[+\numMpbeamWideThreeZeroLo, +\numMpbeamWideThreeZeroHi]$, while at fifteen it stops separating
@@ -625,8 +629,8 @@ at $k = 15$ the exhaustive arm's macro recall is \numMacroBankOneFive{} against 
 $[\numMacrogapBankmetatoxOneFiveLo, +\numMacrogapBankmetatoxOneFiveHi]$, an interval covering
 zero as the micro one does.
 
-The two do not emit alike either: MetaTox returns \numEmittedMetatox{} candidates on average
-against the interactive arm's \numEmittedTrained{}, and at $k=15$
+MetaTox and the interactive arm do not emit alike either: MetaTox returns
+\numEmittedMetatox{} candidates on average against the interactive arm's \numEmittedTrained{}, and at $k=15$
 \numShortMetatoxOneFive{} of \numPopulationN{} MetaTox lists fall short of the budget against
 \numShortTrainedOneFive{} of the interactive arm's. The annotation bias on precision therefore
 runs toward the arm emitting less, which is ours, so it does not explain a gap in the other
@@ -790,8 +794,9 @@ and Figure~\ref{fig:case} shows both.
 
 Every deployed choice is a registered hypothesis with a threshold and a falsification condition,
 tested where it was not selected (Table~\ref{tab:hyp}). Ten of the sixteen registered are checked
-here. Seven are confirmed and three failed, each on the falsification condition it was written
-with. The remaining six are registered against work this paper does not report and are stated
+here. Six are confirmed and three failed, each on the falsification condition it was written
+with; the tenth was measured rather than adjudicated, because its threshold was fixed in advance
+and its population was not. The remaining six are registered against work this paper does not report and are stated
 with their thresholds, so that a later result on any of them cannot rest on a threshold chosen
 afterwards. Section~\ref{sec:limitations} states which of the seven confirmations a stricter
 reading leaves undecided.
@@ -1017,7 +1022,7 @@ is the concrete case for leaderboards releasing per-item predictions rather than
 wide budgets is partly a statement about output length on all sides rather than about ranking.
 
 The argument made here about other people's figures was turned on this work's own release, and it
-found settings that decide a number and were not declared. The rule that combines the
+found settings that decide a number and were not declared. The aggregation that combines the
 templates reaching one candidate is one, and a selection on validation prefers a different one.
 The fusion constant is a second, left at the value the method was published with. A rule gate the
 released checkpoint carries is a third, and no figure in this paper was measured under it. A set
@@ -1083,14 +1088,15 @@ measured at this configuration, so what a headline figure is read against is kno
 the full split under more than \numSpreadSeedsWord{} seeds, which would say whether the level as
 well as the spread moves, is not reported (Section~\ref{SI-sec:si-retrain}).
 
-The register is weaker than its count of confirmations suggests. Three of the seven confirmed predictions clear the falsification condition as written, which
-compares a point estimate to a threshold, and not the stricter reading that asks the whole interval
-to clear it. P1, P2 and P5 each have their threshold inside their own interval. What the data
-establish for those three is that the effect exceeds zero, not that it exceeds the registered
-bar. P5 is weaker again, and
+The register is weaker than its count of confirmations suggests. Three of the six confirmed
+predictions clear the falsification condition as written, which compares a point estimate to a
+threshold, and not the stricter reading that asks the whole interval to clear it. P1 and P2 have
+their threshold inside their own interval, and so does P5. What the data establish for those three
+is that the effect exceeds zero, not that it exceeds the registered bar. P5 is weaker again, and
 the register is what shows it: its threshold was fixed in advance but its population was not, and
 it was adjudicated on the comparison set, which is derived from the test split and was recorded
-afterwards. Table~\ref{tab:hyp} calls that a measurement rather than a confirmation. P3's threshold
+afterwards. Table~\ref{tab:hyp} calls that a measurement rather than a confirmation, which is why
+it is not one of the six. P3's threshold
 is in any case a property of the budget requested rather than of the system.
 
 Two reported quantities are bounded by things outside the system. Precision is bounded by how
