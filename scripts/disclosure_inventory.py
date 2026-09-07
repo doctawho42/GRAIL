@@ -33,7 +33,32 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from _provenance import stamp  # noqa: E402
 
-SOURCES = ("paper2/body.tex", "paper2/si.tex", "paper2/grail_jcim.tex")
+# Everything typeset into either document, found by following the \input chain rather than
+# listed here. The list used to be the three hand-written files, and it missed every generated
+# table -- so a caption could lose a concession ("those two are lower bounds", "the two arms'
+# slowest cells are not on the same substrates") and this check would report the cut clean,
+# because the sentence it was protecting had never been in the inventory. A caption is typeset
+# into the manuscript and a reader reads it; it is part of what the paper says.
+ROOTS = ("paper2/grail_jcim.tex", "paper2/si.tex")
+
+
+def _sources() -> tuple:
+    """Every .tex the two documents pull in, transitively, in a stable order."""
+    seen, queue = [], list(ROOTS)
+    while queue:
+        rel = queue.pop(0)
+        if rel in seen or not (ROOT / rel).exists():
+            continue
+        seen.append(rel)
+        for name in re.findall(r"\\input\{([^}]+)\}", (ROOT / rel).read_text()):
+            nxt = f"paper2/{name}" if "/" not in name else name
+            if not nxt.endswith(".tex"):
+                nxt += ".tex"
+            queue.append(nxt)
+    return tuple(seen)
+
+
+SOURCES = _sources()
 
 # What a concession sounds like. Each is a claim the work makes ABOUT ITS OWN REACH, so the list is
 # about limits and not about the chemistry: "does not" catches a limit on the work and also a fact
@@ -56,8 +81,11 @@ PAT = re.compile("|".join(MARKERS), re.I)
 def _plain(tex: str) -> str:
     """LaTeX with its markup taken off, so a sentence is comparable across an edit that reflows."""
     t = re.sub(r"(?<!\\)%.*", "", tex)
-    t = re.sub(r"\\begin\{(equation|align|figure|table|tabular)\*?\}.*?\\end\{\1\*?\}", " ", t,
-               flags=re.S)
+    # Only the numeric bodies go: a tabular is rows of figures and an equation is not prose.
+    # The float wrappers stay, because a caption lives inside one and a caption is prose the
+    # reader reads. Stripping \begin{table} to \end{table} wholesale is how every generated
+    # table's caption stayed outside this inventory, and one of them lost a concession.
+    t = re.sub(r"\\begin\{(equation|align|tabular)\*?\}.*?\\end\{\1\*?\}", " ", t, flags=re.S)
     t = re.sub(r"\\(cite[a-z]*|ref|label|input|includegraphics)\*?(\[[^\]]*\])?\{[^}]*\}", " ", t)
     t = re.sub(r"\\num[A-Za-z]+\{?\}?", " N ", t)          # a macro's value is not the sentence
     t = re.sub(r"\\[a-zA-Z]+\*?(\[[^\]]*\])?", " ", t)

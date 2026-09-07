@@ -42,25 +42,19 @@ and no analogue of it exists in distributional metrics. What is offered here is 
 that setting: the axes swept, the whole grid printed, and a bound on what any bank mined from this
 corpus could reach.
 
-This work addresses that. We present GRAIL (Graph-scored Rule Application with Inspectable Localisation), a metabolite
-structure predictor built from a bank of reaction templates, a learned model that selects which templates to apply, and a learned model
-that ranks the resulting candidates. Every prediction it emits carries the template that produced
-it and the atoms that template acted on, so a chemist can accept or reject a candidate on
-mechanistic grounds rather than on a score. How much mechanism that carries depends on the template. \numRsizeLethreesharePct{} of the bank,
-\numRsizeLethree{} of \numRsizeParsed{} parseable templates, is patterns of three atoms or fewer,
-for which the named site reports where the pattern matched rather than a mechanism.
-Section~\ref{sec:site} measures both the size of that part and how often the named site is the
-site that changed. We evaluate it with the two decisions above promoted to declared axes: each is stated and varied
-across its full range instead of being fixed silently. The comparison is against
-\numComparatorsColumnsWord{} published predictors we obtained and ran on the same substrates, with
-the two whose knowledge is built on a source of this corpus named and their overlap measured. One system is absent and its absence was not
-forced: DeepCYP was not run for the cost of submission, its interface taking one substrate at a
-time (Section~\ref{SI-sec:si-comparators}). The comparison does not produce a winner:
-which system leads depends on how many candidates it is allowed to return, and we report that
-dependence rather than a single figure. We further measure how much of the recorded chemistry
-lies outside the reach of any single template application, and bound how much of it is chemistry
-the training corpus does not contain: between \numBoundShortfallsharemin{} and
-\numBoundShortfallsharemax{}, which no template mined from that corpus could supply.
+This work addresses that. We present GRAIL (Graph-scored Rule Application with Inspectable
+Localisation), a metabolite structure predictor built from a bank of reaction templates, a learned
+model that selects which templates to apply, and a learned model that ranks the resulting
+candidates. Every prediction it emits carries the template that produced it and the atoms that
+template acted on, so a chemist can accept or reject a candidate on mechanistic grounds rather
+than on a score. We evaluate it with the two decisions above promoted to declared axes: each is
+stated and varied across its full range instead of being fixed silently. The comparison is against
+\numComparatorsColumnsWord{} published predictors we obtained and ran on the same substrates. It
+does not produce a winner: which system leads depends on how many candidates it is allowed to
+return, and we report that dependence rather than a single figure. We further measure how much of
+the recorded chemistry lies outside the reach of any single template application, and find that
+most of what is missing is chemistry the training corpus does not contain, which no template mined
+from that corpus could supply.
 
 The article is organised as follows. Section~\ref{sec:methods} describes the corpus, the three
 stages of the system and the evaluation protocol. Section~\ref{sec:results} reports the
@@ -492,9 +486,8 @@ arm with the interval excluding zero at $k=1$ and from $k=8$ upward, and is indi
 it at $3$ and $5$; the pattern is not monotone in the budget and is reported as it falls. The
 cell at $k=1$ is one of the three the other aggregation moves
 (Table~\ref{SI-tab:si-macro}), and does not separate under it. BioTransformer is not
-the lowest arm at the tight budgets, where MetaTox is, and it is the arm a reader of
-the rule bank should look at hardest, because it supplies
-\numThirdpartyBiotransformerShipped{} of this bank's templates. Held to BioTransformer's own list length the exhaustive arm does not lead it at all: the
+the lowest arm at the tight budgets, where MetaTox is, and it supplies
+\numThirdpartyBiotransformerShipped{} of this bank's templates, more than any other published set. Held to BioTransformer's own list length the exhaustive arm does not lead it at all: the
 difference is
 $\numBtarmMatchedgap$ $[\numBtarmMatchedlo, +\numBtarmMatchedhi]$, an interval covering zero. What
 separates the two at a wide budget is how much each emits
@@ -534,8 +527,7 @@ $+\numChemCleavageMatchedmax$ at the widest to $+\numChemCleavageMatchedmin$ at 
 where \numChemCleavageMatchedminbank{} is read against \numChemCleavageMatchedminother{}. What
 the budget comparison adds to that class is length; what remains is ordering. The second largest, \numChemOtherRefs{} of the \numChemReferences{} references, is the set of
 changes this vocabulary does not name, and no method here exceeds \numChemOtherBest{} on it. A fifth of the annotated chemistry
-therefore falls in a class none of the six systems is built for. That is what a reader deciding
-whether any of them is usable on their own compounds needs before they read a headline number.
+therefore falls in a class none of the six systems is built for. A headline recall figure does not show that.
 
 The rest of that table does not run this system's way, and it belongs beside the part that does.
 The exhaustive arm is not the best arm on \numChemBehind{} of the \numChemClasses{} classes,
@@ -678,7 +670,9 @@ and the spread on the comparison set, so the ratio is indicative and not a test.
 The argument this paper opens with is that a recall figure depends on evaluation choices this
 literature leaves unstated. It is an argument about published numbers, and it applies to ours. The whole comparison is recomputed under each of the \numCritCriteria{} declared criteria, holding
 the population, the arms, the ranking and the parent-drop convention fixed. The verdict moves at up
-to \numCritMovedMax{} of \numCritBudgets{} budgets (Table~\ref{tab:criterion}).
+to \numCritMovedMax{} of \numCritBudgets{} budgets (Table~\ref{tab:criterion}). Neither the arm
+nor the comparator is constant across that grid, so a sign in it does not on its own say what was
+compared with what; the last row names the arm and the superscripts name the comparator.
 
 \input{table_criterion}
 
@@ -840,7 +834,8 @@ per-stage decomposition are in the Supporting Information.
 
 Cost is reported at the tail as well as at the median, because a service is used at both. The
 interactive mode's mean is six times its median, and its slowest substrate is nearly six hundred
-times it.
+times it, so a service answering a web form should impose a deadline and fall back rather than
+size itself on the median.
 
 \subsection{The ceiling, and how much of it is the corpus}
 \label{sec:ceiling}
@@ -851,9 +846,8 @@ same evaluated test set, leaving \numCeilingUncovered{} uncovered. That count is
 through the firing loop a caller runs, with hydrogens implicit; a loop and a hydrogen convention
 together are the \emph{instrument}, and the bound moves with it. A second loop, which audits both
 conventions from one code path, counts \numCeilagreeAuditimplicitUncovered{} under that same
-convention, and four counts of this bound exist in all. They are set out below rather than left
-for a reader to discover, because the number the rest of this section is about is the one that
-moves with the instrument. It carries no
+convention, and four counts of this bound exist in all, and all four are given below,
+because the number the rest of this section is about is the one that moves with the instrument. It carries no
 resampling interval: it is a census of this population under one instrument, and the census keeps
 its counters per shard rather than per substrate, so what is reported beside it is the spread
 across instruments and not across resamples. The remainder divides by the reaction-centre change it requires: \numCeilingNovel{} need
@@ -1043,7 +1037,7 @@ The fusion constant is a second, left at the value the method was published with
 released checkpoint carries is a third, and no figure in this paper was measured under it. A set
 of candidate pools scored by a checkpoint this repository no longer ships is a fourth, and the
 drawing of the substrate and the pool cap are two more of the same kind, both now declared and
-one of them swept. Each is declared and measured here rather than described, and a reader may take that either way: as the
+one of them swept. Each is declared and measured here rather than described, which may be read either way: as the
 discipline doing its work, or as a measure of how easily an undeclared setting survives even in a
 paper whose subject is undeclared settings. The second reading is why the first is worth
 reporting.
@@ -1179,32 +1173,22 @@ and vary it.
 \label{sec:conclusions}
 
 GRAIL predicts metabolite structures by selecting templates from a bank of \numBankRules{} reaction
-rules, applying them, and ranking the products by a reciprocal rank fusion of the generator's score
-and the filter's. The form in which the two learned scores are combined mattered more than what
-produced them: replacing their product with the rank fusion gained more recall than any
-architectural change tested here. Every prediction carries the template that produced it and the
-atoms it acted on. Its two operating modes are two settings of one rule budget rather than two
-designs, the cheap one beaten by the incumbent beyond a short list and the wide one returning about
-a hundred structures at a precision near \numPrecBankFiveZero{}; which a service should run follows
-from the output budget it answers at.
-
-Measured against the published predictors that could be run on the same substrates, the comparison
-divides by output budget rather than resolving into an ordering, and the division is the result.
-The verdict moves with the matching criterion and with the budget, so a single recall figure would
-have named a different leader depending on decisions its author never had to state. Held to the
-stricter test the same argument demands, every arm cut to the comparator's own list length on every
-substrate, one of the wide-budget leads is an ordering result and the rest are statements about
-emission. The class-by-class reading says the same from the other side: the aggregate advantage is
-carried by unusual cleavages and by transformations this vocabulary cannot name, and on several
-classical functionalisations this system is not the best arm and is sometimes beaten by its own
-cheaper setting. Reporting the grid is what makes the comparison checkable, and releasing every
-arm's per-substrate predictions is what lets a third party recompute it.
+rules, applying them, and ranking the products by a reciprocal rank fusion of two learned scores.
+How those two scores are combined mattered more than what produced them: replacing their product
+with the rank fusion gained more recall than any architectural change tested here. Every prediction
+carries the template that produced it and the atoms it acted on, so a candidate can be judged on
+mechanistic grounds. Measured against the published predictors that could be run on the same
+substrates, the comparison divides by output budget rather than resolving into an ordering, and
+that division is the result: a single recall figure would have named a different leader depending
+on decisions its author never had to state. Reporting the whole grid is what makes the comparison
+checkable, and releasing every arm's per-substrate predictions is what lets a third party
+recompute it.
 
 What one application of one template bank cannot reach is mostly chemistry the corpus does not
 contain: between \numBoundShortfallsharemin{} and \numBoundShortfallsharemax{} of the
-\numCeilingUncovered{}-reference shortfall is of a type the training annotation never holds. What
-the figures support is that enlarging this bank from this corpus would not supply the missing
-chemistry, which is a statement about the corpus and about no particular bank.
+\numCeilingUncovered{}-reference shortfall is of a type the training annotation never holds.
+Enlarging this bank from this corpus would not supply that chemistry. The bound is therefore a
+property of the corpus this field trains on and not of any one bank.
 
 \begin{suppinfo}
 

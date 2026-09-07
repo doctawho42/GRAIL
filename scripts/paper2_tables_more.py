@@ -78,12 +78,7 @@ seconds, 90th pct & {i['p90_s']} & {env['p90_finished']}$^{{\\dagger}}$ \\\\
 seconds, slowest & {i['max_s']} & $>{int(env['deadline'])}$$^{{\\dagger}}$ \\\\
 \\bottomrule
 \\end{{tabular}}
-\\caption{{The two operating modes: rules applied, candidates returned and wall-clock time. Every
-row but the two marked $^{{\\dagger}}$ is measured on the validation draw, {i['n']} substrates for
-the interactive mode and {e['candidates']['n']} for the exhaustive one, which lacks a pool for one
-of them; the median seconds are over those populations. Candidates are
-what a caller receives: deduplicated by matching key and capped at
-{i['candidates']['cap']}. Times cover everything before the filter. $^{{\\dagger}}$ marks a statistic that is both censored and measured on a different population: a sampled timing sweep of {sampled} substrates, on which the exhaustive mode exceeds a {int(env['deadline'])}-second deadline for {unfinished}, {env['censored_pct']}, so its mean and ninetieth percentile are taken over the {env['n_finished']} that finished. Those two are lower bounds against that sweep, where censoring removes the slowest; against the whole draw the sweep's design pushes the other way, since it over-represents large substrates on purpose, and the net of the two is not established here. That sweep is drawn as {env['bias']}. Its slowest substrate is one of the censored ones, which is why that cell carries the mark as well: a deadline is defined only for the sweep, so a $>$ entry can come from nowhere else, and the two arms' slowest cells are therefore not on the same substrates. On the test split, where no deadline is imposed, it fails on none. Every time here is measured on an unloaded machine and one substrate at a time; the exhaustive median carried to the load of a second arm is larger, and Section~\\ref{{SI-sec:si-runtime}} gives it, derives it from this median rather than measuring it again, and says between which arms the load ratio was taken. The interactive mode's own slowest substrate, {i['max_s']}~s, is far above its median, so a service answering a form should impose a deadline and fall back rather than assume the median.}}
+\\caption{{The two operating modes: rules applied, candidates returned and wall-clock time. Every row but the three marked $^{{\\dagger}}$ is measured on the validation draw, {i['n']} substrates for the interactive mode and {e['candidates']['n']} for the exhaustive one. Candidates are what a caller receives, deduplicated by matching key and capped at {i['candidates']['cap']}; times cover everything before the filter. $^{{\\dagger}}$ marks a statistic taken over a sampled timing sweep of {sampled} substrates and censored at a {int(env['deadline'])}-second deadline, which the exhaustive mode exceeds for {unfinished} of them.}}
 \\label{{tab:modes}}
 \\end{{table}}
 """
@@ -176,19 +171,9 @@ def hypotheses():
             "what the check returned. P8's figure is a speed-up "
             "factor, P9's a median in seconds and P10's a share of the mined bank; the rest are "
             f"differences in micro recall at a budget of 15. $^{{\\dagger}}$ marks the {_dagger_word} whose "
-            "threshold was fixed in advance but whose population was not: they were adjudicated "
-            "on the comparison set, which was recorded afterwards. Where the verdict says the "
-            "threshold falls inside the interval, what the data establish is that the effect "
-            "exceeds zero rather than that it clears the bar. P3 is confirmed on the validation "
-            "population it was registered against; on the comparison set the same quantity is "
-            "$+\\numHOneZeroComparison$, past its ceiling, and its effect is "
-            "$\\numSpreadPThreeInsd\\times$ the interactive arm\'s retraining spread at the "
-            "configuration reported here, which is indicative rather than a test because the "
-            "effect is measured on validation and the spread on the comparison set. Each row "
-            "carries its identifier in the released register in "
-            "the last column, which numbers them in the order they were written rather than the "
-            "order they are read; the register itself is Supporting Information "
-            "Section~\\ref{SI-sec:si-register}.}"
+            "threshold was fixed in advance but whose population was not. The last column carries "
+            "each row's identifier in the released register, which numbers the predictions in the "
+            "order they were written rather than the order they are read.}"
             "\n\\label{tab:hyp}\n\\end{table*}\n")
 
 

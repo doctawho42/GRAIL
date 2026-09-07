@@ -431,6 +431,15 @@ budget, so the whole comparison is recomputed under it.
 
 \input{si_table_macro}
 
+The \emph{blend} column of Table~\ref{MS-tab:sweep} belongs to the same choice and is printed
+under the same rule. It re-ranks the exhaustive arm's own pool under the aggregation a selection on
+validation prefers, the blend of Equation~\ref{eq:blend}, so that the cost of the released
+aggregation is visible rather than asserted. It is re-derived from per-template scores rather than
+from the collapsed ones the pool carries, and is admitted only because the same re-derivation
+reproduces the deployed column at every budget. \numAggregationUnjoined{} candidates do not join
+the \numAggregationJoined{} the two columns share and are dropped from both, so no emission
+figure is given for the blend.
+
 The choice moves \numAggregationMovedWord{} verdicts of the \numAggregationContrasts{}
 contrasts computed under both, and the table's caption names each. Three of them are cells the main text states: the exhaustive
 arm's lead over MetaPredictor at a budget of fifteen and BioTransformer's trail at a budget of
@@ -616,8 +625,7 @@ the natural drawing raises its recall at every wide budget, by $+\numSygdialectT
 $[\numSygdialectThirtyLo, \numSygdialectThirtyHi]$ at $k=30$. Only MetaTox cannot be re-run, and
 it is the one comparator that was handed the natural drawing to begin with.
 
-That correction is not subtractable from the matched-length margin, which is where the manuscript
-previously sent it. A recall difference measured at a fixed budget of 50 and a margin measured over
+That correction is not subtractable from the matched-length margin. A recall difference measured at a fixed budget of 50 and a margin measured over
 \numMatchedBanksygmaSlots{} slots taken from the comparator substrate by substrate are quantities
 of different populations, so the second is re-measured on the re-run rather than adjusted by the
 first. The re-run's per-substrate lists are written by the same run that produced the sweep above,
@@ -1762,6 +1770,15 @@ it globally would silently move what counts as a hit. It is applied through a pr
 instead: the global setting is untouched, and matching keys on 96 molecules are identical with and
 without it.
 
+\paragraph{How to read the two censored statistics.} The exhaustive mode's mean and ninetieth
+percentile in Table~\ref{MS-tab:modes} are taken over the \numCostFinished{} sampled substrates
+that finished, so against that sweep they are lower bounds: censoring removes the slowest. Against
+the whole validation draw the sweep's design pushes the other way, since it over-represents large
+substrates on purpose, and the net of the two is not established here. The slowest cell is marked
+for a third reason: a deadline is defined only for the sweep, so a $>$ entry can come from nowhere
+else, and the two modes' slowest cells are therefore not measured on the same substrates. On the
+test split, where no deadline is imposed, the exhaustive mode fails on none.
+
 \section{The evaluation claim, checked outside this corpus}
 \label{sec:si-external}
 
@@ -2192,8 +2209,8 @@ the surrounding tree was not clean, not that the producer is unknown.
 
 A reader gets the checks that a clone can run, and is told about the ones it cannot. Neither the
 measured bank nor the candidate pools are redistributed, so a handful of these checks have nothing
-to read; each names the file it wants and says the release withholds it, rather than reporting the
-release as stale, which is what they used to do. Two quantities the manuscript took straight out of
+to read; each names the file it wants and says the release withholds it rather than reporting the
+release as stale. Two quantities the manuscript took straight out of
 a withheld file, the validation draw and the bank's composition, are deposited as small artifacts
 that record that file by digest, so the chain from artifact to printed macro runs end to end for a
 reader and both counts stay traceable to what they were counted from.

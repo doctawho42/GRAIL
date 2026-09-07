@@ -1960,6 +1960,10 @@ def build():
     n["cost.sampled"] = ce["n_done"]
     n["cost.unfinished"] = sum(1 for r in ce["rows"] if not r.get("finished"))
     n["cost.unfinishedshare"] = round(n["cost.unfinished"] / max(n["cost.sampled"], 1), 4)
+    # The two censored statistics are taken over the substrates that finished, and the
+    # Supporting Information says so, so the count is a macro rather than a subtraction a reader
+    # is left to perform.
+    n["cost.finished"] = n["cost.sampled"] - n["cost.unfinished"]
     n["cost.deadline"] = int(ce["deadline_s"])
 
     # How those substrates were drawn, and what the draw does to the rate. The sample is not random:

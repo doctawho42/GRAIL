@@ -41,20 +41,17 @@ Pogodinskaya Str. 10-8, Moscow 119121, Russia}
 \maketitle
 
 \begin{abstract}
-Published metabolite-structure predictors cannot be compared with one another. Recall depends on how
-a predicted structure is judged to match a reference and on how many candidates a system is allowed
-to emit, and papers in this area report neither consistently. We promote both to declared axes and
-sweep them, running \numComparatorsColumnsWord{} published predictors and two configurations of a
-rule-grounded system of our own (GRAIL) on \numPopulationN{} substrates carrying
-\numPopulationReferences{} annotated metabolites. The comparison does not resolve into an ordering. The verdict moves with the matching criterion at
-\numCritMovedMax{} of \numCritBudgets{} budgets, and cutting every arm to the comparator's own list
-length retires the wide-budget leads against all but one of the
-\numMatchedComparatorsWord{} comparators. The confound is not ours alone; in an independent benchmark
-of this class of tool, the arms that emit more score higher, in all eleven of its drugs. We then bound what
-one application of one template bank can reach, at \numCeilingCoverage{} of the annotated
-references. Between \numBoundShortfallshareminPct{} and \numBoundShortfallsharemaxPct{} of the
-shortfall is transformation chemistry the training corpus never contains, which makes the bound a
-property of that corpus rather than of any one bank.
+Published predictors of metabolite structure cannot be compared with one another. Recall depends on
+how a predicted structure is judged to match a reference and on how many candidates a system is
+allowed to return, and papers in this area declare neither. We promote both decisions to declared
+axes and sweep them, running published predictors and two configurations of a rule-grounded system
+of our own (GRAIL) on a common set of drug-like substrates. The comparison does not resolve into an
+ordering: which system leads depends on the matching criterion and on the number of candidates
+allowed, and holding every system to the same list length removes most of the leads that a wide
+budget produces. The same confound governs an independent benchmark of this class of tool, in which
+the systems that emit more score higher. We then bound what one application of one template bank
+can reach, and find that most of what it misses is transformation chemistry the training corpus
+never contains, which makes the bound a property of that corpus rather than of any one bank.
 \end{abstract}
 
 % For Table of Contents Only. Written by scripts/paper2_figures.py at exactly 3.25 by 1.75

@@ -132,16 +132,10 @@ def si_criterion_sweep():
             "\\caption{The verdict of the comparison under each declared matching criterion. "
             "$+$ marks a budget where GRAIL's better arm leads the strongest comparator with the "
             "paired interval excluding zero, $-$ one where it trails on the same terms, and "
-            "$\\cdot$ one where the interval covers zero. Every cell is read from the interval "
-            "and never from the point estimate. The superscript names the comparator the cell is "
-            "read against, " + LEGEND + ", and the last row names the GRAIL arm, "
-            "\\emph{int.} or \\emph{exh.}, "
-            "with a dash where the better arm is not the same one under all five criteria at "
-            "that budget: neither the arm nor the comparator is constant across "
-            "the grid, so a sign on its own does not say what was compared with what. The levels "
-            "every cell is read from are Table~\\ref{SI-tab:si-criterion-levels}. Against "
-            "the default criterion the verdict moves "
-            f"at {moved[worst]} of {len(ks)} budgets under \\texttt{{{worst}}}.}}\n"
+            "$\\cdot$ one where the interval covers zero. The superscript names the comparator "
+            "the cell is read against, " + LEGEND + ", and the last row names the GRAIL arm, "
+            "\\emph{int.} or \\emph{exh.}, with a dash where the better arm is not the same one "
+            "under all five criteria at that budget.}\n"
             "\\label{tab:criterion}\n\\end{table*}\n")
 
 

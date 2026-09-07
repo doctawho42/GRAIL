@@ -105,17 +105,12 @@ def table():
           + _emitted_note(emit2 or emit, out, arms, ks) +
           " A prediction equal to the substrate is "
           "dropped before the budget for every method alike."
+          # What the blend column is, and nothing about why it is admissible: that argument is
+          # the Supporting Information's and the main text carries the pointer.
           + ("" if not blend else
-             " The last column, \\emph{blend}, re-ranks the exhaustive arm's own pool under the aggregation a "
-             "selection on validation chooses, the blend of Equation~\\ref{SI-eq:blend}; it is "
-             "not the released configuration and is printed so that a reader can see what that "
-             "selection would have bought. It is re-derived from per-template scores rather than "
-             "the collapsed ones the pool carries, and is admitted here only because the same "
-             "re-derivation reproduces the deployed column at every budget; "
-             f"{blend[2]['candidates_the_pool_does_not_carry']} candidates of "
-             f"{blend[2]['candidates_scored_by_both'] + blend[2]['candidates_the_pool_does_not_carry']} "
-             "do not join and are dropped from both, so the two share a pool and no emission "
-             "figure is given for it.") + "}",
+             " The last column, \\emph{blend}, re-ranks the exhaustive arm's own pool under the "
+             "aggregation a selection on validation chooses. It is not the released "
+             "configuration.") + "}",
           "\\label{tab:sweep}", "\\end{table*}"]
     return "\n".join(L)
 
