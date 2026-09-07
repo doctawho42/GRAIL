@@ -306,8 +306,8 @@ def si_applicability():
             "\\caption{The substrates behind every number in this work, as median and the fifth "
             "to ninety-fifth percentile. The corpus is assembled from four drug-centric sources "
             "and the distribution is what that produces; the manuscript motivates the problem "
-            "with environmental chemicals as well, and this table is what a reader should hold "
-            "that motivation against. It describes the population and does not establish an "
+            "with environmental chemicals as well, and this table is the population that "
+            "motivation is set against. It describes the population and does not establish an "
             "applicability domain, which would need performance measured against these axes "
             "rather than the axes alone.}\n"
             "\\label{tab:si-applicability}\n\\end{table}\n")
@@ -1286,8 +1286,8 @@ def si_case():
             "number of atoms on its reactant side and the "
             "substrate atoms it fired on. $\\star$ marks an annotated metabolite. "
             f"{small} of the twenty come from a template of three reactant atoms or fewer, which "
-            "is the count the manuscript quotes and which this column is here to let a reader "
-            "check. The interactive "
+            "is the count the manuscript quotes and which this column makes checkable. "
+            "The interactive "
             f"mode returns {i['n_candidates']} candidates for the same substrate. The complete "
             "ranked lists of both modes are in the released artifacts.}\n"
             "\\label{tab:si-case}\n\\end{table}\n")

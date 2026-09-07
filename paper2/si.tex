@@ -73,9 +73,8 @@ decided by: a hash of the canonical SMILES, the InChIKey, the tautomer key and t
 folded Morgan fingerprint. A hash decides string equality exactly and a folded fingerprint decides
 Tanimoto of one exactly, so all \numCritCriteria{} declared criteria survive the substitution and
 none of the metabolites survives it; a check compares each criterion's verdict on the descriptors
-with its verdict on the structures and reports no disagreement. What a reader without the source
-licences loses is not a recall figure or a criterion but the structure-level analyses of this
-document, which read the reference itself, and those need the corpus that reader already needed.
+with its verdict on the structures and reports no disagreement. What the source licences withhold is not a recall figure or a criterion but the structure-level
+analyses of this document, which read the reference itself and therefore need the corpus.
 The deposit's keys must still be joined against a substrate set rebuilt under one's own licences,
 and the manifest is what tells them whether their rebuild matches.
 
@@ -275,15 +274,14 @@ diverse in skeleton rather than a few series sampled repeatedly.
 
 What that does not establish is an applicability domain. A domain is a statement about where
 performance holds, and it would need recall measured against these axes rather than the axes
-described; the table says what was measured on, and a reader whose compounds sit outside this
-range should read every figure here as untested for them.
+described; the table says what was measured on, and every figure here is untested on compounds outside
+that range.
 
 \input{si_table_applicability}
 
 The members are Table~\ref{tab:si-population-list}, under the key every comparison here is
 scored by. How those \numPopulationN{} were drawn from the split is not recorded anywhere and
-that is stated where the population is defined; naming them at least makes the draw checkable
-against anything a reader wants to check it against.
+that is stated where the population is defined; naming them at least makes the draw checkable against any other population.
 
 \input{si_table_population_list}
 
@@ -294,8 +292,7 @@ against anything a reader wants to check it against.
 
 Several counts of how many candidates a mode returns appear in this work, and they differ because
 they are measured at different stages and on different populations rather than because any of them
-estimates the others. They are collected here so that a reader comparing two of them can see at
-once which is which.
+estimates the others. They are collected here so that two of them can be told apart at a glance.
 
 \input{si_table_counts}
 
@@ -317,8 +314,8 @@ number of substrates for which that is the case.
 \section{Which chemistry each method recovers}
 \label{sec:si-chemistry}
 
-A recall figure aggregates over transformations of very different kinds, and a reader deciding
-whether any of these systems is usable on their compound class cannot read that off one number.
+A recall figure aggregates over transformations of very different kinds, and whether any of these systems is usable on a given compound class cannot be read off one
+number.
 Table~\ref{MS-tab:si-chemistry} splits the comparison set's \numChemReferences{} references into
 \numChemClasses{} classes and reports recall within each.
 
@@ -453,9 +450,8 @@ against MetaTox at twenty, which does the same. The wide budgets the paper reads
 are unaffected. It also moves the levels, upward for every arm but one,
 because substrates with few references are easier and count for more under this aggregation;
 BioTransformer is the exception and its macro recall is the lower of the two at the widest
-budgets. A
-reader who suspects the aggregation was chosen to suit the result can read which way each moved
-cell goes from the caption, and the one that bears on a claim goes against this work.
+budgets. Which way each moved cell goes is in the caption, and the one that bears on a claim goes against
+this work.
 
 \section{Precision}
 \label{sec:si-precision}
@@ -491,8 +487,8 @@ it.
 The verdict grid itself is Table~\ref{MS-tab:criterion} of the manuscript, since it is the
 evidence the paper's title advertises and belongs where the argument is made. The levels it is
 read from are Table~\ref{tab:si-criterion-levels}: every arm at every budget under every
-criterion, which is what lets a reader see whether a sign moved because a level moved or because
-the arms reordered. What follows is what the grid does not show on its face.
+criterion, which is what separates a sign that moved because a level moved from one that moved because the
+arms reordered. What follows is what the grid does not show on its face.
 
 \input{si_table_criterion_levels}
 
@@ -522,8 +518,8 @@ the molecule. What that does not explain is the shape of the column, because the
 criterion produces the same one: under Tanimoto similarity of one the verdicts are identical to
 canonical's at every budget, and those are the two criteria under which no advantage of this
 work separates anywhere. Whatever the two ends share, it is not strictness and it is not the
-dialect, and the entanglement is stated here as something a reader of the strict column should
-know rather than as the reason it reads as it does. The tautomer-aware key exists because
+dialect, and the entanglement is a property of the strict column rather than the reason it reads as it
+does. The tautomer-aware key exists because
 reproducing a corpus's tautomer is not the question a comparison should be asking, and the
 canonical column is reported because declaring a criterion means printing what it does, not only
 the one whose behaviour suits the argument.
@@ -646,9 +642,8 @@ $[\numMatchedTrainedsygmastdLo, \numMatchedTrainedsygmastdHi]$, which separates.
 
 \input{si_table_dialect}
 
-Each of those measurements holds the other arms fixed, and none of them answers the question a
-reader of the comparison table has: what the comparison reads when everything that can move is on
-one drawing. Table~\ref{tab:si-equalised} is that reading, and it moves \numEqualisedMovedWord{}
+Each of those measurements holds the other arms fixed, and none of them answers what the comparison reads when everything that can move is on one
+drawing. Table~\ref{tab:si-equalised} is that reading, and it moves \numEqualisedMovedWord{}
 of the nine verdicts. The levels move, downward for this work's arms and upward for the two
 comparators that gain from the drawing, and they move together: the three-way division of the
 comparison is a property of the systems and not of the dialect it was read in. Both of this work's arms are rebuilt on
@@ -909,8 +904,7 @@ both intervals close on zero rather than near it, and the artifact records that 
 rather than leaving it to be read off a bound that rounds to nothing. Of the \numDialcondNbudgetsWord{} budgets swept, the two
 effects separate together at \numDialcondBothsepat{} and at no other.
 
-Both figures belong in the record and they answer different questions. A reader deciding whether
-the drawing moved a verdict wants the pooled one. A chemist submitting one substrate wants the
+Both figures belong in the record and they answer different questions. Whether the drawing moved a verdict is decided by the pooled figure. A chemist submitting one substrate wants the
 conditional one, because their substrate is either affected or it is not.
 
 \section{Whether the missing chemistry is the corpus's or the bank's}
@@ -1039,9 +1033,8 @@ the same way as the first source and settles nothing on its own.
 The two counts of this set are counted differently and neither fraction may be read against the
 other. Section~\ref{sec:si-corpus} keys a pair on the InChIKey skeleton and finds
 \numAssemblyGloryxpairsinside{} of \numAssemblyGloryxpairs{} inside; the typing used here keys it
-on the transformation type and finds \numGloryxdropInside{} of \numGloryxdropPairs{}. A reader
-would not otherwise suspect two instruments, because the source that can be checked against both
-gives one answer either way: MetXBioDB returns \numMetxdropPairs{} pairs with
+on the transformation type and finds \numGloryxdropInside{} of \numGloryxdropPairs{}. Two instruments would not otherwise be suspected, because the source that can be checked against
+both gives one answer either way: MetXBioDB returns \numMetxdropPairs{} pairs with
 \numMetxdropInside{} inside under each.
 
 One thing had to change to measure it at all. The common-substructure search the typing runs
@@ -1260,8 +1253,7 @@ under the gate would therefore be running a narrower configuration than any arm 
 and no number in this paper describes it.
 
 The release is the evaluated configuration: an unspecified rule threshold means no gate, and the
-checkpoint keeps the value so a caller who wants the gate can pass it. The same holds for the
-evaluation path a reader would use to select a configuration of their own, since selecting on a
+checkpoint keeps the value so a caller who wants the gate can pass it. The same holds for the evaluation path by which a different configuration would be selected, since selecting on a
 setting the release does not run is the same defect one layer up. A regression test holds all
 three together, because a released default that differs from an evaluated one is invisible to
 every other check here and is the defect this paper argues about.
@@ -1405,8 +1397,7 @@ different question from the one asked and answers it differently from what the m
 \label{sec:si-refstep}
 
 Section~\ref{sec:si-singlestep} measures how many mined templates perform more than one enzymatic
-edit and draws the consequence for the coverage bound. That measurement is over templates. The
-question a reader of a recall figure has is about the references, because a corpus recording a
+edit and draws the consequence for the coverage bound. That measurement is over templates. The question a recall figure raises is about the references, because a corpus recording a
 metabolite several steps from its parent asks a predictor for something no single application can
 be, and counts a hit when one template stands in for the lot.
 
@@ -1420,8 +1411,8 @@ Nothing in that makes a composite reference unreachable, and it is worth being c
 template mined from a composite pair performs the whole transformation in one application, which is
 how the bank reaches many of them and why the ceiling is as high as it is. What the figure settles
 is what a recall number means. Roughly one annotated metabolite in six is flagged as more than a
-single enzymatic step, so a reader who takes recall for the share of one-step chemistry a system
-finds is reading a number over a population that is not all one-step. How far wrong that reading is
+single enzymatic step, so recall here is not the share of one-step chemistry a system finds: the population it is taken
+over is not all one-step. How far wrong that reading is
 depends on the share among hits rather than among references, and this work does not measure it: the
 sentence above gives the reason to expect the two to differ, since a template mined from a composite
 pair performs the whole transformation in one application, so composites should be enriched among
@@ -1659,8 +1650,7 @@ A separate analysis re-ran three
 methods, four metrics and five criteria on two populations of one split, and asked whether the
 ordering of methods changes with the population. The two are the full \numPopulationTestsubs{}
 and a \numBtN{}-substrate subset drawn for an earlier evaluation against MetaTrans
-\citep{Litsa_2020}, which is not a column of the comparison here; that subset is named because a
-population no reader can identify is the defect this section is about. Of 60 pairwise comparisons, 10 reverse in point estimate,
+\citep{Litsa_2020}, which is not a column of the comparison here; that subset is named because an unidentifiable population is the defect this section is about. Of 60 pairwise comparisons, 10 reverse in point estimate,
 no population-by-method interaction separates from zero, and none survives a Holm correction. The
 design detects an interaction of $0.0661$ at 80\% power, so it excludes large population effects
 and not moderate ones. Two populations is a weak design and we do not offer it as a general
@@ -2008,8 +1998,7 @@ It carries a column. Supplying no ranked predictions would not have excluded it,
 does not separate it from MetaPredictor, whose list is also unranked and shorter than the budget on
 nearly every substrate. Running it takes one thing worth recording for anyone who tries: the
 native InChI library its distribution caches is built for one processor architecture, so on
-another the tool aborts at load, and an x86-64 Java 8 runtime resolves it. It is the comparator a
-reader of the rule bank most wants, since \numThirdpartyBiotransformerShipped{} of its templates
+another the tool aborts at load, and an x86-64 Java 8 runtime resolves it. It is the comparator that bears most on the rule bank, since \numThirdpartyBiotransformerShipped{} of its templates
 are inside that bank, so its column measures how much of this work's reach is BioTransformer's
 reach under another name.
 
@@ -2069,8 +2058,8 @@ to be stated and it is a weak one. It is not reproducibility: neither service's 
 recorded here, and Section~\ref{sec:si-comparators} says as much for MetaTox. It is not
 availability: both are reachable. It is the cost of submission, that MetaTox accepts a file of
 \numPopulationN{} structures and returns a file where DeepCYP takes one substrate at a time.
-That is a statement about our effort and not about either system, and it is the kind of reason
-this paper asks other work not to leave implicit, so it is written here for a reader to weigh.
+That is a statement about our effort and not about either system, and it is the kind of reason this paper asks other work not to leave implicit, so it is written
+here rather than left out.
 On that basis DeepCYP's absence is unforced, and the same
 applies to GLORYx, whose distribution was not sought. Metabolite-Gen \citep{Chavan_2026} is a preprint with no repository we could
 find. The list is closed by a rule: a comparator that could not be obtained is reported as
@@ -2135,8 +2124,7 @@ column and carries the deployed interactive arm from the pools the comparison it
 reproducing Table~\ref{MS-tab:sweep} in every cell of both. It also records, beside that arm, the
 one it replaced: an early dump ranked by the product of the two component scores over a narrower
 pool, which reached \numFourmethodSupersededFiveZero{} at $k=50$. No number in this paper derives
-from that column, and it is kept rather than deleted so a reader who meets it in an older copy can
-tell which arm they are looking at. Table~\ref{MS-tab:sweep} is supplied by
+from that column, and it is kept rather than deleted so that the column can still be identified in an older copy. Table~\ref{MS-tab:sweep} is supplied by
 \texttt{deployment\_table.json}, which carries a gate asserting the two agree on MetaTox.
 
 \numProvPinned{} artifacts are pinned. Most record the script that wrote them, the SHA-256 of
@@ -2187,7 +2175,7 @@ we know it can.
 The identification itself had a blind spot of a different kind, and it is the one that let the
 standardised pools through. It enumerated pool directories by a filename pattern and reported on
 whichever ones matched, saying nothing about those that did not, so four of the thirteen a
-published number is read from were never examined -- among them the pool the interactive arm's
+published number is read from were never examined, among them the pool the interactive arm's
 whole column comes from, and both standardised pools. A check that reports on what it finds and
 is silent about what is missing cannot fail on the thing that is missing. It now refuses when a
 declared directory yields no shard it can read, the readers of those pools refuse a shard that
@@ -2214,13 +2202,13 @@ working tree at write time. Verification resolves by the recorded source digest,
 independent of the commit, so the producer is identified regardless; what the flag says is that
 the surrounding tree was not clean, not that the producer is unknown.
 
-A reader gets the checks that a clone can run, and is told about the ones it cannot. Neither the
+A clone gets the checks it can run, and is told about the ones it cannot. Neither the
 measured bank nor the candidate pools are redistributed, so a handful of these checks have nothing
 to read; each names the file it wants and says the release withholds it rather than reporting the
 release as stale. Two quantities the manuscript took straight out of
 a withheld file, the validation draw and the bank's composition, are deposited as small artifacts
-that record that file by digest, so the chain from artifact to printed macro runs end to end for a
-reader and both counts stay traceable to what they were counted from.
+that record that file by digest, so the chain from artifact to printed macro runs end to end and both counts stay traceable to
+what they were counted from.
 
 One thing had to be repaired before any of that meant anything. An input's digest is taken over the
 bytes on disk, and git normalises line endings when a file is committed without reporting the
@@ -2228,8 +2216,7 @@ working copy as modified, so eight tracked data files here carried bytes no clon
 materialise. Three artifacts therefore verified in this checkout and reported a moved input in a
 fresh one: the guarantee was reproducible only for us. The files were re-materialised from the
 repository, the artifacts that named them re-run, and a check now compares every tracked file's
-bytes against the committed ones, since a digest that means one thing here and another for a reader
-is not a guarantee at all.
+bytes against the committed ones, since a digest that means one thing here and another in a clone is not a guarantee at all.
 
 Third, and it bounds the hop described below: naming a file as an input, by digest, is a guarantee
 about fixity and not about provenance. It establishes that the file has not moved since it was
