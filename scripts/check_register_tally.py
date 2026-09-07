@@ -27,7 +27,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 TABLE = ROOT / "paper2" / "table_hypotheses.tex"
-BODY = ROOT / "paper2" / "body.tex"
+# Both documents, because a sentence that counts the table can live in either and one of them
+# moved: the shortening pass sent the count of marked rows into the Supporting Information, and a
+# check that read only the manuscript reported its own subject missing rather than following it.
+PROSE = (ROOT / "paper2" / "body.tex", ROOT / "paper2" / "si.tex")
 
 WORDS = {"none": 0, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7,
          "eight": 8, "nine": 9, "ten": 10, "eleven": 11, "twelve": 12, "thirteen": 13,
@@ -128,10 +131,11 @@ def main() -> int:
                     help="check that this check fails when the manuscript's count is wrong")
     args = ap.parse_args()
 
-    if not TABLE.exists() or not BODY.exists():
+    if not TABLE.exists() or not all(p.exists() for p in PROSE):
         print("  not checkable in this tree: the manuscript is not here")
         return 0
-    table_tex, body_tex = TABLE.read_text(), BODY.read_text()
+    table_tex = TABLE.read_text()
+    body_tex = "\n\n".join(p.read_text() for p in PROSE)
 
     if args.self_test:
         # A gate that cannot fail is not a gate. Move the count by one and require a refusal.

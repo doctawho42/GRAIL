@@ -190,6 +190,12 @@ knowledge overlaps our test substrates by construction. No prior benchmark in th
 this asymmetry, and neither does this work; it is reported because anyone comparing these numbers to
 published ones should know that the rule-based figures are, in this respect, optimistic.
 
+
+The \emph{validation draw} is a declared sample of \numValdrawCap{} substrates at seed
+\numValdrawSeed{}, of which \numValdrawPaired{} are held by both operating modes in a paired
+comparison; registered ranking and timing thresholds are checked here, because a threshold checked
+on the population that chose the setting it tests is not a check, and three of the ten reported predictions
+were in the event adjudicated on the comparison set instead, which Table~\ref{MS-tab:hyp} marks.
 \section{What the annotation contains}
 \label{sec:si-annotation}
 
@@ -300,6 +306,18 @@ The pool is what rule application produced before duplicates are removed; the li
 receives, deduplicated by matching key and capped. The emission rule reads the pool at its own
 stage, before the cap. The worked example is one substrate and carries no population at all.
 
+
+Under the product combination the system emitted candidates scoring within $\alpha =
+\numEmitAlpha$ of the leader. That emission rule does not transfer to a rank fusion, and the reason is
+structural: the worst candidate scores $\numEmitFusionmedian$ of the best under fusion against
+$\numEmitProductmedian$ under the product, because a reciprocal-rank sum is a rank statistic
+without scale. At that $\alpha$ the emission rule admits $\numEmitByfusion$ candidates from a pool of
+$\numEmitPool$ on the comparison set, truncating nothing.
+
+That figure is not the one Table~\ref{MS-tab:modes} prints, which is
+measured on the validation draw; every candidate count in this paper is listed with the stage and
+the population it belongs to in Table~\ref{tab:si-counts}, because the same words name
+different quantities at different points of the pipeline.
 \section{Where a method runs out of candidates}
 \label{sec:si-short}
 
@@ -311,6 +329,15 @@ prints. They bear directly on the two leads claimed at $k=30$ and $k=50$: an arm
 of candidates cannot gain from a wider window, so the leads should be weighed against the
 number of substrates for which that is the case.
 
+
+It returns \numEmittedTrained{} candidates on average against MetaTox's
+\numEmittedMetatox{}, and at $k=20$ already \numShortTrainedTwoZero{} of its \numPopulationN{}
+lists are shorter than the budget; a list that has ended cannot gain a hit from a wider window, so
+the deficit grows with $k$ whatever the order within it. It trails MetaTox at every budget above
+fifteen, $\numGapTrainedmetatoxThreeZero$ $[\numGapTrainedmetatoxThreeZeroLo,
+\numGapTrainedmetatoxThreeZeroHi]$ at $30$ and $\numGapTrainedmetatoxFiveZero$
+$[\numGapTrainedmetatoxFiveZeroLo, \numGapTrainedmetatoxFiveZeroHi]$ at $50$, both intervals
+excluding zero and both surviving the correction.
 \section{Which chemistry each method recovers}
 \label{sec:si-chemistry}
 
@@ -422,6 +449,10 @@ $\numMatchedTrainedmetatox$
 $[\numMatchedTrainedmetatoxLo, \numMatchedTrainedmetatoxHi]$, which is the same deficit the main
 text reports at fixed budgets and is not an artefact of either.
 
+
+It is measured rather than deducted, since a
+correction taken at a fixed budget cannot be subtracted from a margin taken over a comparator's own
+slot count.
 \section{The comparison under the other aggregation}
 \label{sec:si-macro}
 
@@ -487,6 +518,11 @@ exhaustive mode's lead over MetaTox at $k=30$ excludes zero by little, and its t
 budgets, $k=15$ and $k=20$, have intervals straddling zero narrowly rather than lying far from
 it.
 
+
+against
+MetaTox it even leads at $k=10$, $+\numGapTrainedmetatoxOneZero$
+$[\numGapTrainedmetatoxOneZeroLo, \numGapTrainedmetatoxOneZeroHi]$, one of the four leads the
+family-wise correction removes.
 \section{Sensitivity of the comparison to the matching criterion}
 \label{sec:si-sensitivity}
 
@@ -543,6 +579,17 @@ contains without counting how many times it repeats. Both
 merges are the criterion acting as declared rather than a defect, and both are the reason the
 count is reported per criterion rather than once.
 
+
+The cell-by-cell verdicts in the table are read from per-comparison intervals with no correction
+across the grid. The count of budgets at which a verdict moves is therefore the weaker of the two
+readings, and is given as an illustration. The range of the margin at one budget is a property of
+the point estimates and depends on no multiplicity convention.
+
+Under
+\numCritNeverLeadsWord{} of the \numCritCriteria{} criteria GRAIL leads at no budget at all, and
+the most any criterion yields is \numCritLeadsBestWord{}.
+
+The spread is not evenly earned across the five, and saying so is not a retreat from reporting it.
 \section{How the substrate is drawn}
 \label{sec:si-presentation}
 
@@ -702,6 +749,12 @@ opposite direction: what costs SyGMa recall costs it nothing, which is what a to
 standardises its own input before matching would do. Three rule-based comparators, three
 different answers, and no one of them bounds another.
 
+
+The direction is not
+neutral, since this bank's mined half requires the imidic reactant more often than the amide, and
+the size of it is measured for every arm that can be re-run: it raises SyGMa's recall by
+$+\numSygdialectThirty$ at $k=30$ and MetaPredictor's by $+\numMpdrawAllDiffThreeZero$, and changes
+BioTransformer's by $\numBtarmDrawingdelta$.
 \section{The rule bank}
 \label{sec:si-bank}
 
@@ -827,6 +880,13 @@ and it is the one Section~\ref{sec:si-rarefaction} uses. Re-running the miner on
 re-derives every template it derived before and none new, which shows it is deterministic and
 nothing more.
 
+
+Most of that body is not this
+work's chemistry: \numThirdpartyBorrowed{} of the \numAttribNamed{},
+\numThirdpartyBorrowedsharePct{}, appear verbatim in rule sets published by others,
+\numThirdpartyBiotransformerShipped{} of BioTransformer's, \numThirdpartySygmanamed{} attributed
+to SyGMa and \numThirdpartyGloryxnamed{} to GLORYx. That is a lower bound, because string equality
+cannot trace a template somebody rewrote.
 \section{What the rule budget buys}
 \label{sec:si-budget}
 
@@ -897,6 +957,11 @@ CI $[\numHOneZeroLo, +\numHOneZeroHi]$, taking the mean pool from \numHOneZeroPo
 \numHOneZeroPoolTrained{} candidates before deduplication. The interval covers zero, so what the
 draw establishes is that the difference is smaller than the ceiling and not that it is positive.
 
+
+On validation, raising it to the whole bank is worth
+$+\numBudgetKSevenFiveEightOneGapthirty$
+$[+\numBudgetKSevenFiveEightOneLothirty, +\numBudgetKSevenFiveEightOneHithirty]$ at an output
+budget of thirty, and nothing that separates at fifteen (Section~\ref{sec:si-budget}).
 \section{The drawing's effect where the drawing changes anything}
 \label{sec:si-dialcond}
 
@@ -1069,6 +1134,24 @@ number; and the census of Section~\ref{MS-sec:results} reports its untypeable co
 uncovered subset rather than over the whole set. Three numbers describing three measurements,
 named here because printed side by side they read as one measurement disagreeing with itself.
 
+
+Whether the same bound binds a predictor that
+applies no templates at all is not measured here; what is measured is that the chemistry is absent
+from the corpus, which is a property of the training data rather than of the method reading it.
+
+That is a bound
+rather than a point, because it is derived from the marginals rather than from a join the paper does
+not report, and Section~\ref{sec:si-typeoverlap} gives both counts it rests on and why they
+differ.
+
+What can be checked instead
+is a rebuild, which \texttt{scripts/verify\_rebuilt\_corpus.py} reports substrate by substrate. The one source held on disk says the selection was not blind to chemistry. Between the MetXBioDB
+pairs that entered the corpus and those that did not, the transformation-type distributions differ
+by a total variation distance of \numMetxdropTv{} at $p=\numMetxdropP$ over \numMetxdropPerm{}
+shuffles. \numMetxdropDroppedtypesabsent{} of the dropped pairs carry a type the kept half never
+shows. The
+GLORYx reference set points the same way without settling it, at a distance of \numGloryxdropTv{}
+but $p=\numGloryxdropP$ on \numGloryxdropKeptp{} typed pairs against \numGloryxdropDroppedp{}.
 \section{Whether template discovery has saturated}
 \label{sec:si-rarefaction}
 
@@ -1221,6 +1304,49 @@ generator, the deployed selection gains $+\numSelVspriorApplicable$
 $[+\numSelVspriorApplicablelo, +\numSelVspriorApplicablehi]$: small at every budget and
 separating at all of them.
 
+
+The table's last column is not a sixth system: it is the
+exhaustive arm's own pool re-ranked under the aggregation a selection on validation prefers, and
+it is printed because that selection went against the aggregation this work released
+(Section~\ref{sec:si-aggregation}). Every other number in this paper is the released
+aggregation's.
+
+The aggregation that combines the
+templates reaching one candidate is one, and a selection on validation prefers a different one.
+The fusion constant is a second, left at the value the method was published with. A rule gate the
+released checkpoint carries is a third, and no figure in this paper was measured under it. A set
+of candidate pools scored by a checkpoint this repository no longer ships is a fourth, and the
+drawing of the substrate and the pool cap are two more of the same kind, both now declared and
+one of them swept.
+
+The blend of Equation~\ref{eq:blend} is better at the head of the list.
+It gains at most $+\numAggCmpHybridMax$, 95\% CI
+$[+\numAggCmpHybridMaxLo, +\numAggCmpHybridMaxHi]$, at a budget of
+\numAggCmpHybridMaxkWord{}. On the comparison set it is
+indistinguishable from the deployed aggregation at every budget a lead is claimed at; on the
+validation draw it separates out to an output budget of \numAggValHybridSepto{}, which takes in
+two of the budgets a lead is claimed at, and that reading is in Section~\ref{MS-sec:limitations}.
+
+Equation~\ref{MS-eq:noisyor}
+is why deduplication is not a cosmetic step: the key under which two products are judged the same
+decides which scores are combined, and changing that key moves the ranking. Tautomers are the
+hard case, and their treatment is not settled by the standard identifiers \citep{Dhaked_2020}.
+
+Every constant of
+\numFusionkFlatfrom{} or more is indistinguishable from it at output budgets of 5, 15 and 50, and
+the null
+is stated as the bound it is: no such constant differs from the deployed value by more than
+$\numFusionkBandOneFive$ at fifteen. At an output budget of 30 it is not a null, where
+$K=\numFusionkBreakconstant$ falls $\numFusionkBreakgap$
+$[\numFusionkBreaklo, \numFusionkBreakhi]$ short, so flatness holds at three of the four budgets
+and not at all of them (Section~\ref{sec:si-knobs}).
+
+The
+deployed combination is reciprocal rank fusion \citep{cormack2009},
+\begin{equation}
+\mathrm{RRF}(c) = \sum_{i} \frac{1}{K + r_i(c)}, \qquad K = 60,
+\end{equation}
+where $r_i(c)$ is the rank of $c$ under scorer $i$.
 \section{Model architectures and training}
 \label{sec:si-arch}
 
@@ -1314,6 +1440,20 @@ retraining spread needs (Section~\ref{MS-sec:limitations}), so one campaign woul
 and neither is settled here. What can be said without it is which estimator the release uses and
 in which direction its bias runs, and both are stated above.
 
+
+Both learned stages are trained short of what the split allows: \numTrainSubstrates{} of
+\numSplitTrainSubstrates{} training substrates for \numTrainEpochsWord{} epochs with early stopping
+that never engaged, which is an underfitting signature and not a converged run. The spread is
+measured at this configuration, so what a headline figure is read against is known; retraining on
+the full split under more than \numSpreadSeedsWord{} seeds, which would say whether the level as
+well as the spread moves, is not reported (Section~\ref{sec:si-retrain}).
+
+Both learned stages were trained on a subsample: \numTrainSubstrates{} of the split's
+\numSplitTrainSubstrates{} training substrates, drawn at a recorded seed, for
+\numTrainEpochsWord{} epochs, with early stopping that never engaged. The subsample was fixed when
+the run was configured and is not a consequence of anything measured here, so what the ablations
+compare (Section~\ref{sec:si-ablations}) is the value of each stage at that training budget
+rather than at the split's full size. Every setting is in the Supporting Information.
 \section{Whether the site a prediction names is the site that changed}
 \label{sec:si-site}
 
@@ -1352,6 +1492,11 @@ margin is wider than the uniform one suggested. The reading remains that a raw a
 nine in ten is not the size of the effect; the size is the margin, and it is
 \numSiteConnectedmargin{}.
 
+
+The null is a connected fragment of the same
+size grown at random from the same molecule, which agrees at \numSiteConnectednullPct{}. An
+agreement rate near nine in ten is not the size of the effect. The margin over that null is, and it
+is \numSiteConnectedmargin{}.
 \section{What a single step is}
 \label{sec:si-singlestep}
 
@@ -1435,6 +1580,11 @@ sentence above gives the reason to expect the two to differ, since a template mi
 pair performs the whole transformation in one application, so composites should be enriched among
 hits rather than equally represented. The direction is stated and the size is not.
 
+
+That is what the instruments flag rather than a
+count of such transformations: the union includes the locus instrument, whose error is unmeasured
+in both directions (Section~\ref{MS-sec:limitations}), and the registered instrument alone flags
+\numRefstepEdits{}.
 \section{The registered predictions}
 \label{sec:si-register}
 
@@ -1467,6 +1617,12 @@ because none was run for it, which is a different thing from a prediction that w
 not hold; the three of those are P6, P7 and P8 and they are in Table~\ref{MS-tab:hyp} with their measured
 values.
 
+
+Registered as prediction P4 with a criterion of zero lost cells
+over a grid of five matching criteria by ten budgets and the comparator's own uncapped output:
+\numHOneOneLost{} of \numHOneOneCells{}. That ladder was fixed with the prediction and is not the
+nine budgets read everywhere else here; it is released with the register and with the grid it was
+adjudicated on.
 \section{Group ranking and its oracle}
 \label{sec:si-oracle}
 
@@ -1535,6 +1691,10 @@ of after the cap moves micro recall at $k=1$ from \numSelLearnedOne{} to $0.1068
 difference of $0.0015$. Every arm of every ablation here uses the deployed convention, so the
 differences reported are differences of method and not of tie-breaking.
 
+
+Re-ranking one pool several ways, with the pool, the matching rule and the budget fixed, separates
+what each learned stage contributes from what the form of their combination contributes; no model
+runs, because the pools carry both component scores.
 \section{When a ranking comparison can measure anything}
 \label{sec:si-rankingpower}
 
@@ -1877,6 +2037,23 @@ Nothing was re-run for this and no reference structure was needed. That benchmar
 reference metabolites as drawings, which is why this section checks the claim about evaluation and
 not this system's recall on those drugs.
 
+
+That null holds a drug's emissions fixed but not an arm's, so it cannot say at what level the
+association lives. Removing the additive arm and drug effects from both sides leaves
+$\numExtbudgetResidual$: the association is mostly between the arms and does not vanish inside
+them, and between the arms is in any case the level a benchmark orders at. The axis is counted from
+the deposited files and not reconstructed from recall, which matters, since recall would otherwise
+enter the axis by construction (Section~\ref{sec:si-external}).
+
+Over the
+\numExtbudgetCountedcells{} cells of the \numExtbudgetGrid{}-cell grid carrying both a count and a
+published recall the rank correlation is $\numExtbudgetRho$, positive within a drug in
+\numExtbudgetWithinpositive{} of \numExtbudgetWithinn{}; the remaining cells are accounted for,
+\numExtbudgetAbsentnodeposit{} belonging to the \numExtbudgetArmsnotdepositedWord{} arms never
+deposited and \numExtbudgetAbsentnorecallWord{} counted but carrying no published recall. Shuffling
+emission among the arms of a drug, which preserves every drug's set of emissions and every recall
+and breaks only their pairing, reproduces the correlation in fewer than one permutation in
+\numExtbudgetPermutations{}.
 \section{Comparators}
 \label{sec:si-comparators}
 
@@ -2137,6 +2314,13 @@ The guarantee covers the pinned set and not the directory: of \numProvFiles{} fi
 \texttt{results/}, \numProvUnstamped{} carry no stamp and \numProvChanged{} were written by a
 producer that has since changed. Those files support no number in this paper.
 
+
+It is also the one comparator whose arm one of its own authors has read,
+since its first author \citep{Rudik_2017} is a co-author here.
+
+Ordering is not a
+differentiator either: \numArmreturnOrderingWord{} of the \numComparatorsNWord{} comparators order
+their whole output, and this system is one more that does.
 \section{Provenance and reproduction}
 \label{sec:si-prov}
 
