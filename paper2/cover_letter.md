@@ -2,7 +2,7 @@
 
 **To the Editors, *Journal of Chemical Information and Modeling***
 
-**Manuscript:** Undeclared Choices Reorder Metabolite Predictors, and the Corpus Bounds Any Bank Mined From It
+**Manuscript:** Metabolite Predictors Have a Multiverse Problem
 
 **Authors:** Nikita L. Polomoshnov (corresponding, nikitapol@fbb.msu.ru), Anastasia V. Rudik
 

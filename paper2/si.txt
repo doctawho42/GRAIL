@@ -1,6 +1,5 @@
 Supporting Information:
-GRAIL: rule-grounded metabolite prediction under
-a declared evaluation
+Metabolite Predictors Have a Multiverse Problem
 Nikita L. Polomoshnov∗,† and Anastasia V. Rudik‡
 †Faculty of Bioengineering and Bioinformatics, Lomonosov Moscow State University,
 Leninskie Gory 1-73, Moscow 119234, Russia
@@ -44,11 +43,11 @@ validation.
 
 The annotated substrate–metabolite pairs are assembled from four sources: ChEMBL S1 ,
 DrugBank S2 , MetXBioDB S3 and the GLORYx reference set S4 . The versions used are
+ChEMBL 34, DrugBank 5.1.10, MetXBioDB 1.0 and the GLORYx reference set released in
+2020, published as de Bruyn Kops et al. S4 .
 S1
 
-ChEMBL 34, DrugBank 5.1.10, MetXBioDB 1.0 and the GLORYx reference set released in
-2020, published as de Bruyn Kops et al. S4 .
-Their licences do not combine. ChEMBL 34 is released under CC BY-SA 3.0, which
+Their licences do not combine. ChEMBL 34 is released under CC BY-SA 3.0, which
 requires a derivative to carry the same or a compatible ShareAlike licence and forbids adding
 restrictions. DrugBank 5.1.10 is released under CC BY-NC 4.0, which forbids commercial
 use. A single derived work drawing on both cannot satisfy each: adding the non-commercial
@@ -73,12 +72,12 @@ fingerprint decides Tanimoto of one exactly, so all 5 declared criteria survive 
 and none of the metabolites survives it; a check compares each criterion’s verdict on the
 descriptors with its verdict on the structures and reports no disagreement. What the source
 licences withhold is not a recall figure or a criterion but the structure-level analyses of this
+document, which read the reference itself and therefore need the corpus. The deposit’s keys
+must still be joined against a substrate set rebuilt under one’s own licences, and the manifest
 
 S2
 
-document, which read the reference itself and therefore need the corpus. The deposit’s keys
-must still be joined against a substrate set rebuilt under one’s own licences, and the manifest
-is what tells them whether their rebuild matches.
+is what tells them whether their rebuild matches.
 
 S1.1
 
@@ -89,6 +88,7 @@ and no script among its 857 commits reads any of the four sources or writes the 
 files. The assembly cannot therefore be read off code. What follows separates what the
 shipped files establish about it from what only their producer could, and states the second as
 a bounded absence rather than as silence.
+
 What each record carries. The three splits hold 464,966 structure records, each with
 five fields: an identifier, an InChI, a state, a SMILES string and an index. The identifier is
 the one field that could carry a source accession, and it is empty in every one of the 464,966.
@@ -99,16 +99,18 @@ one is marked as annotated, the remaining records being rule-applicable products
 no annotation. The positive-unlabelled negatives this work trains against are consequently
 not derived when the data is loaded. They are stored, and which rule bank produced them is
 not recorded.
+
 The drawing the standardisation left. Every structure in the corpus is a fixed point of
 the InChI round-trip: 378,228 of 378,238 train records, 41,591 of 41,591 in validation and
 45,133 of 45,133 in test are exactly what their own stored InChI reads back to, and the
 ten exceptions are salts whose counter-ion the SMILES has lost and the InChI kept. That
 round-trip places a mobile hydrogen on oxygen, so an amide arrives as the imidic acid and
 cytosine as its lactim. This is not the declared standardiser’s output: run under ten RDKit
+releases spanning four years, standardize mol returns the amide in ten of ten, from both
+
 S3
 
-releases spanning four years, standardize mol returns the amide in ten of ten, from both
-the amide and the imidic acid. The drawing therefore entered before the standardiser this
+the amide and the imidic acid. The drawing therefore entered before the standardiser this
 work declares, and rules are matched against it. Section S14 treats it as the axis it is.
 
 De-duplication, and the conflicts there were none of. There is no de-duplication
@@ -134,11 +136,11 @@ in MetXBioDB may equally have entered through DrugBank. ChEMBL and DrugBank are
 not present here and admit no such measurement, so no fraction is claimed for them.
 
 The partition, and its seed. The three splits are substrate-disjoint and not moleculedisjoint, which the leakage audit records and the main text states. The repair that produced
+the shipped clean triples ran in the substrate-level mode of scripts/fix splits.py; its
 
 S4
 
-the shipped clean triples ran in the substrate-level mode of scripts/fix splits.py; its
-molecule-disjoint mode is a different partition and was not used. Test was passed through
+molecule-disjoint mode is a different partition and was not used. Test was passed through
 untouched, and its clean file is byte-identical to its input. The three shipped clean files match
 the digests the split manifest declares. There is no split seed: the repair is deterministic and
 draws on no random number generator, and the partition it repairs has no producer in this
@@ -163,11 +165,11 @@ The corpus is divided by substrate, so no substrate of one split appears in anot
 Molecular overlap between splits is non-zero and expected, because a molecule that is a
 substrate in one split may appear as a product in another: 2,408 molecules occur in both
 train and test, and 243 test substrates appear as molecules in train. Both counts are recorded
+so that neither is later discovered and mistaken for leakage.
 
 S5
 
-so that neither is later discovered and mistaken for leakage.
-Three evaluation populations are drawn from these splits, and every figure in the paper
+Three evaluation populations are drawn from these splits, and every figure in the paper
 names one. The evaluated test set is the 1,170 test substrates that carry at least one reference,
 holding all 2,597 references of the split; the substrates it excludes, 1,198 minus 1,170 of
 them, carry none. The validation draw is a sample of 300 substrates at seed 0, of which

@@ -3,7 +3,7 @@
   "script": "disclosure_inventory.py",
   "script_path": "scripts/disclosure_inventory.py",
   "source_sha256": "7178c28f48f37a1fa08c5afd3e14e375980532953fb019937a2ae63c28f9bcf7",
-  "git_commit": "a604ec1dbf18fb248136cc65caf1481065c8dd14",
+  "git_commit": "ffc3524e7632a424116301c4887d67e1d9bf3183",
   "git_dirty": true
  },
  "reviewed_and_accepted": [
@@ -321,6 +321,20 @@
     "paper2/table_criterion.tex"
    ],
    "reason": "the criterion verdict grid became a figure; its caption carries the same legend and the same statement that neither the arm nor the comparator is constant across the grid, and the table it replaced is no longer generated"
+  },
+  {
+   "text": "achemso amsmath,amssymb booktabs threeparttable graphicx microtype xr si Nikita L. Polomoshnov Faculty of Bioengineering and Bioinformatics, Lomonosov Moscow State University, Leninskie Gory 1-73, Moscow 119234, Russia nikitapol@fbb.msu.ru Anastasia V. Rudik Department of Bioinformatics, Institute o",
+   "was_in": [
+    "paper2/grail_jcim.tex"
+   ],
+   "reason": "the title changed, and the extractor keys the preamble together with the sentence that follows it; nothing in the preamble moved"
+  },
+  {
+   "text": "achemso amsmath,amssymb booktabs threeparttable graphicx microtype xr si Nikita L. Polomoshnov Faculty of Bioengineering and Bioinformatics, Lomonosov Moscow State University, Leninskie Gory 1-73, Moscow 119234, Russia nikitapol@fbb.msu.ru Anastasia V. Rudik Department of Bioinformatics, Institute o",
+   "was_in": [
+    "paper2/grail_jcim.tex"
+   ],
+   "reason": "the title changed again; the extractor keys the preamble together with the sentence after it, and nothing in the preamble moved"
   }
  ],
  "question": "every sentence in which this work concedes something, recorded before a cut so that what a cut costs is visible rather than invisible",
@@ -363,7 +377,7 @@
  "n": 236,
  "reading": "a disclosure counts as present if it survives in ANY of the sources: moving one to the Supporting Information shortens the manuscript without retracting anything, and deleting one shortens it by retracting something",
  "disclosures": {
-  "achemso amsmath amssymb booktabs threeparttable graphicx microtype xr si nikita l polomoshnov faculty of bioengineering and bioinformatics lomonosov moscow state university leninskie gory moscow russia nikitapol fbb msu ru anastasia v rudik department of bioinformatics institute of biomedical chemistry pogodinskaya str moscow russia undeclared choices reorder metabolite predictors and the corpus bounds any bank mined from it document abstract published predictors of metabolite structure cannot be compared with one another because recall depends on how a predicted structure is judged to match a reference and on how many candidates a system may return and papers in this area declare neither": {
+  "achemso amsmath amssymb booktabs threeparttable graphicx microtype xr si nikita l polomoshnov faculty of bioengineering and bioinformatics lomonosov moscow state university leninskie gory moscow russia nikitapol fbb msu ru anastasia v rudik department of bioinformatics institute of biomedical chemistry pogodinskaya str moscow russia metabolite predictors have a multiverse problem document abstract published predictors of metabolite structure cannot be compared with one another because recall depends on how a predicted structure is judged to match a reference and on how many candidates a system may return and papers in this area declare neither": {
    "text": "achemso amsmath,amssymb booktabs threeparttable graphicx microtype xr si Nikita L. Polomoshnov Faculty of Bioengineering and Bioinformatics, Lomonosov Moscow State University, Leninskie Gory 1-73, Moscow 119234, Russia nikitapol@fbb.msu.ru Anastasia V. Rudik Department of Bioinformatics, Institute o",
    "in": [
     "paper2/grail_jcim.tex"

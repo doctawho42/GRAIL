@@ -1,6 +1,4 @@
-Undeclared Choices Reorder Metabolite
-Predictors, and the Corpus Bounds Any Bank
-Mined From It
+Metabolite Predictors Have a Multiverse Problem
 Nikita L. Polomoshnov∗,† and Anastasia V. Rudik‡
 †Faculty of Bioengineering and Bioinformatics, Lomonosov Moscow State University,
 Leninskie Gory 1-73, Moscow 119234, Russia
@@ -10,9 +8,6 @@ E-mail: nikitapol@fbb.msu.ru
 
 Abstract
 
-prodrugs activated by phosphorylation, or the
-agent that makes one fail, as with the reactive
-intermediates behind several withdrawals. The
 same question arises outside the clinic, where
 what an environmental chemical becomes in an
 organism determines how far it travels and how
@@ -35,6 +30,13 @@ can see why a structure was proposed and reject
 it on mechanistic grounds; that is what makes
 rule-based systems usable in a discovery workflow, where a prediction has to be defended to
 a medicinal chemist rather than only scored. A
+sequence model is not built to say that, and is
+expected instead to reach chemistry no template
+bank encodes.
+What is missing is not another predictor but
+a way to tell these apart. The usual measure is
+recall: the fraction of the metabolites recorded
+for a compound that a system returns. That
 
 Published predictors of metabolite structure cannot be compared with one another, because recall depends on how a predicted structure is
 judged to match a reference and on how many
@@ -60,16 +62,13 @@ stay the compound that was administered. Enzymes, chiefly in the liver, convert 
 compounds carrying their own activity, toxicity
 and persistence: a metabolite can be the agent
 that makes a drug work, as with the antiviral
+prodrugs activated by phosphorylation, or the
+agent that makes one fail, as with the reactive
+intermediates behind several withdrawals. The
+
 1
 
-sequence model is not built to say that, and is
-expected instead to reach chemistry no template
-bank encodes.
-What is missing is not another predictor but
-a way to tell these apart. The usual measure is
-recall: the fraction of the metabolites recorded
-for a compound that a system returns. That
-fraction depends on two decisions made outside
+fraction depends on two decisions made outside
 the model. The first is what counts as a match,
 since two chemical structures can denote the
 same molecule while differing in how a hydrogen
@@ -88,15 +87,21 @@ of it bound what this paper adds. Ash et al. 15
 give a protocol for method comparison in smallmolecule drug discovery, arguing that a difference should be shown practically significant
 rather than merely significant, and prescribing
 how a comparison ought to be set up. Özçelik
-and Grisoni 16 show what happens when it is not,
-in generative design: the size of the library and
-the choice of metric reorder the models. The
-gap between the two is where this work sits.
-A protocol tells an author what to declare; a
-demonstration on generative metrics does not
-transfer to recall against an incomplete annotation, where the axis that reorders methods
-is how many candidates each may emit and no
-analogue of it exists in distributional metrics.
+and Grisoni 16 show what happens when it is
+not, in generative design: the size of the library
+and the choice of metric reorder the models.
+The gap between the two is where this work
+sits. Reporting the whole space of defensible
+analysis choices instead of one chosen cell is the
+multiverse and specification-curve discipline 17,18 ;
+what follows applies it to metabolite prediction,
+where the two choices that move the ordering are
+how a match is judged and how much a system
+may return. A protocol tells an author what to
+declare; a demonstration on generative metrics
+does not transfer to recall against an incomplete
+annotation, where the axis that reorders methods is how many candidates each may emit and
+no analogue of it exists in distributional metrics.
 What is offered here is the measurement in that
 setting: the axes swept, the whole grid printed,
 and a bound on what any bank mined from this
@@ -104,9 +109,9 @@ corpus could reach.
 This work addresses that.
 We present
 GRAIL (Graph-scored Rule Application with Inspectable Localisation), a metabolite structure
-predictor built from a bank of reaction tem-
+predictor built from a bank of reaction templates, a learned model that selects which tem-
 
-plates, a learned model that selects which templates to apply, and a learned model that ranks
+plates to apply, and a learned model that ranks
 the resulting candidates. Every prediction it
 emits carries the template that produced it and
 the atoms that template acted on, so a chemist
@@ -149,12 +154,12 @@ The corpus divides into three substrate-disjoint
 splits: 9,011 training substrates carrying 17,454
 annotated pairs, 1,020 validation substrates carrying 2,085, and 1,198 test substrates carrying
 2,597. The splits are disjoint by substrate, as a
-held-out figure requires 17,18 , and an audit confirms it (Section S1). The pairs are assembled
-from ChEMBL 19 , DrugBank 20 , MetXBioDB 2
+held-out figure requires 19,20 , and an audit confirms it (Section S1). The pairs are assembled
+from ChEMBL 21 , DrugBank 22 , MetXBioDB 2
+and the GLORYx reference set 4 , at versions
 2
 
-and the GLORYx reference set 4 , at versions
-ChEMBL 34, DrugBank 5.1.10, MetXBioDB 1.0
+ChEMBL 34, DrugBank 5.1.10, MetXBioDB 1.0
 and the GLORYx reference set released in 2020,
 published as de Bruyn Kops et al. 4 .
 Three populations carry the figures here, and
@@ -193,8 +198,8 @@ which applies the whole bank, and the interactive arm, which applies a fixed num
 highest-scoring rules (Section 2.7). At a budget of ten the exhaustive arm trails SyGMa by
 −0.0424 and MetaPredictor by −0.0451 over the
 whole set, both intervals excluding zero, where
-
 on the comparison set neither cell separates at
+
 all. Neither is therefore among the 33 cells the
 family-wise correction is applied to, and the four
 it removes are leads of this work’s.
@@ -248,7 +253,7 @@ before the check, are the register (Table 6).
 GRAIL predicts in three stages, each separately inspectable. A generator scores every
 rule in a bank of 7,581 reaction templates, written as SMIRKS transformation patterns, against
 the substrate. The selected rules are then applied with RDKit 2022.09.5, and their products
-are standardised 21,22 and deduplicated. A template that breaks a bond returns more than
+are standardised 23,24 and deduplicated. A template that breaks a bond returns more than
 one species. Every product, and every disconnected component of it, enters the pool separately provided it has at least two heavy atoms.
 That drops a lone leaving group and keeps a
 small metabolite such as formate. No annotated
@@ -351,7 +356,7 @@ Rank fusion
 Both learned stages produce an opinion about
 each candidate, and their product is scalesensitive: if one scorer occupies a narrow range
 and the other a wide one, the wide one decides
-the order. The deployed combination is reciprocal rank fusion 23 , which scores a candidate
+the order. The deployed combination is reciprocal rank fusion 25 , which scores a candidate
 by the sum over the two scorers of 1/(K + r),
 where r is its rank under that scorer. Only
 positions enter, so the two opinions contribute
@@ -461,7 +466,7 @@ Tanimoto similarity of one over Morgan fingerprints, and a tautomer-aware key th
 the default, because the references neither carry
 stereochemistry nor distinguish tautomers, and
 because standard identifiers normalise only a
-subset of tautomers 24 . That the annotation carries no stereochemistry is also a limit on what
+subset of tautomers 26 . That the annotation carries no stereochemistry is also a limit on what
 any of these systems can be asked for: nothing in this pipeline is stereochemistry-aware, so
 sulfoxidation, epoxide hydrolysis and most conjugation are predicted as constitutions and not
 as configurations. All five are reported for every
@@ -741,7 +746,7 @@ is not a list length: of the comparators the green
 region leads, most do not survive matching on
 realised length (Table 3).
 Reporting the whole space of defensible analysis choices rather than one chosen cell is the
-multiverse and specification-curve discipline 25,26 ,
+multiverse and specification-curve discipline 17,18 ,
 applied here to the two choices this literature
 leaves undeclared.
 
@@ -2778,23 +2783,28 @@ Wang, Y.; Deng, Y.; Cao, D. DeepMetab:
 choices distort the outcome of generative
 drug discovery. Journal of Cheminformatics 2025, 17 .
 
-V2. Journal of Chemical Information and
-Modeling 2020, 60, 1253–1275.
-(25) Steegen, S.; Tuerlinckx, F.; Gelman, A.;
+(25) Cormack, G. V.; Clarke, C. L. A.;
+Buettcher, S. Reciprocal rank fusion outperforms condorcet and individual rank
+learning methods. Proceedings of the 32nd
+International ACM SIGIR Conference on
+Research and Development in Information
+Retrieval. 2009; pp 758–759.
+
+(17) Steegen, S.; Tuerlinckx, F.; Gelman, A.;
 Vanpaemel, W. Increasing Transparency
 Through a Multiverse Analysis. Perspectives on Psychological Science 2016, 11,
 702–712.
 
-(17) Joeres, R.; Blumenthal, D. B.; Kalinina, O. V. Data splitting to avoid information leakage with DataSAIL. Nature Communications 2025, 16 .
+(26) Dhaked, D. K.; Ihlenfeldt, W.-D.; Patel, H.;
+Delannée, V.; Nicklaus, M. C. Toward a
+Comprehensive Treatment of Tautomerism
+in Chemoinformatics Including in InChI
+V2. Journal of Chemical Information and
+Modeling 2020, 60, 1253–1275.
 
-(26) Simonsohn, U.; Simmons, J. P.; Nelson, L. D. Specification Curve Analysis.
+(18) Simonsohn, U.; Simmons, J. P.; Nelson, L. D. Specification Curve Analysis.
 Nature Human Behaviour 2020, 4, 1208–
 1214.
-
-(18) Kretschmer, F.; Seipp, J.; Ludwig, M.;
-Klau, G. W.; Böcker, S. Coverage bias in
-small molecule machine learning. Nature
-Communications 2025, 16, 554.
 
 (27) Rydberg, P.; Gloriam, D. E.; Zaretzki, J.;
 Breneman, C.; Olsen, L. SMARTCyp: A
@@ -2803,10 +2813,11 @@ P450-Mediated Drug Metabolism. ACS
 Medicinal Chemistry Letters 2010, 1, 96–
 100.
 
-(19) Zdrazil, B. et al. The ChEMBL Database
-in 2023: a drug discovery platform spanning multiple bioactivity data types and
-time periods. Nucleic Acids Research 2024,
-52, D1180–D1192.
+(19) Joeres, R.; Blumenthal, D. B.; Kalinina, O. V. Data splitting to avoid information leakage with DataSAIL. Nature Communications 2025, 16 .
+(20) Kretschmer, F.; Seipp, J.; Ludwig, M.;
+Klau, G. W.; Böcker, S. Coverage bias in
+small molecule machine learning. Nature
+Communications 2025, 16, 554.
 
 (28) Šı́cho, M.; Stork, C.; Mazzolari, A.;
 de Bruyn Kops, C.; Pedretti, A.; Testa, B.;
@@ -2816,12 +2827,28 @@ Synthetic Compounds and Natural Products for Phase 1 and Phase 2 Metabolic
 Enzymes. Journal of Chemical Information
 and Modeling 2019, 59, 3400–3412.
 
-(20) Wishart, D. S. et al. DrugBank 5.0: a major update to the DrugBank database for
+(21) Zdrazil, B. et al. The ChEMBL Database
+in 2023: a drug discovery platform spanning multiple bioactivity data types and
+time periods. Nucleic Acids Research 2024,
+52, D1180–D1192.
+
+(29) Jacob, R. A.; Wieder, O.; Chen, Y.;
+Langer, T.; Kirchmair, J. Site-ofMetabolism Prediction with Aleatoric
+and Epistemic Uncertainty Quantification.
+Journal of Chemical Information and
+Modeling 2025, 65, 8462–8474.
+
+(22) Wishart, D. S. et al. DrugBank 5.0: a major update to the DrugBank database for
 2018. Nucleic Acids Research 2018, 46,
 D1074–D1082.
-(21) Hähnke, V. D.; Kim, S.; Bolton, E. E. PubChem chemical structure standardization.
+(23) Hähnke, V. D.; Kim, S.; Bolton, E. E. PubChem chemical structure standardization.
 Journal of Cheminformatics 2018, 10 .
-(22) Mansouri, K.; Moreira-Filho, J. T.;
+
+(30) Mazzolari, A.; Afzal, A. M.; Pedretti, A.;
+Testa, B.; Vistoli, G.; Bender, A. Prediction of UGT-mediated Metabolism Using the Manually Curated MetaQSAR
+Database. ACS Medicinal Chemistry Letters 2019, 10, 633–638.
+
+(24) Mansouri, K.; Moreira-Filho, J. T.;
 Lowe, C. N.; Charest, N.; Martin, T.;
 Tkachenko, V.; Judson, R.; Conway, M.;
 Kleinstreuer, N. C.; Williams, A. J. Free
@@ -2830,35 +2857,14 @@ for automated standardization of chemical
 structures in support of QSAR modeling.
 Journal of Cheminformatics 2024, 16 .
 
-(29) Jacob, R. A.; Wieder, O.; Chen, Y.;
-Langer, T.; Kirchmair, J. Site-ofMetabolism Prediction with Aleatoric
-and Epistemic Uncertainty Quantification.
-Journal of Chemical Information and
-Modeling 2025, 65, 8462–8474.
-(30) Mazzolari, A.; Afzal, A. M.; Pedretti, A.;
-Testa, B.; Vistoli, G.; Bender, A. Prediction of UGT-mediated Metabolism Using the Manually Curated MetaQSAR
-Database. ACS Medicinal Chemistry Letters 2019, 10, 633–638.
-
-(23) Cormack, G. V.; Clarke, C. L. A.;
-Buettcher, S. Reciprocal rank fusion outperforms condorcet and individual rank
-learning methods. Proceedings of the 32nd
-International ACM SIGIR Conference on
-Research and Development in Information
-Retrieval. 2009; pp 758–759.
-
 (31) Jacob, R. A.; Mazzolari, A.; Kirchmair, J. Automated Annotation of Sites of
 Metabolism from Biotransformation Data.
 Journal of Chemical Information and Modeling 2025, 65, 7065–7080.
 
-(24) Dhaked, D. K.; Ihlenfeldt, W.-D.; Patel, H.;
-Delannée, V.; Nicklaus, M. C. Toward a
-Comprehensive Treatment of Tautomerism
-in Chemoinformatics Including in InChI
-
-(32) Maziarz, K.; Tripp, A.; Liu, G.; Stanley, M.; Xie, S.; Gaiński, P.; Seidl, P.;
 24
 
-Segler, M. H. S. Re-evaluating retrosynthesis algorithms with Syntheseus. Faraday
+(32) Maziarz, K.; Tripp, A.; Liu, G.; Stanley, M.; Xie, S.; Gaiński, P.; Seidl, P.;
+Segler, M. H. S. Re-evaluating retrosynthesis algorithms with Syntheseus. Faraday
 Discussions 2025, 256, 568–586.
 (33) Tanovic, S.; Wieczorek, E.; Duarte, F. An
 exploration of dataset bias in single-step

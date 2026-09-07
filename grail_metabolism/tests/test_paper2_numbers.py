@@ -350,6 +350,36 @@ def test_the_verdict_grid_follows_from_the_levels_it_is_read_from():
     assert not wrong, "the grid does not follow from the levels: " + "; ".join(wrong)
 
 
+def test_the_supporting_information_carries_the_manuscript_title():
+    """A submission has one title, and the Supporting Information is part of the submission.
+
+    The Supporting Information carried a title of its own, so the two files went to the editor
+    under different names for the work, and achemso's suppinfo mode prepends "Supporting
+    Information:" to whatever it is given: the front page read "Supporting Information: GRAIL:
+    rule-grounded metabolite prediction under a declared evaluation", with two colons and a title
+    the manuscript never used. The cover letter drifted the same way and is checked one test
+    below; this is the same failure one file over.
+    """
+    import re
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[2]
+    ms, si = root / "paper2" / "grail_jcim.tex", root / "paper2" / "si.tex"
+    if not ms.exists() or not si.exists():
+        pytest.skip("the manuscript or its Supporting Information is not in this checkout")
+
+    m = re.search(r"\\title\[[^\]]*\]\s*\n?\s*\{([^}]*)\}", ms.read_text())
+    assert m, "the manuscript's title could not be read, so nothing can be checked against it"
+    n = re.search(r"^\\title\{([^}]*)\}", si.read_text(), re.M)
+    assert n, "the Supporting Information has no title of its own to check"
+
+    want, got = " ".join(m.group(1).split()), " ".join(n.group(1).split())
+    assert got == want, (
+        f"the Supporting Information is titled {got!r} and the manuscript {want!r}; achemso "
+        f"prepends 'Supporting Information:' to whichever it is given, so the two files would "
+        f"reach the editor under different names for the same work")
+
+
 def test_the_cover_letter_names_the_manuscript_it_accompanies():
     """An editor reads the letter's title first, and it was not the submission's.
 
