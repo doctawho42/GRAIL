@@ -614,6 +614,11 @@ def digest():
     env = art("cost_envelope.json")
     payload = json.dumps({
         "sweep": d["recall_micro"], "contrasts": d["contrasts"],
+        # The three Supporting Information figures draw from artifacts of their own, and a digest
+        # that does not cover them cannot tell a stale one from a current one.
+        "si_budget": art("budget_curve.json")["by_budget"],
+        "si_rarefaction": art("mining_rarefaction.json")["rarefaction"],
+        "si_external": art("external_budget_confound.json")["counted_cells"],
         "grain": cen["granularity_curve"], "gap": art("coverage_gap_types.json")["gap"],
         "uspto": usp["overlap"], "modes": {"i": mt["interactive"], "e": mt["exhaustive"]},
         "env": [(r["heavy"], r["finished"], r.get("t_generate")) for r in env["rows"]],
@@ -632,14 +637,135 @@ def digest():
     return hashlib.sha256(payload).hexdigest()
 
 
+# The Supporting Information is single-column at 12 pt, so a figure there has about six inches of
+# measure rather than the manuscript's 3.33. It carried 93 pages and no figure at all: twenty-two
+# tables, and three quantities whose shape is the finding and which a table cannot show.
+W_SI = 5.6
+
+
+def fig_si_budget():
+    """Recall against the rule budget, one line per output budget.
+
+    The manuscript says the two operating modes are two points on one continuous setting and that
+    which to run follows from the output budget answered at. The table of this sweep prints thirty
+    numbers and the crossing is invisible in it: at a tight output budget the whole bank is worse
+    than a budget of thirty, and at a wide one it is far better. That is one line crossing another.
+    """
+    d = art("budget_curve.json")["by_budget"]
+    rbs = sorted((int(b) for b in d), key=int)
+    ks = sorted((int(k) for k in d[str(rbs[0])]["recall_micro"]), key=int)
+    style = {1: ("-", "o"), 5: ("-", "s"), 10: ("-", "^"), 15: ("-", "v"),
+             30: ("-", "D"), 50: ("-", "P")}
+    missing = [k for k in ks if k not in style]
+    if missing:
+        raise SystemExit(f"budget_curve.json carries output budgets this figure has no style for: "
+                         f"{missing}")
+
+    fig, ax = plt.subplots(figsize=(W_SI, 3.0))
+    for i, k in enumerate(ks):
+        ls, mk = style[k]
+        y = [d[str(b)]["recall_micro"][str(k)] for b in rbs]
+        ax.plot(rbs, y, ls, marker=mk, ms=3.4, lw=1.1, color=PALETTE[i % len(PALETTE)],
+                label=f"$k={k}$")
+    dep = art("budget_curve.json")["deployed_budget"]
+    ax.axvline(dep, color=INK_FAINT, lw=0.6, zorder=0)
+    ax.text(dep, ax.get_ylim()[0], " deployed", fontsize=6.2, color=INK_MUTED,
+            va="bottom", ha="left")
+    ax.set_xscale("log")
+    ax.set_xticks(rbs)
+    ax.set_xticklabels([f"{b:,}".replace(",", "\u2009") for b in rbs], fontsize=6.8)
+    ax.set_xlabel("templates the generator may apply (rule budget)")
+    ax.set_ylabel("micro recall")
+    ax.legend(fontsize=6.4, ncol=3, loc="upper left", handlelength=1.8)
+    ax.tick_params(labelsize=6.8)
+    save(fig, "fig_si_budget")
+    plt.close(fig)
+    return {k: [d[str(b)]["recall_micro"][str(k)] for b in rbs] for k in (1, 50)}
+
+
+def fig_si_rarefaction():
+    """Templates mined against training pairs, with the spread over the draws at each point.
+
+    The manuscript says template discovery from this corpus is not finished and gives the slope.
+    A slope is a claim about a shape, and the shape is the evidence for it.
+    """
+    r = art("mining_rarefaction.json")
+    pts = sorted(r["rarefaction"].values(), key=lambda v: v["pairs"])
+    x = [v["pairs"] for v in pts]
+    y = [v["templates_mean"] for v in pts]
+    sd = [v["templates_sd"] for v in pts]
+    fig, ax = plt.subplots(figsize=(W_SI, 2.7))
+    ax.fill_between(x, [a - b for a, b in zip(y, sd)], [a + b for a, b in zip(y, sd)],
+                    color=PALETTE[0], alpha=0.18, lw=0)
+    ax.plot(x, y, "-", marker="o", ms=3.4, lw=1.2, color=PALETTE[0])
+    ax.plot([r["distinct_training_pairs"]], [r["mined_templates"]], marker="*", ms=8,
+            color=PALETTE[1], lw=0, zorder=4)
+    ax.annotate(f"the whole corpus:\n{r['mined_templates']:,} templates".replace(",", "\u2009"),
+                xy=(r["distinct_training_pairs"], r["mined_templates"]),
+                xytext=(-10, 14), textcoords="offset points", ha="right", va="bottom",
+                fontsize=6.4, color=INK_MUTED)
+    ax.set_xlabel("annotated substrate-product pairs the bank was mined from")
+    ax.set_ylabel("distinct templates")
+    ax.tick_params(labelsize=6.8)
+    save(fig, "fig_si_rarefaction")
+    plt.close(fig)
+    return len(pts), r["draws_per_point"]
+
+
+def fig_si_external():
+    """Recall against how much each tool emitted, in a benchmark that is not ours.
+
+    The manuscript's one external check says the arms that emit more score higher. It states a
+    rank correlation and a permutation test; the scatter is what those two numbers describe, and
+    it also shows the reader that the association is within a drug and not only across drugs.
+    """
+    e = art("external_budget_confound.json")
+    cells = e["counted_cells"]
+    tools = sorted({c["tool"] for c in cells})
+    MARK = ["o", "s", "^", "v", "D", "P", "X", "*"]
+    if len(tools) > len(MARK):
+        raise SystemExit(f"external_budget_confound.json carries {len(tools)} tools and this "
+                         f"figure has {len(MARK)} markers")
+    fig, ax = plt.subplots(figsize=(W_SI, 3.0))
+    for i, t in enumerate(tools):
+        pts = [c for c in cells if c["tool"] == t]
+        ax.scatter([c["counted_emitted"] for c in pts], [c["recall"] for c in pts],
+                   s=22, marker=MARK[i], facecolor="none", linewidths=0.9,
+                   color=PALETTE[i % len(PALETTE)], label=t)
+    ax.set_xscale("log")
+    ax.set_xlabel("candidates the tool emitted for that drug, counted from the deposit")
+    ax.set_ylabel("recall reported for that drug")
+    ax.legend(fontsize=6.2, ncol=2, loc="upper left", handlelength=1.4)
+    ax.tick_params(labelsize=6.8)
+    rho = e["spearman_recall_against_counted_emission"]
+    within = e["association_within_the_arms"][
+        "spearman_after_removing_the_arm_effect_and_the_drug_effect"]
+    ax.text(0.98, 0.03,
+            f"Spearman {rho} over {len(cells)} cells;\n{within} with the arm\n"
+            f"and drug effects removed",
+            transform=ax.transAxes, ha="right", va="bottom", fontsize=6.2, color=INK_MUTED)
+    save(fig, "fig_si_external")
+    plt.close(fig)
+    return len(cells), len(tools)
+
+
+
 if __name__ == "__main__":
     band = fig_sweep()
     fig_ceiling()
     fig_cost()
     fig_case()
     toc = fig_toc()
+    sib = fig_si_budget()
+    sir = fig_si_rarefaction()
+    sie = fig_si_external()
     (OUT / "figures.sha256").write_text(digest() + "\n")
     print("  fig_sweep.pdf, fig_ceiling.pdf, fig_cost.pdf, fig_case.pdf")
     print(f"  fig_toc.tif, fig_toc.eps, fig_toc.pdf  {toc[0]}x{toc[1]} in at {toc[2]} dpi, RGB")
+    print("  fig_si_budget, fig_si_rarefaction, fig_si_external (Supporting Information)")
+    print(f"    the budget curve crosses: at k=1 {sib[1][0]:.4f} -> {sib[1][-1]:.4f}, "
+          f"at k=50 {sib[50][0]:.4f} -> {sib[50][-1]:.4f}")
+    print(f"    rarefaction {sir[0]} points, {sir[1]} draws each; "
+          f"external {sie[0]} cells over {sie[1]} tools")
     print(f"  the sweep's shaded regions, from the contrasts: {band}")
     print(f"  data digest {digest()[:24]}")

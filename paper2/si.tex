@@ -896,6 +896,15 @@ cap, the fusion, the filter and the matching criterion identical, on \numBudgetS
 substrates. Validation and not the comparison set, because a budget chosen on the population the
 comparison is reported on would be chosen on the test.
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{fig_si_budget}
+\caption{Micro recall against the rule budget on the validation draw, one line per output budget
+$k$. The vertical rule marks the budget the released checkpoint was trained at.}
+\label{fig:si-budget}
+\end{figure}
+
+
 That the model is identical across the points is checked and not assumed, because it is the one
 thing a pool did not record. Both scores in a pool are deterministic functions of the substrate
 and the candidate, so the models that wrote them can be recovered: scoring a pool's own candidates
@@ -1159,6 +1168,16 @@ determinism check and not a saturation one. Saturation is a claim about what mor
 yield, and it can be measured on files already held: the mining catalog records which training
 pairs each template was derived from, so pairs can be withheld and the templates that would still
 have been found counted.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{fig_si_rarefaction}
+\caption{Distinct templates recovered against the number of annotated pairs withheld from the
+miner, as the mean over \numRareDraws{} draws at each point with a band of one standard deviation.
+The star is the whole corpus.}
+\label{fig:si-rarefaction}
+\end{figure}
+
 
 Of \numRareTemplates{} mined templates over \numRarePairs{} distinct training pairs,
 \numRareSingletons{} rest on a single pair, \numRareSingletonsharePct{}. A quarter of the pairs
@@ -1961,6 +1980,16 @@ test split, where no deadline is imposed, the exhaustive mode fails on none.
 Every measurement of a system in this work is on one corpus, and the manuscript's limitations say
 so. The claim about evaluation is separable from that, and this section checks it against a
 benchmark nobody here ran.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{fig_si_external}
+\caption{Recall reported by \citet{Gao_2026} for each tool on each drug, against the number of
+candidates that tool emitted for that drug, counted from their deposit. One marker per tool, both
+axes as published; the emission axis is logarithmic.}
+\label{fig:si-external}
+\end{figure}
+
 
 \citet{Gao_2026} evaluate \numExtbudgetArms{} predictors against human radiolabelled ADME data for
 \numExtbudgetDrugs{} drugs carrying \numExtbudgetReferences{} identified metabolites, and report a

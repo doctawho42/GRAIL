@@ -1139,6 +1139,9 @@ def build():
     # check. The curve is measured by withholding training pairs from the catalog.
     rar = art("mining_rarefaction.json")
     n["rare.templates"] = rar["mined_templates"]
+    # How many withholding draws each rarefaction point averages, because the figure's band is a
+    # spread over them and a band with no stated n is decoration.
+    n["rare.draws"] = rar["draws_per_point"]
     n["rare.pairs"] = rar["distinct_training_pairs"]
     n["rare.singletons"] = rar["templates_resting_on_one_pair"]
     n["rare.singletonshare"] = rar["singleton_share"]
