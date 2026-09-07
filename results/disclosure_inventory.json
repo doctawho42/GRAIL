@@ -3,7 +3,7 @@
   "script": "disclosure_inventory.py",
   "script_path": "scripts/disclosure_inventory.py",
   "source_sha256": "f3187b4f867cc7570b771b0b2a1c6ddde31da7fb66276177cfc66627e6774494",
-  "git_commit": "943e96a82d5cdcad240f9f5f739df6bbd7e8d861",
+  "git_commit": "56f30cc6730147d9ef242c9927507a247d28c25d",
   "git_dirty": true
  },
  "reviewed_and_accepted": [
@@ -356,6 +356,20 @@
     "paper2/body.tex"
    ],
    "reason": "two rewordings and one correction: the validation-draw sentence drops a fifth sense of 'rule', the four-instrument sentence prints the intermediate the conversion needed, and the criterion-sweep limitation keeps its claim while replacing a false reason (the two settings returning the identical verdict are canonical and Tanimoto, not the stereo pair, which differs at k=20) with the true one, that no reference in this corpus carries a configuration at all"
+  },
+  {
+   "text": "Every constant of N or more is indistinguishable from it at budgets of 5, 15 and 50, and the null is stated as the bound it is: no such constant differs from the deployed value by more than N at fifteen",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "two rewordings that qualify a bare 'budget' where a fusion constant and an output budget both take the value 30, and where the paper's operational instruction mixes candidates with templates"
+  },
+  {
+   "text": "On validation, raising it to the whole bank is worth + N [+ N , + N ] at a budget of thirty, and nothing that separates at fifteen (Section )",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "two rewordings that qualify a bare 'budget' where a fusion constant and an output budget both take the value 30, and where the paper's operational instruction mixes candidates with templates"
   }
  ],
  "question": "every sentence in which this work concedes something, recorded before a cut so that what a cut costs is visible rather than invisible",
@@ -457,8 +471,8 @@
     "paper2/body.tex"
    ]
   },
-  "every constant of or more is indistinguishable from it at budgets of and and the null is stated as the bound it is no such constant differs from the deployed value by more than at fifteen": {
-   "text": "Every constant of N or more is indistinguishable from it at budgets of 5, 15 and 50, and the null is stated as the bound it is: no such constant differs from the deployed value by more than N at fifteen",
+  "every constant of or more is indistinguishable from it at output budgets of and and the null is stated as the bound it is no such constant differs from the deployed value by more than at fifteen": {
+   "text": "Every constant of N or more is indistinguishable from it at output budgets of 5, 15 and 50, and the null is stated as the bound it is: no such constant differs from the deployed value by more than N at fifteen",
    "in": [
     "paper2/body.tex"
    ]
@@ -679,8 +693,8 @@
     "paper2/body.tex"
    ]
   },
-  "on validation raising it to the whole bank is worth at a budget of thirty and nothing that separates at fifteen section": {
-   "text": "On validation, raising it to the whole bank is worth + N [+ N , + N ] at a budget of thirty, and nothing that separates at fifteen (Section )",
+  "on validation raising it to the whole bank is worth at an output budget of thirty and nothing that separates at fifteen section": {
+   "text": "On validation, raising it to the whole bank is worth + N [+ N , + N ] at an output budget of thirty, and nothing that separates at fifteen (Section )",
    "in": [
     "paper2/body.tex"
    ]

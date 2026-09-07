@@ -251,7 +251,8 @@ deployed combination is reciprocal rank fusion \citep{cormack2009},
 where $r_i(c)$ is the rank of $c$ under scorer $i$. Only positions enter, so the two opinions
 contribute equally whatever their scales. $K = \numFusionkDeployed$ is the value the method was
 published with, and it is swept rather than merely disclosed. Every constant of
-\numFusionkFlatfrom{} or more is indistinguishable from it at budgets of 5, 15 and 50, and the null
+\numFusionkFlatfrom{} or more is indistinguishable from it at output budgets of 5, 15 and 50, and
+the null
 is stated as the bound it is: no such constant differs from the deployed value by more than
 $\numFusionkBandOneFive$ at fifteen. At an output budget of 30 it is not a null, where
 $K=\numFusionkBreakconstant$ falls $\numFusionkBreakgap$
@@ -999,11 +1000,12 @@ $[\numGapTrainedmetatoxFiveZeroLo, \numGapTrainedmetatoxFiveZeroHi]$ at $50$, bo
 excluding zero and both surviving the correction. A service deployed in that mode would recover
 less than the system it replaces wherever it answers with thirty candidates or more.
 
-A service answering with thirty or fifty must therefore either run the exhaustive mode, which leads
-MetaTox at both, or raise the rule budget, which is the same knob. On validation, raising it to the
-whole bank is worth $+\numBudgetKSevenFiveEightOneGapthirty$
-$[+\numBudgetKSevenFiveEightOneLothirty, +\numBudgetKSevenFiveEightOneHithirty]$ at a budget of
-thirty, and nothing that separates at fifteen (Section~\ref{SI-sec:si-budget}). Either way it pays
+A service answering with thirty or fifty candidates must therefore either run the exhaustive mode,
+which leads MetaTox at both, or raise the rule budget, which is the same knob the exhaustive mode
+turns to its limit. On validation, raising it to the whole bank is worth
+$+\numBudgetKSevenFiveEightOneGapthirty$
+$[+\numBudgetKSevenFiveEightOneLothirty, +\numBudgetKSevenFiveEightOneHithirty]$ at an output
+budget of thirty, and nothing that separates at fifteen (Section~\ref{SI-sec:si-budget}). Either way it pays
 in runtime and in what the reader is handed: at fifty the exhaustive arm's precision is
 \numPrecBankFiveZero{}, about thirty wrong structures for each right one. Precision under an
 incomplete annotation is a lower bound and is not used here to order systems, but a list of that

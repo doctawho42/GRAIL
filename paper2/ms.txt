@@ -403,8 +403,8 @@ equally whatever their scales. K = 60 is the
 value the method was published with, and it
 is swept rather than merely disclosed. Every
 constant of 30 or more is indistinguishable from
-it at budgets of 5, 15 and 50, and the null is
-stated as the bound it is: no such constant
+it at output budgets of 5, 15 and 50, and the null
+is stated as the bound it is: no such constant
 differs from the deployed value by more than
 5
 
@@ -1648,23 +1648,24 @@ correction. A service deployed in that mode
 would recover less than the system it replaces
 wherever it answers with thirty candidates or
 more.
-A service answering with thirty or fifty must
-therefore either run the exhaustive mode, which
-leads MetaTox at both, or raise the rule budget, which is the same knob. On validation,
-raising it to the whole bank is worth +0.1115
-[+0.0802, +0.1431] at a budget of thirty, and
-nothing that separates at fifteen (Section S16).
-Either way it pays in runtime and in what the
-reader is handed: at fifty the exhaustive arm’s
-precision is 0.0321, about thirty wrong structures for each right one. Precision under an
-incomplete annotation is a lower bound and is
-not used here to order systems, but a list of that
-length is what the wide-budget figures describe,
-and it is why the next property matters more
-than the recall figure does.
+A service answering with thirty or fifty candidates must therefore either run the exhaustive
+mode, which leads MetaTox at both, or raise
+the rule budget, which is the same knob the
+exhaustive mode turns to its limit. On validation, raising it to the whole bank is worth
++0.1115 [+0.0802, +0.1431] at an output budget
+of thirty, and nothing that separates at fifteen
+(Section S16). Either way it pays in runtime and
+in what the reader is handed: at fifty the exhaustive arm’s precision is 0.0321, about thirty
+wrong structures for each right one. Precision
+under an incomplete annotation is a lower bound
+and is not used here to order systems, but a list
+of that length is what the wide-budget figures
+describe, and it is why the next property matters
+more than the recall figure does.
 
 4.3
 
+ferentiator either: three of the five comparators
 order their whole output, and this system is one
 more that does. What is left, and it is the property this paper rests on, is that every evaluation
 choice is declared with every cell of the resulting
@@ -1707,7 +1708,6 @@ and a reader may take that either way: as the
 discipline doing its work, or as a measure of
 how easily an undeclared setting survives even
 in a paper whose subject is undeclared settings.
-The second reading is why the first is worth
 
 What is and is not distinctive
 
@@ -1718,14 +1718,14 @@ MetaTox’s method reports a biotransformation
 type and a site of metabolism 5 , so reporting one
 is the norm rather than a contribution. Checking it against the atoms that actually changed,
 against a null of the same size, is not done anywhere in this literature that we can find, and
-Section 3.4 is that check. Ordering is not a differentiator either: three of the five comparators
-18
+Section 3.4 is that check. Ordering is not a dif18
 
-reporting.
+The second reading is why the first is worth
+reporting.
 
 4.5
 
-tion is documented. What makes the narrower
+whose assembly is recoverable and whose selection is documented. What makes the narrower
 statement worth having anyway is that this corpus is assembled from the four sources this field
 trains on, so a bank mined from any of them
 inherits the same absence unless the assembly is
@@ -1773,7 +1773,6 @@ close the shortfall, because the chemistry is not
 in it. It does not say what fraction of human
 metabolism is of a type no corpus contains, and
 it cannot, because that would need a corpus
-whose assembly is recoverable and whose selec-
 
 5
 
@@ -1805,10 +1804,10 @@ spread moves, is not reported (Section S31).
 The register is weaker than its count of confirmations suggests. Three of the six confirmed
 predictions clear the falsification condition as
 written, which compares a point estimate to a
-threshold, and not the stricter reading that asks
 19
 
-the whole interval to clear it. P1 and P2 have
+threshold, and not the stricter reading that asks
+the whole interval to clear it. P1 and P2 have
 their threshold inside their own interval, and
 so does P5. What the data establish for those
 three is that the effect exceeds zero, not that it
@@ -1849,8 +1848,8 @@ make it. GLORYx is the one arm not run on this
 machine: the models it needs are not distributed
 with its source, so its column comes from the
 service its authors operate (Section S34). Stereochemistry and protonation are bounded rather
-than priced. 36.1% of annotated pairs produce
 
+than priced. 36.1% of annotated pairs produce
 a metabolite carrying a stereogenic element its
 substrate does not have, and 7.8% of annotated
 metabolites carry a formal charge. The criterion sweep cannot price a configuration-aware
@@ -1891,10 +1890,10 @@ than one permutation in 10,000.
 That null holds a drug’s emissions fixed but
 not an arm’s, so it cannot say at what level the
 association lives. Removing the additive arm
-and drug effects from both sides leaves 0.1891:
 20
 
-the association is mostly between the arms and
+and drug effects from both sides leaves 0.1891:
+the association is mostly between the arms and
 does not vanish inside them, and between the
 arms is in any case the level a benchmark orders
 at. The axis is counted from the deposited
@@ -1913,6 +1912,7 @@ the same, to declare the axis and vary it.
 
 6
 
+of the wide-budget leads is an ordering result
 and the rest are statements about emission. The
 class-by-class reading says the same from the
 other side: the aggregate advantage is carried by
@@ -1957,7 +1957,6 @@ single recall figure would have named a different
 leader depending on decisions its author never
 had to state. Held to the stricter test the same
 argument demands, every arm cut to the comparator’s own list length on every substrate, one
-of the wide-budget leads is an ordering result
 
 Supporting
 Available
@@ -1982,9 +1981,9 @@ both swept; the architecture, training and every setting of both learned stages;
 site a prediction names is the site that changed;
 what each method recovers split by transformation class; whether the missing chemistry is the
 corpus’s or the bank’s, and whether template
-discovery has saturated; how much of the anno21
+21
 
-tation is one enzymatic step; the sixteen registered predictions including the six not reported
+discovery has saturated; how much of the annotation is one enzymatic step; the sixteen registered predictions including the six not reported
 here; group ranking and its oracle, and when a
 ranking comparison can measure anything; the
 stage ablations; the choice of evaluation population; the worked example on both drawings;
@@ -1995,6 +1994,7 @@ and reproduction procedure.
 
 7
 
+not both be satisfied by one derivative, so its
 licence is settled by not redistributing them: the
 deposit carries no source structure. What is released instead is the evaluated test substrates as
 structures and their annotated metabolites as
@@ -2029,7 +2029,7 @@ redistributes admit, which is what the remaining
 GPL templates permit rather than a preference,
 and NOTICE.md carries the decisions file by file.
 The corpus, whose four sources and versions
-Section 2.1 names, is not redistributed as a corpus: ShareAlike and NonCommercial terms cannot both be satisfied by one derivative, so its
+Section 2.1 names, is not redistributed as a corpus: ShareAlike and NonCommercial terms can-
 
 8
 
@@ -2055,16 +2055,19 @@ what the MetaTox arm consists of, together with
 what the service does not expose to a submitter,
 is stated in the Supporting Information.
 
-References
-(1) Ridder, L.; Wagener, M. SyGMa: Combining Expert Knowledge and Empirical
 22
 
-Scoring in the Prediction of Metabolites.
-ChemMedChem 2008, 3, 821–832.
+References
 
+(8) Larsson, S.; Carlsson, M.; Beckmann, R.;
+Miljković, F.; Mercado, R. LAGOM:
+A transformer-based chemical language
 model for drug metabolite prediction. Artificial Intelligence in the Life Sciences
 2025, 8, 100142.
 
+(1) Ridder, L.; Wagener, M. SyGMa: Combining Expert Knowledge and Empirical
+Scoring in the Prediction of Metabolites.
+ChemMedChem 2008, 3, 821–832.
 (2) Djoumbou-Feunang, Y.; Fiamoncini, J.;
 Gil-de-la Fuente, A.; Greiner, R.; Manach, C.; Wishart, D. S. BioTransformer:
 a comprehensive computational tool for
@@ -2074,6 +2077,11 @@ metabolite identification. Journal of Cheminformatics 2019, 11 .
 (9) Zhou, Y.; Jiang, D.; Wei, X.; Yi, J.;
 Wang, Y.; Deng, Y.; Cao, D. DeepMetab:
 a comprehensive and mechanistically informed graph learning framework for endto-end drug metabolism prediction. Chemical Science 2025, 16, 18884–18902.
+(10) Zhou, Y.; Yang, S.; Wang, X.; He, Y.;
+Tian, Y.; Yi, J.; Wang, Y.; Deng, Y.;
+Jiang, D.; Cao, D. DeepCYP: an integrated deep learning web server for the
+holistic “pathway-site product” prediction
+of CYP450 metabolism. Nucleic Acids Research 2026, 54, W22–W32.
 
 (3) de Bruyn Kops, C.; Stork, C.; Šı́cho, M.;
 Kochev, N.; Svozil, D.; Jeliazkova, N.;
@@ -2083,20 +2091,15 @@ Metabolites Based on Predicted Sites of
 Metabolism. Frontiers in Chemistry 2019,
 7, 402.
 
-(10) Zhou, Y.; Yang, S.; Wang, X.; He, Y.;
-Tian, Y.; Yi, J.; Wang, Y.; Deng, Y.;
-Jiang, D.; Cao, D. DeepCYP: an integrated deep learning web server for the
-holistic “pathway-site product” prediction
-of CYP450 metabolism. Nucleic Acids Research 2026, 54, W22–W32.
+(11) Chavan, S. Metabolite-Gen: Joint Prediction of Sites of Metabolism, Reaction
+Class, and Metabolite Structures Using
+Graph Neural Networks. 2026; ChemRxiv
+preprint, posted 6 May 2026.
 
 (4) de Bruyn Kops, C.; Šı́cho, M.; Mazzolari, A.; Kirchmair, J. GLORYx: Prediction of the Metabolites Resulting from
 Phase 1 and Phase 2 Biotransformations
 of Xenobiotics. Chemical Research in Toxicology 2021, 34, 286–299.
 
-(11) Chavan, S. Metabolite-Gen: Joint Prediction of Sites of Metabolism, Reaction
-Class, and Metabolite Structures Using
-Graph Neural Networks. 2026; ChemRxiv
-preprint, posted 6 May 2026.
 (12) Boyce, M.; Meyer, B.; Grulke, C.;
 Lizarraga, L.; Patlewicz, G. Comparing
 the performance and coverage of selected
@@ -2112,8 +2115,6 @@ Lagunin, A. A.; Filimonov, D. A.;
 Poroikov, V. V. MetaTox: Web Application for Predicting Structure and Toxicity of Xenobiotics’ Metabolites. Journal of
 Chemical Information and Modeling 2017,
 57, 638–642.
-(6) Litsa, E. E.; Das, P.; Kavraki, L. E. Prediction of drug metabolites using neural machine translation. Chemical Science 2020,
-11, 12777–12788.
 
 (13) Scholz, V.-A.; Stork, C.; Frericks, M.;
 Kirchmair, J. Computational prediction
@@ -2121,27 +2122,27 @@ of the metabolites of agrochemicals formed
 in rats. Science of The Total Environment
 2023, 895, 165039.
 
-(7) Zhu, K.; Huang, M.; Wang, Y.; Gu, Y.;
-Li, W.; Liu, G.; Tang, Y. MetaPredictor: in silico prediction of drug metabolites based on deep language models with
-prompt engineering. Briefings in Bioinformatics 2024, 25 .
+(6) Litsa, E. E.; Das, P.; Kavraki, L. E. Prediction of drug metabolites using neural machine translation. Chemical Science 2020,
+11, 12777–12788.
 
 (14) Gao, L.; Yan, S.; Feng, K.; Liu, H.;
 Zhang, Z.; Diao, X. Benchmarking In Silico
 Metabolite Prediction Tools against Human Radiolabeled ADME Data for SmallMolecule Drugs. Journal of Chemical Information and Modeling 2026, 66, 2918–2928.
 
-(8) Larsson, S.; Carlsson, M.; Beckmann, R.;
-Miljković, F.; Mercado, R. LAGOM:
-A transformer-based chemical language
+(7) Zhu, K.; Huang, M.; Wang, Y.; Gu, Y.;
+Li, W.; Liu, G.; Tang, Y. MetaPredictor: in silico prediction of drug metabolites based on deep language models with
+prompt engineering. Briefings in Bioinformatics 2024, 25 .
 
 (15) Ash, J. R.; Wognum, C.; Rodrı́guezPérez, R.; Aldeghi, M.; Cheng, A. C.;
-Clevert, D.-A.; Engkvist, O.; Fang, C.;
-
 23
 
-Price, D. A.; Hughes-Oliver, J. M.; Walters, W. P. Practically Significant Method
+Clevert, D.-A.; Engkvist, O.; Fang, C.;
+Price, D. A.; Hughes-Oliver, J. M.; Walters, W. P. Practically Significant Method
 Comparison Protocols for Machine Learning in Small Molecule Drug Discovery.
 Journal of Chemical Information and Modeling 2025, 65, 9398–9411.
 
+V2. Journal of Chemical Information and
+Modeling 2020, 60, 1253–1275.
 (24) Cormack, G. V.; Clarke, C. L. A.;
 Buettcher, S. Reciprocal rank fusion outperforms condorcet and individual rank
 learning methods. Proceedings of the 32nd
@@ -2180,6 +2181,9 @@ Medicinal Chemistry Letters 2010, 1, 96–
 in 2023: a drug discovery platform spanning multiple bioactivity data types and
 time periods. Nucleic Acids Research 2024,
 52, D1180–D1192.
+(20) Wishart, D. S. et al. DrugBank 5.0: a major update to the DrugBank database for
+2018. Nucleic Acids Research 2018, 46,
+D1074–D1082.
 
 (28) Šı́cho, M.; Stork, C.; Mazzolari, A.;
 de Bruyn Kops, C.; Pedretti, A.; Testa, B.;
@@ -2189,18 +2193,8 @@ Synthetic Compounds and Natural Products for Phase 1 and Phase 2 Metabolic
 Enzymes. Journal of Chemical Information
 and Modeling 2019, 59, 3400–3412.
 
-(20) Wishart, D. S. et al. DrugBank 5.0: a major update to the DrugBank database for
-2018. Nucleic Acids Research 2018, 46,
-D1074–D1082.
 (21) Hähnke, V. D.; Kim, S.; Bolton, E. E. PubChem chemical structure standardization.
 Journal of Cheminformatics 2018, 10 .
-
-(29) Jacob, R. A.; Wieder, O.; Chen, Y.;
-Langer, T.; Kirchmair, J. Site-ofMetabolism Prediction with Aleatoric
-and Epistemic Uncertainty Quantification.
-Journal of Chemical Information and
-Modeling 2025, 65, 8462–8474.
-
 (22) Mansouri, K.; Moreira-Filho, J. T.;
 Lowe, C. N.; Charest, N.; Martin, T.;
 Tkachenko, V.; Judson, R.; Conway, M.;
@@ -2210,6 +2204,11 @@ for automated standardization of chemical
 structures in support of QSAR modeling.
 Journal of Cheminformatics 2024, 16 .
 
+(29) Jacob, R. A.; Wieder, O.; Chen, Y.;
+Langer, T.; Kirchmair, J. Site-ofMetabolism Prediction with Aleatoric
+and Epistemic Uncertainty Quantification.
+Journal of Chemical Information and
+Modeling 2025, 65, 8462–8474.
 (30) Mazzolari, A.; Afzal, A. M.; Pedretti, A.;
 Testa, B.; Vistoli, G.; Bender, A. Prediction of UGT-mediated Metabolism Using the Manually Curated MetaQSAR
 Database. ACS Medicinal Chemistry Letters 2019, 10, 633–638.
@@ -2218,10 +2217,6 @@ Database. ACS Medicinal Chemistry Letters 2019, 10, 633–638.
 Delannée, V.; Nicklaus, M. C. Toward a
 Comprehensive Treatment of Tautomerism
 in Chemoinformatics Including in InChI
-V2. Journal of Chemical Information and
-Modeling 2020, 60, 1253–1275.
-
-(31) Jacob, R. A.; Mazzolari, A.; Kirchmair, J. Automated Annotation of Sites of
 24
 
 Table 1: The two operating modes: rules applied, candidates returned and wall-clock time.
@@ -2263,6 +2258,7 @@ The interactive mode’s own slowest substrate,
 answering a form should impose a deadline and
 fall back rather than assume the median.
 
+(31) Jacob, R. A.; Mazzolari, A.; Kirchmair, J. Automated Annotation of Sites of
 Metabolism from Biotransformation Data.
 Journal of Chemical Information and Modeling 2025, 65, 7065–7080.
 (32) Maziarz, K.; Tripp, A.; Liu, G.; Stanley, M.; Xie, S.; Gaiński, P.; Seidl, P.;
