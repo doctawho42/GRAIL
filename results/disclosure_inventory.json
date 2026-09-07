@@ -3,7 +3,7 @@
   "script": "disclosure_inventory.py",
   "script_path": "scripts/disclosure_inventory.py",
   "source_sha256": "7178c28f48f37a1fa08c5afd3e14e375980532953fb019937a2ae63c28f9bcf7",
-  "git_commit": "e1058b9b10ec09bebc4c50f3eb8765a957d17b6d",
+  "git_commit": "d52aacdecd29a601ea9f3a777e90e4c04eee671e",
   "git_dirty": true
  },
  "reviewed_and_accepted": [
@@ -27,6 +27,97 @@
     "paper2/table_criterion.tex"
    ],
    "reason": "the sweep and criterion captions are cut to what their tables show; the blend column's admissibility argument moved to the SI aggregation section and the reading of the criterion grid moved into the main text beside the table"
+  },
+  {
+   "text": "achemso amsmath,amssymb booktabs graphicx microtype xr si Nikita L. Polomoshnov Faculty of Bioengineering and Bioinformatics, Lomonosov Moscow State University, Leninskie Gory 1-73, Moscow 119234, Russia nikitapol@fbb.msu.ru Anastasia V. Rudik Department of Bioinformatics, Institute of Biomedical Ch",
+   "was_in": [
+    "paper2/grail_jcim.tex"
+   ],
+   "reason": "seven tables restructured into an ACS title plus footnotes, which re-keys the sentences that moved from caption to note; every one was checked present in its own file, and the abstract was shortened to four sentences as ACS requires"
+  },
+  {
+   "text": "The comparison does not resolve into an ordering: which system leads depends on the matching criterion and on the number of candidates allowed, and holding every system to the same list length removes most of the leads that a wide budget produces",
+   "was_in": [
+    "paper2/grail_jcim.tex"
+   ],
+   "reason": "seven tables restructured into an ACS title plus footnotes, which re-keys the sentences that moved from caption to note; every one was checked present in its own file, and the abstract was shortened to four sentences as ACS requires"
+  },
+  {
+   "text": "The bound is therefore a property of the corpus this field trains on and not of any one bank. suppinfo The Supporting Information is available free of charge on the ACS Publications website. grail si.pdf : the corpus and what kind of molecules these are, with the splits and their leakage audit; the ",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "seven tables restructured into an ACS title plus footnotes, which re-keys the sentences that moved from caption to note; every one was checked present in its own file, and the abstract was shortened to four sentences as ACS requires"
+  },
+  {
+   "text": "It describes the population and does not establish an applicability domain, which would need performance measured against these axes rather than the axes alone. table",
+   "was_in": [
+    "paper2/si_table_applicability.tex"
+   ],
+   "reason": "seven tables restructured into an ACS title plus footnotes, which re-keys the sentences that moved from caption to note; every one was checked present in its own file, and the abstract was shortened to four sentences as ACS requires"
+  },
+  {
+   "text": "Macro weights a substrate carrying one reference like one carrying twelve, so it answers a different question from micro and is not an estimate of it. table",
+   "was_in": [
+    "paper2/si_table_macro.tex"
+   ],
+   "reason": "seven tables restructured into an ACS title plus footnotes, which re-keys the sentences that moved from caption to note; every one was checked present in its own file, and the abstract was shortened to four sentences as ACS requires"
+  },
+  {
+   "text": "The deployed value is the one the method was published with and was not chosen here, so sweeping it on this population adopts nothing: the objection Section raises against selecting a parameter here applies to a parameter that would be changed, and this one is not. table",
+   "was_in": [
+    "paper2/si_table_fusion_k.tex"
+   ],
+   "reason": "seven tables restructured into an ACS title plus footnotes, which re-keys the sentences that moved from caption to note; every one was checked present in its own file, and the abstract was shortened to four sentences as ACS requires"
+  },
+  {
+   "text": "Read against that control rather than against the deployed ranking, molecular formula does not separate ( -0.0045 , [-0.0399, +0.0325] ) while transformation type does ( +0.0526 , [+0.0259, +0.0837] ). table",
+   "was_in": [
+    "paper2/si_table_oracle.tex"
+   ],
+   "reason": "seven tables restructured into an ACS title plus footnotes, which re-keys the sentences that moved from caption to note; every one was checked present in its own file, and the abstract was shortened to four sentences as ACS requires"
+  },
+  {
+   "text": "It is not the released configuration. table*",
+   "was_in": [
+    "paper2/table_sweep.tex"
+   ],
+   "reason": "seven tables restructured into an ACS title plus footnotes, which re-keys the sentences that moved from caption to note; every one was checked present in its own file, and the abstract was shortened to four sentences as ACS requires"
+  },
+  {
+   "text": "A class is a change in molecular formula, so it groups mechanisms the annotation does not separate. marks the 5 classes holding fewer than 10 references, where one hit moves a cell by more than a tenth and no ordering across a row should be read",
+   "was_in": [
+    "paper2/si_table_chemistry.tex"
+   ],
+   "reason": "seven tables restructured into an ACS title plus footnotes, which re-keys the sentences that moved from caption to note; every one was checked present in its own file, and the abstract was shortened to four sentences as ACS requires"
+  },
+  {
+   "text": "The superscript names the comparator the cell is read against, M for MetaTox, S for SyGMa, P for MetaPredictor and G for GLORYx, and the last row names the GRAIL arm, int. or exh. , with a dash where the better arm is not the same one under all five criteria at that budget. table*",
+   "was_in": [
+    "paper2/table_criterion.tex"
+   ],
+   "reason": "seven tables restructured into an ACS title plus footnotes, which re-keys the sentences that moved from caption to note; every one was checked present in its own file, and the abstract was shortened to four sentences as ACS requires"
+  },
+  {
+   "text": "P8's figure is a speed-up factor, P9's a median in seconds and P10's a share of the mined bank; the rest are differences in micro recall at a budget of 15. marks the three whose threshold was fixed in advance but whose population was not",
+   "was_in": [
+    "paper2/table_hypotheses.tex"
+   ],
+   "reason": "seven tables restructured into an ACS title plus footnotes, which re-keys the sentences that moved from caption to note; every one was checked present in its own file, and the abstract was shortened to four sentences as ACS requires"
+  },
+  {
+   "text": "The arms it is derived between are the bounded and unbounded standardisation arms of this paragraph, not the two operating modes, so a reader should take it as what the exhaustive mode's median becomes under a comparable load rather than as a measurement of the two modes running side by side, which ",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "instructional address to the reader replaced by the statement it was instructing the reader to make; both concessions are present in the same paragraph, one about the load-corrected median and one about DeepCYP's and GLORYx's absence"
+  },
+  {
+   "text": "A reader who judges it insufficient should read DeepCYP's absence as unforced, and the same applies to GLORYx, whose distribution was not sought",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "instructional address to the reader replaced by the statement it was instructing the reader to make; both concessions are present in the same paragraph, one about the load-corrected median and one about DeepCYP's and GLORYx's absence"
   }
  ],
  "question": "every sentence in which this work concedes something, recorded before a cut so that what a cut costs is visible rather than invisible",
@@ -67,17 +158,17 @@
   "paper2/table_hypotheses.tex",
   "paper2/table_grain.tex"
  ],
- "n": 226,
+ "n": 225,
  "reading": "a disclosure counts as present if it survives in ANY of the sources: moving one to the Supporting Information shortens the manuscript without retracting anything, and deleting one shortens it by retracting something",
  "disclosures": {
-  "achemso amsmath amssymb booktabs graphicx microtype xr si nikita l polomoshnov faculty of bioengineering and bioinformatics lomonosov moscow state university leninskie gory moscow russia nikitapol fbb msu ru anastasia v rudik department of bioinformatics institute of biomedical chemistry pogodinskaya str moscow russia undeclared choices reorder metabolite predictors and the corpus bounds any bank mined from it document abstract published predictors of metabolite structure cannot be compared with one another": {
-   "text": "achemso amsmath,amssymb booktabs graphicx microtype xr si Nikita L. Polomoshnov Faculty of Bioengineering and Bioinformatics, Lomonosov Moscow State University, Leninskie Gory 1-73, Moscow 119234, Russia nikitapol@fbb.msu.ru Anastasia V. Rudik Department of Bioinformatics, Institute of Biomedical Ch",
+  "achemso amsmath amssymb booktabs threeparttable graphicx microtype xr si nikita l polomoshnov faculty of bioengineering and bioinformatics lomonosov moscow state university leninskie gory moscow russia nikitapol fbb msu ru anastasia v rudik department of bioinformatics institute of biomedical chemistry pogodinskaya str moscow russia undeclared choices reorder metabolite predictors and the corpus bounds any bank mined from it document abstract published predictors of metabolite structure cannot be compared with one another because recall depends on how a predicted structure is judged to match a reference and on how many candidates a system may return and papers in this area declare neither": {
+   "text": "achemso amsmath,amssymb booktabs threeparttable graphicx microtype xr si Nikita L. Polomoshnov Faculty of Bioengineering and Bioinformatics, Lomonosov Moscow State University, Leninskie Gory 1-73, Moscow 119234, Russia nikitapol@fbb.msu.ru Anastasia V. Rudik Department of Bioinformatics, Institute o",
    "in": [
     "paper2/grail_jcim.tex"
    ]
   },
-  "the comparison does not resolve into an ordering which system leads depends on the matching criterion and on the number of candidates allowed and holding every system to the same list length removes most of the leads that a wide budget produces": {
-   "text": "The comparison does not resolve into an ordering: which system leads depends on the matching criterion and on the number of candidates allowed, and holding every system to the same list length removes most of the leads that a wide budget produces",
+  "the comparison does not resolve into an ordering which system leads depends on the matching criterion and on the number of candidates allowed and holding every system to one list length retires most wide budget leads": {
+   "text": "The comparison does not resolve into an ordering: which system leads depends on the matching criterion and on the number of candidates allowed, and holding every system to one list length retires most wide-budget leads",
    "in": [
     "paper2/grail_jcim.tex"
    ]
@@ -598,8 +689,8 @@
     "paper2/si.tex"
    ]
   },
-  "the arms it is derived between are the bounded and unbounded standardisation arms of this paragraph not the two operating modes so a reader should take it as what the exhaustive mode s median becomes under a comparable load rather than as a measurement of the two modes running side by side which was not made": {
-   "text": "The arms it is derived between are the bounded and unbounded standardisation arms of this paragraph, not the two operating modes, so a reader should take it as what the exhaustive mode's median becomes under a comparable load rather than as a measurement of the two modes running side by side, which ",
+  "the arms it is derived between are the bounded and unbounded standardisation arms of this paragraph not the two operating modes so it is what the exhaustive mode s median becomes under a comparable load and not a measurement of the two modes running side by side which was not made": {
+   "text": "The arms it is derived between are the bounded and unbounded standardisation arms of this paragraph, not the two operating modes, so it is what the exhaustive mode's median becomes under a comparable load and not a measurement of the two modes running side by side, which was not made",
    "in": [
     "paper2/si.tex"
    ]
@@ -706,8 +797,8 @@
     "paper2/si.tex"
    ]
   },
-  "a reader who judges it insufficient should read deepcyp s absence as unforced and the same applies to gloryx whose distribution was not sought": {
-   "text": "A reader who judges it insufficient should read DeepCYP's absence as unforced, and the same applies to GLORYx, whose distribution was not sought",
+  "on that basis deepcyp s absence is unforced and the same applies to gloryx whose distribution was not sought": {
+   "text": "On that basis DeepCYP's absence is unforced, and the same applies to GLORYx, whose distribution was not sought",
    "in": [
     "paper2/si.tex"
    ]
@@ -1318,12 +1409,6 @@
     "paper2/body.tex"
    ]
   },
-  "the bound is therefore a property of the corpus this field trains on and not of any one bank suppinfo the supporting information is available free of charge on the acs publications website grail si pdf the corpus and what kind of molecules these are with the splits and their leakage audit the five matching criteria and the comparison s sensitivity to the choice among them the parent drop convention measured per arm every candidate count the paper prints and what each one is precision at every budget every comparison difference with its paired interval at matched list length and under the other aggregation how the substrate is drawn and the drawing s effect where the drawing changes anything the rule bank its mining the provenance of each collection and how much of it is a published rule set verbatim what the rule budget buys and two parameters of the ranking both swept the architecture training and every setting of both learned stages whether the site a prediction names is the site that changed what each method recovers split by transformation class whether the missing chemistry is the corpus s or the bank s and whether template discovery has saturated how much of the annotation is one enzymatic step the sixteen registered predictions including the six not reported here group ranking and its oracle and when a ranking comparison can measure anything the stage ablations the choice of evaluation population the worked example on both drawings runtime methodology comparator versions and digests the evaluation claim checked against an independent benchmark and the provenance and reproduction procedure suppinfo data and software availability source code the deployed checkpoints the released rule bank the split manifest the annotated references every recall figure is measured against the frozen per substrate predictions of every comparator the evaluation harness the provenance sweep and the preregistration with every hypothesis and its outcome are at github com doctawho grail and are available to reviewers at submission": {
-   "text": "The bound is therefore a property of the corpus this field trains on and not of any one bank. suppinfo The Supporting Information is available free of charge on the ACS Publications website. grail si.pdf : the corpus and what kind of molecules these are, with the splits and their leakage audit; the ",
-   "in": [
-    "paper2/body.tex"
-   ]
-  },
   "the train and validation candidate pools are deposited at the released bank is not the measured bank": {
    "text": "The train and validation candidate pools are deposited at . The released bank is not the measured bank",
    "in": [
@@ -1354,14 +1439,14 @@
     "paper2/body.tex"
    ]
   },
-  "it describes the population and does not establish an applicability domain which would need performance measured against these axes rather than the axes alone table": {
-   "text": "It describes the population and does not establish an applicability domain, which would need performance measured against these axes rather than the axes alone. table",
+  "it describes the population and does not establish an applicability domain which would need performance measured against these axes rather than the axes alone tablenotes threeparttable table": {
+   "text": "It describes the population and does not establish an applicability domain, which would need performance measured against these axes rather than the axes alone. tablenotes threeparttable table",
    "in": [
     "paper2/si_table_applicability.tex"
    ]
   },
-  "macro weights a substrate carrying one reference like one carrying twelve so it answers a different question from micro and is not an estimate of it table": {
-   "text": "Macro weights a substrate carrying one reference like one carrying twelve, so it answers a different question from micro and is not an estimate of it. table",
+  "macro weights a substrate carrying one reference like one carrying twelve so it answers a different question from micro and is not an estimate of it tablenotes threeparttable table": {
+   "text": "Macro weights a substrate carrying one reference like one carrying twelve, so it answers a different question from micro and is not an estimate of it. tablenotes threeparttable table",
    "in": [
     "paper2/si_table_macro.tex"
    ]
@@ -1378,14 +1463,14 @@
     "paper2/si_table_fusion_k.tex"
    ]
   },
-  "the deployed value is the one the method was published with and was not chosen here so sweeping it on this population adopts nothing the objection section raises against selecting a parameter here applies to a parameter that would be changed and this one is not table": {
-   "text": "The deployed value is the one the method was published with and was not chosen here, so sweeping it on this population adopts nothing: the objection Section raises against selecting a parameter here applies to a parameter that would be changed, and this one is not. table",
+  "the deployed value is the one the method was published with and was not chosen here so sweeping it on this population adopts nothing the objection section raises against selecting a parameter here applies to a parameter that would be changed and this one is not tablenotes threeparttable table": {
+   "text": "The deployed value is the one the method was published with and was not chosen here, so sweeping it on this population adopts nothing: the objection Section raises against selecting a parameter here applies to a parameter that would be changed, and this one is not. tablenotes threeparttable table",
    "in": [
     "paper2/si_table_fusion_k.tex"
    ]
   },
-  "read against that control rather than against the deployed ranking molecular formula does not separate while transformation type does table": {
-   "text": "Read against that control rather than against the deployed ranking, molecular formula does not separate ( -0.0045 , [-0.0399, +0.0325] ) while transformation type does ( +0.0526 , [+0.0259, +0.0837] ). table",
+  "read against that control rather than against the deployed ranking molecular formula does not separate while transformation type does tablenotes threeparttable table": {
+   "text": "Read against that control rather than against the deployed ranking, molecular formula does not separate ( -0.0045 , [-0.0399, +0.0325] ) while transformation type does ( +0.0526 , [+0.0259, +0.0837] ). tablenotes threeparttable table",
    "in": [
     "paper2/si_table_oracle.tex"
    ]
@@ -1396,8 +1481,8 @@
     "paper2/si_table_ranking.tex"
    ]
   },
-  "it is not the released configuration table": {
-   "text": "It is not the released configuration. table*",
+  "it is not the released configuration tablenotes threeparttable table": {
+   "text": "It is not the released configuration. tablenotes threeparttable table*",
    "in": [
     "paper2/table_sweep.tex"
    ]
@@ -1408,20 +1493,20 @@
     "paper2/si_table_matched.tex"
    ]
   },
-  "a class is a change in molecular formula so it groups mechanisms the annotation does not separate marks the classes holding fewer than references where one hit moves a cell by more than a tenth and no ordering across a row should be read": {
-   "text": "A class is a change in molecular formula, so it groups mechanisms the annotation does not separate. marks the 5 classes holding fewer than 10 references, where one hit moves a cell by more than a tenth and no ordering across a row should be read",
+  "table t threeparttable micro recall at a budget of within each transformation class on the comparison set s annotated references leading zeros are dropped tablenotes flushleft a class is a change in molecular formula so it groups mechanisms the annotation does not separate marks the classes holding fewer than references where one hit moves a cell by more than a tenth and no ordering across a row should be read": {
+   "text": "table* [t] threeparttable Micro recall at a budget of 15 within each transformation class, on the comparison set's 665 annotated references; leading zeros are dropped. tablenotes [flushleft] A class is a change in molecular formula, so it groups mechanisms the annotation does not separate. marks the",
    "in": [
     "paper2/si_table_chemistry.tex"
    ]
   },
-  "the superscript names the comparator the cell is read against m for metatox s for sygma p for metapredictor and g for gloryx and the last row names the grail arm int or exh with a dash where the better arm is not the same one under all five criteria at that budget table": {
-   "text": "The superscript names the comparator the cell is read against, M for MetaTox, S for SyGMa, P for MetaPredictor and G for GLORYx, and the last row names the GRAIL arm, int. or exh. , with a dash where the better arm is not the same one under all five criteria at that budget. table*",
+  "the superscript names the comparator the cell is read against m for metatox s for sygma p for metapredictor and g for gloryx and the last row names the grail arm int or exh with a dash where the better arm is not the same one under all five criteria at that budget tablenotes threeparttable table": {
+   "text": "The superscript names the comparator the cell is read against, M for MetaTox, S for SyGMa, P for MetaPredictor and G for GLORYx, and the last row names the GRAIL arm, int. or exh. , with a dash where the better arm is not the same one under all five criteria at that budget. tablenotes threeparttable",
    "in": [
     "paper2/table_criterion.tex"
    ]
   },
-  "p s figure is a speed up factor p s a median in seconds and p s a share of the mined bank the rest are differences in micro recall at a budget of marks the three whose threshold was fixed in advance but whose population was not": {
-   "text": "P8's figure is a speed-up factor, P9's a median in seconds and P10's a share of the mined bank; the rest are differences in micro recall at a budget of 15. marks the three whose threshold was fixed in advance but whose population was not",
+  "table t threeparttable every deployed choice as a prediction fixed before it was checked what was fixed the threshold the value measured the population it was checked on and what the check returned tablenotes flushleft p s figure is a speed up factor p s a median in seconds and p s a share of the mined bank the rest are differences in micro recall at a budget of marks the three whose threshold was fixed in advance but whose population was not": {
+   "text": "table* [t] threeparttable Every deployed choice as a prediction fixed before it was checked: what was fixed, the threshold, the value measured, the population it was checked on, and what the check returned. tablenotes [flushleft] P8's figure is a speed-up factor, P9's a median in seconds and P10's a",
    "in": [
     "paper2/table_hypotheses.tex"
    ]

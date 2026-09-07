@@ -1,5 +1,8 @@
 \begin{table}[t]
 \centering\footnotesize
+\begin{threeparttable}
+\caption{The two operating modes: rules applied, candidates returned and wall-clock time.}
+\label{tab:modes}
 \begin{tabular}{lrr}
 \toprule
  & interactive & exhaustive \\
@@ -8,11 +11,18 @@ rules applied & 30 & 7{,}580 \\
 candidates, mean & 16.5 & 98.0 \\
 candidates, median & 14.0 & 100 \\
 seconds, median & 0.39 & 5.28 \\
-seconds, mean & 2.36 & 52.77$^{\dagger}$ \\
-seconds, 90th pct & 2.59 & 89.78$^{\dagger}$ \\
-seconds, slowest & 231.01 & $>600$$^{\dagger}$ \\
+seconds, mean & 2.36 & 52.77\tnote{a} \\
+seconds, 90th pct & 2.59 & 89.78\tnote{a} \\
+seconds, slowest & 231.01 & $>600$\tnote{a} \\
 \bottomrule
 \end{tabular}
-\caption{The two operating modes: rules applied, candidates returned and wall-clock time. Every row but the three marked $^{\dagger}$ is measured on the validation draw, 294 substrates for the interactive mode and 293 for the exhaustive one. Candidates are what a caller receives, deduplicated by matching key and capped at 100; times cover everything before the filter. $^{\dagger}$ marks a statistic taken over a sampled timing sweep of 106 substrates and censored at a 600-second deadline, which the exhaustive mode exceeds for 11 of them.}
-\label{tab:modes}
+\begin{tablenotes}[flushleft]\footnotesize
+\item Every unmarked row is measured on the validation draw, 294 substrates for the
+interactive mode and 293 for the exhaustive one. Candidates are what a caller
+receives, deduplicated by matching key and capped at 100. Times cover
+everything before the filter.
+\item[a] Taken over a sampled timing sweep of 106 substrates and censored at a
+600-second deadline, which the exhaustive mode exceeds for 11 of them.
+\end{tablenotes}
+\end{threeparttable}
 \end{table}

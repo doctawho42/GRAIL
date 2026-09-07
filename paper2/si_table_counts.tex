@@ -1,5 +1,8 @@
 \begin{table}[h]
 \centering\small
+\begin{threeparttable}
+\caption{Every candidate count this work reports, for every arm.}
+\label{tab:si-counts}
 \begin{tabular}{llll}
 \toprule
 quantity & mode & population & mean \\
@@ -29,6 +32,8 @@ slots the matched-length control allows & BioTransformer & comparison set, 291 &
 slots the matched-length control allows & GLORYx & comparison set, 291 & 28.61 \\
 \bottomrule
 \end{tabular}
-\caption{Every candidate count this work reports, for every arm. They differ because they are measured at different stages of the pipeline and on different populations, not because any of them is an estimate of the others: a list as a system emits it, the same list truncated at the widest budget the sweep reads, and the slots the matched-length control allows are three quantities and the first is the one that describes what a user is handed.}
-\label{tab:si-counts}
+\begin{tablenotes}[flushleft]\footnotesize
+\item They differ because they are measured at different stages of the pipeline and on different populations, not because any of them is an estimate of the others: a list as a system emits it, the same list truncated at the widest budget the sweep reads, and the slots the matched-length control allows are three quantities and the first is the one that describes what a user is handed.
+\end{tablenotes}
+\end{threeparttable}
 \end{table}

@@ -1,5 +1,8 @@
 \begin{table*}[t]
 \centering\footnotesize
+\begin{threeparttable}
+\caption{Every deployed choice as a prediction fixed before it was checked: what was fixed, the threshold, the value measured, the population it was checked on, and what the check returned.}
+\label{tab:hyp}
 \begin{tabular}{@{}lllllp{0.125\textwidth}l@{}}
 \toprule
  & what was fixed & threshold & measured & tested on & verdict & register \\
@@ -16,6 +19,8 @@ P9 & survivors, tautomer budget 200 & $<10$ s & $5.28$ & validation & confirmed 
 P10 & composite share, both instruments & $\ge 0.134$ & $0.2212$ & mined bank & confirmed & H16 \\
 \bottomrule
 \end{tabular}
-\caption{Every deployed choice as a prediction fixed before it was checked: what was fixed, the threshold, the value measured, the population it was checked on, and what the check returned. P8's figure is a speed-up factor, P9's a median in seconds and P10's a share of the mined bank; the rest are differences in micro recall at a budget of 15. $^{\dagger}$ marks the three whose threshold was fixed in advance but whose population was not. The last column carries each row's identifier in the released register, which numbers the predictions in the order they were written rather than the order they are read.}
-\label{tab:hyp}
+\begin{tablenotes}[flushleft]\footnotesize
+\item P8's figure is a speed-up factor, P9's a median in seconds and P10's a share of the mined bank; the rest are differences in micro recall at a budget of 15. $^{\dagger}$ marks the three whose threshold was fixed in advance but whose population was not. The last column carries each row's identifier in the released register, which numbers the predictions in the order they were written rather than the order they are read.
+\end{tablenotes}
+\end{threeparttable}
 \end{table*}

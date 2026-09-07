@@ -9,6 +9,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from _acs_table import acs_table
+
 ROOT = Path(__file__).resolve().parent.parent
 
 
@@ -65,6 +67,9 @@ def modes():
                    f"{share}")
     return f"""\\begin{{table}}[t]
 \\centering\\footnotesize
+\\begin{{threeparttable}}
+\\caption{{The two operating modes: rules applied, candidates returned and wall-clock time.}}
+\\label{{tab:modes}}
 \\begin{{tabular}}{{lrr}}
 \\toprule
  & interactive & exhaustive \\\\
@@ -73,13 +78,20 @@ rules applied & {i['top_k']} & {thousands(parseable)} \\\\
 candidates, mean & {i['candidates']['mean']} & {e['candidates']['mean']} \\\\
 candidates, median & {i['candidates']['median']} & {e['candidates']['median']} \\\\
 seconds, median & {i['median_s']} & {e['median_s']} \\\\
-seconds, mean & {i['mean_s']} & {env['mean_finished']}$^{{\\dagger}}$ \\\\
-seconds, 90th pct & {i['p90_s']} & {env['p90_finished']}$^{{\\dagger}}$ \\\\
-seconds, slowest & {i['max_s']} & $>{int(env['deadline'])}$$^{{\\dagger}}$ \\\\
+seconds, mean & {i['mean_s']} & {env['mean_finished']}\\tnote{{a}} \\\\
+seconds, 90th pct & {i['p90_s']} & {env['p90_finished']}\\tnote{{a}} \\\\
+seconds, slowest & {i['max_s']} & $>{int(env['deadline'])}$\\tnote{{a}} \\\\
 \\bottomrule
 \\end{{tabular}}
-\\caption{{The two operating modes: rules applied, candidates returned and wall-clock time. Every row but the three marked $^{{\\dagger}}$ is measured on the validation draw, {i['n']} substrates for the interactive mode and {e['candidates']['n']} for the exhaustive one. Candidates are what a caller receives, deduplicated by matching key and capped at {i['candidates']['cap']}; times cover everything before the filter. $^{{\\dagger}}$ marks a statistic taken over a sampled timing sweep of {sampled} substrates and censored at a {int(env['deadline'])}-second deadline, which the exhaustive mode exceeds for {unfinished} of them.}}
-\\label{{tab:modes}}
+\\begin{{tablenotes}}[flushleft]\\footnotesize
+\\item Every unmarked row is measured on the validation draw, {i['n']} substrates for the
+interactive mode and {e['candidates']['n']} for the exhaustive one. Candidates are what a caller
+receives, deduplicated by matching key and capped at {i['candidates']['cap']}. Times cover
+everything before the filter.
+\\item[a] Taken over a sampled timing sweep of {sampled} substrates and censored at a
+{int(env['deadline'])}-second deadline, which the exhaustive mode exceeds for {unfinished} of them.
+\\end{{tablenotes}}
+\\end{{threeparttable}}
 \\end{{table}}
 """
 
@@ -223,5 +235,5 @@ def case_study():
 if __name__ == "__main__":
     for name, fn in (("table_modes", modes), ("table_grain", grain),
                      ("table_hypotheses", hypotheses), ("table_case", case_study)):
-        (ROOT / f"paper2/{name}.tex").write_text(fn())
+        (ROOT / f"paper2/{name}.tex").write_text(acs_table(fn()))
         print(f"  wrote paper2/{name}.tex")

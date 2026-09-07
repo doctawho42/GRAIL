@@ -1,5 +1,8 @@
 \begin{table}[h]
 \centering\footnotesize
+\begin{threeparttable}
+\caption{The settings the two released checkpoints were trained under, read from the configuration each run recorded beside its weights.}
+\label{tab:si-hyperparameters}
 \begin{tabular}{lll}
 \toprule
  & generator & filter \\
@@ -36,6 +39,8 @@ validation substrates & \multicolumn{2}{l}{300} \\
 sampling seed & \multicolumn{2}{l}{42} \\
 \bottomrule
 \end{tabular}
-\caption{The settings the two released checkpoints were trained under, read from the configuration each run recorded beside its weights. Both come from one run, \texttt{full5000\_implicit}, which is established by reproduction rather than by recollection (Section~\ref{sec:si-prov}); the two columns differ because the two stages were configured differently within it. None of these values was tuned for this paper: they are the configuration the run was launched with, carried forward from earlier development on the training and validation splits, and no search over them is reported here or held in this repository. That is a gap in a paper about selection discipline and it is named rather than dressed as a choice. The two decision thresholds are inert under the emission rule this work deploys, which returns the whole ranked pool and truncates by no threshold (Section~\ref{MS-sec:methods}); they are printed because they are in the configuration the checkpoints carry.}
-\label{tab:si-hyperparameters}
+\begin{tablenotes}[flushleft]\footnotesize
+\item Both come from one run, \texttt{full5000\_implicit}, which is established by reproduction rather than by recollection (Section~\ref{sec:si-prov}); the two columns differ because the two stages were configured differently within it. None of these values was tuned for this paper: they are the configuration the run was launched with, carried forward from earlier development on the training and validation splits, and no search over them is reported here or held in this repository. That is a gap in a paper about selection discipline and it is named rather than dressed as a choice. The two decision thresholds are inert under the emission rule this work deploys, which returns the whole ranked pool and truncates by no threshold (Section~\ref{MS-sec:methods}); they are printed because they are in the configuration the checkpoints carry.
+\end{tablenotes}
+\end{threeparttable}
 \end{table}

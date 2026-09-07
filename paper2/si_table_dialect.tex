@@ -1,5 +1,8 @@
 \begin{table}[h]
 \centering\small
+\begin{threeparttable}
+\caption{Micro recall with every substrate presented as the declared standardiser draws it, minus the same quantity with the substrate as the corpus stores it, on the 291 substrates of the comparison set, with the paired 95\% interval.}
+\label{tab:si-dialect}
 \begin{tabular}{rll}
 \toprule
 $k$ & exhaustive & interactive \\
@@ -15,6 +18,8 @@ $30$ & -.0090$^{*}$ {\scriptsize [-.017,-.003]} & -.0015\phantom{$^{*}$} {\scrip
 $50$ & -.0045\phantom{$^{*}$} {\scriptsize [-.013,+.003]} & -.0015\phantom{$^{*}$} {\scriptsize [-.012,+.009]} \\
 \bottomrule
 \end{tabular}
-\caption{Micro recall with every substrate presented as the declared standardiser draws it, minus the same quantity with the substrate as the corpus stores it, on the 291 substrates of the comparison set, with the paired 95\% interval. A positive value is recall the corpus's drawing was denying the arm; $^{*}$ marks an interval excluding zero, and leading zeros are dropped. The annotation is looked up under the corpus string in both runs, so the two are scored against one reference set and are paired substrate by substrate. On the same population the coverage ceiling is 0.8105 under the stored drawing and 0.8030 under the standardiser's, a difference of -0.0075 $[-0.0176, +0.0016]$. Of 54 arm-against-comparator verdicts, 1 move, and none is a lead the paper claims. The three remaining comparators are held at the corpus drawing because MetaTox is a web service and MetaPredictor a frozen delivery; SyGMa, which can be re-run, is swept above.}
-\label{tab:si-dialect}
+\begin{tablenotes}[flushleft]\footnotesize
+\item A positive value is recall the corpus's drawing was denying the arm; $^{*}$ marks an interval excluding zero, and leading zeros are dropped. The annotation is looked up under the corpus string in both runs, so the two are scored against one reference set and are paired substrate by substrate. On the same population the coverage ceiling is 0.8105 under the stored drawing and 0.8030 under the standardiser's, a difference of -0.0075 $[-0.0176, +0.0016]$. Of 54 arm-against-comparator verdicts, 1 move, and none is a lead the paper claims. The three remaining comparators are held at the corpus drawing because MetaTox is a web service and MetaPredictor a frozen delivery; SyGMa, which can be re-run, is swept above.
+\end{tablenotes}
+\end{threeparttable}
 \end{table}

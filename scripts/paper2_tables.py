@@ -9,6 +9,8 @@ import json
 import sys
 from pathlib import Path
 
+from _acs_table import acs_table
+
 ROOT = Path(__file__).resolve().parent.parent
 LABEL = {"whole bank": "GRAIL exh.", "trained budget": "GRAIL int.",
          "metatox": "MetaTox", "sygma": "SyGMa", "metapredictor": "MetaPred.",
@@ -116,5 +118,5 @@ def table():
 
 
 if __name__ == "__main__":
-    (ROOT / "paper2/table_sweep.tex").write_text(table() + "\n")
+    (ROOT / "paper2/table_sweep.tex").write_text(acs_table(table()) + "\n")
     print(table())

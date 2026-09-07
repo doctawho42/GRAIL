@@ -1,5 +1,8 @@
 \begin{table}[h]
 \centering\small
+\begin{threeparttable}
+\caption{Micro recall under each rule for combining the templates that reach one candidate, on the 291 substrates of the comparison set carrying 665 annotated metabolites; leading zeros are dropped.}
+\label{tab:si-aggregation}
 \begin{tabular}{@{}lrrrrrrrrr@{}}
 \toprule
 aggregation & candidates & $r@3$ & $r@5$ & $r@15$ & $r@30$ & $r@50$ & at 3 & at 5 & at 30 \\
@@ -10,6 +13,8 @@ mean & 98.1 & .2030 & .2947 & .4932 & .5985 & .6586 & $-$.0271 & $-$.0165 & $-$.
 hybrid & 98.1 & .2692 & .3639 & .5474 & .6391 & .7008 & +.0391$^{*}$ & +.0526$^{*}$ & $-$.0135 \\
 \bottomrule
 \end{tabular}
-\caption{Micro recall under each rule for combining the templates that reach one candidate, on the 291 substrates of the comparison set carrying 665 annotated metabolites; leading zeros are dropped. Candidates is the mean number ranked after deduplication and the pool cap. The deployed rule is in bold and reproduces the whole-bank column of the comparison table at every budget. The last two columns are the paired difference against it in micro recall at the two tight budgets a document of this work names and at a wide one, with $^{*}$ marking an interval that excludes zero; the rules disagree at the head of the list and not at the budgets this work reads its leads at.}
-\label{tab:si-aggregation}
+\begin{tablenotes}[flushleft]\footnotesize
+\item Candidates is the mean number ranked after deduplication and the pool cap. The deployed rule is in bold and reproduces the whole-bank column of the comparison table at every budget. The last two columns are the paired difference against it in micro recall at the two tight budgets a document of this work names and at a wide one, with $^{*}$ marking an interval that excludes zero; the rules disagree at the head of the list and not at the budgets this work reads its leads at.
+\end{tablenotes}
+\end{threeparttable}
 \end{table}

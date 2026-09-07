@@ -1,5 +1,8 @@
 \begin{table}[h]
 \centering\footnotesize
+\begin{threeparttable}
+\caption{The first twenty of the 100 candidates the exhaustive mode returns for the worked example, with the rule that produced each, whether that rule was curated or mined, and the number of atoms on its reactant side and the substrate atoms it fired on.}
+\label{tab:si-case}
 \begin{tabular}{rlrlrlrr}
 \toprule
 rank & ref & rule & source & atoms & sites & generator & filter \\
@@ -26,6 +29,8 @@ rank & ref & rule & source & atoms & sites & generator & filter \\
 20 & $\star$ & 2139 & mined & 2 & 8,9 & 0.271 & 0.820 \\
 \bottomrule
 \end{tabular}
-\caption{The first twenty of the 100 candidates the exhaustive mode returns for the worked example, with the rule that produced each, whether that rule was curated or mined, and the number of atoms on its reactant side and the substrate atoms it fired on. $\star$ marks an annotated metabolite. 11 of the twenty come from a template of three reactant atoms or fewer, which is the count the manuscript quotes and which this column is here to let a reader check. The interactive mode returns 18 candidates for the same substrate. The complete ranked lists of both modes are in the released artifacts.}
-\label{tab:si-case}
+\begin{tablenotes}[flushleft]\footnotesize
+\item $\star$ marks an annotated metabolite. 11 of the twenty come from a template of three reactant atoms or fewer, which is the count the manuscript quotes and which this column is here to let a reader check. The interactive mode returns 18 candidates for the same substrate. The complete ranked lists of both modes are in the released artifacts.
+\end{tablenotes}
+\end{threeparttable}
 \end{table}

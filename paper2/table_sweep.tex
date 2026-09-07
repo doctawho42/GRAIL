@@ -1,5 +1,8 @@
 \begin{table*}[t]
 \centering
+\begin{threeparttable}
+\caption{Micro recall at each output budget on the 291 substrates of the comparison set, carrying 665 annotated metabolites.}
+\label{tab:sweep}
 \scriptsize
 \setlength{\tabcolsep}{4.5pt}
 \begin{tabular}{rrrrrrrrr}
@@ -19,6 +22,8 @@ $k$ & GRAIL exh. & GRAIL int. & MetaTox & SyGMa & MetaPred. & BioTrans. & GLORYx
 \emph{mean emitted} & \emph{98.12} & \emph{15.63} & \emph{33.60} & \emph{72.98} & \emph{10.75} & \emph{10.70} & \emph{28.69} & \emph{---} \\
 \bottomrule
 \end{tabular}
-\caption{Micro recall at each output budget on the 291 substrates of the comparison set, carrying 665 annotated metabolites. The last row gives the mean number of candidates each method emits, before any budget is applied: it is a property of the method and not of this table. These arms emit more than the widest budget shown, 50: GRAIL exh., SyGMa. A prediction equal to the substrate is dropped before the budget for every method alike. The last column, \emph{blend}, re-ranks the exhaustive arm's own pool under the aggregation a selection on validation chooses. It is not the released configuration.}
-\label{tab:sweep}
+\begin{tablenotes}[flushleft]\footnotesize
+\item The last row gives the mean number of candidates each method emits, before any budget is applied: it is a property of the method and not of this table. These arms emit more than the widest budget shown, 50: GRAIL exh., SyGMa. A prediction equal to the substrate is dropped before the budget for every method alike. The last column, \emph{blend}, re-ranks the exhaustive arm's own pool under the aggregation a selection on validation chooses. It is not the released configuration.
+\end{tablenotes}
+\end{threeparttable}
 \end{table*}

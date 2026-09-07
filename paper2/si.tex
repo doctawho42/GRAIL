@@ -3,6 +3,7 @@
 
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
+\usepackage{threeparttable}
 \usepackage{graphicx}
 \usepackage{microtype}
 % The comparison population is 291 rows and has to break across pages.
@@ -454,7 +455,7 @@ cell goes from the caption, and the one that bears on a claim goes against this 
 
 \section{Precision}
 
-Precision is reported because a reader is entitled to it and not because it decides anything here.
+Precision is reported for completeness and not because it decides anything here.
 Precision at $k$ is hits over the predictions inside the window, so an arm whose list is shorter
 than the budget is not charged for the empty slots; that is why MetaPredictor is flat from $k=15$
 onwards, having emitted its whole list by then.
@@ -507,8 +508,7 @@ with hits it did not earn and credits the comparators with more of them. Neither
 default, and the paper's argument is not that one criterion is right but that the choice has to be
 declared and its consequences shown.
 
-The strict end carries a second entanglement that a reader should have before the column is read
-as strictness alone. The references are stored in the corpus's drawing, which writes amides as
+The strict end carries a second entanglement, so the column is not strictness alone. The references are stored in the corpus's drawing, which writes amides as
 imidic acids (Section~\ref{sec:si-presentation}), and every method's output passes through a
 standardiser that writes the amide. Canonical SMILES equality between the two is therefore partly
 a test of whether a method reproduces the corpus's own tautomer rather than of whether it found
@@ -1716,8 +1716,8 @@ to the budget itself. Carried to the whole arm it puts the median at
 figure is Table~\ref{MS-tab:modes}'s exhaustive median carried to this load and not a second
 measurement: it is that median multiplied by \numHOneFiveLoad{}, and it is the only load-corrected
 timing in this work. The arms it is derived between are the bounded and unbounded standardisation
-arms of this paragraph, not the two operating modes, so a reader should take it as what the
-exhaustive mode's median becomes under a comparable load rather than as a measurement of the two
+arms of this paragraph, not the two operating modes, so it is what the
+exhaustive mode's median becomes under a comparable load and not a measurement of the two
 modes running side by side, which was not made.
 
 \paragraph{A safeguard the budget needed.} The tautomer enumeration budget lives in a
@@ -2033,7 +2033,7 @@ as it is for SyGMa. That asymmetry was decided after the matched-length control 
 which is worth stating because it is exactly the kind of choice this work asks other papers to
 declare: the control removes list length as a variable and finds no separation, so a scenario that
 emits more would narrow a gap this paper does not claim as an ordering result and would change no
-verdict here. A reader who judges that insufficient should read the absence as unforced.
+verdict here. On that basis the absence is unforced.
 
 Its templates are also measured for reach, which is a different quantity from its recall, on the
 same \numBtN{}-substrate subset drawn for the earlier MetaTrans evaluation
@@ -2064,7 +2064,7 @@ availability: both are reachable. It is the cost of submission, that MetaTox acc
 \numPopulationN{} structures and returns a file where DeepCYP takes one substrate at a time.
 That is a statement about our effort and not about either system, and it is the kind of reason
 this paper asks other work not to leave implicit, so it is written here for a reader to weigh.
-A reader who judges it insufficient should read DeepCYP's absence as unforced, and the same
+On that basis DeepCYP's absence is unforced, and the same
 applies to GLORYx, whose distribution was not sought. Metabolite-Gen \citep{Chavan_2026} is a preprint with no repository we could
 find. The list is closed by a rule: a comparator that could not be obtained is reported as
 unavailable with its reason, is not dropped silently, and the list is not extended after the

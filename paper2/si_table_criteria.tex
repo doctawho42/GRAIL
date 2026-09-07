@@ -1,5 +1,8 @@
 \begin{table}[h]
 \centering\small
+\begin{threeparttable}
+\caption{The five declared matching criteria.}
+\label{tab:si-criteria}
 \begin{tabular}{lp{7.2cm}l}
 \toprule
 criterion & what counts as the same structure & strictness \\
@@ -11,6 +14,8 @@ criterion & what counts as the same structure & strictness \\
 \texttt{inchikey\_tautomer} & canonical tautomer on both sides, then a canonical SMILES without stereochemistry & the default \\
 \bottomrule
 \end{tabular}
-\caption{The five declared matching criteria. The references carry no stereochemistry and do not distinguish tautomers, and standard InChI normalises only a subset of tautomers, which is why the tautomer-aware key is the default rather than the full InChIKey.}
-\label{tab:si-criteria}
+\begin{tablenotes}[flushleft]\footnotesize
+\item The references carry no stereochemistry and do not distinguish tautomers, and standard InChI normalises only a subset of tautomers, which is why the tautomer-aware key is the default rather than the full InChIKey.
+\end{tablenotes}
+\end{threeparttable}
 \end{table}

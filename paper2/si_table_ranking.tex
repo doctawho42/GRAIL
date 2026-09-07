@@ -1,5 +1,8 @@
 \begin{table}[h]
 \centering\small
+\begin{threeparttable}
+\caption{Micro recall when the same candidate pool is ordered five ways.}
+\label{tab:si-ranking}
 \begin{tabular}{lrrrrrr}
 \toprule
 ordering of one pool & \multicolumn{6}{c}{budget $k$} \\
@@ -25,6 +28,8 @@ seeded permutation & 0.0076 & 0.0351 & 0.0794 & 0.1191 & 0.2565 & 0.4092 \\
 \quad \emph{interval} & {\scriptsize [$-$.007,.038]} & {\scriptsize [.002,.063]} & {\scriptsize [.002,.060]} & {\scriptsize [.023,.079]} & {\scriptsize [.009,.058]} & {\scriptsize [$-$.011,.025]} \\
 \bottomrule
 \end{tabular}
-\caption{Micro recall when the same candidate pool is ordered five ways. The pool is built by the deployed configuration and capped by the generator's score before any arm sees it, so the pool, the matching rule and the budget are fixed and only the order varies. No model runs: the pools carry both component scores per candidate. The fusion-minus-product row is the contrast prediction P1 registers, given on both populations with its paired 95\% interval, so the penalty for having selected the fusion rule on the comparison set can be read as two intervals rather than as a difference of point estimates. Interval bounds are unsigned when positive.}
-\label{tab:si-ranking}
+\begin{tablenotes}[flushleft]\footnotesize
+\item The pool is built by the deployed configuration and capped by the generator's score before any arm sees it, so the pool, the matching rule and the budget are fixed and only the order varies. No model runs: the pools carry both component scores per candidate. The fusion-minus-product row is the contrast prediction P1 registers, given on both populations with its paired 95\% interval, so the penalty for having selected the fusion rule on the comparison set can be read as two intervals rather than as a difference of point estimates. Interval bounds are unsigned when positive.
+\end{tablenotes}
+\end{threeparttable}
 \end{table}

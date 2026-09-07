@@ -54,6 +54,15 @@ plt.rcParams.update({
     "pdf.fonttype": 42, "ps.fonttype": 42,
     "font.family": "sans-serif",
     "font.sans-serif": ["Helvetica", "Arial", "DejaVu Sans"],
+    # Matplotlib renders anything between dollar signs with its own math font, whose default is
+    # DejaVu, so a figure whose lettering is Helvetica still shipped DejaVu for "$k$" and for
+    # every sign in the criterion legend. Two typefaces in one figure is a house-style failure
+    # and the second one is not the face ACS asks for. Binding the math faces to the text family
+    # keeps a budget axis and its label in one typeface.
+    "mathtext.fontset": "custom",
+    "mathtext.rm": "Helvetica", "mathtext.it": "Helvetica:italic",
+    "mathtext.bf": "Helvetica:bold", "mathtext.sf": "Helvetica",
+    "mathtext.default": "it",
     "font.size": 8, "axes.linewidth": 0.6, "xtick.major.width": 0.6,
     "ytick.major.width": 0.6, "legend.frameon": False, "savefig.bbox": "tight",
     "savefig.dpi": 600, "figure.dpi": 600,
@@ -70,6 +79,18 @@ W = 3.33
 # the rendered structures, which are the one raster element; saving at 600 puts those comfortably
 # past the colour bar without making the files unwieldy.
 FIG_DPI = 600
+
+
+def save(fig, stem):
+    """The build's PDF and the format ACS accepts.
+
+    ACS takes TIF, JPG, PNG and EPS and does not take PDF, so a submission built only from the
+    file pdflatex needs has nothing to upload. These figures are vector apart from the rendered
+    structures, so EPS is the format that keeps them vector; the PDF stays because the manuscript
+    is compiled with pdflatex.
+    """
+    fig.savefig(OUT / f"{stem}.pdf")
+    fig.savefig(OUT / f"{stem}.eps")
 
 
 def art(name):
@@ -147,7 +168,7 @@ def fig_sweep():
     ax.set_ylim(0, 0.78)
     # Nine budgets on a logarithmic axis crowd where they are closest together, at 8 and 10.
     ax.tick_params(axis="x", labelsize=6.0)
-    fig.savefig(OUT / "fig_sweep.pdf")
+    save(fig, "fig_sweep")
     plt.close(fig)
     return band
 
@@ -211,12 +232,12 @@ def fig_ceiling():
     a2.set_ylabel("share of misses in singleton types")
     a2.set_ylim(0, 1.0)
     a2.axhline(0.5, color=INK_FAINT, lw=0.6, ls=":")
-    a2.text(-0.35, 0.985, "the type definition widens $\\rightarrow$", fontsize=6.2, ha="left",
+    a2.text(-0.35, 0.985, "the type definition widens, left to right", fontsize=6.2, ha="left",
             va="top", color=INK_MUTED)
     a2.text(3.35, 0.93, "hatched: the type names\na transformation", fontsize=6.2, ha="right",
             color=PALETTE[1])
     a2.text(3.35, 0.16, "plain: it does not", fontsize=6.2, ha="right", color=INK_MUTED)
-    fig.savefig(OUT / "fig_ceiling.pdf")
+    save(fig, "fig_ceiling")
     plt.close(fig)
 
 
@@ -278,7 +299,7 @@ def fig_cost():
             transform=a2.get_xaxis_transform())
     a2.set_ylabel("seconds per substrate")
     a2.set_ylim(0.2, 600)
-    fig.savefig(OUT / "fig_cost.pdf")
+    save(fig, "fig_cost")
     plt.close(fig)
 
 
@@ -457,7 +478,7 @@ def fig_case():
     a2.tick_params(axis="y", length=0)
     a2.set_title("where the four annotated metabolites land,\nunder each drawing of the substrate",
                  fontsize=7.5, pad=8)
-    fig.savefig(OUT / "fig_case.pdf")
+    save(fig, "fig_case")
     plt.close(fig)
 
 
@@ -491,7 +512,7 @@ def fig_toc():
     d = art("criterion_sweep.json")
     order = ["canonical", "inchikey", "inchi_no_stereo", "tanimoto1", "inchikey_tautomer"]
     label = {"canonical": "canonical SMILES", "inchikey": "InChIKey",
-             "inchi_no_stereo": "InChIKey, no stereo", "tanimoto1": "Tanimoto $=1$",
+             "inchi_no_stereo": "InChIKey, no stereo", "tanimoto1": "Tanimoto = 1",
              "inchikey_tautomer": "tautomer-aware key"}
     missing = [c for c in order if c not in d["by_criterion"]]
     if missing:
@@ -521,7 +542,7 @@ def fig_toc():
     ax.imshow(np.array(grid), cmap=cmap, vmin=-1, vmax=1, aspect="auto")
     for r, row in enumerate(grid):
         for c, v in enumerate(row):
-            ax.text(c, r, {-1: "$-$", 0: "$\\cdot$", 1: "$+$"}[v], ha="center", va="center",
+            ax.text(c, r, {-1: "\u2013", 0: "\u00b7", 1: "+"}[v], ha="center", va="center",
                     fontsize=CELL_PT, color=INK)
     ax.set_xticks(range(len(budgets)))
     ax.set_xticklabels([str(b) for b in budgets], fontsize=AXIS_PT)

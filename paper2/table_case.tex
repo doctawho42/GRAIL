@@ -1,5 +1,8 @@
 \begin{table*}[t]
 \centering\small
+\begin{threeparttable}
+\caption{The four annotated metabolites of gemcitabine and the rank each is returned at by the two operating modes, with the bank template that produced it.}
+\label{tab:case}
 \begin{tabular}{lrrrr}
 \toprule
  & \multicolumn{2}{c}{interactive} & \multicolumn{2}{c}{exhaustive} \\
@@ -12,6 +15,8 @@ dFdCDP, 5$^\prime$-diphosphate & --- & not produced & 20 & 2139 \\
 dFdCTP, 5$^\prime$-triphosphate & --- & not produced & 16 & 1745 \\
 \bottomrule
 \end{tabular}
-\caption{The four annotated metabolites of gemcitabine and the rank each is returned at by the two operating modes, with the bank template that produced it. Rule is the index into the deployed bank. The substrate is drawn as the corpus stores it; the same run on the drawing a chemist would submit returns different ranks, and both drawings are given in Section~\ref{SI-sec:si-case}.}
-\label{tab:case}
+\begin{tablenotes}[flushleft]\footnotesize
+\item Rule is the index into the deployed bank. The substrate is drawn as the corpus stores it; the same run on the drawing a chemist would submit returns different ranks, and both drawings are given in Section~\ref{SI-sec:si-case}.
+\end{tablenotes}
+\end{threeparttable}
 \end{table*}

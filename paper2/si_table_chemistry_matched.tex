@@ -1,5 +1,8 @@
 \begin{table}[h]
 \centering\scriptsize
+\begin{threeparttable}
+\caption{The class split of Table~\ref{MS-tab:si-chemistry} with list length held instead of the budget.}
+\label{tab:si-chemistry-matched}
 \begin{tabular}{@{}lrrrrrrrrr@{}}
 \toprule
 transformation class & refs & \multicolumn{2}{c}{MetaTox} & \multicolumn{2}{c}{SyGMa} & \multicolumn{2}{c}{MetaPred.} & \multicolumn{2}{c}{BioTrans.} \\
@@ -24,6 +27,8 @@ deamination$^{\dagger}$ & 5 & .60 & .60 & .60 & .00 & .00 & .80 & .00 & .00 \\
 glycine conjugation$^{\dagger}$ & 3 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & .33 & .67 \\
 \bottomrule
 \end{tabular}
-\caption{The class split of Table~\ref{MS-tab:si-chemistry} with list length held instead of the budget. Within each block both arms are cut, substrate by substrate, to the number of candidates that comparator returned there, under the same construction as Table~\ref{MS-tab:si-matched}; \emph{ours} is the exhaustive arm. On the comparison set's 665 classified references; leading zeros are dropped, and $^{\dagger}$ marks the classes under ten references, where no ordering should be read. A block's two cells are comparable with each other and not with another block's, since each block has its own slot count.}
-\label{tab:si-chemistry-matched}
+\begin{tablenotes}[flushleft]\footnotesize
+\item Within each block both arms are cut, substrate by substrate, to the number of candidates that comparator returned there, under the same construction as Table~\ref{MS-tab:si-matched}; \emph{ours} is the exhaustive arm. On the comparison set's 665 classified references; leading zeros are dropped, and $^{\dagger}$ marks the classes under ten references, where no ordering should be read. A block's two cells are comparable with each other and not with another block's, since each block has its own slot count.
+\end{tablenotes}
+\end{threeparttable}
 \end{table}

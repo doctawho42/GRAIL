@@ -140,8 +140,7 @@ favours them. Both are columns of the comparison, both overlaps are measured in
 Section~\ref{SI-sec:si-corpus}, and neither is corrected for: a correction would need a model of
 how much of a rule set a reference set produced, which nothing here supplies. The comparison
 therefore contains two arms whose development sources this corpus draws on, with the advantage
-stated and left in place, and a reader who wants the comparison without them can read the other
-three columns.
+stated and left in place; the comparison without them is the other three columns.
 The remaining three arms are not measured against this corpus and are not thereby cleared:
 MetaTox and MetaPredictor publish no development set that could be intersected with it. What is
 reported is the one overlap that could be computed, not a survey of all four.
@@ -1005,7 +1004,7 @@ turns to its limit. On validation, raising it to the whole bank is worth
 $+\numBudgetKSevenFiveEightOneGapthirty$
 $[+\numBudgetKSevenFiveEightOneLothirty, +\numBudgetKSevenFiveEightOneHithirty]$ at an output
 budget of thirty, and nothing that separates at fifteen (Section~\ref{SI-sec:si-budget}). Either way it pays
-in runtime and in what the reader is handed: at fifty the exhaustive arm's precision is
+in runtime and in what a caller receives: at fifty the exhaustive arm's precision is
 \numPrecBankFiveZero{}, about thirty wrong structures for each right one. Precision under an
 incomplete annotation is a lower bound and is not used here to order systems, but a list of that
 length is what the wide-budget figures describe, and it is why the next property matters more than
@@ -1128,8 +1127,8 @@ duplication beats the released noisy-or on the validation draw at every budget f
 \numAggvalHybridwinsmax{}, with the interval excluding zero, which includes the budget the headline
 is read at (Section~\ref{SI-sec:si-aggregation}). The release keeps the noisy-or because every
 number here is measured under it and switching would leave the paper describing a system nobody
-ran; the choice is a parameter rather than a retraining, so a reader who prefers the blend can make
-it. GLORYx is the one arm not run on this machine: the models it needs are not distributed with its
+ran; the choice is a parameter rather than a retraining, so the blend can be selected without
+retraining anything. GLORYx is the one arm not run on this machine: the models it needs are not distributed with its
 source, so its column comes from the service its authors operate
 (Section~\ref{SI-sec:si-comparators}). Stereochemistry and protonation are bounded rather than priced. \numStereoSharePct{} of annotated
 pairs produce a metabolite carrying a stereogenic element its substrate does not have, and
@@ -1199,7 +1198,20 @@ property of the corpus this field trains on and not of any one bank.
 
 The Supporting Information is available free of charge on the ACS Publications website.
 
-\texttt{grail\_si.pdf}: the corpus and what kind of molecules these are, with the splits and their leakage audit; the five matching criteria and the comparison's sensitivity to the choice among them; the parent-drop convention measured per arm; every candidate count the paper prints and what each one is; precision at every budget; every comparison difference with its paired interval, at matched list length and under the other aggregation; how the substrate is drawn, and the drawing's effect where the drawing changes anything; the rule bank, its mining, the provenance of each collection and how much of it is a published rule set verbatim; what the rule budget buys, and two parameters of the ranking, both swept; the architecture, training and every setting of both learned stages; whether the site a prediction names is the site that changed; what each method recovers split by transformation class; whether the missing chemistry is the corpus's or the bank's, and whether template discovery has saturated; how much of the annotation is one enzymatic step; the sixteen registered predictions including the six not reported here; group ranking and its oracle, and when a ranking comparison can measure anything; the stage ablations; the choice of evaluation population; the worked example on both drawings; runtime methodology; comparator versions and digests; the evaluation claim checked against an independent benchmark; and the provenance and reproduction procedure.
+Corpus, splits and leakage audit; what kind of molecules these are; the five matching criteria and the comparison's sensitivity to
+the choice among them; the parent-drop convention per arm; every candidate count the paper prints;
+precision at every budget; every comparison difference with its paired interval, at matched list
+length and under the other aggregation; how the substrate is drawn and where that changes a
+verdict; the rule bank, its mining and the provenance of each collection; what the rule budget
+buys and two parameters of the ranking, swept; architecture, training and settings of both learned
+stages; whether the site a prediction names is the site that changed; what each method recovers by
+transformation class; whether the missing chemistry is the corpus's or the bank's, and whether
+template discovery has saturated; how much of the annotation is one enzymatic step; the sixteen
+registered predictions; group ranking and its oracle; the stage ablations; the choice of evaluation
+population; the worked example on both drawings; runtime methodology; comparator versions and
+digests; the evaluation claim checked against an independent benchmark; provenance and reproduction
+procedure (PDF)
+
 \end{suppinfo}
 
 \section{Data and Software Availability}
@@ -1242,6 +1254,8 @@ manuscript. A.V.R. reviewed the manuscript and will deploy the released model as
 \begin{acknowledgement}
 
 \Funding{}
+
+\AIUse{}
 
 \end{acknowledgement}
 

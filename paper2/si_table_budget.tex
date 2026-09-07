@@ -1,5 +1,8 @@
 \begin{table}[h]
 \centering\small
+\begin{threeparttable}
+\caption{What the rule budget buys, on the 293 validation substrates every budget holds.}
+\label{tab:si-budget}
 \begin{tabular}{rrrrrrrr}
 \toprule
 rule budget & candidates & $r@1$ & $r@5$ & $r@15$ & $r@30$ & vs deployed at 15 & at 30 \\
@@ -11,6 +14,8 @@ rule budget & candidates & $r@1$ & $r@5$ & $r@15$ & $r@30$ & vs deployed at 15 &
 7581 & 97.99 & .1053 & .2870 & .4748 & .6015 & +.0092 & +.1115$^{*}$ \\
 \bottomrule
 \end{tabular}
-\caption{What the rule budget buys, on the 293 validation substrates every budget holds. Candidates is the mean number returned after deduplication and the pool cap; leading zeros are dropped. The last two columns are the paired difference in micro recall against the deployed rule budget, in bold, read at output budgets of 15 and of 30, with $^{*}$ marking an interval that excludes zero. The two are reported because the paper reads this curve at both and they do not agree.}
-\label{tab:si-budget}
+\begin{tablenotes}[flushleft]\footnotesize
+\item Candidates is the mean number returned after deduplication and the pool cap; leading zeros are dropped. The last two columns are the paired difference in micro recall against the deployed rule budget, in bold, read at output budgets of 15 and of 30, with $^{*}$ marking an interval that excludes zero. The two are reported because the paper reads this curve at both and they do not agree.
+\end{tablenotes}
+\end{threeparttable}
 \end{table}

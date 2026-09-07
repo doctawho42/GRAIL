@@ -48,6 +48,12 @@ def blocks(src: str) -> list:
     t = re.sub(r"\\begin\{(equation|align|figure|table|tabular|suppinfo)\*?\}.*?\\end\{\1\*?\}",
                "\n@@\n", t, flags=re.S)
     t = re.sub(r"\\(?:sub)*section\*?\{[^}]*\}", "\n@@\n", t)
+    # The front matter is not prose and does not end in full stops, so an address, a title and the
+    # abstract's opening ran together into one 61-word "sentence" that no reader ever meets. Each
+    # front-matter field is its own block, and so is the boundary of the abstract.
+    t = re.sub(r"\\(title|author|affiliation|email|keyword|abbreviations)\*?"
+               r"(\[[^\]]*\])?\{", "\n@@\n\\1{", t)
+    t = re.sub(r"\\(begin|end)\{abstract\}", "\n@@\n", t)
     t = re.sub(r"\\(cite[a-z]*|ref|label|input|includegraphics)\*?(\[[^\]]*\])?\{[^}]*\}", " C ", t)
     t = re.sub(r"\\num[A-Za-z]+\{?\}?", " N ", t)
     t = re.sub(r"\\[a-zA-Z]+\*?(\[[^\]]*\])?", " ", t)

@@ -1,5 +1,8 @@
 \begin{table}[h]
 \centering\scriptsize
+\begin{threeparttable}
+\caption{Every difference between a GRAIL arm and a comparator on the comparison set, in micro recall, with its paired bootstrap 95\% interval; leading zeros are dropped.}
+\label{tab:si-intervals}
 \setlength{\tabcolsep}{2.5pt}
 \begin{tabular}{rlllll}
 \toprule
@@ -28,6 +31,8 @@ $30$ & $-$.111$^{*}$\phantom{$^{\dagger}$} [$-$.152, $-$.071] & $-$.017\phantom{
 $50$ & $-$.137$^{*}$\phantom{$^{\dagger}$} [$-$.185, $-$.092] & $-$.021\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.060, +.019] & +.011\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.034, +.056] & +.042\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.011, +.096] & $-$.116$^{*}$\phantom{$^{\dagger}$} [$-$.161, $-$.072] \\
 \bottomrule
 \end{tabular}
-\caption{Every difference between a GRAIL arm and a comparator on the comparison set, in micro recall, with its paired bootstrap 95\% interval; leading zeros are dropped. $^{*}$ marks an interval excluding zero, which is the condition under which the paper claims a lead or a trail, and the verdicts in the main text and in Figure~\ref{MS-fig:sweep} are read from these and from nothing else. The estimator is Equation~\ref{MS-eq:bootstrap} at $B = 10\,000$ resamples, seed 0. $^{\dagger}$ marks a cell that separates per comparison but not under Holm's correction over the whole sweep, a family of 54 tests.}
-\label{tab:si-intervals}
+\begin{tablenotes}[flushleft]\footnotesize
+\item $^{*}$ marks an interval excluding zero, which is the condition under which the paper claims a lead or a trail, and the verdicts in the main text and in Figure~\ref{MS-fig:sweep} are read from these and from nothing else. The estimator is Equation~\ref{MS-eq:bootstrap} at $B = 10\,000$ resamples, seed 0. $^{\dagger}$ marks a cell that separates per comparison but not under Holm's correction over the whole sweep, a family of 54 tests.
+\end{tablenotes}
+\end{threeparttable}
 \end{table}

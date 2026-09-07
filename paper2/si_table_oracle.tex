@@ -1,5 +1,8 @@
 \begin{table}[h]
 \centering\small
+\begin{threeparttable}
+\caption{An oracle that orders candidate groups by whether they contain a reference, under four partitions of one candidate pool.}
+\label{tab:si-oracle}
 \begin{tabular}{lrlr}
 \toprule
 partition & recall@15 & over the deployed ranking & groups \\
@@ -11,6 +14,8 @@ transformation type & 0.7143 & $+0.1789$ $[+0.1417, +0.2179]$ & 51.4 \\
 formula and type & 0.7173 & $+0.1820$ $[+0.1473, +0.2186]$ & 53.7 \\
 \bottomrule
 \end{tabular}
-\caption{An oracle that orders candidate groups by whether they contain a reference, under four partitions of one candidate pool. A finer partition wins at an oracle for nothing, so the random partition is a control: its group-size multiset is exactly the transformation type's on each substrate. Read against that control rather than against the deployed ranking, molecular formula does not separate ($-0.0045$, $[-0.0399, +0.0325]$) while transformation type does ($+0.0526$, $[+0.0259, +0.0837]$).}
-\label{tab:si-oracle}
+\begin{tablenotes}[flushleft]\footnotesize
+\item A finer partition wins at an oracle for nothing, so the random partition is a control: its group-size multiset is exactly the transformation type's on each substrate. Read against that control rather than against the deployed ranking, molecular formula does not separate ($-0.0045$, $[-0.0399, +0.0325]$) while transformation type does ($+0.0526$, $[+0.0259, +0.0837]$).
+\end{tablenotes}
+\end{threeparttable}
 \end{table}

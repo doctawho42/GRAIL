@@ -1,5 +1,8 @@
 \begin{table*}[t]
 \centering\scriptsize
+\begin{threeparttable}
+\caption{Micro recall with every arm that can be re-run presented with the substrate as the declared standardiser draws it, which is the drawing a user submits, on the 291 substrates of the comparison set; the standardiser changes 81 of them.}
+\label{tab:si-equalised}
 \begin{tabular}{lrrrrrrrrr}
 \toprule
 arm & \multicolumn{9}{c}{output budget $k$} \\
@@ -19,6 +22,8 @@ GLORYx$^{\dagger}$ & 0.0662 & 0.1895 & 0.2872 & 0.3970 & 0.4406 & 0.5233 & 0.557
 \emph{verdict, equalised, MetaTox set aside} & $-$ & $-$ & $-$ & $\cdot$ & $\cdot$ & $\cdot$ & $+$ & $+$ & $+$ \\
 \bottomrule
 \end{tabular}
-\caption{Micro recall with every arm that can be re-run presented with the substrate as the declared standardiser draws it, which is the drawing a user submits, on the 291 substrates of the comparison set; the standardiser changes 81 of them. $^{\dagger}$ marks a web service with no re-run available to us: GLORYx and MetaTox. Those columns are the same as in Table~\ref{MS-tab:sweep} and are the arms still on their own input, which is the asymmetry this table removes from the rest. They are also the strongest comparators at several budgets, so a verdict read against one of them is not a verdict of an equalised comparison, and the last row is the grid with both set aside. The verdict rows read the better arm of this work against the strongest comparator at each budget, $+$ where the paired interval excludes zero in this work's favour, $-$ where it excludes zero against, $\cdot$ where it covers zero; no budget's verdict moves between the two. References are looked up under the corpus string in both, so the two grids are scored against one annotation.}
-\label{tab:si-equalised}
+\begin{tablenotes}[flushleft]\footnotesize
+\item $^{\dagger}$ marks a web service with no re-run available to us: GLORYx and MetaTox. Those columns are the same as in Table~\ref{MS-tab:sweep} and are the arms still on their own input, which is the asymmetry this table removes from the rest. They are also the strongest comparators at several budgets, so a verdict read against one of them is not a verdict of an equalised comparison, and the last row is the grid with both set aside. The verdict rows read the better arm of this work against the strongest comparator at each budget, $+$ where the paired interval excludes zero in this work's favour, $-$ where it excludes zero against, $\cdot$ where it covers zero; no budget's verdict moves between the two. References are looked up under the corpus string in both, so the two grids are scored against one annotation.
+\end{tablenotes}
+\end{threeparttable}
 \end{table*}

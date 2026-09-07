@@ -1,5 +1,8 @@
 \begin{table*}[t]
 \centering\small
+\begin{threeparttable}
+\caption{The verdict of the comparison under each declared matching criterion.}
+\label{tab:criterion}
 \begin{tabular}{lccccccccc}
 \toprule
 criterion & \multicolumn{9}{c}{output budget $k$} \\
@@ -15,6 +18,8 @@ tautomer (default) & $-$\textsuperscript{S} & $-$\textsuperscript{S} & $-$\texts
 GRAIL arm & int. & int. & int. & exh. & -- & exh. & exh. & exh. & exh. \\
 \bottomrule
 \end{tabular}
-\caption{The verdict of the comparison under each declared matching criterion. $+$ marks a budget where GRAIL's better arm leads the strongest comparator with the paired interval excluding zero, $-$ one where it trails on the same terms, and $\cdot$ one where the interval covers zero. The superscript names the comparator the cell is read against, M for MetaTox, S for SyGMa, P for MetaPredictor and G for GLORYx, and the last row names the GRAIL arm, \emph{int.} or \emph{exh.}, with a dash where the better arm is not the same one under all five criteria at that budget.}
-\label{tab:criterion}
+\begin{tablenotes}[flushleft]\footnotesize
+\item $+$ marks a budget where GRAIL's better arm leads the strongest comparator with the paired interval excluding zero, $-$ one where it trails on the same terms, and $\cdot$ one where the interval covers zero. The superscript names the comparator the cell is read against, M for MetaTox, S for SyGMa, P for MetaPredictor and G for GLORYx, and the last row names the GRAIL arm, \emph{int.} or \emph{exh.}, with a dash where the better arm is not the same one under all five criteria at that budget.
+\end{tablenotes}
+\end{threeparttable}
 \end{table*}

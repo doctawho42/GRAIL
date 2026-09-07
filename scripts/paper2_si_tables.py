@@ -9,6 +9,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from _acs_table import acs_table
+
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "paper2"
 
@@ -1384,7 +1386,7 @@ def generators():
 if __name__ == "__main__":
     for name, fn in generators():
         try:
-            (OUT / f"{name}.tex").write_text(fn())
+            (OUT / f"{name}.tex").write_text(acs_table(fn()))
             print(f"  wrote paper2/{name}.tex")
         except FileNotFoundError as e:
             # A refusal must not leave the previous table standing. Skipping and exiting zero

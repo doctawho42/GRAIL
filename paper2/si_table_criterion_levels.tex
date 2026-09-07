@@ -1,5 +1,8 @@
 \begin{table*}[t]
 \centering\scriptsize
+\begin{threeparttable}
+\caption{Micro recall for every arm at every budget under each of the five declared matching criteria, on the 291 substrates of the comparison set.}
+\label{tab:si-criterion-levels}
 \setlength{\tabcolsep}{4pt}
 \renewcommand{\arraystretch}{0.92}
 \begin{tabular}{lrrrrrrrrr}
@@ -54,6 +57,8 @@ arm & \multicolumn{9}{c}{output budget $k$} \\
 \quad GLORYx & 0.0662 & 0.1895 & 0.2872 & 0.3970 & 0.4406 & 0.5233 & 0.5579 & 0.5925 & 0.6060 \\
 \bottomrule
 \end{tabular}
-\caption{Micro recall for every arm at every budget under each of the five declared matching criteria, on the 291 substrates of the comparison set. Table~\ref{MS-tab:criterion} reads its verdicts from these numbers: a cell there is the better arm of this work against the strongest comparator at that budget, with the paired interval, so a sign can move either because a level moved or because the arms reordered, and both are visible here. Ranking is settled before the key is taken, so a criterion changes what counts as a hit and never what is ranked, and the parent-drop convention is re-derived under each criterion. A difference taken between two columns here can disagree with the margin behind the verdict by one in the last digit: the margin is computed from the hits and rounded once, and these levels are rounded before anything is subtracted.}
-\label{tab:si-criterion-levels}
+\begin{tablenotes}[flushleft]\footnotesize
+\item Table~\ref{MS-tab:criterion} reads its verdicts from these numbers: a cell there is the better arm of this work against the strongest comparator at that budget, with the paired interval, so a sign can move either because a level moved or because the arms reordered, and both are visible here. Ranking is settled before the key is taken, so a criterion changes what counts as a hit and never what is ranked, and the parent-drop convention is re-derived under each criterion. A difference taken between two columns here can disagree with the margin behind the verdict by one in the last digit: the margin is computed from the hits and rounded once, and these levels are rounded before anything is subtracted.
+\end{tablenotes}
+\end{threeparttable}
 \end{table*}
