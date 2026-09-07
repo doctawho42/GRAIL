@@ -453,6 +453,12 @@ BioTransformer is the exception and its macro recall is the lower of the two at 
 budgets. Which way each moved cell goes is in the caption, and the one that bears on a claim goes against
 this work.
 
+The budget at which micro fails to separate is not rescued by the other aggregation. At $k=15$ the
+exhaustive arm's macro recall is \numMacroBankOneFive{} against MetaTox's
+\numMacroMetatoxOneFive{}, a difference of $+\numMacrogapBankmetatoxOneFive$
+$[\numMacrogapBankmetatoxOneFiveLo, +\numMacrogapBankmetatoxOneFiveHi]$, an interval covering
+zero as the micro one does.
+
 \section{Precision}
 \label{sec:si-precision}
 
@@ -885,6 +891,12 @@ changes the sign of \numBudgetFragileWord{} contrast, a rule budget of fifty rea
 whose interval covers zero either way. No verdict read from this table turns on the substrate
 that is missing from it.
 
+What the whole bank buys over the deployed rule budget was registered as prediction P3 with a
+ceiling of $+\numHOneZeroThreshold$. On the validation draw it is $+\numHOneZeroBought$, 95\%
+CI $[\numHOneZeroLo, +\numHOneZeroHi]$, taking the mean pool from \numHOneZeroPoolBank{} to
+\numHOneZeroPoolTrained{} candidates before deduplication. The interval covers zero, so what the
+draw establishes is that the difference is smaller than the ceiling and not that it is positive.
+
 \section{The drawing's effect where the drawing changes anything}
 \label{sec:si-dialcond}
 
@@ -1203,6 +1215,11 @@ comparison, the ceiling and the worked example under a configuration this paper 
 What the measurement establishes is that the independence assumption is false, that something
 turns on it, and that the correction it argues for is worth an amount this work can now state
 instead of guess.
+
+Against the same number of applicable rules picked by training frequency rather than by the
+generator, the deployed selection gains $+\numSelVspriorApplicable$
+$[+\numSelVspriorApplicablelo, +\numSelVspriorApplicablehi]$: small at every budget and
+separating at all of them.
 
 \section{Model architectures and training}
 \label{sec:si-arch}
@@ -1667,6 +1684,10 @@ form is the 4-imino-2-hydroxy lactim
 point of the declared standardiser, is \texttt{Nc1ccn(C2OC(CO)C(O)C2(F)F)c(=O)n1}. The
 annotation is looked up under the corpus string in both runs, so the two are scored against one
 reference set and are paired.
+
+The interactive mode takes \numCaseInterSeconds~s on this substrate and the exhaustive mode
+\numCaseExhSeconds~s. Both are one substrate on one run rather than the medians of
+Table~\ref{MS-tab:modes}.
 
 \input{si_table_case}
 
