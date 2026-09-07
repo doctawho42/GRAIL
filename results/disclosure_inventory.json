@@ -3,7 +3,7 @@
   "script": "disclosure_inventory.py",
   "script_path": "scripts/disclosure_inventory.py",
   "source_sha256": "7178c28f48f37a1fa08c5afd3e14e375980532953fb019937a2ae63c28f9bcf7",
-  "git_commit": "4b17b925cc763a8c83f5dca48de7b4819dc4e7fd",
+  "git_commit": "56b84c7320244f0751d61e19079adebc28ae3029",
   "git_dirty": true
  },
  "reviewed_and_accepted": [
@@ -279,6 +279,34 @@
     "paper2/body.tex"
    ],
    "reason": "thirty-one passages moved from the manuscript into the Supporting Information rather than being deleted; each was checked present by phrase after the move, and the fourteen the extractor reports are re-keyings caused by the passages sitting beside different neighbours at their destination"
+  },
+  {
+   "text": "It returns N candidates on average against MetaTox's N , and at k=20 already N of its N lists are shorter than the budget; a list that has ended cannot gain a hit from a wider window, so the deficit grows with k whatever the order within it",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "six moved passages opened on a pronoun whose antecedent stayed in the manuscript, and each now names its subject at its destination"
+  },
+  {
+   "text": "It is measured rather than deducted, since a correction taken at a fixed budget cannot be subtracted from a margin taken over a comparator's own slot count",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "six moved passages opened on a pronoun whose antecedent stayed in the manuscript, and each now names its subject at its destination"
+  },
+  {
+   "text": "The table's last column is not a sixth system: it is the exhaustive arm's own pool re-ranked under the aggregation a selection on validation prefers, and it is printed because that selection went against the aggregation this work released (Section )",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "six moved passages opened on a pronoun whose antecedent stayed in the manuscript, and each now names its subject at its destination"
+  },
+  {
+   "text": "That null holds a drug's emissions fixed but not an arm's, so it cannot say at what level the association lives",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "six moved passages opened on a pronoun whose antecedent stayed in the manuscript, and each now names its subject at its destination"
   }
  ],
  "question": "every sentence in which this work concedes something, recorded before a cut so that what a cut costs is visible rather than invisible",
@@ -319,7 +347,7 @@
   "paper2/table_hypotheses.tex",
   "paper2/table_grain.tex"
  ],
- "n": 235,
+ "n": 236,
  "reading": "a disclosure counts as present if it survives in ANY of the sources: moving one to the Supporting Information shortens the manuscript without retracting anything, and deleting one shortens it by retracting something",
  "disclosures": {
   "achemso amsmath amssymb booktabs threeparttable graphicx microtype xr si nikita l polomoshnov faculty of bioengineering and bioinformatics lomonosov moscow state university leninskie gory moscow russia nikitapol fbb msu ru anastasia v rudik department of bioinformatics institute of biomedical chemistry pogodinskaya str moscow russia undeclared choices reorder metabolite predictors and the corpus bounds any bank mined from it document abstract published predictors of metabolite structure cannot be compared with one another because recall depends on how a predicted structure is judged to match a reference and on how many candidates a system may return and papers in this area declare neither": {
@@ -448,8 +476,8 @@
     "paper2/si.tex"
    ]
   },
-  "it returns candidates on average against metatox s and at k already of its lists are shorter than the budget a list that has ended cannot gain a hit from a wider window so the deficit grows with k whatever the order within it": {
-   "text": "It returns N candidates on average against MetaTox's N , and at k=20 already N of its N lists are shorter than the budget; a list that has ended cannot gain a hit from a wider window, so the deficit grows with k whatever the order within it",
+  "the interactive arm returns candidates on average against metatox s and at k already of its lists are shorter than the budget a list that has ended cannot gain a hit from a wider window so the deficit grows with k whatever the order within it": {
+   "text": "The interactive arm returns N candidates on average against MetaTox's N , and at k=20 already N of its N lists are shorter than the budget; a list that has ended cannot gain a hit from a wider window, so the deficit grows with k whatever the order within it",
    "in": [
     "paper2/si.tex"
    ]
@@ -508,8 +536,8 @@
     "paper2/si.tex"
    ]
   },
-  "it is measured rather than deducted since a correction taken at a fixed budget cannot be subtracted from a margin taken over a comparator s own slot count": {
-   "text": "It is measured rather than deducted, since a correction taken at a fixed budget cannot be subtracted from a margin taken over a comparator's own slot count",
+  "the drawing correction against sygma is measured rather than deducted since a correction taken at a fixed budget cannot be subtracted from a margin taken over a comparator s own slot count": {
+   "text": "The drawing correction against SyGMa is measured rather than deducted, since a correction taken at a fixed budget cannot be subtracted from a margin taken over a comparator's own slot count",
    "in": [
     "paper2/si.tex"
    ]
@@ -796,8 +824,8 @@
     "paper2/si.tex"
    ]
   },
-  "the table s last column is not a sixth system it is the exhaustive arm s own pool re ranked under the aggregation a selection on validation prefers and it is printed because that selection went against the aggregation this work released section": {
-   "text": "The table's last column is not a sixth system: it is the exhaustive arm's own pool re-ranked under the aggregation a selection on validation prefers, and it is printed because that selection went against the aggregation this work released (Section )",
+  "the last column of the sweep table in the manuscript is not a sixth system it is the exhaustive arm s own pool re ranked under the aggregation a selection on validation prefers and it is printed because that selection went against the aggregation this work released section": {
+   "text": "The last column of the sweep table in the manuscript is not a sixth system: it is the exhaustive arm's own pool re-ranked under the aggregation a selection on validation prefers, and it is printed because that selection went against the aggregation this work released (Section )",
    "in": [
     "paper2/si.tex"
    ]
@@ -906,6 +934,12 @@
   },
   "roughly one annotated metabolite in six is flagged as more than a single enzymatic step so recall here is not the share of one step chemistry a system finds the population it is taken over is not all one step": {
    "text": "Roughly one annotated metabolite in six is flagged as more than a single enzymatic step, so recall here is not the share of one-step chemistry a system finds: the population it is taken over is not all one-step",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "what the composite instruments flag is not a count of such transformations the union includes the locus instrument whose error is unmeasured in both directions section and the registered instrument alone flags the registered predictions the register is released in full at github com doctawho grail with every prediction as it was written the threshold and falsification condition fixed before the check and the outcome as it was measured": {
+   "text": "What the composite instruments flag is not a count of such transformations: the union includes the locus instrument, whose error is unmeasured in both directions (Section ), and the registered instrument alone flags N . The registered predictions The register is released in full at github.com/doctaw",
    "in": [
     "paper2/si.tex"
    ]
@@ -1042,8 +1076,8 @@
     "paper2/si.tex"
    ]
   },
-  "that null holds a drug s emissions fixed but not an arm s so it cannot say at what level the association lives": {
-   "text": "That null holds a drug's emissions fixed but not an arm's, so it cannot say at what level the association lives",
+  "the permutation null holds a drug s emissions fixed but not an arm s so it cannot say at what level the association lives": {
+   "text": "The permutation null holds a drug's emissions fixed but not an arm's, so it cannot say at what level the association lives",
    "in": [
     "paper2/si.tex"
    ]
