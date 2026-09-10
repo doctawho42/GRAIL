@@ -38,8 +38,14 @@ from rdkit import RDLogger
 RDLogger.DisableLog("rdApp.*")
 
 GRAIL_CSV = ROOT / "artifacts" / "full5000_single" / "predictions" / "test_predictions.csv"
-DEPLOYED_GEN = ROOT / "artifacts" / "full5000_priors" / "checkpoints" / "generator.pt"
-DEPLOYED_FILTER = ROOT / "artifacts" / "full5000_single" / "checkpoints" / "filter.pt"
+# The released pair is full5000_implicit for both stages: results/pool_checkpoints.json
+# identifies it by fingerprinting the pools' own scores, and follows what the repository
+# tracks rather than a name written beside a path. These two are a different run, kept
+# because this analysis is about the frequency prior, and named for the run they are so
+# that no reader takes them for the deployed model. They used to be called DEPLOYED_GEN
+# and DEPLOYED_FILTER, and one reader did.
+PRIORS_GEN = ROOT / "artifacts" / "full5000_priors" / "checkpoints" / "generator.pt"
+SINGLE_FILTER = ROOT / "artifacts" / "full5000_single" / "checkpoints" / "filter.pt"
 OUT = ROOT / "results" / "resource_cache_profile.json"
 
 
@@ -72,7 +78,7 @@ def main() -> int:
 
     # ---- 1. STARTUP ----
     t0 = time.perf_counter()
-    gs = torch.load(DEPLOYED_GEN, map_location="cpu", weights_only=False)
+    gs = torch.load(PRIORS_GEN, map_location="cpu", weights_only=False)
     t_load = time.perf_counter() - t0
     t0 = time.perf_counter()
     gen = build_generator(GeneratorConfig(**gs["arch"]), gs.get("rules"))
@@ -80,7 +86,7 @@ def main() -> int:
     gen.calibrated_threshold = gs.get("calibrated_threshold")
     gen.eval()
     gen.gen_normalization = "canonical"
-    fs = torch.load(DEPLOYED_FILTER, map_location="cpu", weights_only=False)
+    fs = torch.load(SINGLE_FILTER, map_location="cpu", weights_only=False)
     filt = build_filter(FilterConfig(**fs["arch"]))
     filt.load_state_dict(fs["state_dict"], strict=False)
     filt.calibrated_threshold = fs.get("calibrated_threshold")

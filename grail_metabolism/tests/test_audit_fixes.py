@@ -1658,3 +1658,27 @@ def test_the_package_and_the_analysis_fuse_ranks_the_same_way():
     assert "_ordered(" in src, (
         "ModelWrapper.generate no longer orders by the rank fusion, so the released software "
         "ranks by something the manuscript does not describe")
+
+
+def test_no_constant_calls_an_unshipped_checkpoint_deployed():
+    """A name that claims deployment has to name the checkpoint the repository ships.
+
+    Eleven scripts called the full5000_priors generator DEPLOYED_GEN and nine called the
+    full5000_single filter DEPLOYED_FILTER. The released pair is full5000_implicit for both
+    stages, established by results/pool_checkpoints.json, which fingerprints each pool's own
+    scores and follows what the repository tracks rather than a name written beside a path.
+    Reading those constants instead of that audit produced a whole comparison of the wrong model
+    with every existing gate passing, because no gate looked at a constant's name.
+    """
+    import pathlib
+    import subprocess
+    import sys as _sys
+
+    root = pathlib.Path(__file__).resolve().parents[2]
+    r = subprocess.run([_sys.executable, str(root / "scripts" / "check_deployed_names.py")],
+                       capture_output=True, text=True, cwd=root)
+    assert r.returncode == 0, f"the gate refuses the tree as it stands:\n{r.stdout}{r.stderr}"
+
+    s = subprocess.run([_sys.executable, str(root / "scripts" / "check_deployed_names.py"),
+                        "--self-test"], capture_output=True, text=True, cwd=root)
+    assert s.returncode == 0, f"the gate's own self-test fails:\n{s.stdout}{s.stderr}"

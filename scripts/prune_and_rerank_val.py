@@ -57,8 +57,14 @@ RDLogger.DisableLog("rdApp.*")
 
 VAL_CSV = ROOT / "artifacts" / "full5000_single" / "predictions" / "val_predictions.csv"
 TRAIN_LABELS = ROOT / "artifacts" / "preprocessed" / "train" / "ea9ee257861324be" / "reaction_labels.expanded.pt"
-DEPLOYED_GEN = ROOT / "artifacts" / "full5000_priors" / "checkpoints" / "generator.pt"
-DEPLOYED_FILTER = ROOT / "artifacts" / "full5000_single" / "checkpoints" / "filter.pt"
+# The released pair is full5000_implicit for both stages: results/pool_checkpoints.json
+# identifies it by fingerprinting the pools' own scores, and follows what the repository
+# tracks rather than a name written beside a path. These two are a different run, kept
+# because this analysis is about the frequency prior, and named for the run they are so
+# that no reader takes them for the deployed model. They used to be called DEPLOYED_GEN
+# and DEPLOYED_FILTER, and one reader did.
+PRIORS_GEN = ROOT / "artifacts" / "full5000_priors" / "checkpoints" / "generator.pt"
+SINGLE_FILTER = ROOT / "artifacts" / "full5000_single" / "checkpoints" / "filter.pt"
 OUT = ROOT / "results" / "prune_and_rerank_val.json"
 TOP_K, MAX_OUT = 128, 15
 
@@ -103,13 +109,13 @@ def main() -> int:
     print(f"val substrates: {len(subs)}", flush=True)
 
     # ---- models (same pairing as the val dump) ----
-    gs = torch.load(DEPLOYED_GEN, map_location="cpu", weights_only=False)
+    gs = torch.load(PRIORS_GEN, map_location="cpu", weights_only=False)
     gen = build_generator(GeneratorConfig(**gs["arch"]), gs.get("rules"))
     gen.load_state_dict(gs["state_dict"], strict=False)
     gen.calibrated_threshold = gs.get("calibrated_threshold")
     gen.eval()
     gen.gen_normalization = "canonical"
-    fss = torch.load(DEPLOYED_FILTER, map_location="cpu", weights_only=False)
+    fss = torch.load(SINGLE_FILTER, map_location="cpu", weights_only=False)
     filt = build_filter(FilterConfig(**fss["arch"]))
     filt.load_state_dict(fss["state_dict"], strict=False)
     filt.eval()

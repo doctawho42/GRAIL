@@ -32,7 +32,13 @@ from grail_metabolism.utils.preparation import load_default_rules
 from grail_metabolism.workflows.factory import build_generator
 
 RDLogger.DisableLog("rdApp.*")
-DEPLOYED_GEN = ROOT / "artifacts" / "full5000_priors" / "checkpoints" / "generator.pt"
+# The released pair is full5000_implicit for both stages: results/pool_checkpoints.json
+# identifies it by fingerprinting the pools' own scores, and follows what the repository
+# tracks rather than a name written beside a path. These two are a different run, kept
+# because this analysis is about the frequency prior, and named for the run they are so
+# that no reader takes them for the deployed model. They used to be called DEPLOYED_GEN
+# and DEPLOYED_FILTER, and one reader did.
+PRIORS_GEN = ROOT / "artifacts" / "full5000_priors" / "checkpoints" / "generator.pt"
 _MAP = re.compile(r":(\d+)]")
 
 
@@ -62,7 +68,7 @@ def canon_key(smirks):
 
 def main() -> int:
     torch.manual_seed(0)
-    s = torch.load(DEPLOYED_GEN, map_location="cpu", weights_only=False)
+    s = torch.load(PRIORS_GEN, map_location="cpu", weights_only=False)
     gen = build_generator(GeneratorConfig(**s["arch"]), s.get("rules"))
     gen.load_state_dict(s["state_dict"], strict=False)
     gen.eval()

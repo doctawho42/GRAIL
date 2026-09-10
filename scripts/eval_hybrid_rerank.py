@@ -39,8 +39,14 @@ from grail_metabolism.utils.transform import from_rdmol
 from grail_metabolism.workflows.factory import build_filter, build_generator
 from scripts.run_benchmark import load_test_map
 
-DEPLOYED_GEN = ROOT / "artifacts" / "full5000_priors" / "checkpoints" / "generator.pt"
-DEPLOYED_FILTER = ROOT / "artifacts" / "full5000_single" / "checkpoints" / "filter.pt"
+# The released pair is full5000_implicit for both stages: results/pool_checkpoints.json
+# identifies it by fingerprinting the pools' own scores, and follows what the repository
+# tracks rather than a name written beside a path. These two are a different run, kept
+# because this analysis is about the frequency prior, and named for the run they are so
+# that no reader takes them for the deployed model. They used to be called DEPLOYED_GEN
+# and DEPLOYED_FILTER, and one reader did.
+PRIORS_GEN = ROOT / "artifacts" / "full5000_priors" / "checkpoints" / "generator.pt"
+SINGLE_FILTER = ROOT / "artifacts" / "full5000_single" / "checkpoints" / "filter.pt"
 FACTORIZED = ROOT / "artifacts" / "factorized_v1" / "checkpoints" / "factorized.pt"
 VOCAB = ROOT / "grail_metabolism" / "resources" / "coarse_type_vocab.json"
 KS = [5, 10, 15]
@@ -85,10 +91,10 @@ def main() -> int:
     args = ap.parse_args()
     torch.set_num_threads(args.threads)
 
-    generator = _load(DEPLOYED_GEN, lambda a, r: build_generator(GeneratorConfig(**a), r))
+    generator = _load(PRIORS_GEN, lambda a, r: build_generator(GeneratorConfig(**a), r))
     assert float(generator.rule_prior_logits.std()) > 0.1, "degenerate prior; use full5000_priors"
     generator.gen_normalization = "canonical"
-    filt = _load(DEPLOYED_FILTER, lambda a, r: build_filter(FilterConfig(**a)))
+    filt = _load(SINGLE_FILTER, lambda a, r: build_filter(FilterConfig(**a)))
     fact = FactorizedGenerator.load(FACTORIZED)
     fact.eval()
     rule_to_type = json.loads(VOCAB.read_text())["rule_to_type"]
