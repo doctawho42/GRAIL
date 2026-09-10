@@ -10,19 +10,13 @@
    "artifact": "results/aggregation_ablation.json",
    "script": "aggregation_ablation.py",
    "how": "recorded source digest",
-   "status": "producer_changed",
-   "detail": "producer was 6272bbeb0cd1, is now 8bdb4b3877bb",
-   "diff_recovered_by": "the tree was dirty when written, so the source at 85f8a68ee0d7 is the nearest committed version and not exactly what ran",
-   "diff": "--- aggregation_ablation.py (as recorded)\n+++ aggregation_ablation.py (now)\n@@ -37,5 +37,5 @@\n         sys.path.insert(0, _p)\n \n-from _provenance import stamp  # noqa: E402\n+from _provenance import record_inputs, stamp  # noqa: E402\n \n KS = (1, 3, 5, 8, 10, 15, 20, 30, 50)\n@@ -81,14 +81,19 @@\n \n def wide_pools(population=\"comparison\"):\n+    \"\"\"The pools, the references, and the files they were read from, in that order.\"\"\"\n     spec = POPULATIONS[population][\"pools\"]\n     pools, refs = {}, {}\n-    for f in sorted(glob.glob(str(ROOT / spec))) or [str(ROOT / spec)]:\n+    files = sorted(glob.glob(str(ROOT / spec))) or [str(ROOT / spec)]\n+    for f in files:\n         blob = json.loads(Path(f).read_text())\n         pools.update(blob[\"pools\"]); refs.update(blob[\"references\"])\n-    return pools, refs\n-\n-\n-def collect(shard: int, shards: int, out: Path, population=\"comparison\") -> int:\n-    \"\"\"Per-template scores for every candidate of one shard of the comparison set.\"\"\"\n+    return pools, refs, files\n+\n+\n+def collect(shard: int, shards: int, out: Path, population=\"comparison\", top_k: int = 7581) -> int:\n+    \"\"\"Per-template scores for every candidate of one shard of the comparison set.\n+\n+    `top_k` is the rule budget the arm runs at: 7581 is the whole bank, 30 the interactive arm.\n+    \"\"\"\n     from rdkit import Chem, RDLogger\n \n@@ -100,5 +105,5 @@\n     from grail_metabolism.workflows.factory import build_generator\n \n-    pools, refs = wide_pools(population)\n+    pools, refs, _ = wide_pools(population)\n  ... diff truncated"
+   "status": "current"
   },
   {
    "artifact": "results/aggregation_ablation_validation.json",
    "script": "aggregation_ablation.py",
    "how": "recorded source digest",
-   "status": "producer_changed",
-   "detail": "producer was 6272bbeb0cd1, is now 8bdb4b3877bb",
-   "diff_recovered_by": "source at 249f1cdb8f05",
-   "diff": "--- aggregation_ablation.py (as recorded)\n+++ aggregation_ablation.py (now)\n@@ -91,6 +91,9 @@\n \n \n-def collect(shard: int, shards: int, out: Path, population=\"comparison\") -> int:\n-    \"\"\"Per-template scores for every candidate of one shard of the comparison set.\"\"\"\n+def collect(shard: int, shards: int, out: Path, population=\"comparison\", top_k: int = 7581) -> int:\n+    \"\"\"Per-template scores for every candidate of one shard of the comparison set.\n+\n+    `top_k` is the rule budget the arm runs at: 7581 is the whole bank, 30 the interactive arm.\n+    \"\"\"\n     from rdkit import Chem, RDLogger\n \n@@ -110,5 +113,5 @@\n     rows, t0 = {}, time.perf_counter()\n     for n, s in enumerate(mine, 1):\n-        mol, scores, ranked = generator._prepare_generation(s, 7581, None)\n+        mol, scores, ranked = generator._prepare_generation(s, top_k, None)\n         per_candidate: dict[str, list[float]] = {}\n         if mol is not None:\n@@ -318,4 +321,10 @@\n def main() -> int:\n     ap = argparse.ArgumentParser()\n+    # The shards this file has always written are the whole-bank arm, which is what 7581 means.\n+    # The interactive arm is the same pipeline at a rule budget of 30 and has no per-template\n+    # scores anywhere, so the budget is a flag rather than a literal and the shard directory\n+    # moves with it: collecting a second arm must not overwrite the first.\n+    ap.add_argument(\"--top-k\", type=int, default=7581)\n+    ap.add_argument(\"--shard-dir\", default=\"\")\n     ap.add_argument(\"--shard\", type=int, default=-1)\n     ap.add_argument(\"--shards\", type=int, default=8)\n@@ -332,7 +341,9 @@\n         print(\"give --shard N (with --shards M), or --merge\", file=sys.stderr)\n         return 2\n-    return collect(args.shard, args.shards,\n-                   POPULATIONS[args.population][\"shards\"] / f\"s{args.shard}.json\",\n-                   args.population)\n+    shard_dir = (Path(args.shard_dir) if args.shard_dir\n+                 else POPULATIONS[args.population][\"shards\"])\n  ... diff truncated"
+   "status": "current"
   },
   {
    "artifact": "results/applicability_domain.json",
@@ -725,7 +719,7 @@
   }
  ],
  "n_pinned": 118,
- "n_pinned_stale": 2,
+ "n_pinned_stale": 0,
  "sweep": {
   "unstamped": 288,
   "producer_changed": 40,
