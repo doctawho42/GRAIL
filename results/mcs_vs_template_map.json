@@ -1,0 +1,20 @@
+{
+  "provenance": {
+    "script": "mcs_vs_template_map.py",
+    "script_path": "scripts/typed_edit/mcs_vs_template_map.py",
+    "source_sha256": "a89f19696e3ca15ed21045515f215d5d2463f3e579c08feece405b7973ce9a9f",
+    "git_commit": "c9a495bd9cb0240f299cc77de6c2f4ed8cc57263",
+    "git_dirty": true
+  },
+  "substrates": 55,
+  "rules": 60,
+  "pairs_compared": 858,
+  "no_mcs": 50,
+  "pairs_agree": 615,
+  "pairs_disagree": 238,
+  "pair_disagreement_rate": 0.2774,
+  "atoms_compared": 32372,
+  "atoms_misaligned": 1251,
+  "atom_misalignment_rate": 0.0386,
+  "reading": "the MCS correspondence and the template's exact map are compared on the substrate atoms both align. A high pair-disagreement rate means the exact map sends atoms somewhere the MCS does not, so the pair filter's cross-edges were on an inferred correspondence that was often wrong, and the exact-map re-run is a different experiment from the one that lost; a low rate means the MCS was already right and point 5 cannot be rescued by the exact map."
+}

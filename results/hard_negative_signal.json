@@ -1,0 +1,17 @@
+{
+  "provenance": {
+    "script": "hard_negative_signal.py",
+    "script_path": "scripts/typed_edit/hard_negative_signal.py",
+    "source_sha256": "f6de06a6291f780d2b274c01f78d62d0202a4bce6d6583b052309529b39c572a",
+    "git_commit": "c9a495bd9cb0240f299cc77de6c2f4ed8cc57263",
+    "git_dirty": true
+  },
+  "population": 291,
+  "rank_depth": 20,
+  "references_typed": 539,
+  "top_ranked_non_references": 4950,
+  "of_those_typed": 4950,
+  "same_type_as_a_reference_on_the_substrate": 408,
+  "hard_share_of_typed_negatives": 0.0824,
+  "reading": "of 4950 typed non-reference candidates in the deployed top-20, 408 carry the same transformation type as a true metabolite on their own substrate. That is the hard-negative signal and, identically, the PU risk: each is a same-type-different-site product, which is what an unannotated true metabolite looks like. A large share means a hard-negative scheme has much to reject and much to wrongly reject; a small one means little of either."
+}

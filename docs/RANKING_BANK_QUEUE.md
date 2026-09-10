@@ -82,6 +82,8 @@ disagree, measure how often the MCS correspondence differs from the template's a
 rarely differ, the exact map cannot rescue the architecture and the idea is closed; if they often
 differ, the earlier loss is plausibly the correspondence and the run is worth it.
 
+**First stage RESULT (results/mcs_vs_template_map.json).** Run on 55 substrates x 60 rules. Of 858 applied pairs, 238 (27.7%) have an MCS correspondence that sends at least one substrate atom to a different product atom than the template's exact map does; 3.9% of all aligned atoms are misplaced. The MCS is right most of the time atom-for-atom but wrong on more than a quarter of pairs, often at the reaction center where symmetry defeats it. Point 5 is NOT closed by its free stage: the exact map is a genuinely different alignment on a quarter of pairs, so the pair filter's earlier -0.0090 may well have been the correspondence, and the exact-map re-run is worth training.
+
 **Retrains.** The filter, in pair mode, and the plumbing: the generator's rule_id per candidate has
 to reach the filter so the template's map can be used, which the factorized path already threads.
 
