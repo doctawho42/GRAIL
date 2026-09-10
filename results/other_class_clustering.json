@@ -1,0 +1,234 @@
+{
+  "config": {
+    "script": "bank_without_selection.py",
+    "git_commit": "d2c2106c308ba37bbe922eb5f906cb872773aec5",
+    "git_dirty": true,
+    "population": 291,
+    "pools": "results/widepools_implicit/w*.json"
+  },
+  "other_references": 142,
+  "distinct_formula_deltas": 81,
+  "singleton_deltas": 52,
+  "reading": "a long tail: most 'other' references are a formula delta seen once, so the class is not one unnamed transformation but many rare ones, and a bank mined from few examples has few templates for any of them",
+  "families": [
+    {
+      "name": "unclassified tail",
+      "references": 71,
+      "in_pool": 42,
+      "pool_coverage": 0.592,
+      "example": "Cc1c2cc[n+](C)cc2c(C)c2c1[nH]c1ccc([O-])c(SCC(N)C(=O)O)c12"
+    },
+    {
+      "name": "phosphate conjugation / nucleotide adduct (P added)",
+      "references": 16,
+      "in_pool": 10,
+      "pool_coverage": 0.625,
+      "example": "CC(Cn1cnc2c(N)ncnc21)OCP(=O)(O)OP(=O)(O)O"
+    },
+    {
+      "name": "thiol conjugation (glutathione / cysteine / mercapturate)",
+      "references": 15,
+      "in_pool": 11,
+      "pool_coverage": 0.733,
+      "example": "C=CCCN=C(S)SCC(N=C(C)O)C(=O)O"
+    },
+    {
+      "name": "large O-bearing conjugate (glucuronide-like / acyl)",
+      "references": 10,
+      "in_pool": 1,
+      "pool_coverage": 0.1,
+      "example": "NC(CCC(O)=NC(CSc1nc(Cl)c(Cl)cc1Cl)C(O)=NCC(=O)O)C(=O)O"
+    },
+    {
+      "name": "oxidative cleavage (C lost, O gained)",
+      "references": 8,
+      "in_pool": 2,
+      "pool_coverage": 0.25,
+      "example": "O=C(O)Cc1ccccc1"
+    },
+    {
+      "name": "dehydration (loss of H2O)",
+      "references": 5,
+      "in_pool": 5,
+      "pool_coverage": 1.0,
+      "example": "C=C(C)c1ccc(C(F)(F)C(F)(F)c2ccccc2)cc1"
+    },
+    {
+      "name": "oxidative dehalogenation (halogen out, O in)",
+      "references": 5,
+      "in_pool": 5,
+      "pool_coverage": 1.0,
+      "example": "CC(=O)CCl"
+    },
+    {
+      "name": "poly-oxygenation (+3 O, no other change)",
+      "references": 4,
+      "in_pool": 0,
+      "pool_coverage": 0.0,
+      "example": "CC(=O)OC1CC2(C)C(CC(O)C3C4(C)CCC(O)C(C)C4C(=O)CC32C)C1=C(CCC(O)C(C)(C)O)C(=O)O"
+    },
+    {
+      "name": "deoxygenation (O removed, no other change)",
+      "references": 4,
+      "in_pool": 3,
+      "pool_coverage": 0.75,
+      "example": "CNC(C)Cc1ccccc1"
+    },
+    {
+      "name": "desaturation (-4 H, no other change)",
+      "references": 3,
+      "in_pool": 0,
+      "pool_coverage": 0.0,
+      "example": "C=C(C)C1CC=C(C(=O)O)CC1"
+    },
+    {
+      "name": "dehalogenation (halogen removed)",
+      "references": 1,
+      "in_pool": 0,
+      "pool_coverage": 0.0,
+      "example": "O=C1C=CC(=NC(=O)c2sccc2NCc2ccnc3ccccc23)C=C1"
+    }
+  ],
+  "largest_deltas": [
+    {
+      "name": "C+10 H+17 N+3 O+6 S+1",
+      "references": 7,
+      "in_pool": 6,
+      "pool_coverage": 0.857,
+      "example": "C=CCCN=C(S)SCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O"
+    },
+    {
+      "name": "H+2 O+2",
+      "references": 6,
+      "in_pool": 3,
+      "pool_coverage": 0.5,
+      "example": "CCc1nn(CCO)c(C(C)O)c1Oc1cc(C#N)cc(C(=N)O)c1"
+    },
+    {
+      "name": "H-2 O-1",
+      "references": 5,
+      "in_pool": 5,
+      "pool_coverage": 1.0,
+      "example": "C=C(C)c1ccc(C(F)(F)C(F)(F)c2ccccc2)cc1"
+    },
+    {
+      "name": "H+1 O+1",
+      "references": 5,
+      "in_pool": 4,
+      "pool_coverage": 0.8,
+      "example": "CC[N+](O)(CC)CC[N-]c1ccc2[nH+]cn3c4ccc(OC)cc4c(=O)c1c23"
+    },
+    {
+      "name": "C-1 H-2 O+1",
+      "references": 4,
+      "in_pool": 1,
+      "pool_coverage": 0.25,
+      "example": "O=C(O)Cc1ccccc1"
+    },
+    {
+      "name": "O+3",
+      "references": 4,
+      "in_pool": 0,
+      "pool_coverage": 0.0,
+      "example": "CC(=O)OC1CC2(C)C(CC(O)C3C4(C)CCC(O)C(C)C4C(=O)CC32C)C1=C(CCC(O)C(C)(C)O)C(=O)O"
+    },
+    {
+      "name": "O-1",
+      "references": 4,
+      "in_pool": 3,
+      "pool_coverage": 0.75,
+      "example": "CNC(C)Cc1ccccc1"
+    },
+    {
+      "name": "H+1 O+3 P+1",
+      "references": 4,
+      "in_pool": 4,
+      "pool_coverage": 1.0,
+      "example": "CC(Cn1cnc2c(N)ncnc21)OCP(=O)(O)OP(=O)(O)O"
+    },
+    {
+      "name": "H-4",
+      "references": 3,
+      "in_pool": 0,
+      "pool_coverage": 0.0,
+      "example": "C=C(C)C1CC=C(C(=O)O)CC1"
+    },
+    {
+      "name": "H-2 O+2",
+      "references": 3,
+      "in_pool": 3,
+      "pool_coverage": 1.0,
+      "example": "CC(=O)OC1CC2(C)C(CC(O)C3C4(C)CCC(O)C(C)C4CCC32C)C1=C(CCC=C(C)C(=O)O)C(=O)O"
+    },
+    {
+      "name": "C+1 H+2 O+1",
+      "references": 3,
+      "in_pool": 3,
+      "pool_coverage": 1.0,
+      "example": "COc1ccc(OCC(O)CNC(C)C)c2ccccc12"
+    },
+    {
+      "name": "H+2 O+6 P+2",
+      "references": 3,
+      "in_pool": 3,
+      "pool_coverage": 1.0,
+      "example": "CC(Cn1cnc2c(N)ncnc21)OCP(=O)(O)OP(=O)(O)OP(=O)(O)O"
+    },
+    {
+      "name": "C-1",
+      "references": 3,
+      "in_pool": 2,
+      "pool_coverage": 0.667,
+      "example": "CC12CCC3C(CCC4CC(O)CCC43C)C1CCC2=O"
+    },
+    {
+      "name": "H-1 O+1",
+      "references": 3,
+      "in_pool": 2,
+      "pool_coverage": 0.667,
+      "example": "CCCc1cc(C(N)=S=O)cc(=O)n1C"
+    },
+    {
+      "name": "C+10 Cl-1 H+16 N+3 O+6 S+1",
+      "references": 3,
+      "in_pool": 3,
+      "pool_coverage": 1.0,
+      "example": "CCOP(=S)(OCC)Oc1nc(SCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O)c(Cl)cc1Cl"
+    },
+    {
+      "name": "O+1 S-1",
+      "references": 3,
+      "in_pool": 2,
+      "pool_coverage": 0.667,
+      "example": "CCOP(=O)(OCC)Oc1nc(Cl)c(Cl)cc1Cl"
+    },
+    {
+      "name": "C+1 O+1",
+      "references": 3,
+      "in_pool": 2,
+      "pool_coverage": 0.667,
+      "example": "CC(=O)Oc1ccc2c(c1)C13CCCCC1C(C2)N(C)CC3"
+    },
+    {
+      "name": "C+5 H+9 N+1 O+3 S+1",
+      "references": 2,
+      "in_pool": 2,
+      "pool_coverage": 1.0,
+      "example": "C=CCCN=C(S)SCC(N=C(C)O)C(=O)O"
+    },
+    {
+      "name": "H-3 N-1 O+1",
+      "references": 2,
+      "in_pool": 2,
+      "pool_coverage": 1.0,
+      "example": "CC(=O)Cc1ccccc1"
+    },
+    {
+      "name": "C-1 F-1 H-1 O+1 S-1",
+      "references": 2,
+      "in_pool": 2,
+      "pool_coverage": 1.0,
+      "example": "CC1CC2C3CC(F)C4=CC(=O)C=CC4(C)C3(F)C(O)CC2(C)C1(OC(=O)c1ccco1)C(=O)O"
+    }
+  ]
+}
