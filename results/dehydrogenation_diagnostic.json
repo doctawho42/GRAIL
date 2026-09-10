@@ -1,0 +1,227 @@
+{
+  "config": {
+    "script": "bank_without_selection.py",
+    "git_commit": "52763fa747912621a0df81c3960677586ba4a932",
+    "git_dirty": true,
+    "class": "dehydrogenation",
+    "population": 291,
+    "pools": "results/widepools_implicit/w*.json"
+  },
+  "references_in_the_class": 23,
+  "in_the_pool_under_the_key_they_are_scored_by": 19,
+  "in_the_pool_as_a_structure_but_not_under_that_key": 0,
+  "not_in_the_pool_at_all": 4,
+  "in_the_pool_and_inside_the_budget": 4,
+  "in_the_pool_but_ranked_past_the_budget": 12,
+  "in_the_pool_but_dropped_by_the_cap": 3,
+  "reading": "ranking: the references are enumerated and ranked below the budget",
+  "rows": [
+    {
+      "substrate": "C(=NC1CC(NCc2ccccn2)CC(NCc2ccccn2)C1)c1ccccn1",
+      "reference": "C(=NC1CC(N=Cc2ccccn2)CC(NCc2ccccn2)C1)c1ccccn1",
+      "key": "NIIHOCDRFFJHRD-UHFFFAOYSA-N",
+      "in_pool_by_key": true,
+      "in_pool_by_structure": true,
+      "deployed_rank": 70,
+      "pool_size": 401
+    },
+    {
+      "substrate": "CC(=O)OC1CC2(C)C(CC(O)C3C4(C)CCC(O)C(C)C4CCC32C)C1=C(CCC=C(C)C)C(=O)O",
+      "reference": "CC(=O)OC1CC2(C)C(CC(O)C3C4(C)CCC(=O)C(C)C4CCC32C)C1=C(CCC=C(C)C)C(=O)O",
+      "key": "DEKASDKLVVYODQ-UHFFFAOYSA-N",
+      "in_pool_by_key": true,
+      "in_pool_by_structure": true,
+      "deployed_rank": 28,
+      "pool_size": 3054
+    },
+    {
+      "substrate": "CC(C)(CO)c1cc2cc(NC(=O)C3(c4ccc5c(c4)OC(F)(F)O5)CC3)c(F)cc2n1CC(O)CO",
+      "reference": "CC1(C)c2cc3cc(NC(=O)C4(c5ccc6c(c5)OC(F)(F)O6)CC4)c(F)cc3n2CC(CO)OC1O",
+      "key": "BMKQCBWIEAQYOI-UHFFFAOYSA-N",
+      "in_pool_by_key": true,
+      "in_pool_by_structure": true,
+      "deployed_rank": null,
+      "pool_size": 624
+    },
+    {
+      "substrate": "CC(C)C1(C)SC(=NC2CC3CCC2C3)N=C1O",
+      "reference": "C=C(C)C1(C)SC(=NC2CC3CCC2C3)N=C1O",
+      "key": "WAZMEXFELKVLGG-UHFFFAOYSA-N",
+      "in_pool_by_key": true,
+      "in_pool_by_structure": false,
+      "deployed_rank": 51,
+      "pool_size": 871
+    },
+    {
+      "substrate": "CC(C)O",
+      "reference": "CC(C)=O",
+      "key": "CSCPPACGZOOCGX-UHFFFAOYSA-N",
+      "in_pool_by_key": true,
+      "in_pool_by_structure": true,
+      "deployed_rank": 7,
+      "pool_size": 90
+    },
+    {
+      "substrate": "CC(O)=NC(CSc1c(O)c(O)c2c(c1O)C(=O)OC(C)CCCC(=O)CCCCC2)C(=O)O",
+      "reference": "CC(O)=NC(CSc1c(O)c(O)c2c(c1O)C(=O)OC(C)CCCC(=O)CCCC=C2)C(=O)O",
+      "key": "YZRDBYVDRSIWJO-UHFFFAOYSA-N",
+      "in_pool_by_key": true,
+      "in_pool_by_structure": false,
+      "deployed_rank": 23,
+      "pool_size": 1290
+    },
+    {
+      "substrate": "CC1(C(=O)O)CCC2(C)CCC3(C)C(=C2C1)CC(=O)C1C2(C)CCC(O)C(C)(C)C2CCC13C",
+      "reference": "CC1(C(=O)O)CCC2(C)CCC3(C)C(=C2C1)CC(=O)C1C2(C)CCC(=O)C(C)(C)C2CCC13C",
+      "key": "UBVJDBFJGYOVQT-UHFFFAOYSA-N",
+      "in_pool_by_key": true,
+      "in_pool_by_structure": true,
+      "deployed_rank": 17,
+      "pool_size": 2529
+    },
+    {
+      "substrate": "CC1(C)Oc2ccc3ccc(=O)oc3c2C(OC(=O)C23CC(O)C(C)(C(=O)O2)C3(C)C)C1OC(=O)C12CCC(C)(C(=O)O1)C2(C)C",
+      "reference": "CC1(C)Oc2ccc3ccc(=O)oc3c2C(OC(=O)C23CC(=O)C(C)(C(=O)O2)C3(C)C)C1OC(=O)C12CCC(C)(C(=O)O1)C2(C)C",
+      "key": "FMZFTPPORYOEGM-UHFFFAOYSA-N",
+      "in_pool_by_key": true,
+      "in_pool_by_structure": true,
+      "deployed_rank": 24,
+      "pool_size": 1037
+    },
+    {
+      "substrate": "CC1=CC(=O)CC2CCC3C4CCC(O)C4(C)CCC3C12C",
+      "reference": "CC1=CC(=O)CC2CCC3C4CCC(=O)C4(C)CCC3C12C",
+      "key": "STLDQAJEGPFPIE-UHFFFAOYSA-N",
+      "in_pool_by_key": true,
+      "in_pool_by_structure": true,
+      "deployed_rank": 17,
+      "pool_size": 2050
+    },
+    {
+      "substrate": "CC1CCC2C(C)C(N3CCS(=O)(=O)CC3)OC3OC4(C)CC(O)C1C32OO4",
+      "reference": "CC1CCC2C(C)C(N3C=CS(=O)(=O)CC3)OC3OC4(C)CC(O)C1C32OO4",
+      "key": "NQUSIRNEIIUNLD-UHFFFAOYSA-N",
+      "in_pool_by_key": false,
+      "in_pool_by_structure": false,
+      "deployed_rank": null,
+      "pool_size": 1312
+    },
+    {
+      "substrate": "CN(C)CCCOC1(Cc2ccccc2)CCCC(O)CC1",
+      "reference": "CN(C)CCCOC1(Cc2ccccc2)CCCC(=O)CC1",
+      "key": "GULWWHMBPCPATF-UHFFFAOYSA-N",
+      "in_pool_by_key": true,
+      "in_pool_by_structure": true,
+      "deployed_rank": 25,
+      "pool_size": 835
+    },
+    {
+      "substrate": "COC(=O)C1=C(C)N=C(C)C([N+](=O)[O-])C1c1ccccc1C(F)(F)F",
+      "reference": "COC(=O)c1c(C)nc(C)c([N+](=O)[O-])c1-c1ccccc1C(F)(F)F",
+      "key": "APYDPHAWANMIQH-UHFFFAOYSA-N",
+      "in_pool_by_key": true,
+      "in_pool_by_structure": true,
+      "deployed_rank": 15,
+      "pool_size": 367
+    },
+    {
+      "substrate": "COCCO",
+      "reference": "COCC=O",
+      "key": "YSEFYOVWKJXNCH-UHFFFAOYSA-N",
+      "in_pool_by_key": true,
+      "in_pool_by_structure": true,
+      "deployed_rank": 33,
+      "pool_size": 105
+    },
+    {
+      "substrate": "COc1cc(-c2ccc(N)c(OC)c2)ccc1N",
+      "reference": "COC1=CC(=C2C=CC(=N)C(OC)=C2)C=CC1=N",
+      "key": "ZPGZQIXQANVQRM-UHFFFAOYSA-N",
+      "in_pool_by_key": false,
+      "in_pool_by_structure": false,
+      "deployed_rank": null,
+      "pool_size": 145
+    },
+    {
+      "substrate": "COc1ccc(C=CCO)cc1OC",
+      "reference": "COc1ccc(C=CC=O)cc1OC",
+      "key": "KNUFNLWDGZQKKJ-UHFFFAOYSA-N",
+      "in_pool_by_key": true,
+      "in_pool_by_structure": true,
+      "deployed_rank": 28,
+      "pool_size": 257
+    },
+    {
+      "substrate": "COc1ccc2[nH]c3cc(Cl)ccc3c(=Nc3cc(CN4CCCC4)c(O)c(CN4CCCC4O)c3)c2n1",
+      "reference": "COc1ccc2[nH]c3cc(Cl)ccc3c(=Nc3cc(CN4CCCC4)c(O)c(CN4CCCC4=O)c3)c2n1",
+      "key": "SQNHMUMQASOSFE-UHFFFAOYSA-N",
+      "in_pool_by_key": true,
+      "in_pool_by_structure": false,
+      "deployed_rank": 37,
+      "pool_size": 704
+    },
+    {
+      "substrate": "COc1cccc2c(O)c3c(c(O)c12)C(=O)C1=C(CC(O)(C(=O)CO)CC1OC1CC(N2CCOC(OC)C2)C(O)C(C)O1)C3=O",
+      "reference": "COc1cccc2c(O)c3c(c(O)c12)C(=O)C1=C(CC(O)(C(=O)CO)CC1OC1CC2C(OC4C(OC)OCCN24)C(C)O1)C3=O",
+      "key": "ALCJQLRGZWGFPF-UHFFFAOYSA-N",
+      "in_pool_by_key": true,
+      "in_pool_by_structure": true,
+      "deployed_rank": null,
+      "pool_size": 1663
+    },
+    {
+      "substrate": "CS(=O)(=O)CCNCc1ccc(-c2ccc3ncnc(Nc4ccc(O)c(Cl)c4)c3c2)o1",
+      "reference": "CS(=O)(=O)CCNCc1ccc(-c2ccc3ncnc(N=C4C=CC(=O)C(Cl)=C4)c3c2)o1",
+      "key": "IFMCGRMBEHWPHR-UHFFFAOYSA-N",
+      "in_pool_by_key": true,
+      "in_pool_by_structure": true,
+      "deployed_rank": null,
+      "pool_size": 425
+    },
+    {
+      "substrate": "Cc1cc2c(F)c(Oc3ncnn4cc(OCC(C)O)c(C)c34)ccc2[nH]1",
+      "reference": "CC(=O)COc1cn2ncnc(Oc3ccc4[nH]c(C)cc4c3F)c2c1C",
+      "key": "YYEPDBKFCHASFG-UHFFFAOYSA-N",
+      "in_pool_by_key": true,
+      "in_pool_by_structure": true,
+      "deployed_rank": 5,
+      "pool_size": 306
+    },
+    {
+      "substrate": "N=C(O)OCC(CO)c1ccccc1",
+      "reference": "OC1=NC(O)C(c2ccccc2)CO1",
+      "key": "XZZMJRBYVRSAOS-UHFFFAOYSA-N",
+      "in_pool_by_key": false,
+      "in_pool_by_structure": false,
+      "deployed_rank": null,
+      "pool_size": 288
+    },
+    {
+      "substrate": "N=C(O)OCC(CO)c1ccccc1",
+      "reference": "N=C(O)OCC(C=O)c1ccccc1",
+      "key": "XUCMSYZLYLONTH-UHFFFAOYSA-N",
+      "in_pool_by_key": true,
+      "in_pool_by_structure": false,
+      "deployed_rank": 16,
+      "pool_size": 288
+    },
+    {
+      "substrate": "NCc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1",
+      "reference": "Oc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)nc1",
+      "key": "AENNIWWWBBALCX-UHFFFAOYSA-N",
+      "in_pool_by_key": false,
+      "in_pool_by_structure": false,
+      "deployed_rank": null,
+      "pool_size": 482
+    },
+    {
+      "substrate": "O=S(=O)(N=C(O)Nc1ccc(Cl)cc1)c1ccc2c(c1)C(O)CC2",
+      "reference": "O=C1CCc2ccc(S(=O)(=O)N=C(O)Nc3ccc(Cl)cc3)cc21",
+      "key": "VMNGLNYDFGSMKM-UHFFFAOYSA-N",
+      "in_pool_by_key": true,
+      "in_pool_by_structure": false,
+      "deployed_rank": 10,
+      "pool_size": 376
+    }
+  ]
+}
