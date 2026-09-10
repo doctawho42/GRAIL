@@ -86,9 +86,15 @@ class RuleParse(nn.Module):
         molpath_hidden: Optional[int] = None,
         molpath_cutoff: Optional[int] = None,
         molpath_y: Optional[float] = None,
+        id_gate_lambda: float = 0.0,
     ) -> None:
         super().__init__()
         del use_molpath, molpath_hidden, molpath_cutoff, molpath_y
+        # Support-gated identity: the id contributes n/(n+lambda), where n is the rule's training
+        # positive count (filled by _update_rule_statistics). lambda = 0 leaves the id ungated,
+        # which is the deployed model. The support starts at zero and is a non-persistent buffer:
+        # it is recomputed from the training labels, not carried in the checkpoint.
+        self.id_gate_lambda = float(id_gate_lambda)
         hidden = _pad_dims(arg_vec, 3, embedding_dim)
         self.rule_keys = list(rule_dict.keys())
         self.rule_graphs = [rule_dict[key] for key in self.rule_keys]
@@ -104,6 +110,9 @@ class RuleParse(nn.Module):
         meta = [_rule_metadata(rule) for rule in self.rule_keys]
         meta_tensor = torch.tensor(meta, dtype=torch.float32) if meta else torch.empty((0, 6), dtype=torch.float32)
         self.register_buffer("rule_meta", meta_tensor, persistent=False)
+        self.register_buffer("rule_support",
+                             torch.zeros(max(len(self.rule_keys), 1), dtype=torch.float32),
+                             persistent=False)
         self.id_embedding = nn.Embedding(max(len(self.rule_keys), 1), embedding_dim)
         self.meta_encoder = nn.Sequential(
             nn.Linear(6, embedding_dim),
@@ -120,6 +129,12 @@ class RuleParse(nn.Module):
         encoded = self.encoder(rule_batch)
         ids = self.id_embedding.weight[: encoded.size(0)]
         meta = self.meta_encoder(self.rule_meta.to(device))
+        if self.id_gate_lambda > 0.0:
+            # A rare rule (small support) leans on the template's chemistry; a frequent one keeps
+            # its lookup. n/(n+lambda) is 0 for a never-positive rule and approaches 1 as n grows.
+            n = self.rule_support[: encoded.size(0)].to(device)
+            gate = (n / (n + self.id_gate_lambda)).unsqueeze(1)
+            ids = gate * ids
         return self.norm(encoded + ids + meta)
 
 
@@ -256,8 +271,10 @@ class Generator(GGenerator):
         use_applicability_mask: bool = True,
         applicability_penalty: float = 7.5,
         candidate_aggregation: Literal["max", "mean", "noisy_or", "hybrid"] = "noisy_or",
+        id_gate_lambda: float = 0.0,
     ) -> None:
         super().__init__()
+        self.id_gate_lambda = float(id_gate_lambda)
         self._prime_rule_graph_cache(rule_dict)
         self.rules = {rule: graph for rule, graph in zip(rule_dict.keys(), self._get_rule_graphs(list(rule_dict.keys())))}
         self.rule_names = list(self.rules.keys())
@@ -281,6 +298,7 @@ class Generator(GGenerator):
             molpath_hidden=molpath_hidden,
             molpath_cutoff=molpath_cutoff,
             molpath_y=molpath_y,
+            id_gate_lambda=id_gate_lambda,
         )
         # Inference cache for the encoded rule bank (see _rule_embeddings). The rule graphs
         # and encoder weights are fixed during inference, so the ~7.5k-rule encode is done
@@ -664,6 +682,11 @@ class Generator(GGenerator):
             self.pos_weight.copy_(pos_weight.to(self.pos_weight.device))
             self.propensity_weight.copy_(propensity_weight.to(self.propensity_weight.device))
             self.rule_prior_logits.copy_(_safe_logit(prior_prob).to(self.rule_prior_logits.device))
+            # The training positive count per rule, for the support-gated identity. Filled here
+            # because this is where positives is already computed under the applicability mask;
+            # the gate in RuleParse.forward reads it. A no-op when id_gate_lambda = 0.
+            if hasattr(self, "parser") and self.parser.rule_support.numel() == positives.numel():
+                self.parser.rule_support.copy_(positives.to(self.parser.rule_support.device))
 
     def _create_pretraining_graphs(self, smiles_list: Sequence[str]) -> List[Data]:
         graphs = []

@@ -1682,3 +1682,63 @@ def test_no_constant_calls_an_unshipped_checkpoint_deployed():
     s = subprocess.run([_sys.executable, str(root / "scripts" / "check_deployed_names.py"),
                         "--self-test"], capture_output=True, text=True, cwd=root)
     assert s.returncode == 0, f"the gate's own self-test fails:\n{s.stdout}{s.stderr}"
+
+
+def test_support_gated_id_is_off_at_lambda_zero_and_gates_above_it():
+    """The rule identity is gated by training support, and lambda=0 is the deployed model.
+
+    The rule representation is graph_encoded + id_embedding + meta, and 82% of its variance was
+    the per-rule id, which a one-positive rule fits to that one example. The gate makes the id
+    contribute n/(n+lambda): at lambda=0 it is ungated (the deployed model, byte for byte on this
+    path), and at lambda>0 a never-positive rule loses its id entirely while a well-supported one
+    keeps it. This guards both ends so a later edit cannot silently turn the gate on or off.
+    """
+    import torch
+    from grail_metabolism.model.generator import RuleParse
+    from torch_geometric.data import Data
+
+    # two trivial rule graphs; the SMARTS keys only need to split into two halves for the metadata
+    keys = ["[C:1]>>[C:1]O", "[N:1]>>[N:1]=O"]
+    def g():
+        return Data(x=torch.zeros((1, 16)), edge_index=torch.zeros((2, 0), dtype=torch.long),
+                    edge_attr=torch.zeros((0, 18)))
+    rd = {k: g() for k in keys}
+
+    off = RuleParse(rd, arg_vec=[64, 64, 64], embedding_dim=32, id_gate_lambda=0.0)
+    off.eval()
+    with torch.no_grad():
+        base = off()
+
+    on = RuleParse(rd, arg_vec=[64, 64, 64], embedding_dim=32, id_gate_lambda=8.0)
+    on.load_state_dict(off.state_dict(), strict=False)  # same weights, only the gate differs
+    on.eval()
+    # rule 0 well supported, rule 1 never positive
+    on.rule_support[:] = torch.tensor([100.0, 0.0])
+    with torch.no_grad():
+        gated = on()
+
+    # lambda=0 leaves the representation untouched relative to a fresh ungated parser on the
+    # same weights: the gate branch is not entered.
+    off2 = RuleParse(rd, arg_vec=[64, 64, 64], embedding_dim=32, id_gate_lambda=0.0)
+    off2.load_state_dict(off.state_dict(), strict=False)
+    off2.eval()
+    with torch.no_grad():
+        base2 = off2()
+    assert torch.allclose(base, base2, atol=1e-6), "lambda=0 is not deterministic on fixed weights"
+
+    # the never-positive rule (row 1) must move under the gate; the supported rule (row 0) barely.
+    moved_unsupported = float((gated[1] - base[1]).abs().max())
+    moved_supported = float((gated[0] - base[0]).abs().max())
+    assert moved_unsupported > moved_supported, (
+        f"the gate should change the never-positive rule more than the supported one: "
+        f"unsupported {moved_unsupported:.4f} vs supported {moved_supported:.4f}")
+
+
+def test_rule_statistics_fill_the_support_buffer():
+    """Training must fill the support the gate reads, or the gate is silently off during training."""
+    import inspect
+    from grail_metabolism.model import generator as G
+    src = inspect.getsource(G.Generator._update_rule_statistics)
+    assert "rule_support" in src and "positives" in src, (
+        "_update_rule_statistics no longer fills parser.rule_support, so a support-gated run would "
+        "train with an all-zero support and gate every id to nothing")

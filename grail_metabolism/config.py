@@ -86,6 +86,13 @@ class GeneratorConfig:
     use_applicability_mask: bool = True
     applicability_penalty: float = 7.5
     candidate_aggregation: Literal["max", "mean", "noisy_or", "hybrid"] = "noisy_or"
+    # Support-gated rule identity. The rule representation is graph_encoded + id_embedding + meta;
+    # a variance decomposition put 82% of it in the per-rule id, which a rule with one training
+    # positive fits to that one example. This gates the id by the rule's training support n:
+    # id contributes n/(n+id_gate_lambda), so a rare rule leans on the template's chemistry
+    # (graph + meta) and a frequent one keeps its lookup. id_gate_lambda = 0.0 is the deployed
+    # model exactly (gate = 1 everywhere); a positive value is the intervention.
+    id_gate_lambda: float = 0.0
     # Generator training mode. "supervised" = multi-label rule classification (default).
     # "gflownet" = after supervised warm-start, train the generator as a forward flow
     # policy over the metabolic tree (Trajectory Balance), so terminal sampling is
