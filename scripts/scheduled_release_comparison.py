@@ -1,9 +1,18 @@
 #!/usr/bin/env python3
-"""The released arm with the blend at the head of the list, against every comparator.
+"""An alternative the release does not run: the blend at the head of the list, against every comparator.
 
-ModelWrapper.generate now picks the candidate aggregation from the budget it is asked for: the
-blend at ten and below, the noisy-or above. This measures that arm on the comparison set, against
-all five published predictors, at the budgets the manuscript reads.
+The blend beats the released noisy-or at the head of the list and loses at depth, so an
+aggregation picked from the requested budget -- the blend at ten and below, the noisy-or above --
+would run the better one over the whole range. This measures that arm on the comparison set,
+against all five published predictors, at the budgets the manuscript reads.
+
+It is a measurement of an alternative and not a description of the release. The switch was built,
+measured and taken back out: it gains between two and five hundredths at ten and below with every
+interval excluding zero, and turns none of the arm's point-estimate leads at eight and ten into
+established ones. Shipping it would have meant re-measuring every committed number read at those
+budgets, which scripts/blend_switch_scope.py puts at 27 artifacts certain and about twice that
+possible, in exchange for a gain that does not change a single verdict. So the release keeps one
+rule and this file is what says what that costs.
 
 Nothing is re-run. The per-template generator scores are in results/aggregation_shards/s*.json and
 the filter score and tautomer key for each candidate are in results/widepools_implicit/w*.json,
@@ -39,7 +48,11 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "scripts" / "typed_edit"
 import bank_without_selection as B  # noqa: E402
 from _rrf import RRF_K, competition_ranks  # noqa: E402
 from grail_metabolism.model.generator import Generator  # noqa: E402
-from grail_metabolism.model.wrapper import ModelWrapper  # noqa: E402
+
+# The widest budget at which the blend's gain over the released rule separates from zero on the
+# comparison set. It lives here rather than in the package because the package does not switch:
+# this is the alternative's parameter, not the release's.
+BLEND_BUDGET = 10
 
 BUDGETS = [1, 3, 5, 8, 10, 15, 20, 30, 50]
 N_BOOT, SEED, CAP = 10000, 0, 100
@@ -147,7 +160,9 @@ def main() -> int:
         return np.array([len(set(order[s][:b]) & refs[s]) for s in subs], dtype=float)
 
     rep = {"config": {**B._code_version(), "population": len(subs), "budgets": BUDGETS,
-                      "switch": {"blend_at_or_below": ModelWrapper.BLEND_BUDGET,
+                      "status": "an alternative measured and not adopted; the release runs one "
+                                "aggregation at every budget",
+                      "switch": {"blend_at_or_below": BLEND_BUDGET,
                                  "rule_at_the_head": "hybrid", "rule_above": "noisy_or"},
                       "cap": CAP, "aggregation": "micro, ratio of sums", "join": join},
            "comparators": {}, "arms": {}}
@@ -158,7 +173,7 @@ def main() -> int:
     for arm in by_arm:
         rep["arms"][arm] = {}
         for b in BUDGETS:
-            rule = "hybrid" if b <= ModelWrapper.BLEND_BUDGET else "noisy_or"
+            rule = "hybrid" if b <= BLEND_BUDGET else "noisy_or"
             h = hits(by_arm[arm][rule], b)
             base = hits(by_arm[arm]["noisy_or"], b)
             row = {"rule": rule, "micro": round(float(h.sum() / U.sum()), 4),
@@ -179,7 +194,7 @@ def main() -> int:
             rep["arms"][arm][str(b)] = row
 
     col = json.loads((ROOT / "results/deployment_table.json").read_text())["recall_micro"]
-    above = [b for b in BUDGETS if b > ModelWrapper.BLEND_BUDGET]
+    above = [b for b in BUDGETS if b > BLEND_BUDGET]
     m1 = [f"{arm} k={b}: {rep['arms'][arm][str(b)]['micro']} vs manuscript {col[str(b)][arm]}"
           for arm in rep["arms"] for b in above
           if abs(rep["arms"][arm][str(b)]["micro"] - col[str(b)][arm]) > 5e-4]

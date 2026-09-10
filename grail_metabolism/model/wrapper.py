@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from contextlib import contextmanager
 from typing import TYPE_CHECKING, Iterable, List, Literal, Optional, Sequence, Union
 
 from rdkit import Chem
@@ -123,41 +122,6 @@ class ModelWrapper:
         rule_threshold = self._rule_threshold(threshold)
         tree = MetabolicTree(self.generator, self.filter, config, rule_threshold=rule_threshold)
         return [smiles for smiles, _ in tree.beam_search(sub, max_output=max_output)]
-
-    # The blend beats the released noisy-or at the head of the list and loses at depth, so a
-    # single setting runs the worse one over half the range. The switch point is ten: on the
-    # validation draw the blend leads at every budget through thirty, but carried to the
-    # comparison set its gain separates from zero only at one, three, five, eight and ten
-    # (+0.0286, +0.0391, +0.0526, +0.0391, +0.0286), covers zero at fifteen and twenty, and turns
-    # into a loss of 0.0135 at thirty. Ten is the widest budget where the gain is established
-    # rather than the widest where validation liked it.
-    #
-    # results/budget_dependent_schedules.json carries the selection and the transfer, and
-    # scripts/budget_dependent_schedules.py is what produced it: chosen on validation, spent once
-    # on the comparison set. A caller that names no budget gets the released rule unchanged.
-    BLEND_BUDGET = 10
-
-    @contextmanager
-    def _aggregation_for(self, max_output: Optional[int]):
-        """Swap the candidate aggregation for the budget being asked for, and put it back.
-
-        The aggregation is a generator attribute rather than an argument, so this mutates and
-        restores rather than passing a value down. It is not safe to share one wrapper across
-        threads while this is open, which is true of the generator's other mutable settings too.
-        """
-        was = getattr(self.generator, "candidate_aggregation", None)
-        if was is None or max_output is None:
-            # A generator that does not aggregate over templates has nothing to switch, and a
-            # caller that names no budget gets the released rule. Both are left alone rather than
-            # given a default, so a test double without the attribute behaves as it did.
-            yield was
-            return
-        rule = "hybrid" if max_output <= self.BLEND_BUDGET else "noisy_or"
-        self.generator.candidate_aggregation = rule
-        try:
-            yield rule
-        finally:
-            self.generator.candidate_aggregation = was
 
     def generate(
         self,
