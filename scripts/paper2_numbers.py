@@ -672,6 +672,64 @@ def build():
         "of_those_whose_type_this_source_dropped_counts_ignored"]
     n["metxdrop.recoverablecoarseshare"] = _rec["share_counts_ignored"]
 
+    # The aggregation scheduled by budget: an alternative built, measured on both populations and
+    # not adopted. The two artifacts are read together because the claim is a pair -- what the
+    # validation draw promised and what the comparison set paid -- and quoting either alone is the
+    # selection this design exists to avoid.
+    _sched = art("budget_dependent_schedules.json")
+    _rel = art("scheduled_release_comparison.json")
+    n["blend.switch"] = _rel["config"]["switch"]["blend_at_or_below"]
+    for _arm, _tag in (("whole bank", "exh"), ("trained budget", "int")):
+        _rows = _rel["arms"][_arm]
+        for _k in ("1", "3", "5", "8", "10"):
+            _g = _rows[_k]["gain_over_the_released_rule"]
+            n[f"blend.{_tag}.gain{_k}"] = _g["difference"]
+            n[f"blend.{_tag}.gain{_k}.lo"] = _g["ci95"][0]
+            n[f"blend.{_tag}.gain{_k}.hi"] = _g["ci95"][1]
+            n[f"blend.{_tag}.gain{_k}.sep"] = _g["excludes_zero"]
+        # The widest trail against the comparator the manuscript names at the tight budgets, and
+        # whether it is established. The sentence this supports is a negative one, so the number
+        # that carries it is the largest gap that still fails to separate.
+        _sy = {int(k): v["vs"]["SyGMa"] for k, v in _rows.items() if int(k) <= 10}
+        _worst = min(_sy.items(), key=lambda kv: kv[1]["gap"])
+        n[f"blend.{_tag}.sygmaworst"] = _worst[1]["gap"]
+        n[f"blend.{_tag}.sygmaworst.k"] = _worst[0]
+        n[f"blend.{_tag}.sygmaworst.lo"] = _worst[1]["ci95"][0]
+        n[f"blend.{_tag}.sygmaworst.hi"] = _worst[1]["ci95"][1]
+        n[f"blend.{_tag}.sygmaseparating"] = sum(
+            1 for v in _sy.values() if v["excludes_zero"])
+        # How close the nearest cell comes to separating. A claim that nothing separates is worth
+        # only as much as its narrowest margin, and rounding can put that margin at zero: the
+        # sentence has to be able to say so rather than rest on a fourth decimal it does not show.
+        _closest = min(_sy.items(), key=lambda kv: abs(kv[1]["ci95"][1]))
+        n[f"blend.{_tag}.sygmaclosest.k"] = _closest[0]
+        n[f"blend.{_tag}.sygmaclosest.hi"] = _closest[1]["ci95"][1]
+        n[f"blend.{_tag}.sygmaclosest"] = _closest[1]["gap"]
+    # The transfer: what validation promised against what the comparison set delivered, at the
+    # budget where the two disagree in sign. A schedule that half transfers is the result, so the
+    # disagreement is generated rather than described.
+    _agg = _sched["aggregation"]["by_budget"]
+    _flip = [k for k, v in _agg.items()
+             if v["validation_promised"] > 0 and v["delivered"] < 0]
+    n["blend.transferflips"] = len(_flip)
+    if _flip:
+        _k = max(_flip, key=lambda x: int(x))
+        n["blend.flipk"] = int(_k)
+        n["blend.flippromised"] = _agg[_k]["validation_promised"]
+        n["blend.flipdelivered"] = _agg[_k]["delivered"]
+    _gaps = [v["transfer_gap"] for v in _agg.values() if v["chosen_on_validation"] != "noisy_or"]
+    n["blend.transferworst"] = min(_gaps) if _gaps else 0.0
+    # The cap on the same design, which is the arm of this comparison that came back negative.
+    _cap = _sched["cap"]["by_budget"]
+    n["blend.capbest"] = max(v["delivered"] for v in _cap.values())
+    n["blend.capworst"] = min(v["delivered"] for v in _cap.values())
+    n["blend.capchoices"] = len({v["chosen_on_validation"] for v in _cap.values()})
+    # What adopting it would cost, from the dependency graph rather than an estimate.
+    _scope = art("blend_switch_scope.json")
+    n["blend.recompute"] = len(_scope["recompute"])
+    n["blend.recomputepossible"] = len(_scope["recompute"]) + len(_scope["possible"])
+    n["blend.recomputeunplaceable"] = len(_scope["no_recorded_inputs_and_reads_a_tight_budget"])
+
     # The aggregation rule, swept. The manuscript named the violated independence assumption and
     # left it, on the ground that the released pools carry the aggregate and not its parts.
     agg = art("aggregation_ablation.json")

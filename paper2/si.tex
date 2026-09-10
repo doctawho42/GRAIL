@@ -1369,6 +1369,80 @@ deployed combination is reciprocal rank fusion \citep{cormack2009},
 \mathrm{RRF}(c) = \sum_{i} \frac{1}{K + r_i(c)}, \qquad K = 60,
 \end{equation}
 where $r_i(c)$ is the rank of $c$ under scorer $i$.
+\subsection{The aggregation taken from the budget, measured and not adopted}
+\label{sec:si-blendschedule}
+
+The blend of Equation~\ref{eq:blend} is better than the released rule at the head of the list and
+no better at depth, so its sign turns along the output budget and one fixed rule runs the weaker
+of the two over half the range. A system that took the aggregation from the budget it was asked
+for, the blend at \numBlendSwitchWord{} candidates and below and the released rule above, would
+not. This section measures what that would be worth. The release does not do it.
+
+The measurement is designed around the objection that sinks the obvious version of it. Reading the
+better rule off the comparison set at each budget is an argmax over the population the number is
+reported on, which is the failure Section~\ref{sec:si-aggregation} refuses for the same reason.
+So the rule is chosen at each budget on the validation draw and spent once on the comparison set,
+and what the comparison set returns is reported whether or not it agrees with what validation
+promised. The switch sits at \numBlendSwitchWord{} because that is the widest budget at which the
+gain is established on the comparison set, not the widest at which validation preferred the blend,
+which was thirty.
+
+\paragraph{What it delivers.} Both arms gain at the head of the list. The exhaustive arm gains
+$+\numBlendExhGainOne$ $[+\numBlendExhGainOneLo, +\numBlendExhGainOneHi]$ at a budget of one,
+$+\numBlendExhGainThree$ $[+\numBlendExhGainThreeLo, +\numBlendExhGainThreeHi]$ at three and
+$+\numBlendExhGainFive$ $[+\numBlendExhGainFiveLo, +\numBlendExhGainFiveHi]$ at five. At eight
+and ten it gains $+\numBlendExhGainEight$
+$[+\numBlendExhGainEightLo, +\numBlendExhGainEightHi]$ and $+\numBlendExhGainOneZero$
+$[+\numBlendExhGainOneZeroLo, +\numBlendExhGainOneZeroHi]$. Every interval excludes zero.
+
+The interactive arm gains less: $+\numBlendIntGainOne$, $+\numBlendIntGainThree$ and
+$+\numBlendIntGainFive$ at one, three and five, and $+\numBlendIntGainOneZero$ at ten, each
+separating. Its cell at a budget of eight is $+\numBlendIntGainEight$
+$[\numBlendIntGainEightLo, +\numBlendIntGainEightHi]$, which does not separate.
+
+Reading the interactive arm at all required a measurement this work had not made. The
+per-template scores every aggregation is computed from were collected for the whole bank only, so
+each earlier reading of the aggregation covers one of the two arms; the collection is a rule
+budget rather than a constant here, and both arms are read from their own scores.
+
+\paragraph{What it does not deliver.} The schedule does not transfer whole. Validation
+over-promised at every budget it was carried to, by as much as $\numBlendTransferworst$, and at a
+budget of \numBlendFlipk{} it promised $+\numBlendFlippromised$ and delivered
+$\numBlendFlipdelivered$. That budget is above the switch and outside what the release would have
+adopted, but it is the reason the switch is placed by the comparison set rather than by
+validation's preference.
+
+The pool cap answers the same design negatively and is reported as a null rather than left out.
+Chosen per budget on validation in the same way, it delivers at most $+\numBlendCapbest$ where it
+helps, loses $\numBlendCapworst$ where it does not, and its choices take
+\numBlendCapchoicesWord{} different values across nine neighbouring budgets, which is the shape of
+a selection on noise rather than of a setting with a budget-dependent optimum. The deployed cap
+stands.
+
+\paragraph{What it would move in the comparison, and what it would not.} Under the schedule
+neither arm trails SyGMa with an interval excluding zero at any budget of ten or below:
+\numBlendExhSygmaseparatingWord{} of the exhaustive arm's five such cells separate and
+\numBlendIntSygmaseparatingWord{} of the interactive arm's, the widest trail being the interactive
+arm's $\numBlendIntSygmaworst$ $[\numBlendIntSygmaworstLo, +\numBlendIntSygmaworstHi]$ at a budget
+of \numBlendIntSygmaworstK{}. The trail Section~\ref{MS-sec:results} reports at one, three and
+five would become unresolved rather than established. That reading rests on a margin the printed
+precision hides: the interactive arm's cell at a budget of
+\numBlendIntSygmaclosestKWord{} is $\numBlendIntSygmaclosest$ with its interval running to
+$\numBlendIntSygmaclosestHi$, so the cell fails to separate by less than the fourth decimal shows
+and should be read as the boundary case it is.
+
+What the schedule does not do is turn a point estimate into an established lead. Every budget at
+which it puts an arm ahead of the strongest comparator is a budget at which that margin covers
+zero, so no verdict in Table~\ref{MS-tab:sweep} changes sign with an interval behind it.
+
+\paragraph{Why the release keeps one rule.} Adopting the schedule would make every committed
+number read at those budgets a number for a configuration that had not been measured.
+\numBlendRecompute{} artifacts are reachable from the ranking and carry a rate keyed at a budget
+of ten or below, \numBlendRecomputepossible{} more are possible, and a further
+\numBlendRecomputeunplaceable{} record no inputs and cannot be placed in that graph at all. Set
+against a gain that leaves every verdict where it stands, the released system keeps one
+aggregation at every budget, and this section is what that choice costs.
+
 \section{Model architectures and training}
 \label{sec:si-arch}
 

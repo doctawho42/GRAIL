@@ -152,6 +152,11 @@ PINNED = {
     # false of the coverage bound, the split counts, the leakage audit, the contamination claim
     # and the multiseed spread. Several predate stamping and are verified by inference from the
     # commit that added them, which the sweep reports as inferred rather than as current.
+    # The aggregation taken from the budget: an alternative measured on both populations and not
+    # adopted. Its numbers are printed, so it is pinned like any other source the paper reads.
+    "results/budget_dependent_schedules.json": "scripts/budget_dependent_schedules.py",
+    "results/scheduled_release_comparison.json": "scripts/scheduled_release_comparison.py",
+    "results/blend_switch_scope.json": "scripts/blend_switch_scope.py",
     "results/coverage_gap_types.json": "scripts/coverage_gap_types.py",
     "results/ceiling_instrument_agreement.json": "scripts/typed_edit/ceiling_instrument_agreement.py",
     "results/comparator_provenance.json": "scripts/typed_edit/comparator_provenance.py",

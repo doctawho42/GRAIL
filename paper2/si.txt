@@ -2583,6 +2583,70 @@ K = 60,
 
 where ri (c) is the rank of c under scorer i.
 
+S20.1
+
+The aggregation taken from the budget, measured and not
+adopted
+
+The blend of Equation S1 is better than the released rule at the head of the list and no better
+at depth, so its sign turns along the output budget and one fixed rule runs the weaker of the
+two over half the range. A system that took the aggregation from the budget it was asked for,
+the blend at ten candidates and below and the released rule above, would not. This section
+measures what that would be worth. The release does not do it.
+The measurement is designed around the objection that sinks the obvious version of
+it. Reading the better rule off the comparison set at each budget is an argmax over the
+population the number is reported on, which is the failure Section S20 refuses for the same
+S47
+
+reason. So the rule is chosen at each budget on the validation draw and spent once on the
+comparison set, and what the comparison set returns is reported whether or not it agrees
+with what validation promised. The switch sits at ten because that is the widest budget
+at which the gain is established on the comparison set, not the widest at which validation
+preferred the blend, which was thirty.
+
+What it delivers. Both arms gain at the head of the list. The exhaustive arm gains
++0.0286 [+0.0097, +0.0483] at a budget of one, +0.0391 [+0.0161, +0.0640] at three and
++0.0526 [+0.0271, +0.0787] at five. At eight and ten it gains +0.0391 [+0.0170, +0.0628] and
++0.0286 [+0.0064, +0.0519]. Every interval excludes zero.
+The interactive arm gains less: +0.0211, +0.0256 and +0.0241 at one, three and five, and
++0.0075 at ten, each separating. Its cell at a budget of eight is +0.0045 [−0.0049, +0.0146],
+which does not separate.
+Reading the interactive arm at all required a measurement this work had not made. The
+per-template scores every aggregation is computed from were collected for the whole bank
+only, so each earlier reading of the aggregation covers one of the two arms; the collection is a
+rule budget rather than a constant here, and both arms are read from their own scores.
+
+What it does not deliver. The schedule does not transfer whole. Validation over-promised
+at every budget it was carried to, by as much as −0.0386, and at a budget of 30 it promised
++0.0137 and delivered −0.0135. That budget is above the switch and outside what the release
+would have adopted, but it is the reason the switch is placed by the comparison set rather
+than by validation’s preference.
+The pool cap answers the same design negatively and is reported as a null rather than
+left out. Chosen per budget on validation in the same way, it delivers at most +0.0075 where
+it helps, loses −0.0045 where it does not, and its choices take five different values across nine
+neighbouring budgets, which is the shape of a selection on noise rather than of a setting with
+a budget-dependent optimum. The deployed cap stands.
+S48
+
+What it would move in the comparison, and what it would not. Under the schedule
+neither arm trails SyGMa with an interval excluding zero at any budget of ten or below:
+none of the exhaustive arm’s five such cells separate and none of the interactive arm’s, the
+widest trail being the interactive arm’s −0.0301 [−0.0637, +0.0032] at a budget of 5. The
+trail Section 3 reports at one, three and five would become unresolved rather than established.
+That reading rests on a margin the printed precision hides: the interactive arm’s cell at a
+budget of one is −0.0271 with its interval running to 0.0000, so the cell fails to separate by
+less than the fourth decimal shows and should be read as the boundary case it is.
+What the schedule does not do is turn a point estimate into an established lead. Every
+budget at which it puts an arm ahead of the strongest comparator is a budget at which that
+margin covers zero, so no verdict in Table 2 changes sign with an interval behind it.
+
+Why the release keeps one rule. Adopting the schedule would make every committed
+number read at those budgets a number for a configuration that had not been measured. 27
+artifacts are reachable from the ranking and carry a rate keyed at a budget of ten or below,
+48 more are possible, and a further 27 record no inputs and cannot be placed in that graph
+at all. Set against a gain that leaves every verdict where it stands, the released system keeps
+one aggregation at every budget, and this section is what that choice costs.
+
 S21
 
 Model architectures and training
@@ -2595,12 +2659,12 @@ The generator estimates P (r | s), the probability that rule r applies to substr
 the whole bank in one forward pass. Substrate graphs carry 16-dimensional node and 18dimensional edge features. A three-layer GATv2 encoder (16 → 192 → 256 → 128, batch
 normalisation, ReLU, dropout 0.1, mean-pooled readout) embeds the substrate, and a parallel
 multilayer perceptron embeds a 1024-bit Morgan fingerprint, the two combined by a gated
-fusion. Each rule is embedded independently by a rule-graph encoder of the same family
+
+S49
+
+fusion. Each rule is embedded independently by a rule-graph encoder of the same family
 (128 → 192 → 128) alongside a six-dimensional branch of global rule features.
-
-S47
-
-The logit sums four learned terms, each with its own learned scalar: a cross-attention
+The logit sums four learned terms, each with its own learned scalar: a cross-attention
 term in which the rule embedding queries the substrate’s atom states through single-head
 attention; a global term, the cosine similarity between substrate and rule embeddings; a local
 term, the cosine between the attention context and the rule; and a term reflecting whether
@@ -2628,11 +2692,11 @@ top of the score ranking cut at the budget, and nothing else.
 The two are not the same selection. On the comparison set a median of 6 rules clear the
 gate against a budget of 30, and it binds on 185 of 291 substrates, 63.6%. Because both
 orderings are by the same score, the gated set is a prefix of the ungated one wherever the
-gate binds, so it removes candidates the evaluated arm has and never adds one. A caller
-who ran under the gate would therefore be running a narrower configuration than any arm
-S48
+S50
 
-reported here, and no number in this paper describes it.
+gate binds, so it removes candidates the evaluated arm has and never adds one. A caller
+who ran under the gate would therefore be running a narrower configuration than any arm
+reported here, and no number in this paper describes it.
 The release is the evaluated configuration: an unspecified rule threshold means no gate,
 and the checkpoint keeps the value so a caller who wants the gate can pass it. The same
 holds for the evaluation path by which a different configuration would be selected, since
@@ -2662,11 +2726,11 @@ How the incomplete annotation is handled
 
 An annotated metabolite is a positive and a rule-applicable product without an annotation is
 unlabelled, not negative, because a missing annotation does not establish that a transformation
-does not occur S7 . The two learned components answer that differently, and the released
-configuration of each is what follows.
-S49
+S51
 
-The generator down-weights rules that match the substrate but carry no annotation, by
+does not occur S7 . The two learned components answer that differently, and the released
+configuration of each is what follows.
+The generator down-weights rules that match the substrate but carry no annotation, by
 half rather than treating them as negatives, so the label semantics reach the objective directly.
 The filter does not: it can be trained under a non-negative positive-unlabelled risk, and the
 released checkpoint is trained under cross-entropy instead, so its unlabelled pairs enter as
@@ -2691,11 +2755,12 @@ substrates, drawn at a recorded seed, for eight epochs, with early stopping that
 The subsample was fixed when the run was configured and is not a consequence of anything
 measured here, so what the ablations compare (Section S27) is the value of each stage at
 that training budget rather than at the split’s full size. Every setting is in the Supporting
-Information.
 
-S50
+S52
 
-S22
+Information.
+
+S22
 
 Whether the site a prediction names is the site
 that changed
@@ -2722,12 +2787,11 @@ The figure needs a floor, because both sets are subsets of the same molecule and
 small substrate with a large centre they would meet whatever the rule did. Two floors are
 measured. A set of atoms of the same size drawn uniformly touches the centre 50.5% of the
 time, so the reported sites exceed it by 41.8%. That null is the wrong shape: a template
-match is a connected fragment, not a scatter. Growing a fragment of the same size along
+S53
+
+match is a connected fragment, not a scatter. Growing a fragment of the same size along
 bonds from a random seed atom touches the centre 35.2% of the time, and the reported sites
-
-S51
-
-exceed that by 57.1%.
+exceed that by 57.1%.
 The connected null is the lower of the two, which is the opposite of what we expected and
 worth saying: a scattered set of atoms reaches into more of the molecule than a fragment
 clustered in one place, so it meets a given centre more often. Against the null the comparison
@@ -2755,11 +2819,11 @@ not be scored, so the denominator throughout this section is 5,855 and not 5,856
 in two pieces is one event when a bond appears or disappears between them, which is what
 a cleavage or a cyclisation looks like, and two independent edits otherwise; this instrument
 counts the pieces and does not separate the two cases. It has a blind spot in the other
-direction as well, and the blind spot is the larger problem: two edits that share or neighbour
-centre atoms arrive as one piece and are counted once. This share is therefore a floor and not
-S52
+S54
 
-a bound.
+direction as well, and the blind spot is the larger problem: two edits that share or neighbour
+centre atoms arrive as one piece and are counted once. This share is therefore a floor and not
+a bound.
 
 The second instrument, and its bar, fixed first. The remedy is a second lens with no
 threshold chosen after the fact, so the threshold was registered as H16 before the instrument
@@ -2785,11 +2849,11 @@ conjugate after a substitution. None of these is one enzyme acting once.
 The consequence for the paper is confined and stated where it bites: the coverage ceiling is
 a one-template ceiling. A rule that performs two edits can reach a metabolite two steps away
 in one application, so the ceiling is not the reach of one enzymatic step, and the depth-two
-experiment in the Limitations measures a second template application rather than a second
-enzymatic step. The corrected share also explains that experiment’s small effect. If a fifth
-S53
+S55
 
-of the mined bank already performs two edits in one application, as P10 finds, a second
+experiment in the Limitations measures a second template application rather than a second
+enzymatic step. The corrected share also explains that experiment’s small effect. If a fifth
+of the mined bank already performs two edits in one application, as P10 finds, a second
 application has little left to discover that the first did not already reach, and the observed
 lift of about 0.012 is what that predicts rather than a surprise.
 The instrument reads the source pairs and not the templates, and that is deliberate: a
@@ -2816,12 +2880,12 @@ about why: a template mined from a composite pair performs the whole transformat
 one application, which is how the bank reaches many of them and why the ceiling is as high
 as it is. What the figure settles is what a recall number means. Roughly one annotated
 metabolite in six is flagged as more than a single enzymatic step, so recall here is not the
-share of one-step chemistry a system finds: the population it is taken over is not all one-step.
+
+S56
+
+share of one-step chemistry a system finds: the population it is taken over is not all one-step.
 How far wrong that reading is depends on the share among hits rather than among references,
-
-S54
-
-and this work does not measure it: the sentence above gives the reason to expect the two to
+and this work does not measure it: the sentence above gives the reason to expect the two to
 differ, since a template mined from a composite pair performs the whole transformation in
 one application, so composites should be enriched among hits rather than equally represented.
 The direction is stated and the size is not.
@@ -2848,12 +2912,12 @@ part of the pre-specification. The nine before it name a threshold and a falsifi
 and leave the population implicit, and three of them, P5, P6 and P7, were in the event
 adjudicated on the comparison set, which is derived from the test split, while the rest were
 adjudicated on validation. Table 6 records the population each was checked on so which is
-which is on record, but recording it after the fact is not the same as fixing it before, and for
+
+S57
+
+which is on record, but recording it after the fact is not the same as fixing it before, and for
 those three it was not fixed before. The register’s later entries do fix it.
-
-S55
-
-The remaining six concern work this paper does not report, and they are named here by
+The remaining six concern work this paper does not report, and they are named here by
 their register identifiers, so that none can quietly leave unnoticed: H1, a type-indexed rather
 than rule-indexed label space; H2, reactivity and accessibility node features; H3, learned
 abstention; H4, a ranked prediction of intervention sizes; H5, the same null out of sample;
@@ -2881,11 +2945,12 @@ measured −0.1188 against a registered +0.05. The deficit splits into −0.0902
 block emission being worse than interleaved (0.4135 against 0.5038), and −0.0286 from the
 model itself. Because the oracle above is measured in blocked form, 0.3 of the headroom
 it promises is the return of what the design spends. The gate before fusion (P7) measured
-−0.0195 against a registered +0.02 and separated against its hypothesis; a perfect group
-ranking through the gate gives −0.018, worse than the generator cap it replaces.
-S56
+S58
 
-Why the oracle is not an upper bound on the signal. A binary group ordering entered
+−0.0195 against a registered +0.02 and separated against its hypothesis; a perfect group
+ranking through the gate gives −0.018, worse than the generator cap it replaces.
+
+Why the oracle is not an upper bound on the signal. A binary group ordering entered
 as the third term in the fusion reaches 0.5233, the same figure the trained scorer reaches,
 which invites reading the binary case as a ceiling. It is not one: a binary ordering leaves every
 reference-free group tied, and on validation the trained scorer exceeds it, +0.0412 against
@@ -2912,12 +2977,11 @@ candidates, the same contrast is larger; the difference between the two is the c
 selection, and the intervals rather than the point estimates are what settle whether the two
 populations disagree. The figure quoted in the main text as +0.0733 is measured on the
 uncapped pool, because P1 was fixed and checked before the pool cap of P2 existed; the
-capped figure is the smaller of the two because the cap and the fusion recover overlapping
+S59
+
+capped figure is the smaller of the two because the cap and the fusion recover overlapping
 ground.
-
-S57
-
-Two earlier ablations of a superseded configuration, one comparing the candidate scorer
+Two earlier ablations of a superseded configuration, one comparing the candidate scorer
 against the frequency prior and one measuring the pool with rule selection switched off, ran
 on a 245-substrate subsample under the product ordering. Their levels do not transfer to the
 configuration reported here. This table and the selection ablation below replace them.
@@ -2947,12 +3011,12 @@ same pool, and the first of them could not have answered. It compared the produc
 against Tanimoto similarity on a pool whose median size is 8 candidates, at a budget of 15.
 For 887 of 1,170 substrates the entire pool fits inside the budget, so every ordering returns
 the same set and no arm can separate from another. The measured difference, +0.0024 with
-the interval covering zero, is what that design is able to produce and not evidence that the
+
+S60
+
+the interval covering zero, is what that design is able to produce and not evidence that the
 two orderings are equivalent.
-
-S58
-
-The same limit governs a null model of the form used elsewhere in this literature, a
+The same limit governs a null model of the form used elsewhere in this literature, a
 uniform draw of min(k, N ) from a method’s own pool of N . Its lift tends to one as the budget
 approaches the pool, so at k = 15 a method emitting about eleven candidates has a lift of
 1.055 whatever its ranking is, while a method emitting eighty still has room. Comparing
@@ -2979,12 +3043,12 @@ contains substrates a method answers nothing for: one for SyGMa, one for MetaPre
 for BioTransformer and none for the deployed arm.
 What that emission rule would have removed depends on which arm is counted. Over
 the whole evaluated test set, SyGMa answers nothing for 5 of 1,170 substrates, carrying 9
-references, and MetaPredictor for 3, carrying 3. For those two the rule would have removed
+
+S61
+
+references, and MetaPredictor for 3, carrying 3. For those two the rule would have removed
 almost nothing. BioTransformer is the arm it would have bitten: 107 substrates carrying 183
-
-S59
-
-references, which is 9.2% of the population, and the rule would have taken that much of the
+references, which is 9.2% of the population, and the rule would have taken that much of the
 set out of every comparison it appears in.
 What the population does carry is an unrecorded draw, and that is tested rather than
 described. Against the 879 evaluated substrates outside it, the comparison set does not
@@ -3009,12 +3073,12 @@ The interactive arm does not improve on the wider population. Against SyGMa it
 is −0.0262 [−0.0459, −0.0060] at a budget of fifteen over the whole set, against −0.0045
 [−0.0408, +0.0326] on the comparison set: the wider population turns a tie into a small deficit
 that separates. Against MetaPredictor neither population separates.
-The exhaustive arm’s leads mostly survive the move, and the exception is named. Of
+
+S62
+
+The exhaustive arm’s leads mostly survive the move, and the exception is named. Of
 the eleven separating leads it holds on the comparison set against the three comparators
-
-S60
-
-that reach the wider population, ten still separate over the whole set and one does not. The
+that reach the wider population, ten still separate over the whole set and one does not. The
 eleven are the exhaustive arm against SyGMa and MetaPredictor at fifteen, thirty and fifty
 and against BioTransformer at every budget this section sweeps, and ten of them survive:
 against SyGMa +0.1144 [+0.0948, +0.1341] at thirty and +0.1814 [+0.1620, +0.2013] at fifty,
@@ -3039,12 +3103,12 @@ therefore restricted to the comparison set wherever it appears. Two cells move t
 for the same reason and are reported here rather than passed over: at a budget of ten the
 exhaustive arm trails SyGMa by −0.0424 [−0.0627, −0.0224] and MetaPredictor by −0.0451
 [−0.0677, −0.0231] over the whole set, both intervals excluding zero, where on the comparison
-set neither separates.
+
+S63
+
+set neither separates.
 A separate analysis re-ran three methods, four metrics and five criteria on two populations
-
-S61
-
-of one split, and asked whether the ordering of methods changes with the population. The
+of one split, and asked whether the ordering of methods changes with the population. The
 two are the full 1,170 and a 150-substrate subset drawn for an earlier evaluation against
 MetaTrans S8 , which is not a column of the comparison here; that subset is named because
 an unidentifiable population is the defect this section is about. Of 60 pairwise comparisons,
@@ -3074,11 +3138,11 @@ What retraining moves
 Every recall figure in the manuscript comes from one trained checkpoint, and the paired
 bootstrap intervals quantify the substrate population rather than the training. To give the
 registered effects a scale, the generator and the filter were retrained under 3 seeds and the
-whole pipeline re-evaluated on the full test split: macro recall at a budget of 15 is 0.3437
-with a standard deviation of 0.0099, and micro 0.2686 with 0.0058.
-S62
+S64
 
-That study ran at an earlier operating point than the configuration the manuscript reports,
+whole pipeline re-evaluated on the full test split: macro recall at a budget of 15 is 0.3437
+with a standard deviation of 0.0099, and micro 0.2686 with 0.0058.
+That study ran at an earlier operating point than the configuration the manuscript reports,
 so its level is not comparable with those tables, and whether its spread carries across operating
 points was assumed rather than shown. It does not: retraining the generator and the filter
 under the same 3 seeds at the configuration the manuscript does report gives a standard
@@ -3105,12 +3169,12 @@ changes, standardising the survivors, whose medians are 11.88 s unbounded agains
 under the budget, leaves 2.52× attributable to the budget itself. Carried to the whole arm
 it puts the median at 9.12 s under the other arm’s load, inside the registered target. That
 figure is Table 1’s exhaustive median carried to this load and not a second measurement:
-it is that median multiplied by 1.73, and it is the only load-corrected timing in this work.
+
+S65
+
+it is that median multiplied by 1.73, and it is the only load-corrected timing in this work.
 The arms it is derived between are the bounded and unbounded standardisation arms of
-
-S63
-
-this paragraph, not the two operating modes, so it is what the exhaustive mode’s median
+this paragraph, not the two operating modes, so it is what the exhaustive mode’s median
 becomes under a comparable load and not a measurement of the two modes running side by
 side, which was not made.
 
@@ -3134,12 +3198,12 @@ the run that produced the predictions imposes none, so on the test split the sam
 allowed to finish and records 0 failures over 1,170 substrates. What the rate says is how often
 the exhaustive mode would miss a ten-minute deadline, not how often it fails.
 Every timing in the paper is a cold measurement. A cache makes a repeated substrate
-run 16 to 47 times faster, so any timing not taken cold measures a mixture of two regimes.
+
+S66
+
+run 16 to 47 times faster, so any timing not taken cold measures a mixture of two regimes.
 Standardisation is the binding constraint on the generator, at 94 to 99% of cold generator
-
-S64
-
-time. Three other candidates were tested against it and rejected by measurement: the pairwise
+time. Three other candidates were tested against it and rejected by measurement: the pairwise
 filter’s maximum-common-substructure step, which does not bind because the generator
 outruns the filter a hundred to one; rule application, which applies all 7,580 parseable
 templates to a 109-atom molecule in 5.2 s, yielding 20,655 products at no more than 0.58 s per
@@ -3164,7 +3228,7 @@ reason: a deadline is defined only for the sweep, so a > entry can come from now
 and the two modes’ slowest cells are therefore not measured on the same substrates. On the
 test split, where no deadline is imposed, the exhaustive mode fails on none.
 
-S65
+S67
 
 S33
 
@@ -3212,7 +3276,7 @@ rather than an inference.
 What is counted. Deduplicating each deposited file gives the number of distinct structures
 that tool offered for that drug. Averaged per tool the emission spans a factor of 11.9, from
 
-S66
+S68
 
 15.8 candidates to 187.3. No model stands behind that number and no correlation is needed
 to read it: a quantity their design never declares varies twelvefold between the arms whose
@@ -3242,7 +3306,7 @@ and from log emission, the rank correlation of the residuals is 0.1891. Most of 
 is therefore between the arms, and a positive part survives inside them. Neither reading
 weakens the claim, because a benchmark orders arms, and an ordering in which the arms
 that emit more rank higher measures emission at exactly that level.
-S67
+S69
 
 Why the axis is counted and not reconstructed. Emission can also be recovered
 arithmetically. Precision is hits over what was emitted, so emitted is hits over precision,
@@ -3272,7 +3336,7 @@ remedy is to declare that axis and sweep it rather than to correct for it afterw
 Nothing was re-run for this and no reference structure was needed. That benchmark
 publishes its reference metabolites as drawings, which is why this section checks the claim
 about evaluation and not this system’s recall on those drugs.
-S68
+S70
 
 The permutation null holds a drug’s emissions fixed but not an arm’s, so it cannot say at
 what level the association lives. Removing the additive arm and drug effects from both sides
@@ -3304,7 +3368,7 @@ references against 0.5391 for the deployed scenario, so the composition step buy
 95% CI [0.0038, 0.0096]. Against this work’s own uncapped single pass the difference is 0.278
 at the deployed setting and 0.2846 depth-matched: the comparison of the two banks does
 
-S69
+S71
 
 not turn on which of the two SyGMa is run at.
 The other direction is the one that bears on the only wide-budget lead this work still
@@ -3334,7 +3398,7 @@ What that does to the margin is the point of running it. At thirty the exhaustiv
 by +0.1729 [+0.1263, +0.2188] at the deployed beam and by +0.0602 [+0.0184, +0.1024] at the
 wide one, both excluding zero. At fifteen the deployed reading is +0.0556 [+0.0149, +0.0955]
 
-S70
+S72
 
 and the wide one is +0.0195 [−0.0243, +0.0625], which does not exclude zero. So the headof-list margin against MetaPredictor is a statement about the beam it was run at, and the
 depth margin is not.
@@ -3363,7 +3427,7 @@ service on 2026-07-25, and the file it returned, frozen per substrate and pinned
 That is the whole of what this repository holds about the run. The service publishes no
 version to a user, the returned file records no setting, and no setting was chosen by us, so
 
-S71
+S73
 
 nothing further about how those predictions were produced can be established from what is
 held here. That is a shortfall and it is named as one rather than filled in: this paper argues
@@ -3393,7 +3457,7 @@ It is used here, at module version 0.0.26, over the same 291 substrates as every
 and on the drawing the corpus stores, in twelve jobs whose identifiers the artifact records;
 the service’s published anonymous quota is far above what this needed. That is a weaker
 
-S72
+S74
 
 provenance than the other four arms have and it is stated rather than smoothed over: what
 is pinned is the submission, the returned predictions and the version the service reported,
@@ -3423,7 +3487,7 @@ comparator that bears most on the rule bank, since 611 of its templates are insi
 bank, so its column measures how much of this work’s reach is BioTransformer’s reach under
 another name.
 
-S73
+S75
 
 It is run at allHuman for one step, which is one application of its own rules and the closest
 counterpart to what this work’s arms do; it is not a claim that every arm is allowed the same
@@ -3453,7 +3517,7 @@ a gap this paper does not claim as an ordering result and would change no verdic
 that basis the absence is unforced.
 Its templates are also measured for reach, which is a different quantity from its recall,
 
-S74
+S76
 
 on the same 150-substrate subset drawn for the earlier MetaTrans evaluation (Section S29):
 they reach 0.4786 of the references there, 95% CI [0.4138, 0.5495], against 7,581 templates of
@@ -3483,7 +3547,7 @@ Metabolite-Gen S14 is a preprint with no repository we could find. The list is c
 a comparator that could not be obtained is reported as unavailable with its reason, is not
 dropped silently, and the list is not extended after the first run.
 
-S75
+S77
 
 The hydrogen convention is an argument to the rule-application entry point rather than a
 constant, and its default is the presentation every deployed firing path uses, which is the one
@@ -3504,16 +3568,16 @@ maintains of the artifacts a check must find current. 118 files are pinned, and 
 pass the currency check. Of the pinned set, 96 are the ones this paper’s figures are drawn
 from, and none of those figures comes from outside it. The chain from artifact to printed
 macro runs end to end in a clone, which is not where it started (Section S35).
-The wider sweep is over 522 files and its parts are worth printing, since a total is easier to
-accept than to add up: 286 carry no stamp, 40 have a producer that has changed since, 26
-have a producer the sweep cannot identify, 8 changed only cosmetically, 45 are stamped and
+The wider sweep is over 529 files and its parts are worth printing, since a total is easier to
+accept than to add up: 289 carry no stamp, 40 have a producer that has changed since, 26
+have a producer the sweep cannot identify, 8 changed only cosmetically, 49 are stamped and
 current without being pinned, and 117 are the pinned files that live under the results directory
 the total names. Those six add to the total. A split manifest pins by digest the triple files,
 the substrate sets, the evaluated test set, the rule bank and every third-party artifact, and
 a verify mode recomputes and names any file that has moved. Candidate pools record, by
 digest, the two checkpoints that scored them; both stages of the released system come from
 
-S76
+S78
 
 one training run, and for the pools frozen before that field existed the run is established by
 reproduction rather than by recollection. The Supporting Information describes the checks
@@ -3523,8 +3587,8 @@ which hold every candidate the generator produced for every substrate of their p
 together with both component scores, and which are the deposit named above. The repository pins the SHA-256 of both the raw file and the uploaded archive in paper2/zenodo
 manifest.json, and the deposit script’s --verify mode checks a download against it, so
 the deposit is verifiable against the version used here rather than merely available.
-The guarantee covers the pinned set and not the directory: of 522 files under results/,
-286 carry no stamp and 40 were written by a producer that has since changed. Those files
+The guarantee covers the pinned set and not the directory: of 529 files under results/,
+289 carry no stamp and 40 were written by a producer that has since changed. Those files
 support no number in this paper.
 MetaTox is also the one comparator whose arm one of its own authors has read, since its
 first author S10 is a co-author here.
@@ -3544,7 +3608,7 @@ and it is kept rather than deleted so that the column can still be identified in
 Table 2 is supplied by deployment table.json, which carries a gate asserting the two agree
 on MetaTox.
 
-S77
+S79
 
 118 artifacts are pinned. Most record the script that wrote them, the SHA-256 of that
 script’s source, and the commit it ran at; a sweep recomputes the hash of each producer and
@@ -3574,7 +3638,7 @@ Which model produced an artifact is checked separately, because a producer whose
 has not moved can still have been pointed at a checkpoint nobody deployed, and one was:
 the worked example was ranked by a filter from a neighbouring training run for as long as the
 
-S78
+S80
 
 example existed, and its own artifact said so in plain text. 0 of the 96 now name a checkpoint
 outside the deployed run, and the gate fails on any that do. That check has a blind spot
@@ -3604,7 +3668,7 @@ of train.sdf that the RDKit version used here no longer parses, which the loader
 and which affect no substrate, no annotated pair and no figure in this paper. Every other
 field of every re-run artifact is byte-identical to what was committed, including the leakage
 
-S79
+S81
 
 audit’s overlap counts, the contamination audit and the population-defining comparison.
 That is the evidence that the unpinned state was harmless, and it is worth having in a form
@@ -3634,7 +3698,7 @@ compares every tracked file’s bytes against the committed ones, since a digest
 one thing here and another in a clone is not a guarantee at all.
 Third, and it bounds the hop described below: naming a file as an input, by digest, is a
 
-S80
+S82
 
 guarantee about fixity and not about provenance. It establishes that the file has not moved
 since it was read, and says nothing about what wrote it. Asking the second question of every
@@ -3650,8 +3714,8 @@ The candidate pools are the case that matters, and for them the gap is narrow ra
 open: they record by digest both checkpoints that scored them, the script that writes them
 stamps itself, and the pools behind the seed spread reproduce from those checkpoints under
 the recorded rule budget.
-The guarantee also covers the pinned set and not the directory: of 522 files under results/
-and everything below it, 286 carry no stamp and 40 were written by a producer that has
+The guarantee also covers the pinned set and not the directory: of 529 files under results/
+and everything below it, 289 carry no stamp and 40 were written by a producer that has
 since changed. None of those is among the 96 the numbers come from, which the gate is
 what establishes. The sweep reaches below the top level because most of what a published
 number is actually made of lives there: the candidate pools are written one shard at a time
@@ -3664,10 +3728,10 @@ A split manifest pins by digest the triple files, the substrate sets, the evalua
 the rule bank and every third-party artifact, and a verify mode recomputes and names any
 leaf that has moved.
 
-S81
+S83
 
 Numbers reach the page through macros generated from pinned artifacts: 228 distinct
-macros in the manuscript and 711 here. The claim is not that every number does. 37
+macros in the manuscript and 712 here. The claim is not that every number does. 37
 measurements are typed by hand, most of them in this document, and they are enumerated
 in the checker itself rather than folded into a wildcard, so a number typed by hand that
 is not already on that list still fails the check, and the list is the exact statement of what
@@ -3694,7 +3758,7 @@ cell. It compares the digest of every source against what the build recorded, wh
 an edit but says nothing about whether the numbers in that source are right, since that is
 a different checker’s job. And it reads the compiled log rather than the rendered page, so
 
-S82
+S84
 
 anything that goes wrong in the geometry rather than in the references is outside it. The
 guarantee this paragraph offers is therefore narrow: no pointer between these documents is
@@ -3724,7 +3788,7 @@ from a pool whose substrates were not keyed, and refuses to publish one at all w
 licence: a Zenodo record cannot be withdrawn once published, so the last gate before one
 exists is that it carries nothing that cannot be redistributed.
 
-S83
+S85
 
 References
 (S1) Zdrazil, B.; Felix, E.; Hunter, F.; Manners, E. J.; Blackshaw, J.; Corbett, S.; de Veij, M.;
@@ -3752,7 +3816,7 @@ metabolism prediction and metabolite identification. Journal of Cheminformatics 
 Metabolites Resulting from Phase 1 and Phase 2 Biotransformations of Xenobiotics.
 Chemical Research in Toxicology 2021, 34, 286–299.
 
-S84
+S86
 
 (S5) Dhaked, D. K.; Ihlenfeldt, W.-D.; Patel, H.; Delannée, V.; Nicklaus, M. C. Toward a
 Comprehensive Treatment of Tautomerism in Chemoinformatics Including in InChI
@@ -3776,7 +3840,7 @@ transformer-based chemical language model for drug metabolite prediction. Artifi
 Intelligence in the Life Sciences 2025, 8, 100142.
 (S12) Zhou, Y.; Jiang, D.; Wei, X.; Yi, J.; Wang, Y.; Deng, Y.; Cao, D. DeepMetab: a
 
-S85
+S87
 
 comprehensive and mechanistically informed graph learning framework for end-to-end
 drug metabolism prediction. Chemical Science 2025, 16, 18884–18902.
@@ -3787,7 +3851,7 @@ W22–W32.
 and Metabolite Structures Using Graph Neural Networks. 2026; ChemRxiv preprint,
 posted 6 May 2026.
 
-S86
+S88
 
 Table S10: The aggregation moves 11 verdicts of the 90 contrasts computed under both: the exhaustive arm against BioTransformer at k = 1,
 which separates under micro and not macro; the exhaustive arm against
@@ -3913,7 +3977,7 @@ GRAIL interactive minus, under macro
 30 −.078∗ [−.127, −.029] +.027 [−.021, +.075] +.011 [−.040, +.064] +.119∗ [+.064, +.175]
 50 −.105∗ [−.155, −.056] +.023 [−.026, +.072] +.011 [−.040, +.064] +.119∗ [+.064, +.174]
 The comparison under macro aggregation, the mean
-S87 of per-substrate recall, on the same population
+S89 of per-substrate recall, on the same population
 and with the same conventions as Table 2; leading zeros are dropped. The last column is the paired
 difference against MetaTox, with ∗ marking an interval excluding zero. Macro weights a substrate
 carrying one reference like one carrying twelve, so it answers a different question from micro and is
@@ -4098,7 +4162,7 @@ and the verdicts in the main text and in Figure 1 are read from these and from n
 is Equation 5 at B = 10 000 resamples, seed 0. † marks a cell that separates per comparison but not under
 Holm’s correction over the whole sweep, a family of 54 tests.
 
-S88
+S90
 
 Table S13: Micro recall for every arm at every budget under each
 of the five declared matching criteria, on the 291 substrates of the
@@ -4533,7 +4597,7 @@ between two columns here can disagree with the margin behind the verdict by
 one in the last digit: the margin is computed from the hits and rounded once,
 and these levels are rounded before anything is subtracted.
 
-S89
+S91
 
 Table S14: Micro recall with every substrate
 presented as the declared standardiser draws
@@ -4592,7 +4656,7 @@ MetaTox is a web service and MetaPredictor a frozen
 delivery; SyGMa, which can be re-run, is swept
 above.
 
-S90
+S92
 
 Table S15: Micro recall with every arm that can be re-run presented with the substrate as
 the declared standardiser draws it, which is the drawing a user submits, on the 291 substrates
@@ -4816,7 +4880,7 @@ dropped. The last two columns are the paired difference in micro recall against 
 budget, in bold, read at output budgets of 15 and of 30, with ∗ marking an interval that excludes
 zero. The two are reported because the paper reads this curve at both and they do not agree.
 
-S91
+S93
 
 Table S17: Micro recall under each value of the reciprocal-rank-fusion
 constant K, on the 291 substrates of the comparison set carrying 665
@@ -5004,7 +5068,7 @@ columns are the paired difference against it in micro recall at the two tight bu
 work names and at a wide one, with ∗ marking an interval that excludes zero; the rules disagree at the
 head of the list and not at the budgets this work reads its leads at.
 
-S92
+S94
 
 Table S19: The settings the two released checkpoints were trained under,
 read from the configuration each run recorded beside its weights.
@@ -5112,7 +5176,7 @@ are inert under the emission rule this work deploys, which returns the whole ran
 pool and truncates by no threshold (Section 2); they are printed because they are in
 the configuration the checkpoints carry.
 
-S93
+S95
 
 Table S20: An oracle that orders candidate groups by whether they contain
 a reference, under four partitions of one candidate pool.
@@ -5298,7 +5362,7 @@ is the contrast prediction P1 registers, given on both populations with its pair
 the penalty for having selected the fusion rule on the comparison set can be read as two intervals
 rather than as a difference of point estimates. Interval bounds are unsigned when positive.
 
-S94
+S96
 
 Table S22: The first twenty of the 100 candidates the exhaustive
 mode returns for the worked example, with the rule that produced
@@ -5477,6 +5541,6 @@ and which this column makes checkable. The interactive mode returns 18
 candidates for the same substrate. The complete ranked lists of both modes
 are in the released artifacts.
 
-S95
+S97
 
 

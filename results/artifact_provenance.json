@@ -37,9 +37,23 @@
    "status": "current"
   },
   {
+   "artifact": "results/blend_switch_scope.json",
+   "script": "blend_switch_scope.py",
+   "inferred": true,
+   "how": "producer at 2c8041392b59, the commit that added the artifact",
+   "status": "current"
+  },
+  {
    "artifact": "results/budget_curve.json",
    "script": "budget_curve.py",
    "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/budget_dependent_schedules.json",
+   "script": "budget_dependent_schedules.py",
+   "inferred": true,
+   "how": "producer at 2c8041392b59, the commit that added the artifact",
    "status": "current"
   },
   {
@@ -549,6 +563,13 @@
    "status": "current"
   },
   {
+   "artifact": "results/scheduled_release_comparison.json",
+   "script": "bank_without_selection.py",
+   "how": "source at b410f7afad2c",
+   "dirty_when_written": true,
+   "status": "current"
+  },
+  {
    "artifact": "results/scored_predictions.json",
    "script": "dump_scored_predictions.py",
    "inferred": true,
@@ -718,12 +739,12 @@
    "status": "current"
   }
  ],
- "n_pinned": 118,
+ "n_pinned": 121,
  "n_pinned_stale": 0,
  "sweep": {
-  "unstamped": 289,
+  "unstamped": 287,
   "producer_changed": 40,
-  "current": 49,
+  "current": 48,
   "producer_unknown": 26,
   "cosmetic_only": 8
  },
@@ -919,17 +940,7 @@
    "detail": "no provenance block: nothing records which code wrote this"
   },
   {
-   "artifact": "results/blend_switch_scope.json",
-   "status": "unstamped",
-   "detail": "no provenance block: nothing records which code wrote this"
-  },
-  {
    "artifact": "results/budget_curves.json",
-   "status": "unstamped",
-   "detail": "no provenance block: nothing records which code wrote this"
-  },
-  {
-   "artifact": "results/budget_dependent_schedules.json",
    "status": "unstamped",
    "detail": "no provenance block: nothing records which code wrote this"
   },
