@@ -3,6 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Dict, List
 
+import dataclasses
+
 from ..config import DatasetConfig, EvaluationConfig, ExperimentConfig, FilterConfig, GeneratorConfig, OptimConfig, PretrainConfig
 
 
@@ -176,6 +178,18 @@ def _preset_map() -> Dict[str, ExperimentConfig]:
             evaluation={"candidate_top_k": 5, "generator_top_k": [1, 3, 5]},
         ),
     }
+    # The rule-representation experiment (docs/RULE_REPRESENTATION_PREREGISTRATION.md). Two runs
+    # identical but for the gate, so the comparison is the gate alone. Same seed as the base (42).
+    presets["rulegate_baseline"] = base.with_overrides(
+        name="rulegate_baseline",
+        description="support-gated id, lambda=0 (gate off): the retrained baseline for the gate",
+        generator=dataclasses.asdict(dataclasses.replace(base.generator, id_gate_lambda=0.0)),
+    )
+    presets["rulegate_lambda8"] = base.with_overrides(
+        name="rulegate_lambda8",
+        description="support-gated id, lambda=8: a rule needs ~8 positives to recover half its id",
+        generator=dataclasses.asdict(dataclasses.replace(base.generator, id_gate_lambda=8.0)),
+    )
     return presets
 
 
