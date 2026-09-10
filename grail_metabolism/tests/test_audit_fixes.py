@@ -1682,3 +1682,39 @@ def test_no_constant_calls_an_unshipped_checkpoint_deployed():
     s = subprocess.run([_sys.executable, str(root / "scripts" / "check_deployed_names.py"),
                         "--self-test"], capture_output=True, text=True, cwd=root)
     assert s.returncode == 0, f"the gate's own self-test fails:\n{s.stdout}{s.stderr}"
+
+
+def test_the_released_arm_switches_aggregation_at_the_budget_it_is_asked_for():
+    """The blend at ten and below, the released rule above, and the setting put back after.
+
+    The blend beats the noisy-or at the head of the list and loses at depth, so one fixed rule
+    runs the worse one over half the range. Ten is where the gain is established rather than where
+    validation liked it: carried from the validation draw to the comparison set the blend
+    separates from zero at one, three, five, eight and ten, covers zero at fifteen and twenty and
+    turns into a loss at thirty (results/budget_dependent_schedules.json).
+
+    The swap mutates a generator attribute, so the restore is half the contract: a caller that
+    asks for three candidates must not leave the next caller ranking under the blend.
+    """
+    from grail_metabolism.model.wrapper import ModelWrapper
+
+    class Gen:
+        candidate_aggregation = "noisy_or"
+
+    w = ModelWrapper.__new__(ModelWrapper)
+    w.generator = Gen()
+    for budget, want in ((1, "hybrid"), (10, "hybrid"), (11, "noisy_or"), (50, "noisy_or")):
+        with w._aggregation_for(budget):
+            assert w.generator.candidate_aggregation == want, budget
+        assert w.generator.candidate_aggregation == "noisy_or", f"not restored after {budget}"
+
+    with w._aggregation_for(None):
+        assert w.generator.candidate_aggregation == "noisy_or", "an unnamed budget must not switch"
+
+    class Bare:
+        pass
+
+    bare = ModelWrapper.__new__(ModelWrapper)
+    bare.generator = Bare()
+    with bare._aggregation_for(5) as rule:
+        assert rule is None, "a generator that does not aggregate has nothing to switch"
