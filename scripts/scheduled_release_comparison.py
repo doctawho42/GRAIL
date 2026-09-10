@@ -64,9 +64,17 @@ def main() -> int:
     ap.add_argument("--out", default=str(ROOT / "results" / "scheduled_release_comparison.json"))
     args = ap.parse_args()
 
+    # Both arms of the released system: the same pipeline at two rule budgets. The interactive
+    # arm's per-template scores did not exist until they were collected for this, which is why
+    # every earlier reading of the aggregation covers one arm only.
+    ARMS = {"whole bank": "results/aggregation_shards/s*.json",
+            "trained budget": "results/aggregation_shards_k30/s*.json"}
     per_template = {}
-    for f in sorted(glob.glob(str(ROOT / "results/aggregation_shards/s*.json"))):
-        per_template.update(json.loads(Path(f).read_text())["rows"])
+    for arm, spec in ARMS.items():
+        rows = {}
+        for f in sorted(glob.glob(str(ROOT / spec))):
+            rows.update(json.loads(Path(f).read_text())["rows"])
+        per_template[arm] = rows
     pools, refs_raw = {}, {}
     for f in sorted(glob.glob(str(ROOT / "results/widepools_implicit/w*.json"))):
         blob = json.loads(Path(f).read_text())
@@ -76,7 +84,8 @@ def main() -> int:
     comp_raw = {n: (json.loads((ROOT / rel).read_text())[k] if k
                     else json.loads((ROOT / rel).read_text()))
                 for n, (rel, k) in COMPARATORS.items()}
-    subs = sorted(set(pools) & set(per_template) & set(refs_raw)
+    subs = sorted(set(pools) & set(refs_raw)
+                  & set.intersection(*(set(r) for r in per_template.values()))
                   & set.intersection(*(set(p) for p in comp_raw.values())))
     if len(subs) != 291:
         raise SystemExit(f"population is {len(subs)}, not the committed 291")
@@ -94,12 +103,15 @@ def main() -> int:
 
     # The filter score and the key come from the pool, the per-template scores from the shard.
     side = {s: {c["smiles"]: (c["filter"], c["key"]) for c in pools[s]} for s in subs}
-    joined = sum(1 for s in subs for x in per_template[s] if x in side[s])
-    unjoined = sum(1 for s in subs for x in per_template[s] if x not in side[s])
-    print(f"  candidates joined {joined}, unjoined {unjoined} "
-          f"({unjoined / max(joined + unjoined, 1):.4f})", flush=True)
+    join = {}
+    for arm, rows in per_template.items():
+        j = sum(1 for s in subs for x in rows[s] if x in side[s])
+        u = sum(1 for s in subs for x in rows[s] if x not in side[s])
+        join[arm] = {"joined": j, "unjoined": u, "share": round(u / max(j + u, 1), 4)}
+        print(f"  {arm}: candidates joined {j}, unjoined {u} ({join[arm]['share']:.4f})",
+              flush=True)
 
-    def ranked(s, rule):
+    def ranked(s, rule, arm):
         """The deployed order of operations, which is not interchangeable with any other.
 
         Deduplicate by match key in descending order of the product of the two component scores,
@@ -108,8 +120,8 @@ def main() -> int:
         order of two steps: doing it that way read 0.5368 at a budget of fifteen where the
         manuscript reads 0.5353, and the gate below is what caught it.
         """
-        cands = [(x, aggregate(v, rule), *side[s][x]) for x, v in per_template[s].items()
-                 if x in side[s]]
+        cands = [(x, aggregate(v, rule), *side[s][x])
+                 for x, v in per_template[arm][s].items() if x in side[s]]
         cands.sort(key=lambda c: -(c[2] * c[1]))
         seen, pool = set(), []
         for c in cands:
@@ -124,7 +136,8 @@ def main() -> int:
                        key=lambda i: -(1.0 / (RRF_K + rf[i]) + 1.0 / (RRF_K + rg[i])))
         return [kept[i][3] for i in order if kept[i][3] != self_key[s]][:lim]
 
-    by_rule = {r: {s: ranked(s, r) for s in subs} for r in ("noisy_or", "hybrid")}
+    by_arm = {arm: {r: {s: ranked(s, r, arm) for s in subs} for r in ("noisy_or", "hybrid")}
+              for arm in per_template}
     U = np.array([len(refs[s]) for s in subs], dtype=float)
     rng = np.random.default_rng(SEED)
     idx = rng.integers(0, len(subs), (N_BOOT, len(subs)))
@@ -136,42 +149,40 @@ def main() -> int:
     rep = {"config": {**B._code_version(), "population": len(subs), "budgets": BUDGETS,
                       "switch": {"blend_at_or_below": ModelWrapper.BLEND_BUDGET,
                                  "rule_at_the_head": "hybrid", "rule_above": "noisy_or"},
-                      "cap": CAP, "aggregation": "micro, ratio of sums",
-                      "join": {"candidates": joined, "unjoined": unjoined}},
-           "comparators": {}, "scheduled_arm": {}}
+                      "cap": CAP, "aggregation": "micro, ratio of sums", "join": join},
+           "comparators": {}, "arms": {}}
     ch = {n: {b: hits(comp[n], b) for b in BUDGETS} for n in comp}
     for n in ch:
         rep["comparators"][n] = {str(b): round(float(ch[n][b].sum() / U.sum()), 4) for b in BUDGETS}
 
-    for b in BUDGETS:
-        rule = "hybrid" if b <= ModelWrapper.BLEND_BUDGET else "noisy_or"
-        h = hits(by_rule[rule], b)
-        base = hits(by_rule["noisy_or"], b)
-        row = {"rule": rule, "micro": round(float(h.sum() / U.sum()), 4),
-               "released_rule_everywhere": round(float(base.sum() / U.sum()), 4), "vs": {}}
-        d = h - base
-        bt = d[idx].sum(axis=1) / denom
-        row["gain_over_the_released_rule"] = {
-            "difference": round(float(d.sum() / U.sum()), 4),
-            "ci95": [round(float(np.quantile(bt, .025)), 4),
-                     round(float(np.quantile(bt, .975)), 4)]}
-        row["gain_over_the_released_rule"]["excludes_zero"] = bool(
-            row["gain_over_the_released_rule"]["ci95"][0] > 0
-            or row["gain_over_the_released_rule"]["ci95"][1] < 0)
-        for n in ch:
-            dd = h - ch[n][b]
-            bb = dd[idx].sum(axis=1) / denom
-            lo, hi = float(np.quantile(bb, .025)), float(np.quantile(bb, .975))
-            row["vs"][n] = {"gap": round(float(dd.sum() / U.sum()), 4),
-                            "ci95": [round(lo, 4), round(hi, 4)],
-                            "excludes_zero": bool(lo > 0 or hi < 0)}
-        rep["scheduled_arm"][str(b)] = row
+    for arm in by_arm:
+        rep["arms"][arm] = {}
+        for b in BUDGETS:
+            rule = "hybrid" if b <= ModelWrapper.BLEND_BUDGET else "noisy_or"
+            h = hits(by_arm[arm][rule], b)
+            base = hits(by_arm[arm]["noisy_or"], b)
+            row = {"rule": rule, "micro": round(float(h.sum() / U.sum()), 4),
+                   "released_rule_everywhere": round(float(base.sum() / U.sum()), 4), "vs": {}}
+            d = h - base
+            bt = d[idx].sum(axis=1) / denom
+            lo, hi = float(np.quantile(bt, .025)), float(np.quantile(bt, .975))
+            row["gain_over_the_released_rule"] = {
+                "difference": round(float(d.sum() / U.sum()), 4), "ci95": [round(lo, 4), round(hi, 4)],
+                "excludes_zero": bool(lo > 0 or hi < 0)}
+            for n in ch:
+                dd = h - ch[n][b]
+                bb = dd[idx].sum(axis=1) / denom
+                l2, h2 = float(np.quantile(bb, .025)), float(np.quantile(bb, .975))
+                row["vs"][n] = {"gap": round(float(dd.sum() / U.sum()), 4),
+                                "ci95": [round(l2, 4), round(h2, 4)],
+                                "excludes_zero": bool(l2 > 0 or h2 < 0)}
+            rep["arms"][arm][str(b)] = row
 
     col = json.loads((ROOT / "results/deployment_table.json").read_text())["recall_micro"]
     above = [b for b in BUDGETS if b > ModelWrapper.BLEND_BUDGET]
-    m1 = [f"k={b}: {rep['scheduled_arm'][str(b)]['micro']} vs manuscript {col[str(b)]['whole bank']}"
-          for b in above
-          if abs(rep["scheduled_arm"][str(b)]["micro"] - col[str(b)]["whole bank"]) > 5e-4]
+    m1 = [f"{arm} k={b}: {rep['arms'][arm][str(b)]['micro']} vs manuscript {col[str(b)][arm]}"
+          for arm in rep["arms"] for b in above
+          if abs(rep["arms"][arm][str(b)]["micro"] - col[str(b)][arm]) > 5e-4]
     four = json.loads((ROOT / "results/four_method_291.json").read_text())["per_method"]["MetaTox"]["recall"]
     m2 = [f"k={b}: {rep['comparators']['MetaTox'][str(b)]} vs {four[str(b)]}"
           for b in BUDGETS if str(b) in four
@@ -183,20 +194,28 @@ def main() -> int:
         print(f"    {m}")
     print(f"  gate: MetaTox reproduces the committed artifact: {not m2}")
 
-    print(f"\n{'k':>3} | {'rule':>8} | {'scheduled':>9} | {'released':>8} | {'gain':>18} | "
-          f"{'best rival':>14} | {'gap':>18}")
-    for b in BUDGETS:
-        r = rep["scheduled_arm"][str(b)]
-        g = r["gain_over_the_released_rule"]
-        rival = max(ch, key=lambda n: rep["comparators"][n][str(b)])
-        v = r["vs"][rival]
-        print(f"{b:>3} | {r['rule']:>8} | {r['micro']:>9.4f} | {r['released_rule_everywhere']:>8.4f} | "
-              f"{g['difference']:>+8.4f} {'sep' if g['excludes_zero'] else 'n.s.':>4} | "
-              f"{rival[:13]:>14} | {v['gap']:>+8.4f} {'sep' if v['excludes_zero'] else 'n.s.':>4}")
+    for arm in rep["arms"]:
+        print(f"\n  {arm}")
+        print(f"  {'k':>3} | {'rule':>8} | {'scheduled':>9} | {'released':>8} | {'gain':>14} | "
+              f"{'best rival':>14} | {'gap':>14}")
+        for b in BUDGETS:
+            _print_row(rep, arm, b, ch)
 
     Path(args.out).write_text(json.dumps(rep, indent=2))
     print(f"\nWrote {args.out}")
     return 0
+
+
+def _print_row(rep, arm, b, ch):
+        r = rep["arms"][arm][str(b)]
+        g = r["gain_over_the_released_rule"]
+        rival = max(ch, key=lambda n: rep["comparators"][n][str(b)])
+        v = r["vs"][rival]
+        print(f"  {b:>3} | {r['rule']:>8} | {r['micro']:>9.4f} | "
+              f"{r['released_rule_everywhere']:>8.4f} | "
+              f"{g['difference']:>+8.4f} {'sep' if g['excludes_zero'] else 'n.s.':>4} | "
+              f"{rival[:13]:>14} | {v['gap']:>+8.4f} "
+              f"{'sep' if v['excludes_zero'] else 'n.s.':>4}")
 
 
 if __name__ == "__main__":

@@ -90,8 +90,11 @@ def wide_pools(population="comparison"):
     return pools, refs, files
 
 
-def collect(shard: int, shards: int, out: Path, population="comparison") -> int:
-    """Per-template scores for every candidate of one shard of the comparison set."""
+def collect(shard: int, shards: int, out: Path, population="comparison", top_k: int = 7581) -> int:
+    """Per-template scores for every candidate of one shard of the comparison set.
+
+    `top_k` is the rule budget the arm runs at: 7581 is the whole bank, 30 the interactive arm.
+    """
     from rdkit import Chem, RDLogger
 
     RDLogger.DisableLog("rdApp.*")
@@ -109,7 +112,7 @@ def collect(shard: int, shards: int, out: Path, population="comparison") -> int:
 
     rows, t0 = {}, time.perf_counter()
     for n, s in enumerate(mine, 1):
-        mol, scores, ranked = generator._prepare_generation(s, 7581, None)
+        mol, scores, ranked = generator._prepare_generation(s, top_k, None)
         per_candidate: dict[str, list[float]] = {}
         if mol is not None:
             # The enumeration of generate_scored_with_details, with the score list kept instead
@@ -317,6 +320,12 @@ def merge(out: str, population="comparison") -> int:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
+    # The shards this file has always written are the whole-bank arm, which is what 7581 means.
+    # The interactive arm is the same pipeline at a rule budget of 30 and has no per-template
+    # scores anywhere, so the budget is a flag rather than a literal and the shard directory
+    # moves with it: collecting a second arm must not overwrite the first.
+    ap.add_argument("--top-k", type=int, default=7581)
+    ap.add_argument("--shard-dir", default="")
     ap.add_argument("--shard", type=int, default=-1)
     ap.add_argument("--shards", type=int, default=8)
     ap.add_argument("--merge", action="store_true")
@@ -331,9 +340,11 @@ def main() -> int:
     if args.shard < 0:
         print("give --shard N (with --shards M), or --merge", file=sys.stderr)
         return 2
-    return collect(args.shard, args.shards,
-                   POPULATIONS[args.population]["shards"] / f"s{args.shard}.json",
-                   args.population)
+    shard_dir = (Path(args.shard_dir) if args.shard_dir
+                 else POPULATIONS[args.population]["shards"])
+    shard_dir.mkdir(parents=True, exist_ok=True)
+    return collect(args.shard, args.shards, shard_dir / f"s{args.shard}.json",
+                   args.population, args.top_k)
 
 
 if __name__ == "__main__":
