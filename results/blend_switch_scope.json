@@ -1,0 +1,346 @@
+{
+  "artifacts_scanned": 340,
+  "producers_that_rank": [
+    "bank_without_selection.py",
+    "filter_vs_prior_ci.py",
+    "joint_ranker.py",
+    "prior_vs_learned.py",
+    "scripts/four_method_291.py",
+    "scripts/typed_edit/aggregation_ablation.py",
+    "scripts/typed_edit/biotransformer_arm.py",
+    "scripts/typed_edit/budget_curve.py",
+    "scripts/typed_edit/build_train_pools.py",
+    "scripts/typed_edit/build_val_pools.py",
+    "scripts/typed_edit/build_wide_pools.py",
+    "scripts/typed_edit/case_study.py",
+    "scripts/typed_edit/cost_envelope.py",
+    "scripts/typed_edit/criterion_sweep.py",
+    "scripts/typed_edit/deployment_table.py",
+    "scripts/typed_edit/dialect_conditional.py",
+    "scripts/typed_edit/dialect_sweep.py",
+    "scripts/typed_edit/drawing_equalised.py",
+    "scripts/typed_edit/emission_rule_transfer.py",
+    "scripts/typed_edit/error_by_chemistry.py",
+    "scripts/typed_edit/fusion_knobs.py",
+    "scripts/typed_edit/generator_cost_split.py",
+    "scripts/typed_edit/group_decode.py",
+    "scripts/typed_edit/h10_verdict.py",
+    "scripts/typed_edit/h11_grid.py",
+    "scripts/typed_edit/h12_verdict.py",
+    "scripts/typed_edit/h13_verdict.py",
+    "scripts/typed_edit/h14_verdict.py",
+    "scripts/typed_edit/h15_verdict.py",
+    "scripts/typed_edit/h7_verdict.py",
+    "scripts/typed_edit/h8_verdict.py",
+    "scripts/typed_edit/h9_verdict.py",
+    "scripts/typed_edit/hyperparameters.py",
+    "scripts/typed_edit/matched_length.py",
+    "scripts/typed_edit/metapredictor_beam_sweep.py",
+    "scripts/typed_edit/oracle_by_grouping.py",
+    "scripts/typed_edit/parent_drop_effect.py",
+    "scripts/typed_edit/pool_cap_cost.py",
+    "scripts/typed_edit/pool_checkpoints.py",
+    "scripts/typed_edit/population_definition.py",
+    "scripts/typed_edit/precision_table.py",
+    "scripts/typed_edit/rank_probe.py",
+    "scripts/typed_edit/ranking_ablation.py",
+    "scripts/typed_edit/reaction_timeout_probe.py",
+    "scripts/typed_edit/released_default_threshold.py",
+    "scripts/typed_edit/reproduce_from_descriptors.py",
+    "scripts/typed_edit/retraining_spread.py",
+    "scripts/typed_edit/rrf_vs_metatox.py",
+    "scripts/typed_edit/rule_budget_curve.py",
+    "scripts/typed_edit/selection_ablation_deployed.py",
+    "scripts/typed_edit/selection_verdict.py",
+    "scripts/typed_edit/similarity_baseline.py",
+    "scripts/typed_edit/site_agreement.py",
+    "scripts/typed_edit/sygma_scenario_sweep.py",
+    "scripts/typed_edit/train_group_scorer.py",
+    "scripts/typed_edit/wide_pool_analysis.py",
+    "selection_ablation.py",
+    "verify_clamp.py"
+  ],
+  "recompute": [
+    {
+      "artifact": "results/bank_without_selection.json",
+      "producer": "bank_without_selection.py",
+      "reached_directly": true
+    },
+    {
+      "artifact": "results/biotransformer_arm.json",
+      "producer": "scripts/typed_edit/biotransformer_arm.py",
+      "reached_directly": true
+    },
+    {
+      "artifact": "results/case_study.json",
+      "producer": "scripts/typed_edit/case_study.py",
+      "reached_directly": true
+    },
+    {
+      "artifact": "results/case_study_drawn.json",
+      "producer": "scripts/typed_edit/case_study.py",
+      "reached_directly": true
+    },
+    {
+      "artifact": "results/case_study_exhaustive.json",
+      "producer": "scripts/typed_edit/case_study.py",
+      "reached_directly": true
+    },
+    {
+      "artifact": "results/case_study_exhaustive_drawn.json",
+      "producer": "scripts/typed_edit/case_study.py",
+      "reached_directly": true
+    },
+    {
+      "artifact": "results/criterion_sweep.json",
+      "producer": "scripts/typed_edit/criterion_sweep.py",
+      "reached_directly": true
+    },
+    {
+      "artifact": "results/deployed_pool_orderings.json",
+      "producer": "bank_without_selection.py",
+      "reached_directly": true
+    },
+    {
+      "artifact": "results/deployment_table.json",
+      "producer": "scripts/typed_edit/deployment_table.py",
+      "reached_directly": true
+    },
+    {
+      "artifact": "results/dialect_conditional.json",
+      "producer": "scripts/typed_edit/dialect_conditional.py",
+      "reached_directly": true
+    },
+    {
+      "artifact": "results/dialect_sweep.json",
+      "producer": "scripts/typed_edit/dialect_sweep.py",
+      "reached_directly": true
+    },
+    {
+      "artifact": "results/drawing_equalised.json",
+      "producer": "scripts/typed_edit/drawing_equalised.py",
+      "reached_directly": true
+    },
+    {
+      "artifact": "results/error_by_chemistry.json",
+      "producer": "scripts/typed_edit/error_by_chemistry.py",
+      "reached_directly": true
+    },
+    {
+      "artifact": "results/four_method_291.json",
+      "producer": "scripts/four_method_291.py",
+      "reached_directly": true
+    },
+    {
+      "artifact": "results/h10_verdict.json",
+      "producer": "scripts/typed_edit/h10_verdict.py",
+      "reached_directly": true
+    },
+    {
+      "artifact": "results/joint_ranker.json",
+      "producer": "joint_ranker.py",
+      "reached_directly": true
+    },
+    {
+      "artifact": "results/metapredictor_beam_sweep.json",
+      "producer": "scripts/typed_edit/metapredictor_beam_sweep.py",
+      "reached_directly": true
+    },
+    {
+      "artifact": "results/parent_drop_effect.json",
+      "producer": "scripts/typed_edit/parent_drop_effect.py",
+      "reached_directly": true
+    },
+    {
+      "artifact": "results/population_definition.json",
+      "producer": "scripts/typed_edit/population_definition.py",
+      "reached_directly": true
+    },
+    {
+      "artifact": "results/precision_table.json",
+      "producer": "scripts/typed_edit/precision_table.py",
+      "reached_directly": true
+    },
+    {
+      "artifact": "results/prior_vs_learned.json",
+      "producer": "prior_vs_learned.py",
+      "reached_directly": true
+    },
+    {
+      "artifact": "results/prior_vs_learned_propensity.json",
+      "producer": "prior_vs_learned.py",
+      "reached_directly": true
+    },
+    {
+      "artifact": "results/ranking_headroom.json",
+      "producer": "bank_without_selection.py",
+      "reached_directly": true
+    },
+    {
+      "artifact": "results/reproduce_from_descriptors.json",
+      "producer": "scripts/typed_edit/reproduce_from_descriptors.py",
+      "reached_directly": true
+    },
+    {
+      "artifact": "results/retraining_spread.json",
+      "producer": "scripts/typed_edit/retraining_spread.py",
+      "reached_directly": true
+    },
+    {
+      "artifact": "results/scheduled_release_comparison.json",
+      "producer": "bank_without_selection.py",
+      "reached_directly": true
+    },
+    {
+      "artifact": "results/sygma_scenario_sweep.json",
+      "producer": "scripts/typed_edit/sygma_scenario_sweep.py",
+      "reached_directly": true
+    }
+  ],
+  "possible": [
+    {
+      "artifact": "results/aggregation_ablation.json",
+      "producer": "scripts/typed_edit/aggregation_ablation.py"
+    },
+    {
+      "artifact": "results/aggregation_ablation_validation.json",
+      "producer": "scripts/typed_edit/aggregation_ablation.py"
+    },
+    {
+      "artifact": "results/budget_curve.json",
+      "producer": "scripts/typed_edit/budget_curve.py"
+    },
+    {
+      "artifact": "results/fusion_knobs.json",
+      "producer": "scripts/typed_edit/fusion_knobs.py"
+    },
+    {
+      "artifact": "results/group_decode.json",
+      "producer": "scripts/typed_edit/group_decode.py"
+    },
+    {
+      "artifact": "results/h11_grid.json",
+      "producer": "scripts/typed_edit/h11_grid.py"
+    },
+    {
+      "artifact": "results/h12_verdict.json",
+      "producer": "scripts/typed_edit/h12_verdict.py"
+    },
+    {
+      "artifact": "results/h12_verdict_validation.json",
+      "producer": "scripts/typed_edit/h12_verdict.py"
+    },
+    {
+      "artifact": "results/h13_verdict.json",
+      "producer": "scripts/typed_edit/h13_verdict.py"
+    },
+    {
+      "artifact": "results/h14_verdict.json",
+      "producer": "scripts/typed_edit/h14_verdict.py"
+    },
+    {
+      "artifact": "results/h15_verdict.json",
+      "producer": "scripts/typed_edit/h15_verdict.py"
+    },
+    {
+      "artifact": "results/h7_verdict.json",
+      "producer": "scripts/typed_edit/h7_verdict.py"
+    },
+    {
+      "artifact": "results/h8_verdict.json",
+      "producer": "scripts/typed_edit/h8_verdict.py"
+    },
+    {
+      "artifact": "results/h9_verdict.json",
+      "producer": "scripts/typed_edit/h9_verdict.py"
+    },
+    {
+      "artifact": "results/oracle_by_grouping.json",
+      "producer": "scripts/typed_edit/oracle_by_grouping.py"
+    },
+    {
+      "artifact": "results/pool_cap_cost.json",
+      "producer": "scripts/typed_edit/pool_cap_cost.py"
+    },
+    {
+      "artifact": "results/ranking_ablation.json",
+      "producer": "scripts/typed_edit/ranking_ablation.py"
+    },
+    {
+      "artifact": "results/rrf_vs_metatox.json",
+      "producer": "scripts/typed_edit/rrf_vs_metatox.py"
+    },
+    {
+      "artifact": "results/rule_budget_curve.json",
+      "producer": "scripts/typed_edit/rule_budget_curve.py"
+    },
+    {
+      "artifact": "results/selection_ablation_deployed.json",
+      "producer": "scripts/typed_edit/selection_verdict.py"
+    },
+    {
+      "artifact": "results/similarity_baseline.json",
+      "producer": "scripts/typed_edit/similarity_baseline.py"
+    }
+  ],
+  "method": "an artifact is listed if its producer builds a GRAIL ranking or it reads one that does, and it holds a rate keyed by a budget of ten or less. The producer test is coarse and this is an upper bound, not a diff.",
+  "reaches_the_ranking_but_reads_no_tight_budget": [
+    "results/clamp_verification.json",
+    "results/cost_envelope.json",
+    "results/emission_rule_transfer.json",
+    "results/filter_vs_prior_ci.json",
+    "results/generator_cost_split.json",
+    "results/group_scorer_selection.json",
+    "results/group_scorer_selection_h12.json",
+    "results/group_scorer_selection_h14.json",
+    "results/hyperparameters.json",
+    "results/matched_length.json",
+    "results/pool_checkpoints.json",
+    "results/rank_probe.json",
+    "results/reaction_timeout_probe.json",
+    "results/released_default_threshold.json",
+    "results/scored_predictions_identity.json",
+    "results/selection_ablation.json",
+    "results/selection_ablation_prior300.json",
+    "results/selection_pools_deployed.json",
+    "results/site_agreement.json",
+    "results/train_pools.json",
+    "results/train_pools_keyed.json",
+    "results/val_pool_population.json",
+    "results/val_pools.json",
+    "results/val_pools_keyed.json",
+    "results/wide_pool_analysis.json",
+    "results/wide_pool_analysis_implicit.json",
+    "results/wide_pools.json",
+    "results/worked_example_structures.json"
+  ],
+  "no_recorded_inputs_and_reads_a_tight_budget": [
+    "results/ablate_id_embedding.json",
+    "results/ablate_id_embedding_val.json",
+    "results/benchmark_report.json",
+    "results/budget_curves.json",
+    "results/budget_dependent_schedules.json",
+    "results/budget_matched_frontier.json",
+    "results/criterion_within_method.json",
+    "results/emission_grid.json",
+    "results/ensemble_budget_matched.json",
+    "results/factorized_eval.json",
+    "results/factorized_eval_matched.json",
+    "results/factorized_eval_subset250.json",
+    "results/h6_stratum.json",
+    "results/metapredictor_1170.json",
+    "results/null_model_lift.json",
+    "results/pair_chemistry_ranker.json",
+    "results/parent_sensitivity.json",
+    "results/propensity_weights.json",
+    "results/reactant_size_census.json",
+    "results/reference_closure.json",
+    "results/retro_population_axis.json",
+    "results/som_prior_reeval.json",
+    "results/sygma_by_dialect.json",
+    "results/sygma_robust.json",
+    "results/tautomer_budget.json",
+    "results/typed_edit_type_curve.json",
+    "results/union_ranker.json"
+  ]
+}

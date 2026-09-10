@@ -1,0 +1,564 @@
+{
+  "config": {
+    "budgets": [
+      1,
+      3,
+      5,
+      8,
+      10,
+      15,
+      20,
+      30,
+      50
+    ],
+    "caps": [
+      50,
+      100,
+      250,
+      500,
+      1000,
+      2000,
+      0
+    ],
+    "deployed": {
+      "cap": 100,
+      "aggregation": "noisy_or"
+    },
+    "selected_on": "validation",
+    "evaluated_on": "comparison",
+    "aggregation": "micro, ratio of sums",
+    "not_measured": "the two axes jointly; each is read with the other held at its deployed value"
+  },
+  "populations": {
+    "validation": {
+      "n": 293,
+      "references": 655
+    },
+    "comparison": {
+      "n": 291,
+      "references": 665
+    }
+  },
+  "cap": {
+    "validation_table": {
+      "50": {
+        "1": 0.0947,
+        "3": 0.2076,
+        "5": 0.2718,
+        "8": 0.3481,
+        "10": 0.3878,
+        "15": 0.4519,
+        "20": 0.5191,
+        "30": 0.6061,
+        "50": 0.658
+      },
+      "100": {
+        "1": 0.1038,
+        "3": 0.2244,
+        "5": 0.287,
+        "8": 0.3634,
+        "10": 0.3939,
+        "15": 0.4748,
+        "20": 0.5313,
+        "30": 0.6046,
+        "50": 0.6855
+      },
+      "250": {
+        "1": 0.116,
+        "3": 0.226,
+        "5": 0.2901,
+        "8": 0.3557,
+        "10": 0.4076,
+        "15": 0.4672,
+        "20": 0.5069,
+        "30": 0.5695,
+        "50": 0.6656
+      },
+      "500": {
+        "1": 0.1176,
+        "3": 0.229,
+        "5": 0.2916,
+        "8": 0.3557,
+        "10": 0.3969,
+        "15": 0.4611,
+        "20": 0.4977,
+        "30": 0.5405,
+        "50": 0.6305
+      },
+      "1000": {
+        "1": 0.1145,
+        "3": 0.229,
+        "5": 0.2931,
+        "8": 0.3557,
+        "10": 0.3954,
+        "15": 0.4534,
+        "20": 0.4947,
+        "30": 0.5389,
+        "50": 0.6153
+      },
+      "2000": {
+        "1": 0.113,
+        "3": 0.2275,
+        "5": 0.2947,
+        "8": 0.3496,
+        "10": 0.3908,
+        "15": 0.4504,
+        "20": 0.4947,
+        "30": 0.5374,
+        "50": 0.6137
+      },
+      "0": {
+        "1": 0.113,
+        "3": 0.2275,
+        "5": 0.2947,
+        "8": 0.3496,
+        "10": 0.3878,
+        "15": 0.4489,
+        "20": 0.4916,
+        "30": 0.5374,
+        "50": 0.6107
+      }
+    },
+    "comparison_table": {
+      "50": {
+        "1": 0.0872,
+        "3": 0.206,
+        "5": 0.2977,
+        "8": 0.3985,
+        "10": 0.4346,
+        "15": 0.5338,
+        "20": 0.588,
+        "30": 0.6481,
+        "50": 0.6737
+      },
+      "100": {
+        "1": 0.0992,
+        "3": 0.2301,
+        "5": 0.3113,
+        "8": 0.4165,
+        "10": 0.4556,
+        "15": 0.5353,
+        "20": 0.5865,
+        "30": 0.6526,
+        "50": 0.7023
+      },
+      "250": {
+        "1": 0.1023,
+        "3": 0.2331,
+        "5": 0.3173,
+        "8": 0.4286,
+        "10": 0.4602,
+        "15": 0.5188,
+        "20": 0.5624,
+        "30": 0.612,
+        "50": 0.6812
+      },
+      "500": {
+        "1": 0.1053,
+        "3": 0.2361,
+        "5": 0.3203,
+        "8": 0.4165,
+        "10": 0.4511,
+        "15": 0.5158,
+        "20": 0.5489,
+        "30": 0.6015,
+        "50": 0.6692
+      },
+      "1000": {
+        "1": 0.1038,
+        "3": 0.2391,
+        "5": 0.3203,
+        "8": 0.418,
+        "10": 0.4496,
+        "15": 0.5098,
+        "20": 0.5414,
+        "30": 0.5985,
+        "50": 0.6647
+      },
+      "2000": {
+        "1": 0.1038,
+        "3": 0.2346,
+        "5": 0.3188,
+        "8": 0.4165,
+        "10": 0.4466,
+        "15": 0.5038,
+        "20": 0.5398,
+        "30": 0.6,
+        "50": 0.6602
+      },
+      "0": {
+        "1": 0.1038,
+        "3": 0.2346,
+        "5": 0.3188,
+        "8": 0.4165,
+        "10": 0.4466,
+        "15": 0.5038,
+        "20": 0.5398,
+        "30": 0.597,
+        "50": 0.6647
+      }
+    },
+    "schedule": {
+      "1": {
+        "choice": 500,
+        "validation_gain": 0.0138
+      },
+      "3": {
+        "choice": 500,
+        "validation_gain": 0.0046
+      },
+      "5": {
+        "choice": 2000,
+        "validation_gain": 0.0077
+      },
+      "8": {
+        "choice": 100,
+        "validation_gain": 0.0
+      },
+      "10": {
+        "choice": 250,
+        "validation_gain": 0.0137
+      },
+      "15": {
+        "choice": 100,
+        "validation_gain": 0.0
+      },
+      "20": {
+        "choice": 100,
+        "validation_gain": 0.0
+      },
+      "30": {
+        "choice": 50,
+        "validation_gain": 0.0015
+      },
+      "50": {
+        "choice": 100,
+        "validation_gain": 0.0
+      }
+    },
+    "by_budget": {
+      "1": {
+        "chosen_on_validation": 500,
+        "deployed": 0.0992,
+        "scheduled": 0.1053,
+        "delivered": 0.0061,
+        "validation_promised": 0.0138,
+        "transfer_gap": -0.0077
+      },
+      "3": {
+        "chosen_on_validation": 500,
+        "deployed": 0.2301,
+        "scheduled": 0.2361,
+        "delivered": 0.006,
+        "validation_promised": 0.0046,
+        "transfer_gap": 0.0014
+      },
+      "5": {
+        "chosen_on_validation": 2000,
+        "deployed": 0.3113,
+        "scheduled": 0.3188,
+        "delivered": 0.0075,
+        "validation_promised": 0.0077,
+        "transfer_gap": -0.0002
+      },
+      "8": {
+        "chosen_on_validation": 100,
+        "deployed": 0.4165,
+        "scheduled": 0.4165,
+        "delivered": 0.0,
+        "validation_promised": 0.0,
+        "transfer_gap": 0.0
+      },
+      "10": {
+        "chosen_on_validation": 250,
+        "deployed": 0.4556,
+        "scheduled": 0.4602,
+        "delivered": 0.0046,
+        "validation_promised": 0.0137,
+        "transfer_gap": -0.0091
+      },
+      "15": {
+        "chosen_on_validation": 100,
+        "deployed": 0.5353,
+        "scheduled": 0.5353,
+        "delivered": 0.0,
+        "validation_promised": 0.0,
+        "transfer_gap": 0.0
+      },
+      "20": {
+        "chosen_on_validation": 100,
+        "deployed": 0.5865,
+        "scheduled": 0.5865,
+        "delivered": 0.0,
+        "validation_promised": 0.0,
+        "transfer_gap": 0.0
+      },
+      "30": {
+        "chosen_on_validation": 50,
+        "deployed": 0.6526,
+        "scheduled": 0.6481,
+        "delivered": -0.0045,
+        "validation_promised": 0.0015,
+        "transfer_gap": -0.006
+      },
+      "50": {
+        "chosen_on_validation": 100,
+        "deployed": 0.7023,
+        "scheduled": 0.7023,
+        "delivered": 0.0,
+        "validation_promised": 0.0,
+        "transfer_gap": 0.0
+      }
+    }
+  },
+  "aggregation": {
+    "validation_table": {
+      "noisy_or": {
+        "1": 0.1053,
+        "3": 0.2244,
+        "5": 0.287,
+        "8": 0.3634,
+        "10": 0.3939,
+        "15": 0.4748,
+        "20": 0.5313,
+        "30": 0.6046,
+        "50": 0.6855
+      },
+      "max": {
+        "1": 0.1313,
+        "3": 0.2595,
+        "5": 0.3344,
+        "8": 0.4076,
+        "10": 0.4351,
+        "15": 0.4931,
+        "20": 0.5359,
+        "30": 0.5954,
+        "50": 0.658
+      },
+      "mean": {
+        "1": 0.0977,
+        "3": 0.1939,
+        "5": 0.258,
+        "8": 0.3313,
+        "10": 0.3649,
+        "15": 0.4305,
+        "20": 0.4779,
+        "30": 0.5389,
+        "50": 0.6107
+      },
+      "hybrid": {
+        "1": 0.1328,
+        "3": 0.2718,
+        "5": 0.3527,
+        "8": 0.4336,
+        "10": 0.4611,
+        "15": 0.5221,
+        "20": 0.571,
+        "30": 0.6183,
+        "50": 0.6794
+      }
+    },
+    "comparison_table": {
+      "noisy_or": {
+        "1": 0.0992,
+        "3": 0.2301,
+        "5": 0.3113,
+        "8": 0.4165,
+        "10": 0.4556,
+        "15": 0.5353,
+        "20": 0.5865,
+        "30": 0.6526,
+        "50": 0.7023
+      },
+      "max": {
+        "1": 0.1233,
+        "3": 0.2617,
+        "5": 0.3429,
+        "8": 0.4271,
+        "10": 0.4662,
+        "15": 0.5263,
+        "20": 0.5699,
+        "30": 0.6226,
+        "50": 0.6782
+      },
+      "mean": {
+        "1": 0.0917,
+        "3": 0.203,
+        "5": 0.2947,
+        "8": 0.385,
+        "10": 0.4256,
+        "15": 0.4932,
+        "20": 0.5474,
+        "30": 0.5985,
+        "50": 0.6586
+      },
+      "hybrid": {
+        "1": 0.1278,
+        "3": 0.2692,
+        "5": 0.3639,
+        "8": 0.4556,
+        "10": 0.4842,
+        "15": 0.5474,
+        "20": 0.5955,
+        "30": 0.6391,
+        "50": 0.7008
+      }
+    },
+    "schedule": {
+      "1": {
+        "choice": "hybrid",
+        "validation_gain": 0.0275
+      },
+      "3": {
+        "choice": "hybrid",
+        "validation_gain": 0.0474
+      },
+      "5": {
+        "choice": "hybrid",
+        "validation_gain": 0.0657
+      },
+      "8": {
+        "choice": "hybrid",
+        "validation_gain": 0.0702
+      },
+      "10": {
+        "choice": "hybrid",
+        "validation_gain": 0.0672
+      },
+      "15": {
+        "choice": "hybrid",
+        "validation_gain": 0.0473
+      },
+      "20": {
+        "choice": "hybrid",
+        "validation_gain": 0.0397
+      },
+      "30": {
+        "choice": "hybrid",
+        "validation_gain": 0.0137
+      },
+      "50": {
+        "choice": "noisy_or",
+        "validation_gain": 0.0
+      }
+    },
+    "by_budget": {
+      "1": {
+        "chosen_on_validation": "hybrid",
+        "deployed": 0.0992,
+        "scheduled": 0.1278,
+        "delivered": 0.0286,
+        "validation_promised": 0.0275,
+        "transfer_gap": 0.0011,
+        "ci95": [
+          0.0097,
+          0.0483
+        ],
+        "excludes_zero": true
+      },
+      "3": {
+        "chosen_on_validation": "hybrid",
+        "deployed": 0.2301,
+        "scheduled": 0.2692,
+        "delivered": 0.0391,
+        "validation_promised": 0.0474,
+        "transfer_gap": -0.0083,
+        "ci95": [
+          0.0161,
+          0.064
+        ],
+        "excludes_zero": true
+      },
+      "5": {
+        "chosen_on_validation": "hybrid",
+        "deployed": 0.3113,
+        "scheduled": 0.3639,
+        "delivered": 0.0526,
+        "validation_promised": 0.0657,
+        "transfer_gap": -0.0131,
+        "ci95": [
+          0.0271,
+          0.0787
+        ],
+        "excludes_zero": true
+      },
+      "8": {
+        "chosen_on_validation": "hybrid",
+        "deployed": 0.4165,
+        "scheduled": 0.4556,
+        "delivered": 0.0391,
+        "validation_promised": 0.0702,
+        "transfer_gap": -0.0311,
+        "ci95": [
+          0.017,
+          0.0628
+        ],
+        "excludes_zero": true
+      },
+      "10": {
+        "chosen_on_validation": "hybrid",
+        "deployed": 0.4556,
+        "scheduled": 0.4842,
+        "delivered": 0.0286,
+        "validation_promised": 0.0672,
+        "transfer_gap": -0.0386,
+        "ci95": [
+          0.0064,
+          0.0519
+        ],
+        "excludes_zero": true
+      },
+      "15": {
+        "chosen_on_validation": "hybrid",
+        "deployed": 0.5353,
+        "scheduled": 0.5474,
+        "delivered": 0.0121,
+        "validation_promised": 0.0473,
+        "transfer_gap": -0.0352,
+        "ci95": [
+          -0.0066,
+          0.0314
+        ],
+        "excludes_zero": false
+      },
+      "20": {
+        "chosen_on_validation": "hybrid",
+        "deployed": 0.5865,
+        "scheduled": 0.5955,
+        "delivered": 0.009,
+        "validation_promised": 0.0397,
+        "transfer_gap": -0.0307,
+        "ci95": [
+          -0.0103,
+          0.0284
+        ],
+        "excludes_zero": false
+      },
+      "30": {
+        "chosen_on_validation": "hybrid",
+        "deployed": 0.6526,
+        "scheduled": 0.6391,
+        "delivered": -0.0135,
+        "validation_promised": 0.0137,
+        "transfer_gap": -0.0272,
+        "ci95": [
+          -0.0317,
+          0.0048
+        ],
+        "excludes_zero": false
+      },
+      "50": {
+        "chosen_on_validation": "noisy_or",
+        "deployed": 0.7023,
+        "scheduled": 0.7023,
+        "delivered": 0.0,
+        "validation_promised": 0.0,
+        "transfer_gap": 0.0
+      }
+    }
+  },
+  "gate": {
+    "deployed_cap_reproduces_the_manuscript_column": true,
+    "mismatches": []
+  }
+}
