@@ -58,3 +58,29 @@ of the intervention even if the directional test passes.
 **Reported regardless.** The full per-class delta table, the lambda sweep on both populations, the
 headline at every budget, and the transfer gap between what validation promised and what the
 comparison set delivered. A prediction reported only when it succeeds is not a preregistration.
+
+## Result (added after the run; the prediction above is unchanged)
+
+**Rejected. The mechanism is dead at every strength.**
+
+lambda was swept on the validation draw and the best value was lambda = 0, i.e. no shrinkage:
+validation recall@15 is 0.4748 at lambda = 0 and falls to 0.41-0.47 for every lambda > 0. The
+discipline therefore spent lambda = 0 on the comparison set, and every per-class delta is zero.
+
+The prediction about group G could not be tested content-fully, because the intervention collapsed
+to a no-op rather than because it raised the wrong classes. So a comparison-set sweep was run for
+diagnosis only -- never for selection -- to separate "the mechanism is dead" from "the discipline
+would not take it". It is dead: on the comparison set too, lambda = 0 is the best value
+(recall@15 0.5353), and shrinkage only lowers it (0.4737 at lambda = 1, recovering to 0.5128 at
+lambda = 64 as the score approaches the prior but never reaching lambda = 0). The comparison-best
+lambda is 0, so there was nothing for the discipline to fail to take.
+
+**Reading.** Pulling a rule's score toward the frequency prior in proportion to its training
+support does not help, at any strength, on either population. The displacement account it was built
+on -- that low-support mined rules carry noisy high scores that push correct candidates past the
+budget -- is not refuted as a description of the bank, but it is refuted as something this
+correction fixes: the deployed cap at 100 and the reciprocal-rank fusion already absorb whatever
+those rules do, and shifting their scores toward the prior only moves good candidates with the bad.
+
+The guardrail passed trivially, because lambda = 0 is a no-op. That is not the intervention
+succeeding; it is the intervention declining to fire.

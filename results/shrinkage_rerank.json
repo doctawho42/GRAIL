@@ -1,0 +1,218 @@
+{
+  "config": {
+    "script": "bank_without_selection.py",
+    "git_commit": "00ac7114dd9d9d3118eb67aee65520c201c2d3a4",
+    "git_dirty": true,
+    "lambda_grid": [
+      0.0,
+      0.25,
+      0.5,
+      1.0,
+      2.0,
+      4.0,
+      8.0,
+      16.0,
+      32.0,
+      64.0
+    ],
+    "lambda_star": 0.0,
+    "lambda_oracle_comparison": 0.0,
+    "cap": 100,
+    "n_source": "artifacts/preprocessed/train/5a3f22a1e5962bbb/reaction_labels.expanded.pt",
+    "gate_recall15_lambda0": 0.5353
+  },
+  "prereg": "docs/SHRINKAGE_PREREGISTRATION.md",
+  "group_G": [
+    "deamination",
+    "demethylation",
+    "hydrolysis",
+    "isomerisation, no formula change",
+    "sulfation"
+  ],
+  "headline": {
+    "deployed": {
+      "1": 0.0992,
+      "3": 0.2301,
+      "5": 0.3113,
+      "8": 0.4165,
+      "10": 0.4556,
+      "15": 0.5353,
+      "20": 0.5865,
+      "30": 0.6526,
+      "50": 0.7023
+    },
+    "shrunk": {
+      "1": 0.0992,
+      "3": 0.2301,
+      "5": 0.3113,
+      "8": 0.4165,
+      "10": 0.4556,
+      "15": 0.5353,
+      "20": 0.5865,
+      "30": 0.6526,
+      "50": 0.7023
+    }
+  },
+  "validation_sweep": {
+    "0.0": 0.4748,
+    "0.25": 0.4107,
+    "0.5": 0.4168,
+    "1.0": 0.4076,
+    "2.0": 0.4107,
+    "4.0": 0.4168,
+    "8.0": 0.4244,
+    "16.0": 0.4351,
+    "32.0": 0.4473,
+    "64.0": 0.4672
+  },
+  "per_class_delta_recall15": {
+    "cleavage, two or more carbons lost": {
+      "references": 151,
+      "deployed": 0.6159,
+      "shrunk": 0.6159,
+      "delta": 0.0,
+      "in_G": false
+    },
+    "other": {
+      "references": 142,
+      "deployed": 0.2394,
+      "shrunk": 0.2394,
+      "delta": 0.0,
+      "in_G": false
+    },
+    "oxidation, one oxygen added": {
+      "references": 140,
+      "deployed": 0.7429,
+      "shrunk": 0.7429,
+      "delta": 0.0,
+      "in_G": false
+    },
+    "glucuronidation": {
+      "references": 59,
+      "deployed": 0.7627,
+      "shrunk": 0.7627,
+      "delta": 0.0,
+      "in_G": false
+    },
+    "demethylation": {
+      "references": 36,
+      "deployed": 0.8333,
+      "shrunk": 0.8333,
+      "delta": 0.0,
+      "in_G": true
+    },
+    "dehydrogenation": {
+      "references": 23,
+      "deployed": 0.1739,
+      "shrunk": 0.1739,
+      "delta": 0.0,
+      "in_G": false
+    },
+    "reduction": {
+      "references": 20,
+      "deployed": 0.75,
+      "shrunk": 0.75,
+      "delta": 0.0,
+      "in_G": false
+    },
+    "sulfation": {
+      "references": 19,
+      "deployed": 0.4211,
+      "shrunk": 0.4211,
+      "delta": 0.0,
+      "in_G": true
+    },
+    "oxidation to a carbonyl": {
+      "references": 15,
+      "deployed": 0.6,
+      "shrunk": 0.6,
+      "delta": 0.0,
+      "in_G": false
+    },
+    "hydrolysis": {
+      "references": 13,
+      "deployed": 0.5385,
+      "shrunk": 0.5385,
+      "delta": 0.0,
+      "in_G": true
+    },
+    "oxidation, two oxygens added": {
+      "references": 11,
+      "deployed": 0.0,
+      "shrunk": 0.0,
+      "delta": 0.0,
+      "in_G": false
+    },
+    "methylation": {
+      "references": 10,
+      "deployed": 0.3,
+      "shrunk": 0.3,
+      "delta": 0.0,
+      "in_G": false
+    },
+    "acetylation": {
+      "references": 7,
+      "deployed": 0.1429,
+      "shrunk": 0.1429,
+      "delta": 0.0,
+      "in_G": false
+    },
+    "isomerisation, no formula change": {
+      "references": 6,
+      "deployed": 0.0,
+      "shrunk": 0.0,
+      "delta": 0.0,
+      "in_G": true
+    },
+    "glutathione conjugation": {
+      "references": 5,
+      "deployed": 0.0,
+      "shrunk": 0.0,
+      "delta": 0.0,
+      "in_G": false
+    },
+    "deamination": {
+      "references": 5,
+      "deployed": 0.0,
+      "shrunk": 0.0,
+      "delta": 0.0,
+      "in_G": true
+    },
+    "glycine conjugation": {
+      "references": 3,
+      "deployed": 1.0,
+      "shrunk": 1.0,
+      "delta": 0.0,
+      "in_G": false
+    }
+  },
+  "primary_test": {
+    "mean_gain_G": 0.0,
+    "mean_gain_notG": 0.0,
+    "prediction_holds": false
+  },
+  "guardrail": {
+    "deployed_recall15": 0.5353,
+    "shrunk_recall15": 0.5353,
+    "not_below_deployed": true
+  },
+  "comparison_sweep_diagnosis": {
+    "0.0": 0.5353,
+    "0.25": 0.4752,
+    "0.5": 0.4767,
+    "1.0": 0.4737,
+    "2.0": 0.4782,
+    "4.0": 0.4812,
+    "8.0": 0.4842,
+    "16.0": 0.4872,
+    "32.0": 0.5023,
+    "64.0": 0.5128
+  },
+  "oracle_reading": {
+    "lambda": 0.0,
+    "mean_gain_G": 0.0,
+    "mean_gain_notG": 0.0,
+    "note": "comparison-best lambda; forbidden for selection, reported to show whether the mechanism could land on G at all",
+    "mechanism_is_dead": true
+  }
+}
