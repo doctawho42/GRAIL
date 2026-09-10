@@ -1,0 +1,28 @@
+{
+  "config": {
+    "script": "bank_without_selection.py",
+    "git_commit": "045737580e686a11ffbb405e4d5b50767c7a720f",
+    "git_dirty": true,
+    "bank": "grail_metabolism/resources/extended_smirks.txt",
+    "support_source": "artifacts/preprocessed/train/5a3f22a1e5962bbb/reaction_labels.expanded.pt"
+  },
+  "rules": 7581,
+  "untypeable_rules": 341,
+  "distinct_types": 4417,
+  "types_with_more_than_one_template": 807,
+  "rules_in_multi_template_types": 3630,
+  "largest_type_templates": 143,
+  "support_per_template": {
+    "median": 0,
+    "mean": 7.13,
+    "share_le_1": 0.7639,
+    "share_eq_0": 0.5634
+  },
+  "support_per_type_after_merge": {
+    "median": 0,
+    "mean": 10.93,
+    "share_le_1": 0.7904
+  },
+  "support_argument_holds": false,
+  "reading": "the support argument does NOT hold: the median per-unit support is 0 per template and 0 per type, and the share resting on <=1 pair RISES from 0.7639 to 0.7904 rather than falling, because most types carry a single template and their share of the type space is higher than of the rule space. Merging pools support only in the 807 types with more than one template; the bank-wide support does not improve. What the merge still buys is independence -- those 807 types stop being counted as multiple witnesses by noisy-or -- so if point 7 is run it is for the independence, not the support, and the coverage of the merged bank (needing the generalised environment) is the deciding next stage."
+}
