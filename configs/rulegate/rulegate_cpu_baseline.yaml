@@ -1,4 +1,4 @@
-name: rulegate_lambda8
+name: rulegate_cpu_baseline
 description: The deployed configuration trained on the whole training split rather
   than a 5,000-substrate sample, with an epoch budget early stopping can actually
   reach. The released checkpoints saw 5,000 of 9,011 substrates for 8 epochs and their
@@ -26,8 +26,8 @@ dataset:
   cache_preprocessed: true
   cache_dir: artifacts/preprocessed
   max_uspto_rows: 10000
-  max_train_substrates: null
-  max_val_substrates: 1020
+  max_train_substrates: 1500
+  max_val_substrates: 400
   max_test_substrates: 300
   sampling_seed: 42
   excluded_substrates: []
@@ -59,7 +59,7 @@ generator:
   applicability_penalty: 7.5
   candidate_aggregation: noisy_or
   training_mode: supervised
-  id_gate_lambda: 8.0
+  id_gate_lambda: 0.0
 filter:
   in_channels: 16
   edge_dim: 18

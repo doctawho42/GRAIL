@@ -1,12 +1,14 @@
 name: rulegate_baseline
-description: 'support-gated id, lambda=0 (gate off): the retrained baseline for the
-  gate'
+description: The deployed configuration trained on the whole training split rather
+  than a 5,000-substrate sample, with an epoch budget early stopping can actually
+  reach. The released checkpoints saw 5,000 of 9,011 substrates for 8 epochs and their
+  early stopping never fired, which is an underfitting signature; this config exists
+  so that statement can be replaced by a measurement.
 output_dir: artifacts
 seed: 42
 tags:
 - paper
-- default
-- ensemble
+- converged
 dataset:
   train_sdf: grail_metabolism/data/train.sdf
   train_triples: grail_metabolism/data/train_triples.txt
@@ -18,15 +20,15 @@ dataset:
   include_phase2_rules: false
   uspto_csv: grail_metabolism/data/USPTO_FULL.csv
   use_clean_splits: true
-  standardize: true
+  standardize: false
   pca: false
   augment_negatives: false
   cache_preprocessed: true
   cache_dir: artifacts/preprocessed
   max_uspto_rows: 10000
   max_train_substrates: null
-  max_val_substrates: null
-  max_test_substrates: null
+  max_val_substrates: 1020
+  max_test_substrates: 300
   sampling_seed: 42
   excluded_substrates: []
   excluded_substrates_path: grail_metabolism/resources/slow_substrates.txt
@@ -42,27 +44,24 @@ generator:
   - 128
   projection_dim: 128
   scoring: retrieval
-  use_pretraining: true
+  use_pretraining: false
   freeze_pretrained: false
-  use_maccs_pretraining: true
-  top_k: 128
+  use_maccs_pretraining: false
+  top_k: 30
   threshold: null
   conv_kind: gatv2
   use_fingerprint: true
   rank_weight: 0.25
   ranking_margin: 0.45
   unlabeled_weight: 0.5
-  propensity_weighting: false
-  propensity_a: 0.55
-  propensity_b: 1.5
   prior_strength: 0.4
   use_applicability_mask: true
   applicability_penalty: 7.5
   candidate_aggregation: noisy_or
-  id_gate_lambda: 0.0
   training_mode: supervised
+  id_gate_lambda: 0.0
 filter:
-  in_channels: 18
+  in_channels: 16
   edge_dim: 18
   hidden_dims:
   - 192
@@ -71,7 +70,7 @@ filter:
   - 128
   - 64
   - 32
-  mode: pair
+  mode: single
   model_type: GATv2Filter
   conv_kind: gatv2
   use_graph: true
@@ -83,7 +82,7 @@ filter:
   train_on_candidates: false
   candidate_generation_top_k: 200
 pretrain:
-  enabled: true
+  enabled: false
   epochs: 30
   batch_size: 128
   lr: 0.0001
@@ -93,21 +92,21 @@ pretrain:
   save_path: null
 generator_optim:
   lr: 0.0001
-  epochs: 20
-  batch_size: 64
+  epochs: 40
+  batch_size: 32
   weight_decay: 1.0e-06
   prior: 0.75
   nnpu: true
-  patience: 7
+  patience: 6
   min_delta: 0.0001
 filter_optim:
   lr: 0.0001
-  epochs: 20
+  epochs: 40
   batch_size: 64
   weight_decay: 1.0e-06
   prior: 0.75
   nnpu: false
-  patience: 7
+  patience: 6
   min_delta: 0.0001
 evaluation:
   generator_top_k:
@@ -115,14 +114,13 @@ evaluation:
   - 3
   - 5
   - 10
-  - 20
-  candidate_top_k: 128
-  max_output: null
-  match: exact
+  - 12
+  - 15
+  candidate_top_k: 30
+  max_output: 15
+  match: inchikey_tautomer
   ranking_policy: rank
-  filter_candidate_cap: null
-  candidate_pool: 100
-  prior_strength: null
+  filter_candidate_cap: 32
   threshold: null
   export_predictions: true
   multistep:
@@ -145,10 +143,6 @@ evaluation:
     out_dim: 64
     conv_kind: gatv2
     dropout: 0.1
-  factorized_rerank: false
-  factorized_rerank_checkpoint: null
-  factorized_rerank_vocab: null
-  factorized_rerank_aggregation: max
 gflownet:
   epochs: 10
   lr: 0.0001
@@ -161,8 +155,3 @@ gflownet:
   anchor_weight: 0.0
   node_budget: 64
   reward: annotation
-  lam: 0.1
-  max_size: 15
-  top_k: 200
-  child_cache_max: 12000
-  ik_cache_max: 400000
