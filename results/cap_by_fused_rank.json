@@ -1,0 +1,302 @@
+{
+  "provenance": {
+    "script": "cap_by_fused_rank.py",
+    "script_path": "scripts/typed_edit/cap_by_fused_rank.py",
+    "source_sha256": "a084a93a113cf957226875d776a50b7ed7e58b3d515ac0dc520e744511c74d8a",
+    "git_commit": "72cd283c9a64414d22090b4147dd2848d97122ee",
+    "git_dirty": true
+  },
+  "question": "whether capping the deduplicated pool at 100 by the fused rank, rather than by the generator score alone, recovers the filter-favoured references the generator cap drops (pool_cap_cost.json: 39, 5.9%)",
+  "cap": 100,
+  "bootstrap": {
+    "n": 10000,
+    "seed": 0
+  },
+  "selection": "validation is decisive; comparison is confirmatory",
+  "by_population": {
+    "validation": {
+      "n_substrates": 293,
+      "n_references": 655,
+      "mean_ranked": {
+        "generator_cap": 97.2,
+        "fused_cap": 97.4
+      },
+      "deployed_generator_cap": {
+        "1": 0.1053,
+        "3": 0.2244,
+        "5": 0.287,
+        "8": 0.3634,
+        "10": 0.3939,
+        "15": 0.4748,
+        "20": 0.5313,
+        "30": 0.6046,
+        "50": 0.6855
+      },
+      "variant_fused_cap": {
+        "1": 0.113,
+        "3": 0.2183,
+        "5": 0.2733,
+        "8": 0.3221,
+        "10": 0.3527,
+        "15": 0.4046,
+        "20": 0.429,
+        "30": 0.5023,
+        "50": 0.6
+      },
+      "delta_variant_minus_deployed": {
+        "1": {
+          "difference": 0.0076,
+          "ci95": [
+            -0.0089,
+            0.0247
+          ],
+          "excludes_zero": false
+        },
+        "3": {
+          "difference": -0.0061,
+          "ci95": [
+            -0.0255,
+            0.0136
+          ],
+          "excludes_zero": false
+        },
+        "5": {
+          "difference": -0.0137,
+          "ci95": [
+            -0.0343,
+            0.0079
+          ],
+          "excludes_zero": false
+        },
+        "8": {
+          "difference": -0.0412,
+          "ci95": [
+            -0.0651,
+            -0.0182
+          ],
+          "excludes_zero": true
+        },
+        "10": {
+          "difference": -0.0412,
+          "ci95": [
+            -0.0654,
+            -0.0176
+          ],
+          "excludes_zero": true
+        },
+        "15": {
+          "difference": -0.0702,
+          "ci95": [
+            -0.0936,
+            -0.0478
+          ],
+          "excludes_zero": true
+        },
+        "20": {
+          "difference": -0.1023,
+          "ci95": [
+            -0.1297,
+            -0.0757
+          ],
+          "excludes_zero": true
+        },
+        "30": {
+          "difference": -0.1023,
+          "ci95": [
+            -0.1314,
+            -0.0745
+          ],
+          "excludes_zero": true
+        },
+        "50": {
+          "difference": -0.0855,
+          "ci95": [
+            -0.1127,
+            -0.0581
+          ],
+          "excludes_zero": true
+        }
+      },
+      "reproduces_registered_arm": {
+        "reference": "results/aggregation_ablation_validation.json",
+        "checked_budgets": [
+          "1",
+          "3",
+          "5",
+          "8",
+          "10",
+          "15",
+          "20",
+          "30",
+          "50"
+        ],
+        "matches": true,
+        "mismatches": {}
+      }
+    },
+    "comparison": {
+      "n_substrates": 291,
+      "n_references": 665,
+      "mean_ranked": {
+        "generator_cap": 98.1,
+        "fused_cap": 98.3
+      },
+      "deployed_generator_cap": {
+        "1": 0.0992,
+        "3": 0.2301,
+        "5": 0.3113,
+        "8": 0.4165,
+        "10": 0.4556,
+        "15": 0.5353,
+        "20": 0.5865,
+        "30": 0.6526,
+        "50": 0.7023
+      },
+      "variant_fused_cap": {
+        "1": 0.0992,
+        "3": 0.2226,
+        "5": 0.3023,
+        "8": 0.3774,
+        "10": 0.4165,
+        "15": 0.4707,
+        "20": 0.5113,
+        "30": 0.5669,
+        "50": 0.6526
+      },
+      "delta_variant_minus_deployed": {
+        "1": {
+          "difference": 0.0,
+          "ci95": [
+            -0.016,
+            0.0164
+          ],
+          "excludes_zero": false
+        },
+        "3": {
+          "difference": -0.0075,
+          "ci95": [
+            -0.0265,
+            0.0116
+          ],
+          "excludes_zero": false
+        },
+        "5": {
+          "difference": -0.009,
+          "ci95": [
+            -0.0332,
+            0.0152
+          ],
+          "excludes_zero": false
+        },
+        "8": {
+          "difference": -0.0391,
+          "ci95": [
+            -0.0662,
+            -0.012
+          ],
+          "excludes_zero": true
+        },
+        "10": {
+          "difference": -0.0391,
+          "ci95": [
+            -0.0633,
+            -0.016
+          ],
+          "excludes_zero": true
+        },
+        "15": {
+          "difference": -0.0647,
+          "ci95": [
+            -0.0899,
+            -0.0401
+          ],
+          "excludes_zero": true
+        },
+        "20": {
+          "difference": -0.0752,
+          "ci95": [
+            -0.1,
+            -0.0514
+          ],
+          "excludes_zero": true
+        },
+        "30": {
+          "difference": -0.0857,
+          "ci95": [
+            -0.1104,
+            -0.0618
+          ],
+          "excludes_zero": true
+        },
+        "50": {
+          "difference": -0.0496,
+          "ci95": [
+            -0.0737,
+            -0.025
+          ],
+          "excludes_zero": true
+        }
+      },
+      "reproduces_registered_arm": {
+        "reference": "results/deployment_table.json",
+        "checked_budgets": [
+          "1",
+          "3",
+          "5",
+          "8",
+          "10",
+          "15",
+          "20",
+          "30",
+          "50"
+        ],
+        "matches": true,
+        "mismatches": {}
+      }
+    }
+  },
+  "inputs": [
+    {
+      "path": "results/val_pools_keyed.json",
+      "exists": true,
+      "sha256_16": "254f3dfb34b8860b",
+      "bytes": 48635517
+    },
+    {
+      "path": "results/widepools_implicit/w0.json",
+      "exists": true,
+      "sha256_16": "6a90b7bcc2b82562",
+      "bytes": 10103608
+    },
+    {
+      "path": "results/widepools_implicit/w1.json",
+      "exists": true,
+      "sha256_16": "dcb34d6ca5a7c690",
+      "bytes": 9923282
+    },
+    {
+      "path": "results/widepools_implicit/w2.json",
+      "exists": true,
+      "sha256_16": "2f7440497f05cd4a",
+      "bytes": 5621821
+    },
+    {
+      "path": "results/widepools_implicit/w3.json",
+      "exists": true,
+      "sha256_16": "c194bbb0bd7ec69e",
+      "bytes": 8229360
+    },
+    {
+      "path": "results/widepools_implicit/w4.json",
+      "exists": true,
+      "sha256_16": "504576d634e4bdb8",
+      "bytes": 5126437
+    },
+    {
+      "path": "results/widepools_implicit/w5.json",
+      "exists": true,
+      "sha256_16": "7f4c7cee307a726c",
+      "bytes": 3561735
+    }
+  ]
+}
