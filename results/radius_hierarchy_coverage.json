@@ -1,0 +1,35 @@
+{
+  "provenance": {
+    "script": "radius_hierarchy_coverage.py",
+    "script_path": "scripts/typed_edit/radius_hierarchy_coverage.py",
+    "source_sha256": "9af73fd8b569e6c0958119167c3215baacd9622d11b484830954405829ebba7c",
+    "git_commit": "347b951788032f2ffd621874c33c9e956b4e3c8b",
+    "git_dirty": true
+  },
+  "train_pairs": 400,
+  "test_substrates": 40,
+  "bank_sizes": {
+    "0": 154,
+    "1": 220,
+    "2": 295
+  },
+  "by_radius": {
+    "r0": {
+      "coverage": 0.5976,
+      "mean_pool": 88.3
+    },
+    "r1": {
+      "coverage": 0.5122,
+      "mean_pool": 53.6
+    },
+    "r2": {
+      "coverage": 0.4268,
+      "mean_pool": 18.6
+    },
+    "hierarchy": {
+      "coverage": 0.4268,
+      "mean_pool": 18.6
+    }
+  },
+  "reading": "radius 1 is the deployed granularity at coverage 0.5122 / pool 53.6. A hierarchy helps only if it raises coverage without the pool blowing up; radius 0 alone is the inflation ceiling. Read coverage and pool together -- a coverage gain at many times the pool is the precision cost point 3 warns of, on a system already at 0.032."
+}

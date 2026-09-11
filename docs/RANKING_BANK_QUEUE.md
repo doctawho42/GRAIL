@@ -167,3 +167,21 @@ the dehydrogenation diagnostic implicates, so it runs first when compute frees. 
 retrain, cheap) and B (filter-only retrain), then C after the rulegate run reports. All are
 validation-selected with the deployed arm reproduced as the gate, on the same terms as the cap
 experiment above.
+
+## Point 3 (radius hierarchy): MEASURED, closed (results/radius_hierarchy_coverage.json)
+
+The caveat above predicted it and the measurement confirms it. Mining the same 400 train pairs at
+radii 0/1/2 and applying each to 40 test substrates:
+
+  radius 0 (bare center): coverage 0.5976, mean pool 88.3
+  radius 1 (deployed):    coverage 0.5122, mean pool 53.6
+  radius 2 (specific):    coverage 0.4268, mean pool 18.6
+  most-specific-that-fires hierarchy: 0.4268 / 18.6 -- identical to radius 2
+
+Two findings. Coverage rises only by going MORE general (r0 is +0.085 over the deployed r1) at 1.65x
+the pool -- the precision cost this bank cannot afford at 0.032, and the wrong end of the pipeline
+when the binding constraint is ranking a noisy pool, not coverage. And the naive hierarchy
+degenerates to radius 2: the specific rules fire SOMETHING on all 40 substrates, so
+"most-specific-that-fires" never falls back and lands on the worst coverage. A hierarchy that helped
+would need a per-rule confidence/support signal to decide fallback -- which is point 7's merge/support
+work, not a pure radius mechanism. Radius alone is not a lever; closed.
