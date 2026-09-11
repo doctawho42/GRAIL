@@ -1,0 +1,168 @@
+{
+  "provenance": {
+    "script": "rulegate_id_gate_result.py",
+    "script_path": "scripts/typed_edit/rulegate_id_gate_result.py",
+    "source_sha256": "2bca164266071aa48ab8826dab4454d847d41c3175dc33c29e3478e7e15b141a",
+    "git_commit": "8f07e4cec3ea3017e49dd359e7ab2e5ccc4691c4",
+    "git_dirty": true
+  },
+  "inputs": [
+    {
+      "path": "results/rulegate_cpu/baseline/metrics.json",
+      "exists": true,
+      "sha256_16": "2757b1f843446181",
+      "bytes": 1857
+    },
+    {
+      "path": "results/rulegate_cpu/baseline/generator_training.json",
+      "exists": true,
+      "sha256_16": "9f7c576dc0990ed6",
+      "bytes": 1289
+    },
+    {
+      "path": "results/rulegate_cpu/baseline/rule_embed_decomposition.json",
+      "exists": true,
+      "sha256_16": "8dc06e814548a0cb",
+      "bytes": 811
+    },
+    {
+      "path": "results/rulegate_cpu/lambda8/metrics.json",
+      "exists": true,
+      "sha256_16": "1baf1da292fcfb10",
+      "bytes": 1821
+    },
+    {
+      "path": "results/rulegate_cpu/lambda8/generator_training.json",
+      "exists": true,
+      "sha256_16": "21456ec69ab03b8e",
+      "bytes": 1243
+    },
+    {
+      "path": "results/rulegate_cpu/lambda8/rule_embed_decomposition.json",
+      "exists": true,
+      "sha256_16": "8a240fcde8d55e0f",
+      "bytes": 777
+    }
+  ],
+  "arms": {
+    "baseline": {
+      "id_gate_lambda": 0,
+      "kernel": "polomoshnov/grail-rulegate-cpu-baseline",
+      "epochs": 13,
+      "stop_reason": "early_stopping",
+      "best_val_loss": 1.2731
+    },
+    "lambda8": {
+      "id_gate_lambda": 8,
+      "kernel": "polomoshnov/grail-rulegate-cpu-lambda8",
+      "epochs": 12,
+      "stop_reason": "early_stopping",
+      "best_val_loss": 1.3037
+    }
+  },
+  "matched_subsample": {
+    "train_substrates": 1457,
+    "seed": 42,
+    "standardize": false,
+    "note": "compared only to each other, never to deployed full-5000"
+  },
+  "variance_decomposition": {
+    "baseline": {
+      "id_share": 0.7734,
+      "graph_share": 0.2228
+    },
+    "lambda8": {
+      "id_share": 0.0,
+      "graph_share": 0.9936
+    }
+  },
+  "recall_validation_selection": {
+    "r@1": {
+      "baseline": 0.1647,
+      "lambda8": 0.1554,
+      "delta": -0.0093
+    },
+    "r@3": {
+      "baseline": 0.3018,
+      "lambda8": 0.3097,
+      "delta": 0.0079
+    },
+    "r@5": {
+      "baseline": 0.4106,
+      "lambda8": 0.406,
+      "delta": -0.0046
+    },
+    "r@10": {
+      "baseline": 0.5267,
+      "lambda8": 0.5387,
+      "delta": 0.012
+    },
+    "r@15": {
+      "baseline": 0.5874,
+      "lambda8": 0.5824,
+      "delta": -0.005
+    },
+    "mean_output_size": {
+      "baseline": 12.4134,
+      "lambda8": 12.2584,
+      "delta": -0.155
+    }
+  },
+  "recall_test": {
+    "r@1": {
+      "baseline": 0.1015,
+      "lambda8": 0.0945,
+      "delta": -0.007
+    },
+    "r@3": {
+      "baseline": 0.2415,
+      "lambda8": 0.2649,
+      "delta": 0.0234
+    },
+    "r@5": {
+      "baseline": 0.3322,
+      "lambda8": 0.3471,
+      "delta": 0.0149
+    },
+    "r@10": {
+      "baseline": 0.4637,
+      "lambda8": 0.4577,
+      "delta": -0.006
+    },
+    "r@15": {
+      "baseline": 0.5242,
+      "lambda8": 0.503,
+      "delta": -0.0212
+    },
+    "mean_output_size": {
+      "baseline": 11.9381,
+      "lambda8": 11.8694,
+      "delta": -0.0687
+    }
+  },
+  "filter": {
+    "baseline": {
+      "mcc": 0.21973714392545668,
+      "roc_auc": 0.7699353404001807
+    },
+    "lambda8": {
+      "mcc": 0.21519187656512545,
+      "roc_auc": 0.7614257638632098
+    }
+  },
+  "seed_spread_caveat": {
+    "sd_at_15": 0.0107,
+    "source": "results/retraining_spread.json",
+    "note": "single seed per arm; deltas below this are not distinguished from noise"
+  },
+  "prereg": "docs/RULE_REPRESENTATION_PREREGISTRATION.md",
+  "verdict": {
+    "primary_recall5_rose": false,
+    "primary_reading": "recall@5 delta -0.0046 on validation. The preregistration rejects the mechanism if recall@5(lambda) <= recall@5(0); it did not rise, so the gate is REJECTED on the head test.",
+    "mechanism_graph_share_rose": true,
+    "mechanism_reading": "id share of variance 0.7734 (lambda 0) -> 0.0 (lambda 8); graph share 0.2228 -> 0.9936. The gate is mechanically saturated at lambda 8 -- the id contribution is zeroed, not merely reduced -- so the head test failing is not the mechanism failing to engage; it is the engaged mechanism not producing the head gain.",
+    "guardrail_depth_held": true,
+    "guardrail_reading": "recall@15 delta -0.005 on validation (-0.0212 on test). Single seed, no interval; both are within the seed-to-seed sd 0.0107 the deployed config shows, so the depth loss is not distinguished from noise but is consistently signed, the over-gating the ablation predicted.",
+    "overall": "REJECTED at lambda 8: the mechanism engages fully (id share 0.77 -> 0.00) but recall@5 does not rise and depth is not gained; every validation delta is within seed noise and mixed in sign. lambda 8 saturates the gate, so it overshoots any head-helping setting; the open question the preregistration named is a lambda sweep (or the type-shared id refinement), not lambda 8. Consistent with the session finding that the binding constraint is ranking the pool, not how a rule is represented."
+  }
+}

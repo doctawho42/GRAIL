@@ -63,3 +63,33 @@ reported as a failure of the intervention even if the primary test passes.
 variance decomposition before and after, and -- if a lambda sweep is run -- the transfer gap
 between the validation choice and the comparison result. A prediction reported only on success is
 not a preregistration.
+
+## RESULT (results/rulegate_id_gate_result.json): rejected at lambda 8
+
+Two arms trained on Kaggle on the same small CPU subsample (1457 train substrates, seed 42,
+standardize false, both early-stopped cleanly), compared only to each other. Each preregistered
+criterion, applied verbatim:
+
+**Primary (recall@5 must rise): FAILED.** Validation recall@5 0.4106 (lambda 0) -> 0.4060
+(lambda 8), delta -0.0046. The preregistration rejects the mechanism when recall@5(lambda) <=
+recall@5(0); it did not rise, so the gate is rejected on the head test.
+
+**Mechanism check (graph share must rise): CONFIRMED, and then some.** id share of variance
+0.7734 -> 0.0000; graph share 0.2228 -> 0.9936. The gate is mechanically SATURATED at lambda 8 --
+the per-template id is zeroed, not merely reduced. So the head test did not fail because the
+mechanism failed to engage; it failed because the fully engaged mechanism does not produce the head
+gain the reading predicted. The 82% the deployed model puts in the id was memorisation, but
+removing it did not free recall.
+
+**Guardrail (recall@15 must not fall): loss, within noise.** Validation recall@15 delta -0.0050,
+test -0.0212. Single seed, no interval; both sit inside the seed-to-seed sd 0.0107 the deployed
+config shows, so the depth loss is not distinguished from noise -- but it is consistently signed and
+matches the over-gating the ablation predicted (head up, depth down).
+
+**Reading.** Every validation delta is tiny and mixed in sign; the intervention is a wash on the
+metric it is selected on. lambda 8 saturates the gate, so it necessarily overshoots any milder
+setting that might help the head without surrendering depth. The preregistration named a lambda
+sweep as the follow-up; the type-shared-id refinement (RANKING_BANK_QUEUE.md item C) is the other.
+Neither is likely to move the headline far: this is one more lever on how a rule is REPRESENTED,
+and the session's binding constraint is how the pool is RANKED. Closed at lambda 8; a sweep is
+optional, not load-bearing.
