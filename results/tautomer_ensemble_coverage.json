@@ -1,0 +1,63 @@
+{
+  "provenance": {
+    "script": "tautomer_ensemble_coverage.py",
+    "script_path": "scripts/typed_edit/tautomer_ensemble_coverage.py",
+    "source_sha256": "d11c4c170abd6d6b8ca8a3a3bde53543bc5403517da930a03d41cea6a76e39fe",
+    "git_commit": "347b951788032f2ffd621874c33c9e956b4e3c8b",
+    "git_dirty": true
+  },
+  "substrates": 75,
+  "max_tautomers": 4,
+  "population": "incomplete base coverage",
+  "references": 279,
+  "base_coverage": 0.5591,
+  "ensemble_coverage": 0.5806,
+  "references_gained": 6,
+  "coverage_gain": 0.0215,
+  "substrates_helped": 6,
+  "examples": [
+    {
+      "substrate": "CC(C(=O)O)=c1ccc(=CC2CCCCC2=O)cc1",
+      "refs": 2,
+      "base": 1,
+      "ensemble": 2,
+      "tautomers": 4
+    },
+    {
+      "substrate": "CCOc1ncccc1OCCOc1ncc(=O)[nH]c1N1CCNCC1C",
+      "refs": 1,
+      "base": 0,
+      "ensemble": 1,
+      "tautomers": 3
+    },
+    {
+      "substrate": "CS(=O)(=O)c1ccccc1-c1ccc(N=C(O)c2cc(C(F)(F)F)nn2-c2cccc(C=NO)c2)c(F)c1",
+      "refs": 2,
+      "base": 1,
+      "ensemble": 2,
+      "tautomers": 4
+    },
+    {
+      "substrate": "O=C(O)C(F)Cl",
+      "refs": 1,
+      "base": 0,
+      "ensemble": 1,
+      "tautomers": 2
+    },
+    {
+      "substrate": "O=C1c2cccn2C2(CC(O)=NC2=O)C(=O)N1Cc1ccc(Br)cc1F",
+      "refs": 3,
+      "base": 1,
+      "ensemble": 2,
+      "tautomers": 4
+    },
+    {
+      "substrate": "Oc1cnc(N2CCN3CC(Cn4c(O)ccc4O)CCC3C2)nc1",
+      "refs": 5,
+      "base": 3,
+      "ensemble": 4,
+      "tautomers": 4
+    }
+  ],
+  "reading": "coverage can only rise, so the number is how much the tautomer ensemble is worth as a ceiling: a gain means the bank reaches references on a tautomer it misses on the corpus drawing (the gemcitabine case), and zero means the corpus form already sees what the bank can reach. This is a coverage ceiling, not recall -- the ranker still has to bring the newly reachable references into the budget."
+}
