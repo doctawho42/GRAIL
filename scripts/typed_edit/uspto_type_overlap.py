@@ -110,6 +110,7 @@ def main() -> int:
                       "note": "the bank and USPTO must share something; a zero here would mean "
                               "the two type vocabularies do not meet and the intersection above "
                               "measures incomparability rather than absence"},
+           "recovered_types": sorted(hit_b),
            "examples_recoverable": [json.loads(t) for t in hit_b[:8]]}
     Path(args.out).write_text(json.dumps(rep, indent=1))
 

@@ -115,6 +115,7 @@ def main() -> int:
                        "share_of_the_novel_gap": round(mass / len(novel), 4) if novel else None},
            "sanity": {"bank_types_rhea_also_has": len(bank_types & rhea_types),
                       "note": "a zero here would mean the two type vocabularies do not meet"},
+           "recovered_types": sorted(hit),
            "examples_recoverable": [json.loads(t) for t in hit[:8]]}
     Path(args.out).write_text(json.dumps(rep, indent=1))
     print(f"\nRhea: {typed} reactions typed, {len(rhea_types)} distinct types")
