@@ -310,7 +310,7 @@ def self_test(smirks: str, sub_smi: str, prod_smi: str) -> bool:
         return False
 
 
-def process_pair(sub_smi: str, prod_smi: str) -> MiningOutcome:
+def process_pair(sub_smi: str, prod_smi: str, radius: int = 1) -> MiningOutcome:
     try:
         sub_mol = Chem.MolFromSmiles(sub_smi)
         prod_mol = Chem.MolFromSmiles(prod_smi)
@@ -373,8 +373,8 @@ def process_pair(sub_smi: str, prod_smi: str) -> MiningOutcome:
         return MiningOutcome(None, None, "no_center")
 
     sub_match, prod_match, center_sub, center_prod = best
-    exp_sub = expand_center(sub_mol, center_sub, radius=1)
-    exp_prod = expand_center(prod_mol, center_prod, radius=1)
+    exp_sub = expand_center(sub_mol, center_sub, radius=radius)
+    exp_prod = expand_center(prod_mol, center_prod, radius=radius)
     smirks = build_smirks(sub_mol, prod_mol, sub_match, prod_match, exp_sub, exp_prod)
     if smirks is None:
         return MiningOutcome(None, None, "build_fail")
