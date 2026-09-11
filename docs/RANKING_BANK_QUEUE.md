@@ -98,3 +98,72 @@ specificity), then 5's disagreement measurement, then 6's -- all three free. Whi
 free stage is trained first; 6 trains only the filter and is cheapest to train, 7 trains the
 generator and is dearest. None depends on the rule-gate result, so they can be measured now and
 trained whenever the GPU is free.
+
+## Change panel: what survived, and the invariance that kills half of it
+
+A design panel proposed changes across six lenses (ranking, calibration, filter, generator, pool,
+ensemble); each was checked against what is already measured. Ten of twenty-three were renames of
+levers already rejected (score shrinkage, the k-adaptive blend, coverage expansion, hard-negative
+reweighting). Of the survivors, the one rated most promising was measured directly and failed, and
+a structural fact disposes of a whole family of the rest.
+
+**Cap by the fused rank instead of the generator score: MEASURED, worse (results/cap_by_fused_rank.json).**
+The generator cap drops 39 in-pool references the filter favours (pool_cap_cost.json). Keeping the
+same budget of 100 but selecting it by the fused rank was expected to recover them. It does the
+reverse: -0.0702 [-0.0936, -0.0478] at k=15 on validation, -0.0647 on the comparison set, both
+significant, with the deployed arm reproduced exactly (0.4748 / 0.5353). The weaker filter pulls
+noise into the top-100 faster than it recovers the dropped refs, so the generator cap's noise
+suppression is load-bearing. Closed.
+
+**The rank-invariance that closes the calibration family.** The deployed fusion (scripts/typed_edit/_rrf.py)
+orders candidates by reciprocal fusion of their two competition RANKS, and the cap keeps the top-100
+by raw generator score. Both are invariant to any monotone, per-axis rescaling of the scores. So
+temperature/Platt/isotonic calibration, MC-dropout averaging over an eval-mode scorer with no
+variance, and SWA/EMA weight averaging cannot change the order they are applied to -- the same
+reason score shrinkage's optimum was lambda=0. Any lever that only rescales scores is dead on
+arrival; only a lever that changes which candidate OUTRANKS which can move recall@k. That leaves
+two routes: change the pool composition (the cap experiment above, worse), or retrain so a model's
+score ORDER differs. Everything below is the second route, and needs compute.
+
+### Compute-gated survivors (retrain to change the rank order; GPU-bound)
+
+**A. Difference-aware readout in the pair filter.** filter.py Filter.forward (pair mode) reads the
+merged sub+prod graph with a single global_mean_pool, averaging the ~5% minimal-delta signal of a
+dehydrogenation (the class GRAIL trails furthest, and where the diagnostic puts 12/23 refs in the
+pool but ranked past the budget) into near-invariance. Replace with a structured readout:
+encoder.forward_nodes (exists) then split substrate/product pools by the flag column at node index
+16 and concatenate a delta vector. PU-safe (label-free), changes the filter's discrimination order
+on minimal-delta pairs. Prediction: recall@15 rises, concentrated on dehydrogenation; falsify if
+the class-conditioned recall does not move.
+
+**B. train_on_candidates as the release filter config.** The deployed filter trains on MolFrame.negs
+(derived from gen_map), a different distribution from the wide generator-top-k pool it ranks at
+inference; the machinery to train on the generator's own top-k exists (workflows/ensemble.py
+generate_filter_training_data, candidate_generation_top_k=200). Aligning train and deploy
+distributions changes the filter's rank order on the pool it must rank. nnPU-correct (unannotated
+candidates stay unlabeled, not true-negative), val-selected on recall@15. Falsify if aligned
+negatives do not beat the deployed filter on validation.
+
+**C. Type-shared rule-id embedding (refinement to the support-gated id already training).** The
+id-zeroing ablation gains at the head (+0.037@1, +0.027@5) but loses at depth (-0.021@30): the
+per-template id overfits a rare template's single positive at the head yet carries signal at depth.
+Form id_r = g(n_r)*template_id_r + type_id_{type(r)} so a rare template borrows its reaction type's
+pooled id (canonical_type over rule_keys; type stats pooled as _update_rule_statistics already does).
+Sequence AFTER the current rulegate run reports, since it builds on that id_gate. Falsify if the
+type term does not recover the depth loss without giving back the head gain.
+
+**D. Eval-time match_scale override.** generator._forward_generation_logits adds match_scale*log_counts
+to every rule logit, a systematic bonus for rules matching the substrate at many sites (promiscuous
+aromatic hydroxylation over few-site desaturation). match_scale is a learned parameter with no
+inference knob. NOT frozen-measurable: the bonus is baked into the generator score in the frozen
+pools, so testing an override requires a generation pass with the knob exposed, not a re-rank.
+Add the inference override, regenerate the pool at a swept match_scale, measure on validation.
+Falsify if curbing the bonus does not lift few-site classes without sinking the many-site ones.
+
+### Order
+
+D is the cheapest (one generation pass, no training) and directly tests the promiscuity tilt that
+the dehydrogenation diagnostic implicates, so it runs first when compute frees. Then A (filter-only
+retrain, cheap) and B (filter-only retrain), then C after the rulegate run reports. All are
+validation-selected with the deployed arm reproduced as the gate, on the same terms as the cap
+experiment above.
