@@ -72,12 +72,20 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(ROOT / "results" / "seed_ensemble_probe.json"))
     ap.add_argument("--k", type=int, default=15, help="budget the paired bootstrap is run at")
+    ap.add_argument("--pools", default=f"results/seedpools/{ARM}_seed{{seed}}.json",
+                    help="pool file per seed, with {seed} standing for 0, 1, 2")
+    ap.add_argument("--gate", choices=("registered", "structural"), default="registered",
+                    help="registered: each seed's recall must match the value recorded in "
+                         "retraining_spread.json, which only exists for the comparison pools. "
+                         "structural: no registered value to match, so instead every pool must "
+                         "be stamped with the checkpoint of the seed it is taken for and the "
+                         "three must enumerate the same candidates.")
     args = ap.parse_args()
 
     from _rrf import rrf_order
     from bank_without_selection import _key as tautkey
 
-    paths = [ROOT / f"results/seedpools/{ARM}_seed{s}.json" for s in SEEDS]
+    paths = [ROOT / args.pools.format(seed=s) for s in SEEDS]
     blobs = {}
     for s, p in zip(SEEDS, paths):
         if not p.exists():
@@ -106,28 +114,50 @@ def main() -> int:
         per_seed_order[s] = {x: _order(blobs[s]["pools"][x], parent[x], rrf_order) for x in subs}
         per_seed[f"seed{s}"] = _recall(per_seed_order[s], real, universe)
 
-    registered = json.loads((ROOT / "results/retraining_spread.json").read_text())
-    reg_seeds = registered["by_arm"][ARM]["seeds"]
-    gate = {}
-    for s in SEEDS:
-        name = f"{ARM}_seed{s}"
-        want = reg_seeds.get(name, {}).get("recall", {})
-        got = per_seed[f"seed{s}"]
-        gate[name] = {"recall15_here": got["15"], "recall15_registered": want.get("15"),
-                      "max_abs_diff_over_budgets": round(max(
-                          abs(got[str(k)] - want[str(k)]) for k in KS if str(k) in want), 4)
-                      if want else None}
-    # `or 1.0` here would be a gate that cannot pass: a perfect reproduction is 0.0, which is
-    # falsy, so it would be replaced by the failure sentinel. Missing evidence (None) is the only
-    # thing that may fail open.
-    worst = max(1.0 if v["max_abs_diff_over_budgets"] is None else v["max_abs_diff_over_budgets"]
-                for v in gate.values())
-    if worst > 0.0002:
-        print("REFUSING: this probe does not reproduce the registered per-seed recalls "
-              f"(worst budget differs by {worst}); the ordering or the population is not the "
-              "producer's, so an ensemble measured here would not be comparable", file=sys.stderr)
-        print(json.dumps(gate, indent=1), file=sys.stderr)
-        return 1
+    if args.gate == "registered":
+        registered = json.loads((ROOT / "results/retraining_spread.json").read_text())
+        reg_seeds = registered["by_arm"][ARM]["seeds"]
+        gate = {}
+        for s in SEEDS:
+            name = f"{ARM}_seed{s}"
+            want = reg_seeds.get(name, {}).get("recall", {})
+            got = per_seed[f"seed{s}"]
+            gate[name] = {"recall15_here": got["15"], "recall15_registered": want.get("15"),
+                          "max_abs_diff_over_budgets": round(max(
+                              abs(got[str(k)] - want[str(k)]) for k in KS if str(k) in want), 4)
+                          if want else None}
+        # `or 1.0` here would be a gate that cannot pass: a perfect reproduction is 0.0, which is
+        # falsy, so it would be replaced by the failure sentinel. Missing evidence (None) is the
+        # only thing that may fail open.
+        worst = max(1.0 if v["max_abs_diff_over_budgets"] is None
+                    else v["max_abs_diff_over_budgets"] for v in gate.values())
+        if worst > 0.0002:
+            print("REFUSING: this probe does not reproduce the registered per-seed recalls "
+                  f"(worst budget differs by {worst}); the ordering or the population is not the "
+                  "producer's, so an ensemble measured here would not be comparable",
+                  file=sys.stderr)
+            print(json.dumps(gate, indent=1), file=sys.stderr)
+            return 1
+    else:
+        # No registered per-seed value exists for these pools, so the gate cannot be a
+        # reproduction. What it can still establish is that the three files are what they are
+        # taken for: each stamped with its own seed's checkpoint, and all three enumerating the
+        # same candidates. A pool scored by a checkpoint nobody thinks it was scored by is a
+        # defect this repository has already had once.
+        gate = {}
+        for s, p in zip(SEEDS, paths):
+            stamped = ((blobs[s].get("checkpoints") or {}).get("generator") or {}).get("path", "")
+            gate[p.name] = {"generator_checkpoint": stamped,
+                            "names_this_seed": f"seed{s}" in stamped,
+                            "recall15_here": per_seed[f"seed{s}"]["15"]}
+        wrong = [k for k, v in gate.items() if not v["names_this_seed"]]
+        if wrong or not identical:
+            print("REFUSING: the pools are not what they are taken for "
+                  f"(checkpoint stamp mismatch: {wrong}; identical candidate sets: {identical})",
+                  file=sys.stderr)
+            print(json.dumps(gate, indent=1), file=sys.stderr)
+            return 1
+        worst = None
 
     # --- the ensembles -------------------------------------------------------------------------
     # Score-level: average (and median) each axis over the three seeds, then rank exactly as the
@@ -211,7 +241,10 @@ def main() -> int:
         "ranking": "cap 100 by generator, reciprocal rank fusion, parent dropped",
         "candidate_sets_identical_across_seeds": bool(identical),
         "mean_pool_union": round(union_mean, 1), "mean_pool_shared_by_all_seeds": round(shared_mean, 1),
-        "reproduces_the_registered_per_seed_recalls": gate,
+        "gate_kind": args.gate,
+        **({"reproduces_the_registered_per_seed_recalls": gate} if args.gate == "registered"
+           else {"the_pools_are_stamped_with_the_seed_they_are_taken_for": gate}),
+        "pool_files": [str(p.relative_to(ROOT)) for p in paths],
         "per_seed": per_seed,
         "bar": bar,
         "by_arm": results,
@@ -226,7 +259,11 @@ def main() -> int:
 
     print(f"population: {len(subs)} substrates, {int(universe)} references | "
           f"candidate sets identical across seeds: {identical}")
-    print(f"gate: worst per-seed budget differs from the registered value by {worst}")
+    if args.gate == "registered":
+        print(f"gate: worst per-seed budget differs from the registered value by {worst}")
+    else:
+        print("gate: every pool is stamped with its own seed's checkpoint and the three "
+              "enumerate the same candidates (no registered value exists for these pools)")
     print(f"\n  {'arm':<16s}" + "".join(f"{f'r@{k}':>9s}" for k in (1, 5, 15, 30)))
     for name in ("seed0", "seed1", "seed2"):
         print(f"  {name:<16s}" + "".join(f"{per_seed[name][str(k)]:9.4f}" for k in (1, 5, 15, 30)))

@@ -2,8 +2,8 @@
  "provenance": {
   "script": "seed_ensemble_probe.py",
   "script_path": "scripts/typed_edit/seed_ensemble_probe.py",
-  "source_sha256": "7f0580d8000789d574747801facd07430e604776641580bd0234cf19902b1eb6",
-  "git_commit": "17266732c5db1034746f1fa281853dff7979312e",
+  "source_sha256": "a3d9697638a0d5b859d6155db45761885572ae45a3bcbac155ab6eb2d3a699de",
+  "git_commit": "1c4924f228df08c007dfd2a2aa05d60b6f91fd1f",
   "git_dirty": true
  },
  "inputs": [
@@ -42,6 +42,7 @@
  "candidate_sets_identical_across_seeds": true,
  "mean_pool_union": 588.7,
  "mean_pool_shared_by_all_seeds": 588.7,
+ "gate_kind": "registered",
  "reproduces_the_registered_per_seed_recalls": {
   "exhaustive_seed0": {
    "recall15_here": 0.5489,
@@ -59,6 +60,11 @@
    "max_abs_diff_over_budgets": 0.0
   }
  },
+ "pool_files": [
+  "results/seedpools/exhaustive_seed0.json",
+  "results/seedpools/exhaustive_seed1.json",
+  "results/seedpools/exhaustive_seed2.json"
+ ],
  "per_seed": {
   "seed0": {
    "1": 0.0872,
