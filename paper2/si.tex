@@ -1474,6 +1474,61 @@ The sweep was stopped after this decisive pair and before a third setting that a
 so the values here are the point estimates the producer reported rather than a per-run interval;
 they are read against the measured seed spread instead.
 
+\section{Three trained variants of the ranking, and the frontier they share}
+\label{sec:si-survivors}
+
+The two settings swept above are inference-time: they change how a fixed pair of trained models is
+read. Three further variants change the training itself, one in each of the three places a ranking
+decision is made, and they are reported together because what they share is more informative than
+any of them alone.
+
+They are measured at a matched subsample scale and not at the deployed one. Each arm and its
+baseline were trained on the same \numSurvivorsTrainsubs{} substrates at seed
+\numSurvivorsSeed{} with the substrate drawn as the corpus stores it, and each arm is compared only
+with that matched baseline, never with the deployed run. So the levels here are not comparable with
+the rest of this supplement; only the paired differences within each arm are, and that is how they
+are read below.
+
+The first variant changes the representation of a rule. The generator adds a learned per-rule
+identity embedding to the encoding of the rule's chemistry, which lets a frequently rewarded rule
+be recognised by name rather than by what it does; the arm gates that identity by the rule's
+training support, scaling it by $n/(n+\lambda)$ so a rarely rewarded rule must lean on its
+chemistry. The second changes the filter's objective. The deployed filter learns on
+rule-applicable products that carry no annotation, which is the positive-unlabelled construction of
+the corpus; the arm instead draws its negatives from the generator's own highest-scoring
+candidates, so the filter is trained on the distribution it is actually asked to rank. The third
+changes the filter's features. The deployed filter encodes substrate and product independently and
+concatenates the two embeddings; the arm appends their signed difference, so a transformation that
+changes little of the molecule is represented directly rather than having to be inferred from two
+absolute encodings.
+
+On validation, which is the split selection is made on, the matched baseline reaches
+\numSurvivorsBaseOne{} at $k=1$, \numSurvivorsBaseThree{} at $k=3$ and
+\numSurvivorsBaseOneFive{} at $k=15$. Against it, gating the rule identity moves recall by
+$\numSurvivorsIdgateOne{}$, $+\numSurvivorsIdgateThree{}$ and $\numSurvivorsIdgateOneFive{}$ at
+those three budgets; training the filter on candidates moves it by $+\numSurvivorsCandfilterOne{}$,
+$+\numSurvivorsCandfilterThree{}$ and $\numSurvivorsCandfilterOneFive{}$; and appending the
+difference readout moves it by $+\numSurvivorsDiffreadoutOne{}$,
+$+\numSurvivorsDiffreadoutThree{}$ and $\numSurvivorsDiffreadoutOneFive{}$.
+
+One shape appears three times. Averaged over the two head budgets, the filter-objective arm gains
+$+\numSurvivorsCandfilterhead{}$ and the difference-readout arm $+\numSurvivorsDiffreadouthead{}$,
+while at the reported budget they lose $\numSurvivorsCandfilterdepth{}$ and
+$\numSurvivorsDiffreadoutdepth{}$; the identity gate is flat at the head,
+$\numSurvivorsIdgatehead{}$, and loses $\numSurvivorsIdgatedepth{}$ at $k=15$. Every one of these
+differences is smaller than the seed-to-seed spread the deployed configuration shows at that
+budget, \numSurvivorsSdOneFive{} (Section~\ref{sec:si-retrain}), so no arm is an individually
+significant win where the headline is read.
+
+The consistent trade is the result. Three unrelated interventions, on the representation of a rule,
+on what the filter is trained against and on what the filter is shown, all lift the top of the
+ranking and all give it back by $k=15$. None lifts the whole curve. At this scale the ranking
+ceiling behaves as a frontier set by what the generator's rule scores can order, and reshaping how
+a candidate is read, or how a rule is named, moves along that frontier rather than raising it,
+which is the behaviour the inference-time generator setting of Section~\ref{sec:si-matchscale}
+also shows. Raising the reported budget would require changing what the generator ranks, not how
+its candidates are read.
+
 \section{Model architectures and training}
 \label{sec:si-arch}
 

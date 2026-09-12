@@ -2159,6 +2159,23 @@ def build():
     n["matchscale.registered"] = _ms["reproduces_deployed_arm"]["registered_recall15"]
     n["matchscale.reprohere"] = _ms["reproduces_deployed_arm"]["deployed_recall15_here"]
     n["matchscale.reprodiff"] = _ms["reproduces_deployed_arm"]["difference"]
+
+    # The three matched arms behind the head-versus-depth frontier the match_scale subsection
+    # refers to. They are trained at a matched subsample scale, not at the deployed 5,000, and
+    # the scale is carried here as a number so the text cannot state it loosely.
+    _sv = art("rulegate_survivors_summary.json")
+    _val = _sv["recall_delta_vs_baseline"]["validation_ensemble_val"]
+    n["survivors.trainsubs"] = _sv["matched"]["train_substrates"]
+    n["survivors.seed"] = _sv["matched"]["seed"]
+    for _k in ("1", "3", "15"):
+        n[f"survivors.base{_k}"] = _val[f"r@{_k}"]["baseline"]
+        for _arm in ("id_gate", "candfilter", "diffreadout"):
+            n[f"survivors.{_arm.replace('_', '')}{_k}"] = _val[f"r@{_k}"][_arm]
+    for _arm in ("id_gate", "candfilter", "diffreadout"):
+        _hd = _sv["head_vs_depth"][_arm]
+        n[f"survivors.{_arm.replace('_', '')}head"] = _hd["head_delta_mean_k1_k3"]
+        n[f"survivors.{_arm.replace('_', '')}depth"] = _hd["depth_delta_k15"]
+    n["survivors.sd15"] = _sv["seed_spread_caveat"]["sd_at_15"]
     return n
 
 
