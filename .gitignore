@@ -504,6 +504,8 @@ artifacts/**
 !artifacts/full5000_implicit/checkpoints/filter.pt
 !artifacts/full5000_implicit/checkpoints/generator.pt
 !artifacts/full5000_priors/config.yaml
+!artifacts/full5000_released/checkpoints/filter.pt
+!artifacts/full5000_released/checkpoints/generator.pt
 !artifacts/full5000_single/config.yaml
 !artifacts/full5000_single/predictions/test_predictions.csv
 !artifacts/full5000_single/predictions/val_predictions.csv
@@ -522,7 +524,7 @@ artifacts/**
 !artifacts/tier2/sub_index_map.json
 !artifacts/tier2/substrates.json
 !artifacts/tier2_1170/metapredictor_preds.json
-#   22 tracked under artifacts/
+#   24 tracked under artifacts/
 
 grail_metabolism/data/**
 !grail_metabolism/data/**/
