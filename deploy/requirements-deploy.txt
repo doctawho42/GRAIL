@@ -1,0 +1,7 @@
+# GRAIL deploy pins. RDKit is pinned because tautomer canonicalisation moves between releases and
+# the matching key depends on it; a different RDKit's measured drift (scripts/kaggle_b1.py) is 3 of
+# 3000 structures and 1 of 3000 keys, recorded rather than hidden.
+numpy<2
+rdkit==2022.09.5
+torch
+torch-geometric
