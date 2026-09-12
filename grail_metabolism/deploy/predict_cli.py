@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import signal
 import sys
 import tempfile
 from pathlib import Path
@@ -27,7 +28,17 @@ def read_input(path: str):
 
 def predict_rows(model, rows, top_k, timeout_seconds):
     out = []
+    # SIGALRM is Unix-only; way2drug runs on Linux, but guard so this never crashes elsewhere
+    # (e.g. Windows) -- it just runs without a timeout there.
+    use_alarm = bool(timeout_seconds) and timeout_seconds > 0 and hasattr(signal, "SIGALRM")
+
+    def _raise_timeout(signum, frame):
+        raise TimeoutError(f"model.rank() exceeded {timeout_seconds}s")
+
     for ident, smiles in rows:
+        if use_alarm:
+            previous_handler = signal.signal(signal.SIGALRM, _raise_timeout)
+            signal.alarm(timeout_seconds)
         try:
             ranked = model.rank(smiles, top_k=top_k)
         except TimeoutError:
@@ -36,6 +47,10 @@ def predict_rows(model, rows, top_k, timeout_seconds):
         except Exception:
             out.append({"parent_id": ident, "rank": 0, "metabolite_smiles": "", "score": "", "status": "no_parse"})
             continue
+        finally:
+            if use_alarm:
+                signal.alarm(0)                                    # cancel a pending alarm
+                signal.signal(signal.SIGALRM, previous_handler)    # restore any prior handler
         if not ranked:
             out.append({"parent_id": ident, "rank": 0, "metabolite_smiles": "", "score": "", "status": "no_metabolites"})
             continue

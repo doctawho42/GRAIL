@@ -113,3 +113,21 @@ def test_cli_end_to_end_small(tmp_path):
     ids = {ln.split("\t")[0] for ln in lines[1:]}
     assert ids == {"s1", "2"}                      # line-2 id defaulted to its line number
     assert any(ln.split("\t")[4] == "no_parse" for ln in lines[1:])  # BADSMILES flagged
+
+
+import signal as _signal
+import time as _time
+
+
+@pytest.mark.skipif(not hasattr(_signal, "SIGALRM"), reason="SIGALRM not available on this platform")
+def test_predict_rows_enforces_per_substrate_timeout():
+    from grail_metabolism.deploy.predict_cli import predict_rows
+
+    class SlowStub:
+        def rank(self, smiles, top_k):
+            if smiles == "SLOW":
+                _time.sleep(2)
+            return [("m1", 0.9)][:top_k]
+
+    rows = predict_rows(SlowStub(), [("s1", "SLOW"), ("s2", "CCO")], top_k=1, timeout_seconds=1)
+    assert [(r["parent_id"], r["status"]) for r in rows] == [("s1", "timeout"), ("s2", "ok")]
