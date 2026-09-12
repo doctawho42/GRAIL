@@ -49,6 +49,26 @@ TE = "scripts/typed_edit"
 # the older pair reads the live pools instead. results/bank_without_selection_full.json was scored
 # with a filter checkpoint the system does not deploy and no figure in either manuscript is drawn
 # from it. Keeping a stale pin would have been a gate that reports currency it cannot check.
+# One pin fails permanently, and the reason is recorded here rather than repaired, because
+# repairing it would mean reporting a currency nothing can check.
+#
+#   results/uspto_type_overlap.json  producer_changed (was 81e44a0d3d8a, is now 23314d652a09)
+#
+# The artifact cannot be regenerated at all: its input, grail_metabolism/uspto_templates.csv.gz,
+# is a zero-byte placeholder in every checkout, was never tracked, and no producer in this
+# repository writes it. So the usual closure -- re-run and re-stamp -- does not exist.
+#
+# What the change was, reviewed against the log rather than asserted: the producer has exactly two
+# commits, the one that created it and 5a4aadf, which inserts one line, `"recovered_types":
+# sorted(hit_b)`, adding a set to the report beside the count and examples it already wrote. None
+# of the six values the manuscript reads from this artifact (uspto.templates, uspto.types,
+# uspto.hit, uspto.mass, uspto.share, uspto.sanity) is computed from that line.
+#
+# That argument is not promoted to a pass. semantic_equal on the recorded and current sources
+# returns False -- the delta is a statement, not a comment -- so COSMETIC correctly does not
+# apply, and reading the code is weaker evidence than re-running it. The status stays
+# producer_changed: it says nobody has checked, which is exactly true and cannot be made
+# untrue while the input is missing.
 PINNED = {
     # the type vocabulary the H1 stratum and the appendix's counts are keyed to
     "results/typed_edit_type_curve.json": f"{TE}/type_curve.py",

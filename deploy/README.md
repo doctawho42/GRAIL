@@ -38,7 +38,24 @@ The released model files ship with the repository:
 (Note: pip wheels exclude `artifacts/**`, so wheels cannot be used for deployment; use a git clone instead.)
 
 ## Performance
-Per-substrate latency (measured, top-k 15): CCO ~1.7s; phenol (c1ccccc1O) ~11.6s; acetaminophen ~14.4s; larger substrates up to ~120s, bounded by --timeout-seconds (default 120).
+
+**Start-up, paid once per process: about 60s.** Loading the released pair is dominated by
+constructing the rule side of the generator (the 6,970 templates are parsed into reaction objects,
+graphs and per-rule metadata); the checkpoint tensors themselves load in well under a second. This
+cost does not depend on the input file.
+
+**Per substrate: seconds to tens of seconds**, and independent of `--top-k`, which caps the ranked
+output rather than the rule budget: every run applies the whole bank. Measured: CCO ~1.7s; phenol
+(`c1ccccc1O`) ~11.6s; acetaminophen ~14s; larger substrates up to ~120s, bounded by
+`--timeout-seconds` (default 120). Applying the bank with RDKit is not the expensive part (a whole
+sweep of the 6,970 templates over one substrate is a fraction of a second); nearly all of the time
+is tautomer canonicalisation of the enumerated products, first when each product is normalised and
+again when it is keyed. Filter scoring is negligible (well under a second per substrate).
+
+**What this means for a service.** Put many substrates in ONE input file: the ~60s start-up is then
+amortised over the batch instead of being paid per molecule. Invoking the CLI once per submission
+makes start-up the dominant cost of every request. A web front end should hold a long-lived worker
+that loads the model once and serves many requests, rather than shelling out per request.
 
 ## Bank
 See NOTICE.md: the released bank excludes the BioTransformer templates at zero coverage cost.
