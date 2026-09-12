@@ -16,8 +16,23 @@ Predict probable metabolites with scores for a file of substrate SMILES.
     grail-metabolites in.smi out.tsv --top-k 15
 
 ## Environment
-Install `requirements-deploy.txt` into a Python 3.10 environment, or use `environment.yml`. The model
-files (released bank + released checkpoints) ship with the package.
+This tool runs from a git clone of the repository. Install dependencies and register the `grail-metabolites` command:
+
+1. Create a Python 3.10 environment using either `requirements-deploy.txt` or `environment.yml`:
+   - **pip:** `pip install -r deploy/requirements-deploy.txt`
+   - **conda:** `conda env create -f deploy/environment.yml`
+
+2. From the repository root, install the package and its console script:
+   ```
+   pip install -e .
+   ```
+   This registers the `grail-metabolites` command and installs `grail_metabolism`.
+
+The released model files ship with the repository:
+- Released rule bank: `grail_metabolism/resources/extended_smirks_released.txt`
+- Released checkpoints: `artifacts/full5000_released/checkpoints/{generator,filter}.pt`
+
+(Note: pip wheels exclude `artifacts/**`, so wheels cannot be used for deployment; use a git clone instead.)
 
 ## Performance
 Per-substrate latency (measured, top-k 15): CCO ~1.7s; phenol (c1ccccc1O) ~11.6s; acetaminophen ~14.4s; larger substrates up to ~120s, bounded by --timeout-seconds (default 120).

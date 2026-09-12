@@ -3,5 +3,5 @@
 # 3000 structures and 1 of 3000 keys, recorded rather than hidden.
 numpy<2
 rdkit==2022.09.5
-torch
-torch-geometric
+torch>=2.4,<3.0
+torch-geometric>=2.4,<3.0

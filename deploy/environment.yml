@@ -5,4 +5,4 @@ dependencies:
   - numpy<2
   - rdkit=2022.09.5
   - pip
-  - pip: [torch, torch-geometric]
+  - pip: ['torch>=2.4,<3.0', 'torch-geometric>=2.4,<3.0']
