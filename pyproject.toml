@@ -98,6 +98,7 @@ twine = "^6.1.0"
 
 [tool.poetry.scripts]
 grail = "grail_metabolism.cli:main"
+grail-metabolites = "grail_metabolism.deploy.predict_cli:main"
 
 [tool.pytest.ini_options]
 testpaths = ["grail_metabolism/tests"]

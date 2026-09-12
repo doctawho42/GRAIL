@@ -77,3 +77,17 @@ def test_released_generator_scores_match_full_on_kept_rules():
     pos = {r: i for i, r in enumerate(full_rules)}
     kept = [pos[r] for r in rel_rules]
     assert torch.allclose(torch.as_tensor(rs), torch.as_tensor(fs)[kept], atol=1e-5)
+
+
+def test_predict_rows_handles_ok_and_unparseable_and_limits_top_k():
+    from grail_metabolism.deploy.predict_cli import predict_rows
+    class Stub:
+        def rank(self, smiles, top_k):
+            if smiles == "BAD":
+                raise ValueError("unparseable")
+            return [("m1", 0.9), ("m2", 0.8), ("m3", 0.7)][:top_k]
+    rows = predict_rows(Stub(), [("s1", "CCO"), ("s2", "BAD")], top_k=2, timeout_seconds=1)
+    assert [(r["parent_id"], r["rank"], r["metabolite_smiles"], r["status"]) for r in rows] == [
+        ("s1", 1, "m1", "ok"), ("s1", 2, "m2", "ok"),
+        ("s2", 0, "", "no_parse"),
+    ]
