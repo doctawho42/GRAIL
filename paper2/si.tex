@@ -1443,6 +1443,37 @@ of ten or below, \numBlendRecomputepossible{} more are possible, and a further
 against a gain that leaves every verdict where it stands, the released system keeps one
 aggregation at every budget, and this section is what that choice costs.
 
+\subsection{The generator's multiplicity bonus, curbed and not adopted}
+\label{sec:si-matchscale}
+
+The generator adds a term $\lambda_{m}\log(1+c_r)$ to each rule's logit, where $c_r$ counts the
+sites at which rule $r$ matches the substrate and $\lambda_{m}$ is a learned scale fixed at
+\numMatchscaleDeployed{} in the released model. The term is a systematic bonus for promiscuous
+rules that fire at many sites, an aromatic hydroxylation over a desaturation, and it can lift the
+products of such a rule over a few-site true metabolite. It is the one ranking knob that moves the
+generator's scores rather than the filter's or the rule identity's, so it is the one whose curbing
+could in principle raise the reported budget rather than trade within it.
+
+Because $\lambda_{m}$ is a parameter and not a data setting, it is overridden at inference on the
+deployed model, with the candidate set and the filter scores held fixed so that only the generator
+score and the resulting order change. Curbing it to zero is compared with the released value on the
+validation pools, under the release order. The released value reproduces the registered validation
+recall at the reported budget, \numMatchscaleReprohere{} against \numMatchscaleRegistered{}, a
+difference of \numMatchscaleReprodiff{}, which certifies the regenerated arm is the deployed model
+and makes the comparison between the two settings internally consistent.
+
+Curbing the bonus to zero lifts recall at the head and leaves the reported budget where it was:
+recall at $k=1$ rises by \numMatchscaleDiffOne{} and at $k=5$ by \numMatchscaleDiffFive{}, while at
+$k=15$ it moves by $\numMatchscaleDiffOneFive{}$, from \numMatchscaleDepOneFive{} to
+\numMatchscaleCurbOneFive{}. Every one of these is smaller than the seed-to-seed spread the release
+configuration shows elsewhere in this supplement, so the generator-score lever behaves as the
+representation and filter levers do: it moves along a head-versus-depth frontier the rule scores
+set, and does not raise the budget the headline is read at. The release keeps the trained scale.
+
+The sweep was stopped after this decisive pair and before a third setting that amplifies the bonus,
+so the values here are the point estimates the producer reported rather than a per-run interval;
+they are read against the measured seed spread instead.
+
 \section{Model architectures and training}
 \label{sec:si-arch}
 

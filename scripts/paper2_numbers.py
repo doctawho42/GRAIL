@@ -2143,6 +2143,22 @@ def build():
     n["inprov.bare"] = _cls["bare"]
     n["inprov.notours"] = _cls["not_ours"]
     n["inprov.consumers"] = ip["consumers_reading_an_input_without_a_producer"]
+
+    # The match-scale sweep (queue point D): the one lever that moves the generator's scores rather
+    # than the filter's or the rule id's. Curbing the multiplicity bonus to zero is compared to the
+    # deployed value on validation; the run was trimmed after the decisive pair, so these are point
+    # estimates the producer printed, read against the seed spread rather than a per-run interval.
+    _ms = art("match_scale_sweep.json")
+    _curb = _ms["by_match_scale"]["0.0"]["recall"]
+    _dep = _ms["by_match_scale"]["0.25"]["recall"]
+    for _k in ("1", "5", "15"):
+        n[f"matchscale.curb{_k}"] = _curb[_k]
+        n[f"matchscale.dep{_k}"] = _dep[_k]
+        n[f"matchscale.diff{_k}"] = _ms["curb_minus_deployed"][_k]
+    n["matchscale.deployed"] = _ms["deployed_match_scale"]
+    n["matchscale.registered"] = _ms["reproduces_deployed_arm"]["registered_recall15"]
+    n["matchscale.reprohere"] = _ms["reproduces_deployed_arm"]["deployed_recall15_here"]
+    n["matchscale.reprodiff"] = _ms["reproduces_deployed_arm"]["difference"]
     return n
 
 

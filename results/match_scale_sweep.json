@@ -1,0 +1,28 @@
+{
+  "provenance": {
+    "producer": "scripts/typed_edit/match_scale_sweep.py",
+    "recovered": "point estimates read from the producer's per-value log output; the run was trimmed after the decisive pair (v=0.0, v=0.25) completed and before v=0.5, so the producer's final JSON with bootstrap intervals was not written. The numbers below are the producer's own printed recall, not re-typed measurements of anything else.",
+    "population": "validation, val_pools.json, 293 substrates with references",
+    "generator": "artifacts/full5000_implicit (deployed), match_scale overridden at inference; candidate set and filter scores unchanged, only the generator score and thus the ranking move",
+    "ranking": "the release order (dedup by tautomer key, cap 100 by generator, reciprocal rank fusion, parent dropped)",
+    "seed": 0,
+    "bootstrap": "not computed (trimmed before the final pass); deltas are read against the seed-to-seed sd 0.0107 at k=15 from results/retraining_spread.json"
+  },
+  "deployed_match_scale": 0.25,
+  "by_match_scale": {
+    "0.0": {"recall": {"1": 0.1115, "5": 0.2916, "15": 0.4748}},
+    "0.25": {"recall": {"1": 0.1053, "5": 0.2870, "15": 0.4763}}
+  },
+  "reproduces_deployed_arm": {
+    "deployed_recall15_here": 0.4763,
+    "registered_recall15": 0.4748,
+    "difference": 0.0015,
+    "note": "the regenerated deployed arm (match_scale 0.25) reproduces the registered validation recall of 0.4748 to within 0.0015, which certifies the regeneration is on the deployed model; the delta between match_scale values is internally consistent within this one pipeline"
+  },
+  "curb_minus_deployed": {
+    "1": 0.0062,
+    "5": 0.0046,
+    "15": -0.0015
+  },
+  "reading": "removing the multiplicity bonus entirely (match_scale 0.0) lifts recall at the head (k=1, k=5) and is flat to fractionally lower at the reported budget (k=15); every delta is well inside the seed-to-seed sd of 0.0107, so the generator-score lever, like the representation and filter levers, moves along the head-vs-depth frontier rather than raising it"
+}
