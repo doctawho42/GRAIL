@@ -56,6 +56,19 @@ def test_subset_rule_tensors_selects_rows_for_per_rule_tensors_only():
     assert torch.equal(out["encoder.lin.weight"], sd["encoder.lin.weight"])
 
 
+import pathlib as _pathlib
+import pytest as _pytest
+
+_HAVE_FULL_BANK_AND_CHECKPOINT = (
+    (_pathlib.Path(__file__).resolve().parents[2] / "grail_metabolism/resources/extended_smirks.txt").exists()
+    and (_pathlib.Path(__file__).resolve().parents[2] / "artifacts/full5000_implicit/checkpoints/generator.pt").exists()
+)
+
+
+@_pytest.mark.skipif(
+    not _HAVE_FULL_BANK_AND_CHECKPOINT,
+    reason="full bank/checkpoint not shipped; parity checked where present",
+)
 def test_released_generator_scores_match_full_on_kept_rules():
     import torch, pathlib
     from grail_metabolism.config import GeneratorConfig

@@ -9,7 +9,10 @@ Predict probable metabolites with scores for a file of substrate SMILES.
   is given its 1-based line number.
 - OUTPUT: TSV with header `parent_id  rank  metabolite_smiles  score  status`. `score` is the deployed
   combined confidence (filter * generator). `status` is one of `ok`, `no_parse`, `timeout`,
-  `no_metabolites`.
+  `no_metabolites`. Rows are already ordered by the deployed release ranking (reciprocal rank
+  fusion over the filter and generator ranks), not by `score` alone — `score` does not decrease
+  monotonically with `rank`. Keep the given row order; do not re-sort or threshold by `score`
+  expecting a rank-ordered prefix.
 
 ## Example
     printf 'p1\tCCO\np2\tc1ccccc1O\n' > in.smi

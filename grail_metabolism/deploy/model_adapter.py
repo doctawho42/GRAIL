@@ -59,7 +59,30 @@ class ReleasedModel:
 
 
 def load_released_model(timeout_seconds=120):
+    generator_ckpt = CKPT / "generator.pt"
+    filter_ckpt = CKPT / "filter.pt"
+    for required in (BANK, generator_ckpt, filter_ckpt):
+        if not required.exists():
+            raise FileNotFoundError(f"required released deploy file is missing: {required}")
+
     rules = [l.strip() for l in open(BANK) if l.strip()]
-    gen = _load(CKPT / "generator.pt", lambda a, r: build_generator(GeneratorConfig(**a), r or rules))
-    filt = _load(CKPT / "filter.pt", lambda a, r: build_filter(FilterConfig(**a)))
+    gen = _load(generator_ckpt, lambda a, r: build_generator(GeneratorConfig(**a), r or rules))
+    filt = _load(filter_ckpt, lambda a, r: build_filter(FilterConfig(**a)))
+
+    # Safety cross-check: `_load` uses strict=False, which would silently skip a
+    # size-mismatched per-rule tensor (e.g. rule_prior_logits, id_embedding) rather than
+    # error. Catch a bank/checkpoint mismatch here instead of letting it fail silently.
+    if len(rules) != gen.num_rules:
+        raise ValueError(
+            f"released bank/checkpoint rule-count mismatch: bank {BANK} has {len(rules)} rules "
+            f"but generator checkpoint {generator_ckpt} was built for {gen.num_rules} rules"
+        )
+    payload = torch.load(generator_ckpt, map_location="cpu", weights_only=False)
+    ckpt_rules = payload.get("rules")
+    if ckpt_rules is not None and len(ckpt_rules) != len(rules):
+        raise ValueError(
+            f"released bank/checkpoint rule-count mismatch: bank {BANK} has {len(rules)} rules "
+            f"but checkpoint {generator_ckpt} payload['rules'] has {len(ckpt_rules)} rules"
+        )
+
     return ReleasedModel(gen, filt, timeout_seconds)
