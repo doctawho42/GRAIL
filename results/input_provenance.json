@@ -3,7 +3,7 @@
   "script": "audit_input_provenance.py",
   "script_path": "scripts/audit_input_provenance.py",
   "source_sha256": "8d0f08c8dde0a6cdc00e3489cd6c98f8ecfac54a7746e02277aad1d35b097295",
-  "git_commit": "ffc3524e7632a424116301c4887d67e1d9bf3183",
+  "git_commit": "7cf5dbba858519502bcd9cba9b44b1fcf364c572",
   "git_dirty": true
  },
  "question": "whether the artifacts a manuscript number is computed from can themselves say what produced them, which the existing audit never asks",
@@ -15,13 +15,13 @@
   "not_ours": "a third party's file; its provenance is a citation"
  },
  "distinct_inputs_by_class": {
-  "stamped": 16,
-  "half": 34,
-  "bare": 22,
+  "stamped": 18,
+  "half": 36,
+  "bare": 28,
   "unreadable": 0,
   "not_ours": 3
  },
- "consumers_reading_an_input_without_a_producer": 24,
+ "consumers_reading_an_input_without_a_producer": 27,
  "expected": 24,
  "consumers": [
   {
@@ -340,6 +340,43 @@
    ]
   },
   {
+   "artifact": "results/rulegate_id_gate_result.json",
+   "inputs_recorded": 6,
+   "inputs_without_a_producer": 6,
+   "which": [
+    {
+     "input": "results/rulegate_cpu/baseline/metrics.json",
+     "records": "bare",
+     "tracked": true
+    },
+    {
+     "input": "results/rulegate_cpu/baseline/generator_training.json",
+     "records": "bare",
+     "tracked": true
+    },
+    {
+     "input": "results/rulegate_cpu/baseline/rule_embed_decomposition.json",
+     "records": "half",
+     "tracked": true
+    },
+    {
+     "input": "results/rulegate_cpu/lambda8/metrics.json",
+     "records": "bare",
+     "tracked": true
+    },
+    {
+     "input": "results/rulegate_cpu/lambda8/generator_training.json",
+     "records": "bare",
+     "tracked": true
+    },
+    {
+     "input": "results/rulegate_cpu/lambda8/rule_embed_decomposition.json",
+     "records": "half",
+     "tracked": true
+    }
+   ]
+  },
+  {
    "artifact": "results/widepools_implicit/w0.json",
    "inputs_recorded": 6,
    "inputs_without_a_producer": 6,
@@ -653,6 +690,33 @@
    ]
   },
   {
+   "artifact": "results/rulegate_survivors_summary.json",
+   "inputs_recorded": 4,
+   "inputs_without_a_producer": 4,
+   "which": [
+    {
+     "input": "results/rulegate_cpu/baseline/metrics.json",
+     "records": "bare",
+     "tracked": true
+    },
+    {
+     "input": "results/rulegate_cpu/lambda8/metrics.json",
+     "records": "bare",
+     "tracked": true
+    },
+    {
+     "input": "results/rulegate_cpu/candfilter/metrics.json",
+     "records": "bare",
+     "tracked": true
+    },
+    {
+     "input": "results/rulegate_cpu/diffreadout/metrics.json",
+     "records": "bare",
+     "tracked": true
+    }
+   ]
+  },
+  {
    "artifact": "results/retraining_spread.json",
    "inputs_recorded": 6,
    "inputs_without_a_producer": 3,
@@ -710,6 +774,23 @@
      "input": "results/metapredictor_wide_beam_preds.json",
      "records": "bare",
      "tracked": false
+    }
+   ]
+  },
+  {
+   "artifact": "results/rulegate_candfilter_result.json",
+   "inputs_recorded": 2,
+   "inputs_without_a_producer": 2,
+   "which": [
+    {
+     "input": "results/rulegate_cpu/baseline/metrics.json",
+     "records": "bare",
+     "tracked": true
+    },
+    {
+     "input": "results/rulegate_cpu/candfilter/metrics.json",
+     "records": "bare",
+     "tracked": true
     }
    ]
   },

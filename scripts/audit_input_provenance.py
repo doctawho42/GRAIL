@@ -71,7 +71,15 @@ NOT_OURS = {
 # The count the tree is expected to be at. A census that only ever reports is a census nobody
 # reads; --strict fails when a consumer acquires an unstamped input it did not have, which is the
 # direction that matters. Raising this number is a decision, not a fix.
-EXPECTED_CONSUMERS = 24
+#
+# Raised from 24 to 27 for the three matched-arm summaries, rulegate_id_gate_result.json,
+# rulegate_candfilter_result.json and rulegate_survivors_summary.json. Each reads the
+# metrics.json of a training run under results/rulegate_cpu/, and those are written by the
+# training harness rather than by a stamped producer, so the step that made their inputs cannot
+# be checked even though the summaries themselves record what they read, by digest. The arms are
+# reported in the supporting information, so the artifacts stay and the census says plainly that
+# they are unverifiable one step back.
+EXPECTED_CONSUMERS = 27
 
 
 def _tracked() -> set:
