@@ -174,7 +174,7 @@ sample of 300 substrates on which the registered
 ranking and timing thresholds are checked, because a threshold checked on the population that
 chose the setting it tests is not a check; Table 6
 records the population each prediction was in
-the event checked on, and Section S25 states
+the event checked on, and Section S26 states
 that all but one of the ten fixed a threshold in
 advance and not a population. The comparison set is the 291 substrates every method has
 an entry for, carrying 665 references, and every comparison against a published predictor is
@@ -186,7 +186,7 @@ a web service, and how those 291 were drawn
 is recorded nowhere in this repository, which is
 the same defect the corpus assembly carries. So
 the comparison is read again on the whole evaluated test set, 1,170 substrates, against the three
-comparators that ran over all of it (Section S29).
+comparators that ran over all of it (Section S30).
 The wide-budget leads survive that move and
 the narrower lead over SyGMa at a budget of
 fifteen does not, so that one is restricted to the
@@ -242,9 +242,9 @@ a survey of all four.
 
 Overview
 
-(Section S27) is the value of each stage at that
+(Section S28) is the value of each stage at that
 training budget rather than at the split’s full
-size. Every setting is in Section S21.
+size. Every setting is in Section S22.
 
 Each design choice below is given with the measurement that decided it and the prediction it
 was registered as; those predictions, each with
@@ -549,7 +549,7 @@ BioTransformer is run for one step, MetaTox’s
 depth is neither ours to turn nor readable, and
 a mined template may perform more than one
 enzymatic edit in a single application, as 22.1%
-of this bank’s mined templates do (Section S23).
+of this bank’s mined templates do (Section S24).
 The depth is swept for SyGMa, whose scenario
 is a documented setting, and the lead survives it.
 BioTransformer’s step count is also ours to turn
@@ -557,7 +557,7 @@ and was not swept, a decision taken after the
 matched-length control, which cuts every arm
 to the comparator’s own list length substrate
 by substrate, had been read, and stated as such
-(Section S34). For those two the difference between the arms is stated rather than removed,
+(Section S35). For those two the difference between the arms is stated rather than removed,
 and the wide-budget cells should be read with
 it in view.
 The number of candidates a system is permitted to return is the output budget, written k,
@@ -597,7 +597,7 @@ claimed. Two comparators were obtained after
 that family was fixed, so their contrasts are
 reported with their own intervals and are not
 folded into a correction declared without them
-(Section S34).
+(Section S35).
 That leaves the obvious objection, which is
 that this paper prints more contrasts than the
 family covers, and it is answered by measurement rather than by the declaration. Applying
@@ -676,7 +676,7 @@ templates, more than any other published set.
 Held to BioTransformer’s own list length the
 exhaustive arm does not lead it at all: the difference is −0.0045 [−0.0402, +0.0315], an interval
 covering zero. What separates the two at a wide
-budget is how much each emits (Section S34).
+budget is how much each emits (Section S35).
 The corrections that follow are about the
 sweep rather than about the matched-length
 table above (Table 3): the ten cells in which the
@@ -1097,7 +1097,7 @@ over SyGMa, an ordering result on a comparator whose own rules are largely insid
 That lead also survives the one test the comparator’s own settings allow: run at its deeper
 scenario SyGMa emits more than five times what
 the exhaustive arm returns and the gap does
-not close (Section S34).
+not close (Section S35).
 The advantage is at depth rather than at the
 head of the list. MetaPredictor is flat from
 k = 15 because 273 of its 291 lists are shorter
@@ -1303,7 +1303,7 @@ reported for every arm. At k = 50, of 291 substrates, the lists shorter than the
 exhaustive one.
 MetaPredictor’s beam is the second comparator setting this work turns, and turning it up
 narrows the margin at thirty without removing
-it and removes the one at fifteen (Section S34).
+it and removes the one at fifteen (Section S35).
 Against MetaTox alone, the incumbent web
 service this work set out to replace, the exhaustive mode leads at all nine budgets and separates
 at seven, and none of those seven survives the
@@ -1321,7 +1321,7 @@ and what did not work
 One candidate pool, ordered several ways with
 everything but the order held fixed, separates
 what each learned stage contributes from what
-the form of their combination contributes (Section S27). At k = 15 the deployed fusion separates from the generator’s ordering alone, from
+the form of their combination contributes (Section S28). At k = 15 the deployed fusion separates from the generator’s ordering alone, from
 the filter’s alone and from their product, by
 +0.1083, +0.1459 and +0.0827. It also separates
 from a baseline this literature does not report,
@@ -1334,7 +1334,7 @@ budget on both populations. The substratespecific part of the rule choice is wor
 either. Against the same number of applicable rules picked by training frequency it gains
 a small margin that separates at every budget,
 and is reported as that rather than as the stage’s
-justification (Section S27).
+justification (Section S28).
 Two registered mechanisms failed and are reported as failures. Emitting candidates in whole
 groups failed (P6), and so did gating on the
 11
@@ -1344,7 +1344,7 @@ quality: even a perfect group ordering through
 that gate is worse than the generator cap it replaces. The signal helps only where it adjusts
 an order that already exists, which is what P5
 does and why P5 is a measurement rather than
-a confirmation (Section S26).
+a confirmation (Section S27).
 Every figure here comes from one trained
 checkpoint, so the intervals quantify the population and not the training. Retraining both
 stages under three seeds at the configuration
@@ -1353,7 +1353,7 @@ and against the interactive arm’s spread the
 rank fusion of P1 is 18.3 times it, the pool cap
 of P2 6.5 times it and the rule budget of P3 2.3
 times it rather than inside it, the last of these
-indicative rather than a test (Section S31).
+indicative rather than a test (Section S32).
 
 3.3
 
@@ -1395,7 +1395,7 @@ than about site prediction: the site this system
 names is the site that changed.
 That consistency is measured on the interactive arm. Of 327 correctly predicted metabolites,
 the reported site touches the atoms that actually differ from the substrate in 92.3%, and lies
-wholly inside the change in 46.2% (Section S22).
+wholly inside the change in 46.2% (Section S23).
 An agreement rate near nine in ten is not the
 size of the effect; the margin over a connected
 null fragment of the same size is, and it is 0.5715.
@@ -1778,7 +1778,7 @@ Runtime
 
 The binding constraint is product standardisation, run once per product of every template;
 three other candidates were tested and rejected
-by measurement (Section S32).
+by measurement (Section S33).
 Two registered predictions followed. Standardising only the survivors (P8) freed recall but
 missed its registered speed-up threshold (Table 6). Adding a tautomer enumeration budget
 of 200 (P9) passes both halves, taking the median from 49.85 s to 5.28 s against a registered
@@ -1849,7 +1849,7 @@ not produced
 
 Rule is the index into the deployed bank. The substrate is drawn as the
 corpus stores it; the same run on the drawing a chemist would submit returns
-different ranks, and both drawings are given in Section S30.
+different ranks, and both drawings are given in Section S31.
 
 3.8
 
@@ -2456,7 +2456,7 @@ of this bank fails to reach, between 0.6253 and
 19
 
 error measured, so its share is neither a floor
-nor a bound; the two agree on only 130 templates (Section S23). The coverage ceiling here
+nor a bound; the two agree on only 130 templates (Section S24). The coverage ceiling here
 is therefore a one-template ceiling and not a oneenzyme one, and the composite share is why a
 second application of the bank buys little: a
 fifth of the mined bank already carries the compositions a second pass would have to discover.
@@ -2468,7 +2468,7 @@ Both learned stages are trained short of what
 the split allows, on a subsample of it and with
 early stopping that never engaged, which is an
 underfitting signature and not a converged run;
-retraining on the full split is not reported (Section S31).
+retraining on the full split is not reported (Section S32).
 The register is weaker than its count of confirmations suggests. Three of the six confirmed
 predictions clear the falsification condition as
 written, which compares a point estimate to a
@@ -2494,7 +2494,7 @@ at wide budgets, so the widest columns measure
 list length on all sides as much as ordering. The
 comparison population is the 291 substrates every method has an entry for, a quarter of the
 evaluated test split, and how that quarter was
-drawn is not recorded (Section S29). Two com-
+drawn is not recorded (Section S30). Two com-
 
 parators, BioTransformer and GLORYx, are
 built on sources this corpus is assembled from,
@@ -2513,7 +2513,7 @@ without retraining anything. GLORYx is the
 one arm not run on this machine: the models
 it needs are not distributed with its source, so
 its column comes from the service its authors
-operate (Section S34). Stereochemistry and protonation are bounded rather than priced. 36.1%
+operate (Section S35). Stereochemistry and protonation are bounded rather than priced. 36.1%
 of annotated pairs produce a metabolite carrying a stereogenic element its substrate does not
 have, and 7.8% of annotated metabolites carry
 a formal charge. The criterion sweep cannot
@@ -2546,7 +2546,7 @@ comparison measures. The arms that emit more
 score higher. Shuffling emission among the arms
 of a drug, which breaks only which arm is paired
 with which emission, does not reproduce that
-association (Section S33).
+association (Section S34).
 It lives mostly between the arms, which is the
 level at which a benchmark orders them. It is
 not the whole story and this paper’s argument
