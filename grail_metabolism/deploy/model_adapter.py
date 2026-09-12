@@ -18,7 +18,11 @@ def _load(path, build_fn):
     p = torch.load(path, map_location="cpu", weights_only=False)
     m = build_fn(p["arch"], p.get("rules"))
     m.load_state_dict(p["state_dict"], strict=False)
-    m.calibrated_threshold = p.get("calibrated_threshold")
+    # The checkpoint's calibrated_threshold is deliberately NOT carried onto the model. Every pool
+    # the paper measures was built with no rule threshold, and the released generator's stored
+    # value of 0.6 admits a median of six rules where the measured arms used the whole bank, so a
+    # model that silently adopted it would serve a configuration nobody evaluated. `rank` passes
+    # no threshold; keeping the attribute unset means nothing downstream can fall back to it.
     m.eval()
     return m
 

@@ -144,3 +144,51 @@ def test_predict_rows_enforces_per_substrate_timeout():
 
     rows = predict_rows(SlowStub(), [("s1", "SLOW"), ("s2", "CCO")], top_k=1, timeout_seconds=1)
     assert [(r["parent_id"], r["status"]) for r in rows] == [("s1", "timeout"), ("s2", "ok")]
+
+
+_RELEASED_BANK = (_pathlib.Path(__file__).resolve().parents[2]
+                  / "grail_metabolism/resources/extended_smirks_released.txt")
+
+
+@pytest.mark.skipif(not _RELEASED_BANK.exists(), reason="released bank not present")
+def test_rule_graph_disk_cache_is_opt_in_and_gives_identical_graphs(tmp_path, monkeypatch):
+    """The deploy's start-up cache must be invisible: off by default, and identical when on.
+
+    Building the rule graphs is most of the cost of constructing a generator over the released
+    bank, and the deploy pays it per process. The cache is only safe if a graph read from disk is
+    the graph that would have been built, so that is asserted tensor by tensor rather than trusted.
+    """
+    import torch
+    from grail_metabolism.model.generator import Generator
+    from grail_metabolism.workflows import factory
+
+    rules = [ln.strip() for ln in _RELEASED_BANK.read_text().splitlines() if ln.strip()][:40]
+    monkeypatch.setenv(factory.RULE_GRAPH_CACHE_DIR_ENV, str(tmp_path))
+
+    # Off by default: the directory is named but nothing may be written to it.
+    monkeypatch.delenv(factory.RULE_GRAPH_CACHE_ENV, raising=False)
+    fresh = factory.build_rule_dict(rules)
+    assert list(tmp_path.glob("*.pt")) == []
+
+    # On: the first call writes one file, keyed by this rule list.
+    monkeypatch.setenv(factory.RULE_GRAPH_CACHE_ENV, "1")
+    factory.build_rule_dict(rules)
+    assert len(list(tmp_path.glob("*.pt"))) == 1
+
+    # Drop the in-process cache so the next build has to come off disk.
+    Generator._rule_graph_cache.clear()
+    from_disk = factory.build_rule_dict(rules)
+
+    assert set(from_disk) == set(fresh)
+    for rule in rules:
+        a, b = fresh[rule], from_disk[rule]
+        assert torch.equal(a.x, b.x)
+        assert torch.equal(a.edge_index, b.edge_index)
+        assert (a.edge_attr is None) == (b.edge_attr is None)
+        if a.edge_attr is not None:
+            assert torch.equal(a.edge_attr, b.edge_attr)
+
+    # A different rule list must not read this entry: the key is the input.
+    other = factory.build_rule_dict(rules[:20])
+    assert len(other) == 20
+    assert len(list(tmp_path.glob("*.pt"))) == 2
