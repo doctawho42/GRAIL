@@ -2,8 +2,8 @@
  "provenance": {
   "script": "audit_input_provenance.py",
   "script_path": "scripts/audit_input_provenance.py",
-  "source_sha256": "8d0f08c8dde0a6cdc00e3489cd6c98f8ecfac54a7746e02277aad1d35b097295",
-  "git_commit": "7cf5dbba858519502bcd9cba9b44b1fcf364c572",
+  "source_sha256": "33b326f7f59e9658d1d2f4eccf6a9aa44f1ecc6504407025036b6f36df15373f",
+  "git_commit": "2efab9a662637c9f8e7c434684ad7b3bf16c1afc",
   "git_dirty": true
  },
  "question": "whether the artifacts a manuscript number is computed from can themselves say what produced them, which the existing audit never asks",
@@ -22,7 +22,7 @@
   "not_ours": 3
  },
  "consumers_reading_an_input_without_a_producer": 27,
- "expected": 24,
+ "expected": 27,
  "consumers": [
   {
    "artifact": "results/dialect_sweep.json",
