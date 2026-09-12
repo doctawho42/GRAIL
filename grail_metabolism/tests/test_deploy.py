@@ -91,3 +91,25 @@ def test_predict_rows_handles_ok_and_unparseable_and_limits_top_k():
         ("s1", 1, "m1", "ok"), ("s1", 2, "m2", "ok"),
         ("s2", 0, "", "no_parse"),
     ]
+
+
+import pathlib
+import pytest
+
+_HAVE_RELEASED_CHECKPOINT = (
+    pathlib.Path(__file__).resolve().parents[2] / "artifacts/full5000_released/checkpoints/generator.pt"
+).exists()
+
+
+@pytest.mark.skipif(not _HAVE_RELEASED_CHECKPOINT, reason="released checkpoint not built in this checkout")
+def test_cli_end_to_end_small(tmp_path):
+    from grail_metabolism.deploy.predict_cli import main
+    inp = tmp_path / "in.smi"
+    inp.write_text("s1\tCCO\nBADSMILES\n")
+    out = tmp_path / "out.tsv"
+    assert main([str(inp), str(out), "--top-k", "5"]) == 0
+    lines = out.read_text().splitlines()
+    assert lines[0].split("\t") == ["parent_id", "rank", "metabolite_smiles", "score", "status"]
+    ids = {ln.split("\t")[0] for ln in lines[1:]}
+    assert ids == {"s1", "2"}                      # line-2 id defaulted to its line number
+    assert any(ln.split("\t")[4] == "no_parse" for ln in lines[1:])  # BADSMILES flagged
