@@ -407,9 +407,13 @@ results/**
 !results/rule_embed_decomp.json
 !results/rule_prune_probe.json
 !results/rule_train_positives.json
+!results/rulegate_candfilter_result.json
 !results/rulegate_cpu/baseline/generator_training.json
 !results/rulegate_cpu/baseline/metrics.json
 !results/rulegate_cpu/baseline/rule_embed_decomposition.json
+!results/rulegate_cpu/candfilter/filter_training.json
+!results/rulegate_cpu/candfilter/generator_training.json
+!results/rulegate_cpu/candfilter/metrics.json
 !results/rulegate_cpu/lambda8/generator_training.json
 !results/rulegate_cpu/lambda8/metrics.json
 !results/rulegate_cpu/lambda8/rule_embed_decomposition.json
@@ -488,7 +492,7 @@ results/**
 !results/wmt_official_clusters.json
 !results/worked_example_structures.json
 !results/xdomain_retro_protocol.json
-#   370 tracked under results/
+#   374 tracked under results/
 
 artifacts/**
 !artifacts/**/

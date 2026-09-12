@@ -1,0 +1,129 @@
+{
+  "provenance": {
+    "script": "rulegate_candfilter_result.py",
+    "script_path": "scripts/typed_edit/rulegate_candfilter_result.py",
+    "source_sha256": "4a90cada0239eebe3cdad377575d97028a75c6574dd9b9e257f005db5f4eccaa",
+    "git_commit": "9ec67469947c3d88ece92fab166963868cc66ced",
+    "git_dirty": true
+  },
+  "inputs": [
+    {
+      "path": "results/rulegate_cpu/baseline/metrics.json",
+      "exists": true,
+      "sha256_16": "2757b1f843446181",
+      "bytes": 1857
+    },
+    {
+      "path": "results/rulegate_cpu/candfilter/metrics.json",
+      "exists": true,
+      "sha256_16": "1b6299033b9e958c",
+      "bytes": 2191
+    }
+  ],
+  "arms": {
+    "baseline": {
+      "train_on_candidates": false,
+      "kernel": "polomoshnov/grail-rulegate-cpu-baseline"
+    },
+    "candidates": {
+      "train_on_candidates": true,
+      "run": "local CPU, configs/rulegate/rulegate_cpu_candfilter.yaml",
+      "filter_train_candidates": {
+        "substrates": 1457,
+        "positive_pairs": 3020,
+        "negative_pairs": 173951
+      }
+    }
+  },
+  "matched": {
+    "train_substrates": 1457,
+    "seed": 42,
+    "standardize": false,
+    "note": "compared only to each other, never to deployed full-5000"
+  },
+  "recall_validation_selection": {
+    "r@1": {
+      "baseline": 0.1647,
+      "candidates": 0.1722,
+      "delta": 0.0075
+    },
+    "r@3": {
+      "baseline": 0.3018,
+      "candidates": 0.312,
+      "delta": 0.0102
+    },
+    "r@5": {
+      "baseline": 0.4106,
+      "candidates": 0.4095,
+      "delta": -0.0011
+    },
+    "r@10": {
+      "baseline": 0.5267,
+      "candidates": 0.5442,
+      "delta": 0.0175
+    },
+    "r@15": {
+      "baseline": 0.5874,
+      "candidates": 0.5837,
+      "delta": -0.0037
+    },
+    "mean_output_size": {
+      "baseline": 12.4134,
+      "candidates": 12.4057,
+      "delta": -0.0078
+    }
+  },
+  "recall_test": {
+    "r@1": {
+      "baseline": 0.1015,
+      "candidates": 0.1312,
+      "delta": 0.0297
+    },
+    "r@3": {
+      "baseline": 0.2415,
+      "candidates": 0.2782,
+      "delta": 0.0367
+    },
+    "r@5": {
+      "baseline": 0.3322,
+      "candidates": 0.3626,
+      "delta": 0.0303
+    },
+    "r@10": {
+      "baseline": 0.4637,
+      "candidates": 0.4757,
+      "delta": 0.012
+    },
+    "r@15": {
+      "baseline": 0.5242,
+      "candidates": 0.5113,
+      "delta": -0.0129
+    },
+    "mean_output_size": {
+      "baseline": 11.9381,
+      "candidates": 11.9072,
+      "delta": -0.0309
+    }
+  },
+  "filter": {
+    "baseline": {
+      "mcc": 0.21973714392545668,
+      "roc_auc": 0.7699353404001807
+    },
+    "candidates": {
+      "mcc": 0.13870644279414798,
+      "roc_auc": 0.6954615908011348
+    }
+  },
+  "seed_spread_caveat": {
+    "sd_at_15": 0.0107,
+    "source": "results/retraining_spread.json",
+    "note": "single seed per arm; deltas below this are not distinguished from noise"
+  },
+  "prereg": "docs/RANKING_BANK_QUEUE.md (point B)",
+  "verdict": {
+    "primary_recall5_val_rose": false,
+    "reading": "On the validation selection metric recall@5 delta -0.0011 (r@15 -0.0037) -- a wash, every budget within the seed sd 0.0107. On test recall@5 rose +0.0303, the largest head signal among the survivors, but recall@15 fell -0.0129: the covariate-shift alignment shifts the filter toward accuracy on the head of the pool it ranks (its global binary discrimination drops, mcc -0.081, auc -0.0745) at the cost of depth. Same helps-head-loses-depth shape as the id-gate, and again not a win on the metric selection is made on.",
+    "overall": "NOT SELECTED at this scale: validation recall (the selection metric) is a wash within seed noise, so B is not adopted on its own terms, despite the strongest test-head signal seen (recall@5 +0.030). The alignment is mechanically real -- the filter trades global binary accuracy for head accuracy on the ranked pool -- but on one seed at subsample scale it does not move the validation headline. A multi-seed or full-scale run is the only way the +0.030 test head would separate from noise; worth escalating only if a cheap second seed reproduces the head gain."
+  }
+}

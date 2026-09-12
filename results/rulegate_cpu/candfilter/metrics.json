@@ -1,0 +1,71 @@
+{
+  "generator": {
+    "jaccard": 0.0868152222825394,
+    "precision": 0.09690709978339142,
+    "recall": 0.5363465905991678,
+    "f1": 0.14382906466120918,
+    "exact_match": 0.003436426116838488,
+    "mean_output_size": 16.3127147766323,
+    "top_1_recall": 0.08546696716799809,
+    "top_3_recall": 0.2001999623133644,
+    "top_5_recall": 0.2823125089877666,
+    "top_10_recall": 0.44705938868309997,
+    "top_12_recall": 0.4681074986487358,
+    "top_15_recall": 0.4875710343493848
+  },
+  "filter": {
+    "mcc": 0.13870644279414798,
+    "roc_auc": 0.6954615908011348
+  },
+  "ensemble": {
+    "jaccard": 0.08963161185916352,
+    "precision": 0.10062221093148924,
+    "recall": 0.511289316830554,
+    "f1": 0.14835930946266868,
+    "exact_match": 0.003436426116838488,
+    "mean_output_size": 11.907216494845361,
+    "top_1_recall": 0.13122870829056396,
+    "top_3_recall": 0.27820838478054977,
+    "top_5_recall": 0.36257215007215016,
+    "top_10_recall": 0.47566763610578044,
+    "top_12_recall": 0.4915871404273467,
+    "top_15_recall": 0.511289316830554
+  },
+  "ensemble_val": {
+    "jaccard": 0.08939718455950162,
+    "precision": 0.09791220837732487,
+    "recall": 0.5836898669890005,
+    "f1": 0.15268908993718308,
+    "exact_match": 0.0,
+    "mean_output_size": 12.405684754521964,
+    "top_1_recall": 0.17222759043324481,
+    "top_3_recall": 0.3119552472151651,
+    "top_5_recall": 0.4094922637444297,
+    "top_10_recall": 0.5442226589171412,
+    "top_12_recall": 0.558477611544187,
+    "top_15_recall": 0.5836898669890005
+  },
+  "runtime": {
+    "data_prepare_seconds": 7342.292448542001,
+    "pretrain_seconds": 3.316699803690426e-05,
+    "generator_train_seconds": 3260.2940872500003,
+    "filter_candidate_generation_seconds": 1341.062228666,
+    "filter_train_seconds": 4595.188697333,
+    "evaluation_seconds": 444.0690597499997
+  },
+  "reproducibility": {
+    "seed": 42,
+    "sampling_seed": 42
+  },
+  "filter_candidates": {
+    "enabled": true,
+    "substrates": 1457,
+    "rows": 176971,
+    "generator_candidates": 176544,
+    "positives": 3020,
+    "negatives": 173951,
+    "missed_positives_added": 427,
+    "generator_top_k": 200,
+    "generator_threshold": null
+  }
+}

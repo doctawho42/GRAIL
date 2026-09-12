@@ -185,3 +185,19 @@ degenerates to radius 2: the specific rules fire SOMETHING on all 40 substrates,
 "most-specific-that-fires" never falls back and lands on the worst coverage. A hierarchy that helped
 would need a per-rule confidence/support signal to decide fallback -- which is point 7's merge/support
 work, not a pure radius mechanism. Radius alone is not a lever; closed.
+
+## Point B (train_on_candidates): RESULT -- not selected at subsample scale (results/rulegate_candfilter_result.json)
+
+Trained locally on CPU, the cpu_baseline recipe with filter.train_on_candidates=true, seed 42,
+compared only to rulegate_cpu_baseline. The filter's negatives came from the generator's own top-200
+(176,544 candidates, 427 missed positives added back) instead of MolFrame.negs.
+
+Validation (the selection metric) is a wash: recall@5 -0.0011, recall@15 -0.0037, every budget within
+the seed sd 0.0107. On test recall@5 rose +0.0303 -- the largest head signal of any survivor -- but
+recall@15 fell -0.0129, and the filter's global discrimination dropped (mcc -0.081, auc -0.075). The
+covariate-shift alignment is mechanically real: the filter trades global binary accuracy for accuracy
+on the head of the pool it actually ranks. But on one seed at subsample scale it does not move the
+metric selection is made on, so B is not adopted on its own terms. The only survivor with a head
+signal worth a second look: a cheap second seed would say whether the +0.030 test head separates from
+noise. Same helps-head-loses-depth shape as the id-gate; representation and filter-objective levers
+both nudge the head and cost depth without breaking the ranking ceiling.
