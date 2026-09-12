@@ -64,6 +64,34 @@ def test_filter_return_logits_is_logit_domain():
     assert torch.allclose(torch.sigmoid(logit), prob, atol=1e-5)
 
 
+def test_difference_readout_widens_single_mode_and_runs():
+    # The delta term (prod_emb - sub_emb) is a single-mode readout: it must widen the classifier
+    # by exactly one graph_dim, only in single mode with graph features, and the forward must run.
+    from grail_metabolism.utils.transform import from_rdmol
+
+    arg = [32, 64, 32, 64, 32, 16]
+    graph_dim = 32  # arg[2]
+
+    def first_in(model):
+        return next(m.in_features for m in model.classifier if hasattr(m, "in_features"))
+
+    plain = Filter(16, 18, arg, mode="single", difference_readout=False)
+    delta = Filter(16, 18, arg, mode="single", difference_readout=True)
+    assert plain.difference_readout is False and delta.difference_readout is True
+    assert first_in(delta) - first_in(plain) == graph_dim
+
+    # pair mode and no-graph must ignore the flag (no meaning there)
+    assert Filter(18, 18, arg, mode="pair", difference_readout=True).difference_readout is False
+    assert Filter(16, 18, arg, mode="single", use_graph=False,
+                  difference_readout=True).difference_readout is False
+
+    sub = Batch.from_data_list([from_rdmol(Chem.MolFromSmiles("CCO"))])
+    prod = Batch.from_data_list([from_rdmol(Chem.MolFromSmiles("CC=O"))])
+    delta.eval()
+    out = delta(sub, prod, return_logits=True)
+    assert tuple(out.shape) == (1, 1)
+
+
 def test_puloss_trains_on_logits():
     # Before the fix, probabilities were fed into a logit-domain surrogate (double
     # sigmoid), collapsing the loss range and killing the gradient.

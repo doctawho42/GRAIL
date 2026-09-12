@@ -116,6 +116,10 @@ class FilterConfig:
     molpath_hidden: Optional[int] = None
     train_on_candidates: bool = False
     candidate_generation_top_k: int = 200
+    # single mode only: append (prod_emb - sub_emb) to the classifier input, so a minimal-delta
+    # transformation (a dehydrogenation differs by two hydrogens) is represented explicitly rather
+    # than left for the MLP to recover from the concatenated pair. Ignored in pair mode.
+    difference_readout: bool = False
 
 
 @dataclass

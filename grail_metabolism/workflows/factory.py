@@ -55,6 +55,7 @@ def build_filter(config: FilterConfig):
             "use_graph": config.use_graph,
             "use_fingerprint": config.use_fingerprint,
             "dropout": config.dropout,
+            "difference_readout": getattr(config, "difference_readout", False),
         }
         if model_cls is Filter:
             kwargs["conv_kind"] = config.conv_kind

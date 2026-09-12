@@ -61,6 +61,7 @@ class Filter(GFilter):
         use_graph: bool = True,
         use_fingerprint: bool = True,
         dropout: float = 0.1,
+        difference_readout: bool = False,
     ) -> None:
         super().__init__()
         hidden = _pad_dims(arg_vec, 6, max(32, in_channels * 2))
@@ -70,6 +71,10 @@ class Filter(GFilter):
         self.conv_kind = conv_kind
         self.use_graph = use_graph
         self.use_fingerprint = use_fingerprint
+        # the delta term is a single-mode readout over the two independent encoders; it has no
+        # meaning in pair mode (one merged graph) or without graph features, so it is only live when
+        # both hold, and the classifier width below follows the same condition.
+        self.difference_readout = bool(difference_readout) and mode == "single" and use_graph
         self.calibrated_threshold: Optional[float] = None
         graph_dim = hidden[2] if use_graph else 0
         fp_dim = 2 * FINGERPRINT_DIM if use_fingerprint else 0
@@ -125,8 +130,9 @@ class Filter(GFilter):
                 if use_graph
                 else None
             )
+            delta_dim = graph_dim if self.difference_readout else 0
             self.classifier = nn.Sequential(
-                nn.Linear((2 * graph_dim) + fp_dim, hidden[3]),
+                nn.Linear((2 * graph_dim) + delta_dim + fp_dim, hidden[3]),
                 nn.ReLU(inplace=True),
                 nn.Dropout(dropout),
                 nn.Linear(hidden[3], hidden[4]),
@@ -170,6 +176,10 @@ class Filter(GFilter):
             sub_embedding = self.sub_encoder(data)
             prod_embedding = self.prod_encoder(met)
             features.extend([sub_embedding, prod_embedding])
+            if self.difference_readout:
+                # the signed change, so a two-hydrogen loss is a small vector the classifier reads
+                # directly rather than as the near-cancellation of two large pooled embeddings
+                features.append(prod_embedding - sub_embedding)
             device = sub_embedding.device
             batch_size = sub_embedding.size(0)
         if self.use_fingerprint:
