@@ -1,0 +1,361 @@
+{
+ "provenance": {
+  "script": "seed_ensemble_probe.py",
+  "script_path": "scripts/typed_edit/seed_ensemble_probe.py",
+  "source_sha256": "7f0580d8000789d574747801facd07430e604776641580bd0234cf19902b1eb6",
+  "git_commit": "17266732c5db1034746f1fa281853dff7979312e",
+  "git_dirty": true
+ },
+ "inputs": [
+  {
+   "path": "results/seedpools/exhaustive_seed0.json",
+   "exists": true,
+   "sha256_16": "103a5ab006c9d85e",
+   "bytes": 42547624
+  },
+  {
+   "path": "results/seedpools/exhaustive_seed1.json",
+   "exists": true,
+   "sha256_16": "c1557e52c95d24a8",
+   "bytes": 42534581
+  },
+  {
+   "path": "results/seedpools/exhaustive_seed2.json",
+   "exists": true,
+   "sha256_16": "193d9a4e173ae7a9",
+   "bytes": 42531331
+  },
+  {
+   "path": "results/retraining_spread.json",
+   "exists": true,
+   "sha256_16": "ab720d7b1720c799",
+   "bytes": 9306
+  }
+ ],
+ "question": "whether averaging the component scores over training seeds reorders the release ranking enough to move recall, which is the one statistical lever the rank-invariance argument does not close",
+ "why_the_rank_argument_does_not_close_it": "the fusion consumes competition ranks, so a monotone rescaling of one axis cannot reorder; an average over seeds is not a rescaling of one axis and does reorder",
+ "population": "the comparison set, whole-bank arm, as in results/retraining_spread.json",
+ "n_substrates": 291,
+ "n_references": 665,
+ "criterion": "tautomer-aware InChIKey",
+ "ranking": "cap 100 by generator, reciprocal rank fusion, parent dropped",
+ "candidate_sets_identical_across_seeds": true,
+ "mean_pool_union": 588.7,
+ "mean_pool_shared_by_all_seeds": 588.7,
+ "reproduces_the_registered_per_seed_recalls": {
+  "exhaustive_seed0": {
+   "recall15_here": 0.5489,
+   "recall15_registered": 0.5489,
+   "max_abs_diff_over_budgets": 0.0
+  },
+  "exhaustive_seed1": {
+   "recall15_here": 0.5278,
+   "recall15_registered": 0.5278,
+   "max_abs_diff_over_budgets": 0.0
+  },
+  "exhaustive_seed2": {
+   "recall15_here": 0.5353,
+   "recall15_registered": 0.5353,
+   "max_abs_diff_over_budgets": 0.0
+  }
+ },
+ "per_seed": {
+  "seed0": {
+   "1": 0.0872,
+   "3": 0.2316,
+   "5": 0.3068,
+   "8": 0.406,
+   "10": 0.4451,
+   "15": 0.5489,
+   "20": 0.594,
+   "30": 0.6556,
+   "50": 0.6977
+  },
+  "seed1": {
+   "1": 0.1008,
+   "3": 0.2226,
+   "5": 0.3143,
+   "8": 0.403,
+   "10": 0.4466,
+   "15": 0.5278,
+   "20": 0.582,
+   "30": 0.6421,
+   "50": 0.7098
+  },
+  "seed2": {
+   "1": 0.0992,
+   "3": 0.212,
+   "5": 0.2992,
+   "8": 0.4045,
+   "10": 0.4541,
+   "15": 0.5353,
+   "20": 0.585,
+   "30": 0.6526,
+   "50": 0.7113
+  }
+ },
+ "bar": {
+  "1": {
+   "seed_mean": 0.0957,
+   "seed_best": 0.1008,
+   "seed_sd": 0.0074
+  },
+  "3": {
+   "seed_mean": 0.2221,
+   "seed_best": 0.2316,
+   "seed_sd": 0.0098
+  },
+  "5": {
+   "seed_mean": 0.3068,
+   "seed_best": 0.3143,
+   "seed_sd": 0.0076
+  },
+  "8": {
+   "seed_mean": 0.4045,
+   "seed_best": 0.406,
+   "seed_sd": 0.0015
+  },
+  "10": {
+   "seed_mean": 0.4486,
+   "seed_best": 0.4541,
+   "seed_sd": 0.0048
+  },
+  "15": {
+   "seed_mean": 0.5373,
+   "seed_best": 0.5489,
+   "seed_sd": 0.0107
+  },
+  "20": {
+   "seed_mean": 0.587,
+   "seed_best": 0.594,
+   "seed_sd": 0.0062
+  },
+  "30": {
+   "seed_mean": 0.6501,
+   "seed_best": 0.6556,
+   "seed_sd": 0.0071
+  },
+  "50": {
+   "seed_mean": 0.7063,
+   "seed_best": 0.7113,
+   "seed_sd": 0.0075
+  }
+ },
+ "by_arm": {
+  "mean_scores": {
+   "1": 0.0992,
+   "3": 0.218,
+   "5": 0.3098,
+   "8": 0.4075,
+   "10": 0.4541,
+   "15": 0.5414,
+   "20": 0.5835,
+   "30": 0.6481,
+   "50": 0.7068
+  },
+  "median_scores": {
+   "1": 0.1008,
+   "3": 0.2195,
+   "5": 0.3113,
+   "8": 0.4,
+   "10": 0.4421,
+   "15": 0.5368,
+   "20": 0.5895,
+   "30": 0.6466,
+   "50": 0.7068
+  },
+  "six_axis_rrf": {
+   "1": 0.1038,
+   "3": 0.2226,
+   "5": 0.3098,
+   "8": 0.4135,
+   "10": 0.4556,
+   "15": 0.5519,
+   "20": 0.588,
+   "30": 0.6526,
+   "50": 0.7053
+  }
+ },
+ "deltas": {
+  "mean_scores": {
+   "1": {
+    "minus_seed_mean": 0.0035,
+    "minus_seed_best": -0.0016
+   },
+   "3": {
+    "minus_seed_mean": -0.0041,
+    "minus_seed_best": -0.0136
+   },
+   "5": {
+    "minus_seed_mean": 0.003,
+    "minus_seed_best": -0.0045
+   },
+   "8": {
+    "minus_seed_mean": 0.003,
+    "minus_seed_best": 0.0015
+   },
+   "10": {
+    "minus_seed_mean": 0.0055,
+    "minus_seed_best": 0.0
+   },
+   "15": {
+    "minus_seed_mean": 0.0041,
+    "minus_seed_best": -0.0075
+   },
+   "20": {
+    "minus_seed_mean": -0.0035,
+    "minus_seed_best": -0.0105
+   },
+   "30": {
+    "minus_seed_mean": -0.002,
+    "minus_seed_best": -0.0075
+   },
+   "50": {
+    "minus_seed_mean": 0.0005,
+    "minus_seed_best": -0.0045
+   }
+  },
+  "median_scores": {
+   "1": {
+    "minus_seed_mean": 0.0051,
+    "minus_seed_best": 0.0
+   },
+   "3": {
+    "minus_seed_mean": -0.0026,
+    "minus_seed_best": -0.0121
+   },
+   "5": {
+    "minus_seed_mean": 0.0045,
+    "minus_seed_best": -0.003
+   },
+   "8": {
+    "minus_seed_mean": -0.0045,
+    "minus_seed_best": -0.006
+   },
+   "10": {
+    "minus_seed_mean": -0.0065,
+    "minus_seed_best": -0.012
+   },
+   "15": {
+    "minus_seed_mean": -0.0005,
+    "minus_seed_best": -0.0121
+   },
+   "20": {
+    "minus_seed_mean": 0.0025,
+    "minus_seed_best": -0.0045
+   },
+   "30": {
+    "minus_seed_mean": -0.0035,
+    "minus_seed_best": -0.009
+   },
+   "50": {
+    "minus_seed_mean": 0.0005,
+    "minus_seed_best": -0.0045
+   }
+  },
+  "six_axis_rrf": {
+   "1": {
+    "minus_seed_mean": 0.0081,
+    "minus_seed_best": 0.003
+   },
+   "3": {
+    "minus_seed_mean": 0.0005,
+    "minus_seed_best": -0.009
+   },
+   "5": {
+    "minus_seed_mean": 0.003,
+    "minus_seed_best": -0.0045
+   },
+   "8": {
+    "minus_seed_mean": 0.009,
+    "minus_seed_best": 0.0075
+   },
+   "10": {
+    "minus_seed_mean": 0.007,
+    "minus_seed_best": 0.0015
+   },
+   "15": {
+    "minus_seed_mean": 0.0146,
+    "minus_seed_best": 0.003
+   },
+   "20": {
+    "minus_seed_mean": 0.001,
+    "minus_seed_best": -0.006
+   },
+   "30": {
+    "minus_seed_mean": 0.0025,
+    "minus_seed_best": -0.003
+   },
+   "50": {
+    "minus_seed_mean": -0.001,
+    "minus_seed_best": -0.006
+   }
+  }
+ },
+ "paired_bootstrap_at_15": {
+  "mean_scores_vs_seed0": {
+   "point": -0.0075,
+   "ci95": [
+    -0.0205,
+    0.0045
+   ]
+  },
+  "mean_scores_vs_seed1": {
+   "point": 0.0135,
+   "ci95": [
+    0.0,
+    0.0264
+   ]
+  },
+  "mean_scores_vs_seed2": {
+   "point": 0.006,
+   "ci95": [
+    -0.0079,
+    0.02
+   ]
+  },
+  "median_scores_vs_seed0": {
+   "point": -0.012,
+   "ci95": [
+    -0.0275,
+    0.003
+   ]
+  },
+  "median_scores_vs_seed1": {
+   "point": 0.009,
+   "ci95": [
+    -0.0049,
+    0.0228
+   ]
+  },
+  "median_scores_vs_seed2": {
+   "point": 0.0015,
+   "ci95": [
+    -0.0125,
+    0.0147
+   ]
+  },
+  "six_axis_rrf_vs_seed0": {
+   "point": 0.003,
+   "ci95": [
+    -0.009,
+    0.0156
+   ]
+  },
+  "six_axis_rrf_vs_seed1": {
+   "point": 0.0241,
+   "ci95": [
+    0.0122,
+    0.0378
+   ]
+  },
+  "six_axis_rrf_vs_seed2": {
+   "point": 0.0165,
+   "ci95": [
+    0.003,
+    0.0306
+   ]
+  }
+ },
+ "this_is_not_a_selection": "the pools are on the reported comparison population, so nothing here may be adopted on this evidence; a lift would have to be confirmed on validation pools, which do not yet exist for the three seeds, before any release decision"
+}

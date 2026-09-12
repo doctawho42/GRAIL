@@ -231,3 +231,77 @@ scores set, and reshaping how the FILTER reads a candidate, or how a rule id is 
 along it rather than raising it. A headline gain needs either a multi-seed confirmation of a head
 lever at the k the product is read at, or a change to what the GENERATOR ranks -- which is point D
 (match_scale), the one remaining survivor and the only one that touches the generator's scores.
+
+## Point D (match_scale): RESULT -- head lifts, budget flat, not adopted (results/match_scale_sweep.json)
+
+The generator's multiplicity bonus `match_scale * log1p(counts)/log(5)` was overridden at inference
+on the deployed model, candidate set and filter scores held fixed, so only the generator score and
+the resulting order move. Curbing it to zero against the released 0.25, on the validation pools
+under the release order:
+
+  recall@k            match_scale 0.0   deployed 0.25   delta
+    r@1                    0.1115          0.1053      +0.0062
+    r@5                    0.2916          0.2870      +0.0046
+    r@15                   0.4748          0.4763      -0.0015
+
+The deployed arm reproduces the registered validation recall (0.4763 here against 0.4748), which
+certifies the regeneration is on the deployed model. The sweep was trimmed after this decisive pair
+and before the amplifying setting, so these are point estimates read against the seed sd 0.0107
+rather than per-run intervals. Same shape as the other three: the head rises, the reported budget
+does not. The release keeps the trained scale. Written up as SI \label{sec:si-matchscale}.
+
+With D closed, all four registered survivors are measured and none raises k=15. Every remaining
+idea in the change panel was either closed analytically (the whole calibration family, by rank
+invariance) or measured and closed here.
+
+## Seed ensembling: the one lever the rank argument does not close -- PROBE (results/seed_ensemble_probe.json)
+
+Why it is not the calibration family. The fusion consumes competition RANKS, so any monotone
+rescaling of one axis cannot reorder anything, which is what killed temperature, Platt, isotonic,
+MC-dropout, SWA and shrinkage in one line. An average over independently trained seeds is not a
+rescaling of one axis, so the argument does not reach it. It is also the only untried lever that
+needs no new training: the three seed pools at the deployed configuration already carry, per
+substrate, the whole-bank candidate set with both component scores.
+
+The join is well posed. The three seeds enumerate IDENTICAL candidate sets on all 291 substrates
+(mean pool 588.7, intersection equals union), because generation is deterministic given bank and
+substrate. The seeds disagree only about the scores, by a per-candidate sd of about 0.018 on both
+axes. So no missing-value policy is needed and the ensemble is a pure re-scoring of a fixed pool.
+
+Reproduction gate: the probe recomputes each seed's recall with its own code and matches the
+registered per-seed values exactly at every budget (worst difference 0.0).
+
+  recall@k          seed0    seed1    seed2   seed mean  seed best | mean_sc  median_sc  6axis_rrf
+    r@1            0.0872   0.1008   0.0992    0.0957    0.1008   |  0.0992   0.1008     0.1038
+    r@5            0.3068   0.3143   0.2992    0.3068    0.3143   |  0.3098   0.3113     0.3098
+    r@15           0.5489   0.5278   0.5353    0.5373    0.5489   |  0.5414   0.5368     0.5519
+    r@30           0.6556   0.6421   0.6526    0.6501    0.6556   |  0.6481   0.6466     0.6526
+
+Two findings, and the second is the interesting one.
+
+Score-level averaging is not the lever. Averaging the two axes (mean_scores) gains +0.0041 on the
+seed mean at k=15 but sits -0.0075 below the best seed; the median is worse than the mean. Averaging
+score LEVELS across runs mixes calibrations that were never on a common scale.
+
+Rank-level fusion is. Fusing all six axes (three seeds x two components) by reciprocal rank -- the
+operation the pipeline already performs for two axes -- gives the first arm in this whole campaign
+that does not trade head for depth: r@1 +0.0081, r@15 +0.0146 and r@30 +0.0025 against the seed
+mean, with nothing given back. Against the BEST seed it is +0.0030 at k=15, and the paired bootstrap
+over substrates puts that inside the interval, [-0.0090, +0.0156]; against the other two seeds it is
++0.0241 [+0.0122, +0.0378] and +0.0165 [+0.0030, +0.0306], both excluding zero.
+
+So the honest reading is not "the ceiling moved". It is that six-axis fusion lands at or above the
+best of three seeds WITHOUT knowing which seed is best, which is a different and cheaper kind of
+gain: it removes the seed lottery rather than beating it. The released single model is one draw from
+a distribution whose sd at k=15 is 0.0107, and the fusion converts that variance into the top of the
+range.
+
+What it may not be used for yet. These pools are on the comparison population, which is the
+population the manuscript reports, so nothing here is a selection and nothing may be adopted on this
+evidence. Per-seed VALIDATION pools do not exist: every artifact under results/seedpools is
+population=comparison. Confirming this properly means building validation pools for the three seeds,
+and the cost is bounded by the fact that candidate enumeration is seed-independent -- enumerate once
+per substrate, then score with each of the three checkpoints -- so the honest confirmation is one
+enumeration pass plus three cheap scoring passes, not three full regenerations. A confirmed lift
+would then also carry a deployment cost of three models at inference, which is a release decision
+and not a measurement.
