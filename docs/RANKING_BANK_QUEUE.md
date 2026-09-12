@@ -201,3 +201,33 @@ metric selection is made on, so B is not adopted on its own terms. The only surv
 signal worth a second look: a cheap second seed would say whether the +0.030 test head separates from
 noise. Same helps-head-loses-depth shape as the id-gate; representation and filter-objective levers
 both nudge the head and cost depth without breaking the ranking ceiling.
+
+## Point A (difference_readout) + the survivor frontier: RESULT (results/rulegate_survivors_summary.json)
+
+A note on scope: A was written for the pair filter's single mean-pool, but the deployed filter is
+mode=single (two independent encoders concatenated), which has no merged-pool averaging problem. A
+was adapted to the deployed mode: append the signed delta (prod_emb - sub_emb) to the [sub, prod]
+readout so a minimal-delta transformation is represented directly. Trained on the cpu_baseline
+recipe, seed 42, compared to the matched baseline.
+
+A behaves like the others. Validation (selection): recall@1 +0.0148, recall@3 +0.0120 -- the clearest
+head gain on the selection metric of any arm -- but recall@15 -0.0119. Filter discrimination is
+unchanged (mcc +0.002, auc +0.001), so the gain is a cleaner head readout, not a better binary
+filter.
+
+**The frontier.** With A done, all four matched arms are in one table (rulegate_survivors_summary.json):
+
+  recall@k delta vs baseline, validation:   id_gate   candfilter   diffreadout
+    r@1                                       -0.0093    +0.0075      +0.0148
+    r@3                                       +0.0079    +0.0102      +0.0120
+    r@15                                      -0.0050    -0.0037      -0.0119
+
+Three unrelated mechanisms -- representation (id-gate), filter objective (train-on-candidates),
+filter features (difference-readout) -- and one shape: each lifts the head (k=1,3) and loses the
+budget (k=15). None lifts the whole curve, and most deltas are within the seed sd 0.0107, so no arm
+is an individually significant win at k=15. The consistent head-for-depth trade across three places
+in the pipeline is the result: at this scale the ranking ceiling is a frontier the generator's rule
+scores set, and reshaping how the FILTER reads a candidate, or how a rule id is represented, slides
+along it rather than raising it. A headline gain needs either a multi-seed confirmation of a head
+lever at the k the product is read at, or a change to what the GENERATOR ranks -- which is point D
+(match_scale), the one remaining survivor and the only one that touches the generator's scores.

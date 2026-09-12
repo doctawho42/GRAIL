@@ -1,0 +1,130 @@
+{
+  "provenance": {
+    "script": "rulegate_survivors_summary.py",
+    "script_path": "scripts/typed_edit/rulegate_survivors_summary.py",
+    "source_sha256": "85ed5c629b6be6095cee01fed3d6eba8d1ea38bef8257493a1bf3384f72c9059",
+    "git_commit": "4350bae8fc127349810d2deac19bd97e78fa54fe",
+    "git_dirty": true
+  },
+  "inputs": [
+    {
+      "path": "results/rulegate_cpu/baseline/metrics.json",
+      "exists": true,
+      "sha256_16": "2757b1f843446181",
+      "bytes": 1857
+    },
+    {
+      "path": "results/rulegate_cpu/lambda8/metrics.json",
+      "exists": true,
+      "sha256_16": "1baf1da292fcfb10",
+      "bytes": 1821
+    },
+    {
+      "path": "results/rulegate_cpu/candfilter/metrics.json",
+      "exists": true,
+      "sha256_16": "1b6299033b9e958c",
+      "bytes": 2191
+    },
+    {
+      "path": "results/rulegate_cpu/diffreadout/metrics.json",
+      "exists": true,
+      "sha256_16": "7ae41e2ca55e700d",
+      "bytes": 1862
+    }
+  ],
+  "matched": {
+    "train_substrates": 1457,
+    "seed": 42,
+    "standardize": false,
+    "compared_to": "the matched baseline only, never deployed full-5000"
+  },
+  "recall_delta_vs_baseline": {
+    "validation_ensemble_val": {
+      "r@1": {
+        "baseline": 0.1647,
+        "id_gate": -0.0093,
+        "candfilter": 0.0075,
+        "diffreadout": 0.0148
+      },
+      "r@3": {
+        "baseline": 0.3018,
+        "id_gate": 0.0079,
+        "candfilter": 0.0102,
+        "diffreadout": 0.012
+      },
+      "r@5": {
+        "baseline": 0.4106,
+        "id_gate": -0.0046,
+        "candfilter": -0.0011,
+        "diffreadout": 0.0034
+      },
+      "r@10": {
+        "baseline": 0.5267,
+        "id_gate": 0.012,
+        "candfilter": 0.0175,
+        "diffreadout": -0.0013
+      },
+      "r@15": {
+        "baseline": 0.5874,
+        "id_gate": -0.005,
+        "candfilter": -0.0037,
+        "diffreadout": -0.0119
+      }
+    },
+    "test_ensemble": {
+      "r@1": {
+        "baseline": 0.1015,
+        "id_gate": -0.007,
+        "candfilter": 0.0297,
+        "diffreadout": 0.0136
+      },
+      "r@3": {
+        "baseline": 0.2415,
+        "id_gate": 0.0234,
+        "candfilter": 0.0367,
+        "diffreadout": 0.0276
+      },
+      "r@5": {
+        "baseline": 0.3322,
+        "id_gate": 0.0149,
+        "candfilter": 0.0303,
+        "diffreadout": 0.0072
+      },
+      "r@10": {
+        "baseline": 0.4637,
+        "id_gate": -0.006,
+        "candfilter": 0.012,
+        "diffreadout": -0.0045
+      },
+      "r@15": {
+        "baseline": 0.5242,
+        "id_gate": -0.0212,
+        "candfilter": -0.0129,
+        "diffreadout": -0.0052
+      }
+    }
+  },
+  "head_vs_depth": {
+    "id_gate": {
+      "head_delta_mean_k1_k3": -0.0007,
+      "depth_delta_k15": -0.005,
+      "trades_head_for_depth": false
+    },
+    "candfilter": {
+      "head_delta_mean_k1_k3": 0.0088,
+      "depth_delta_k15": -0.0037,
+      "trades_head_for_depth": true
+    },
+    "diffreadout": {
+      "head_delta_mean_k1_k3": 0.0134,
+      "depth_delta_k15": -0.0119,
+      "trades_head_for_depth": true
+    }
+  },
+  "seed_spread_caveat": {
+    "sd_at_15": 0.0107,
+    "source": "results/retraining_spread.json"
+  },
+  "reading": "All three levers -- representation (id-gate), filter objective (train-on-candidates) and filter features (difference-readout) -- lift recall at the head (k=1,3) and lose it at k=15. None lifts the reported budget; each slides along a head-vs-depth frontier rather than raising it. Most single-arm deltas are within the seed sd, so no arm is an individually significant win at k=15, and the consistent shape across three unrelated mechanisms is the real result: at this scale the ranking ceiling is a frontier the generator's rule scores set, and reshaping the filter or the rule id moves along it. A headline gain would need either a multi-seed confirmation of a head lever at the k the product is read at, or a change to what the generator ranks, not how the filter reads it.",
+  "verdict": "no arm selected: head gains at k=1,3 within noise, all lose depth at k=15"
+}
