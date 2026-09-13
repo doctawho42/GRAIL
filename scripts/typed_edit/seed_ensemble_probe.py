@@ -100,6 +100,43 @@ def main() -> int:
     parent = {s: tautkey(s) for s in subs}
     universe = float(sum(len(real[s]) for s in subs))
 
+    # The population is read off the pools, not written here. A hardcoded label is wrong the
+    # first time the same producer is pointed at another pool set, and this one was: the
+    # validation run inherited a line naming the comparison set. Requiring the three to agree
+    # also refuses a join across two populations, which would compare nothing meaningful.
+    def _population_label(blob):
+        pop, split = blob.get("population"), blob.get("split")
+        if isinstance(pop, str):
+            return pop
+        if isinstance(pop, dict):
+            drawn = f"draw of {pop.get('n')} substrates (cap {pop.get('cap')}, seed {pop.get('seed')})"
+            return f"{split} {drawn}" if split else drawn
+        return split or None
+
+    labels = {_population_label(blobs[s]) for s in SEEDS}
+    if len(labels) != 1:
+        print(f"REFUSING: the pools are not one population: {sorted(map(str, labels))}",
+              file=sys.stderr)
+        return 1
+    population = next(iter(labels))
+    identified_from = None
+    if population is None:
+        # A shard of the validation builder records its slice and its checkpoints but not which
+        # population the slice indexes into, so the label is identified rather than assumed:
+        # an artifact that DOES record a population and holds exactly these substrates is the
+        # population. Matching the substrate set is evidence; naming the split by hand, from the
+        # directory these files happen to sit in, would be the assumption this avoids.
+        for candidate in (ROOT / "results/val_pools.json",):
+            if not candidate.exists():
+                continue
+            other = json.loads(candidate.read_text())
+            if set(other.get("pools") or {}) == set(blobs[SEEDS[0]]["pools"]):
+                population = _population_label(other)
+                identified_from = str(candidate.relative_to(ROOT))
+                break
+    if population is None:
+        population = "unrecorded by the pools and matching no artifact that records one"
+
     # The join is only well posed if the seeds agree about WHICH candidates exist. Checked, not
     # assumed: a seed that enumerated a different set would make an average over seeds a different
     # quantity per candidate, and the probe would be comparing pools of different composition.
@@ -235,7 +272,8 @@ def main() -> int:
         "why_the_rank_argument_does_not_close_it": (
             "the fusion consumes competition ranks, so a monotone rescaling of one axis cannot "
             "reorder; an average over seeds is not a rescaling of one axis and does reorder"),
-        "population": "the comparison set, whole-bank arm, as in results/retraining_spread.json",
+        "population": population,
+        "population_recorded_by": identified_from or "the pool files themselves",
         "n_substrates": len(subs), "n_references": int(universe),
         "criterion": "tautomer-aware InChIKey",
         "ranking": "cap 100 by generator, reciprocal rank fusion, parent dropped",

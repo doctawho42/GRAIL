@@ -305,3 +305,31 @@ per substrate, then score with each of the three checkpoints -- so the honest co
 enumeration pass plus three cheap scoring passes, not three full regenerations. A confirmed lift
 would then also carry a deployment cost of three models at inference, which is a release decision
 and not a measurement.
+
+## Seed ensembling: CONFIRMATION FAILED on validation -- lever closed (results/seed_ensemble_probe_validation.json)
+
+Validation pools were built for the three seeds (293 substrates, 655 references, whole bank, same
+release order, `build_val_pools.py` with each seed's checkpoints; the structural gate confirms each
+pool is stamped with the checkpoint of the seed it is taken for and that the three enumerate the
+same candidates). The result does not survive the split selection is allowed to use.
+
+  recall@15        seed0    seed1    seed2   seed mean  seed best | mean_sc  median_sc  6axis_rrf
+    comparison    0.5489   0.5278   0.5353    0.5373    0.5489   |  0.5414   0.5368     0.5519
+    validation    0.4748   0.4794   0.4641    0.4728    0.4794   |  0.4733   0.4794     0.4733
+
+  delta at k=15, against the seed mean / the best seed:
+    arm              comparison            validation
+    mean_scores      +0.0041 / -0.0075     +0.0005 / -0.0061
+    median_scores    -0.0005 / -0.0121     +0.0066 / +0.0000
+    six_axis_rrf     +0.0146 / +0.0030     +0.0005 / -0.0061
+
+On validation the rank-level fusion is flat against the seed mean (+0.0005) and below the best seed
+(-0.0061), and every paired bootstrap spans zero. The decisive evidence is not the size of the
+deltas but which arm wins: six-axis fusion on the comparison set, the median on validation, each
+by about the same small margin. An arm that changes between populations is fitting the population,
+not the mechanism, and the comparison-set gain lived inside the seed lottery it appeared to beat.
+
+So the one lever the rank-invariance argument could not close is closed by measurement instead.
+Nothing is adopted, the release keeps its single model, and the campaign has no open ranking lever
+left: coverage, representation, filter objective, filter features, generator scores, the whole
+calibration family, and now ensembling across training runs.

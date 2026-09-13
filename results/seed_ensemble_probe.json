@@ -2,8 +2,8 @@
  "provenance": {
   "script": "seed_ensemble_probe.py",
   "script_path": "scripts/typed_edit/seed_ensemble_probe.py",
-  "source_sha256": "a3d9697638a0d5b859d6155db45761885572ae45a3bcbac155ab6eb2d3a699de",
-  "git_commit": "1c4924f228df08c007dfd2a2aa05d60b6f91fd1f",
+  "source_sha256": "c1299c74f7bff83cd1e7ab04ca233a4fdb289de25cba240b6f4368567dd30565",
+  "git_commit": "f8c97c1636572ec2e36397df1b267d281efeae06",
   "git_dirty": true
  },
  "inputs": [
@@ -34,7 +34,8 @@
  ],
  "question": "whether averaging the component scores over training seeds reorders the release ranking enough to move recall, which is the one statistical lever the rank-invariance argument does not close",
  "why_the_rank_argument_does_not_close_it": "the fusion consumes competition ranks, so a monotone rescaling of one axis cannot reorder; an average over seeds is not a rescaling of one axis and does reorder",
- "population": "the comparison set, whole-bank arm, as in results/retraining_spread.json",
+ "population": "comparison",
+ "population_recorded_by": "the pool files themselves",
  "n_substrates": 291,
  "n_references": 665,
  "criterion": "tautomer-aware InChIKey",
