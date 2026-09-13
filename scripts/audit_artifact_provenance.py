@@ -99,6 +99,8 @@ PINNED = {
     "results/group_decode.json": f"{TE}/group_decode.py",
     # the three matched training variants the supplement reports, and the frontier they share
     "results/rulegate_survivors_summary.json": f"{TE}/rulegate_survivors_summary.py",
+    # the generator's multiplicity bonus, swept at inference on the deployed model
+    "results/match_scale_sweep.json": f"{TE}/match_scale_sweep.py",
     # what the matching's tautomer canonicalisation costs, measured on the data
     "results/tautomer_near_miss.json": f"{TE}/tautomer_near_miss.py",
     "results/tautomer_budget.json": f"{TE}/tautomer_budget.py",

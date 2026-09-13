@@ -212,6 +212,11 @@ def main() -> int:
               "generator": "artifacts/full5000_implicit (deployed), match_scale overridden at inference",
               "population": {"split": "validation", "n_substrates": len(subs), "n_references": int(U.sum())},
               "bootstrap": {"n": N_BOOT, "seed": SEED}, "cap": CAP, "top_k": args.top_k,
+              # Which of the swept values is the released one, recorded rather than left to a
+              # reader who already knows: every delta below is against this value, and an
+              # artifact whose keys are bare numbers cannot otherwise say which column is the
+              # baseline.
+              "deployed_match_scale": DEPLOYED_MATCH_SCALE,
               "by_match_scale": by_value}
 
     if dep_key in by_value:
