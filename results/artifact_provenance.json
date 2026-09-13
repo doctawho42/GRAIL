@@ -556,6 +556,12 @@
    "status": "current"
   },
   {
+   "artifact": "results/rulegate_survivors_summary.json",
+   "script": "rulegate_survivors_summary.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
    "artifact": "results/scaffold_baseline.json",
    "script": "scaffold_baseline.py",
    "how": "source at a1b1d96ee9c0",
@@ -741,7 +747,7 @@
    "status": "current"
   }
  ],
- "n_pinned": 121,
+ "n_pinned": 122,
  "n_pinned_stale": 1,
  "sweep": {
   "unstamped": 298,
@@ -2804,7 +2810,7 @@
   }
  ],
  "files_below_the_top_level": 202,
- "of_those_named_as_an_input_by_a_pinned_artifact": 65,
+ "of_those_named_as_an_input_by_a_pinned_artifact": 69,
  "named_inputs": [
   "results/aggregation_shards/s0.json",
   "results/aggregation_shards/s1.json",
@@ -2818,6 +2824,10 @@
   "results/aggregation_shards_val/s3.json",
   "results/aggregation_shards_val/s4.json",
   "results/aggregation_shards_val/s5.json",
+  "results/rulegate_cpu/baseline/metrics.json",
+  "results/rulegate_cpu/candfilter/metrics.json",
+  "results/rulegate_cpu/diffreadout/metrics.json",
+  "results/rulegate_cpu/lambda8/metrics.json",
   "results/seedpools/exhaustive_seed0.json",
   "results/seedpools/exhaustive_seed1.json",
   "results/seedpools/exhaustive_seed2.json",
