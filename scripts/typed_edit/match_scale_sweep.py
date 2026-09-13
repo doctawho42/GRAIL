@@ -23,7 +23,9 @@ Selection is on validation, and the deployed value 0.25 must reproduce the regis
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -70,6 +72,10 @@ def main() -> int:
     ap.add_argument("--sample", type=int, default=0, help="0 = all val substrates")
     ap.add_argument("--top-k", type=int, default=7581, help="rules applied; deployed used the whole bank")
     ap.add_argument("--out", default=str(ROOT / "results" / "match_scale_sweep.json"))
+    ap.add_argument("--partials", default=str(ROOT / "results" / "matchscale_partials"),
+                    help="where each value's ranking is persisted as it is computed, so a killed "
+                         "run resumes and so two values can be computed by two processes and "
+                         "assembled by a later invocation of this script")
     args = ap.parse_args()
 
     from rdkit import RDLogger
@@ -99,12 +105,63 @@ def main() -> int:
     idx = rng.integers(0, len(subs), (N_BOOT, len(subs)))
     denom = np.maximum(U[idx].sum(axis=1), 1)
 
+    # A pass over the whole validation population at the whole-bank budget costs about six hours
+    # of single-threaded work per value (results/valpool_shards/v*.json keep the per-substrate
+    # timings this is measured from), so a two-value sweep held entirely in memory loses everything
+    # to one kill at hour eleven. Each value's ranking is persisted as it is computed and reloaded
+    # on restart, which also lets two values be computed by two processes and the artifact be
+    # assembled afterwards BY THIS SCRIPT from its own partials -- assembling it by hand is what
+    # left the previous artifact unstamped.
+    #
+    # The fingerprint is what makes a reused partial safe: a ranking computed against a different
+    # population, rule budget or generator is not this run's ranking, and resuming on it would
+    # produce an artifact whose parts disagree while looking whole.
+    partials = Path(args.partials)
+    partials.mkdir(parents=True, exist_ok=True)
+    fingerprint = {
+        "top_k": args.top_k,
+        "n_substrates": len(subs),
+        "substrates_sha256_16": hashlib.sha256("\n".join(subs).encode()).hexdigest()[:16],
+        "generator_sha256_16": hashlib.sha256(GEN_CKPT.read_bytes()).hexdigest()[:16],
+        "valpools_sha256_16": hashlib.sha256(VALPOOLS.read_bytes()).hexdigest()[:16],
+    }
+
+    def partial_path(value):
+        return partials / f"v{value}.json"
+
+    def load_partial(value):
+        """The rankings already computed for this value, or {} when there is nothing usable."""
+        path = partial_path(value)
+        if not path.exists():
+            return {}
+        try:
+            blob = json.loads(path.read_text())
+        except Exception:
+            return {}
+        if blob.get("fingerprint") != fingerprint:
+            print(f"  v={value}: ignoring {path.name}, it was computed against different inputs",
+                  flush=True)
+            return {}
+        return {s: list(order) for s, order in (blob.get("order") or {}).items() if s in real}
+
+    def save_partial(value, order):
+        path = partial_path(value)
+        tmp = path.with_name(f"{path.name}.{os.getpid()}.tmp")
+        tmp.write_text(json.dumps({"fingerprint": fingerprint, "value": value,
+                                   "complete": len(order) == len(subs), "order": order}))
+        os.replace(tmp, path)
+
     by_value, hitvecs = {}, {}
     for v in args.values:
         gen.match_scale.data.fill_(float(v))
-        order = {}
-        t0 = time.time()
+        order = load_partial(f"{v}")
+        if order:
+            print(f"  v={v}: resuming with {len(order)} of {len(subs)} substrates already ranked",
+                  flush=True)
+        t0, done_at_start = time.time(), len(order)
         for i, s in enumerate(subs, 1):
+            if s in order:
+                continue
             cands = []
             for smiles, gscore, _rid, _sites in gen.generate_scored_with_details(
                     s, top_k=args.top_k, threshold=None, compute_sites=False):
@@ -114,8 +171,15 @@ def main() -> int:
                 cands.append({"smiles": smiles, "generator": float(gscore),
                               "filter": fkey[s][k], "key": k})
             order[s] = deployed_order(cands, parent[s])
+            if len(order) % 25 == 0:
+                save_partial(f"{v}", order)
             if i % 50 == 0:
                 print(f"  v={v}: {i}/{len(subs)} ({time.time()-t0:.0f}s)", flush=True)
+        if len(order) != done_at_start:
+            save_partial(f"{v}", order)
+        if len(order) != len(subs):
+            print(f"REFUSING: v={v} ranked {len(order)} of {len(subs)} substrates", file=sys.stderr)
+            return 1
 
         def hitvec(k):
             return np.array([len(set(order[s][:k]) & real[s]) for s in subs], dtype=float)
