@@ -192,3 +192,51 @@ def test_rule_graph_disk_cache_is_opt_in_and_gives_identical_graphs(tmp_path, mo
     other = factory.build_rule_dict(rules[:20])
     assert len(other) == 20
     assert len(list(tmp_path.glob("*.pt"))) == 2
+
+
+def test_the_released_pair_resolves_as_a_derivative_of_the_measured_pair():
+    """Two tracked checkpoint directories are one release, and the declaration must say which.
+
+    build_released_checkpoint.py writes artifacts/full5000_released from artifacts/full5000_implicit:
+    the generator with its per-rule rows subset to the released bank, the filter copied byte for
+    byte. Until that was declared, `deployed_runs` refused to name a release at all and
+    `released_pair` returned nothing, which was worse: every pool then passed a gate comparing
+    against an empty expectation.
+
+    This holds the declaration to the script it describes, proves the half that can be proved
+    cheaply, and checks that resolution lands on the measured run rather than the derivative.
+    """
+    import sys as _sys
+
+    root = _pathlib.Path(__file__).resolve().parents[2]
+    for extra in (root / "scripts", root / "scripts" / "typed_edit"):
+        if str(extra) not in _sys.path:
+            _sys.path.insert(0, str(extra))
+    import build_released_checkpoint as brc
+
+    import _pools
+
+    base, derived = brc.SRC.parent.name, brc.DST.parent.name
+    assert _pools.DERIVED_FROM == {derived: base}, (
+        "the declared derivation no longer matches the directories build_released_checkpoint "
+        f"writes between: declared {_pools.DERIVED_FROM}, producer {derived} from {base}")
+
+    tracked = _pools._tracked_checkpoints()
+    runs = {run for by_run in tracked.values() for run in by_run}
+    if not {base, derived} <= runs:
+        _pytest.skip("both pairs are not tracked in this checkout, so there is nothing to resolve")
+
+    # The filter half of the claim is byte-for-byte copying, so it is checkable here.
+    import hashlib
+
+    def digest(path):
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+
+    assert digest(brc.SRC / "filter.pt") == digest(brc.DST / "filter.pt"), (
+        "the released filter is declared a copy of the measured one and is not")
+    # The generator half is a row subset, so the two files must NOT be identical; the parity of
+    # their scores on the kept rules is asserted by the test above.
+    assert digest(brc.SRC / "generator.pt") != digest(brc.DST / "generator.pt")
+
+    assert _pools.released_runs() == {"generator": base, "filter": base}
+    assert _pools.derivative_runs() == {derived: base}

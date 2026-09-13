@@ -41,30 +41,14 @@ def deployed_runs() -> dict:
     comparison is read from matched the tracked pair rather than the named one. Reading the answer
     out of `git ls-files` makes the gate follow the release instead of a recollection of it, so
     changing what is released changes what every check here demands, in one place.
-    """
-    import subprocess
 
-    found = {}
-    try:
-        tracked = subprocess.run(["git", "ls-files", "artifacts/"], cwd=ROOT,
-                                 capture_output=True, text=True, timeout=30).stdout.splitlines()
-    except Exception:
-        tracked = []
-    for rel in tracked:
-        parts = rel.split("/")
-        if len(parts) >= 4 and parts[-2] == "checkpoints" and parts[-1].endswith(".pt"):
-            stage = parts[-1][:-3]
-            if stage in ("generator", "filter"):
-                found.setdefault(stage, set()).add(parts[1])
-    # Exactly one checkpoint per stage, or there is no answer to give. Taking the first of several
-    # would make the release depend on the order git happens to list files in, and this whole
-    # question arose because a release was inferred rather than read.
-    ambiguous = {s: sorted(runs) for s, runs in found.items() if len(runs) > 1}
-    if ambiguous:
-        raise SystemExit(
-            "the repository tracks more than one checkpoint for a stage, so what it releases is "
-            f"not determined: {ambiguous}. Track one per stage.")
-    return {s: sorted(runs)[0] for s, runs in found.items()}
+    Two tracked directories are not necessarily two releases: the deploy's pair is built from the
+    measured pair, so `_pools` resolves a declared derivative to its base and still raises on an
+    ambiguity that is real. One implementation answers this for every caller.
+    """
+    from _pools import released_runs
+
+    return released_runs()
 
 
 DEPLOYED_BY_STAGE = deployed_runs()
