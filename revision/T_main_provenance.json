@@ -1,0 +1,570 @@
+{
+ "generated_by": "revision/phase1_tmain.py",
+ "cap": 100,
+ "budgets": [
+  1,
+  3,
+  5,
+  8,
+  10,
+  15,
+  20,
+  30,
+  50
+ ],
+ "n_boot": 10000,
+ "seed": 0,
+ "mechanics_copied_from": "scripts/typed_edit/deployment_table.py",
+ "arms": {
+  "comparison291": {
+   "whole bank": "results/widepools_implicit/w*.json",
+   "trained budget": "results/widepools_k30/all.json",
+   "metatox": "results/metatox_smirks_preds.json",
+   "sygma": "results/sygma_fulltest_predictions.json",
+   "metapredictor": "artifacts/tier2_1170/metapredictor_preds.json",
+   "biotransformer": "results/biotransformer_allhuman_one_step_preds.json",
+   "gloryx": "results/gloryx_service_preds.json"
+  },
+  "evaluated1170": {
+   "whole bank": "results/widepools_fulltest/w*.json",
+   "trained budget": "results/widepools_k30_fulltest/w*.json",
+   "sygma": "results/sygma_fulltest_predictions.json",
+   "metapredictor": "artifacts/tier2_1170/metapredictor_preds.json",
+   "biotransformer": "results/biotransformer_fulltest_preds.json"
+  }
+ },
+ "cells_absent_by_construction": {
+  "evaluated1170": [
+   "metatox",
+   "gloryx"
+  ],
+  "why": "no prediction file covers this population; Phase 2 produces them"
+ },
+ "keying": [
+  {
+   "population": "comparison291",
+   "criterion": "exact",
+   "system": "whole bank",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "exact",
+   "system": "trained budget",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "exact",
+   "system": "metatox",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "exact",
+   "system": "sygma",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "exact",
+   "system": "metapredictor",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "exact",
+   "system": "biotransformer",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "exact",
+   "system": "gloryx",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "canonical",
+   "system": "whole bank",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "canonical",
+   "system": "trained budget",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "canonical",
+   "system": "metatox",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "canonical",
+   "system": "sygma",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "canonical",
+   "system": "metapredictor",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "canonical",
+   "system": "biotransformer",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "canonical",
+   "system": "gloryx",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "inchikey",
+   "system": "whole bank",
+   "fallbacks": 25
+  },
+  {
+   "population": "comparison291",
+   "criterion": "inchikey",
+   "system": "trained budget",
+   "fallbacks": 19
+  },
+  {
+   "population": "comparison291",
+   "criterion": "inchikey",
+   "system": "metatox",
+   "fallbacks": 45
+  },
+  {
+   "population": "comparison291",
+   "criterion": "inchikey",
+   "system": "sygma",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "inchikey",
+   "system": "metapredictor",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "inchikey",
+   "system": "biotransformer",
+   "fallbacks": 12
+  },
+  {
+   "population": "comparison291",
+   "criterion": "inchikey",
+   "system": "gloryx",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "inchi_no_stereo",
+   "system": "whole bank",
+   "fallbacks": 17
+  },
+  {
+   "population": "comparison291",
+   "criterion": "inchi_no_stereo",
+   "system": "trained budget",
+   "fallbacks": 16
+  },
+  {
+   "population": "comparison291",
+   "criterion": "inchi_no_stereo",
+   "system": "metatox",
+   "fallbacks": 39
+  },
+  {
+   "population": "comparison291",
+   "criterion": "inchi_no_stereo",
+   "system": "sygma",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "inchi_no_stereo",
+   "system": "metapredictor",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "inchi_no_stereo",
+   "system": "biotransformer",
+   "fallbacks": 12
+  },
+  {
+   "population": "comparison291",
+   "criterion": "inchi_no_stereo",
+   "system": "gloryx",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "tanimoto1",
+   "system": "whole bank",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "tanimoto1",
+   "system": "trained budget",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "tanimoto1",
+   "system": "metatox",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "tanimoto1",
+   "system": "sygma",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "tanimoto1",
+   "system": "metapredictor",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "tanimoto1",
+   "system": "biotransformer",
+   "fallbacks": 12
+  },
+  {
+   "population": "comparison291",
+   "criterion": "tanimoto1",
+   "system": "gloryx",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "inchikey_tautomer",
+   "system": "whole bank",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "inchikey_tautomer",
+   "system": "trained budget",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "inchikey_tautomer",
+   "system": "metatox",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "inchikey_tautomer",
+   "system": "sygma",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "inchikey_tautomer",
+   "system": "metapredictor",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "inchikey_tautomer",
+   "system": "biotransformer",
+   "fallbacks": 12
+  },
+  {
+   "population": "comparison291",
+   "criterion": "inchikey_tautomer",
+   "system": "gloryx",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "exact",
+   "system": "whole bank",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "exact",
+   "system": "trained budget",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "exact",
+   "system": "sygma",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "exact",
+   "system": "metapredictor",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "exact",
+   "system": "biotransformer",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "canonical",
+   "system": "whole bank",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "canonical",
+   "system": "trained budget",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "canonical",
+   "system": "sygma",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "canonical",
+   "system": "metapredictor",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "canonical",
+   "system": "biotransformer",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "inchikey",
+   "system": "whole bank",
+   "fallbacks": 92
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "inchikey",
+   "system": "trained budget",
+   "fallbacks": 62
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "inchikey",
+   "system": "sygma",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "inchikey",
+   "system": "metapredictor",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "inchikey",
+   "system": "biotransformer",
+   "fallbacks": 87
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "inchi_no_stereo",
+   "system": "whole bank",
+   "fallbacks": 72
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "inchi_no_stereo",
+   "system": "trained budget",
+   "fallbacks": 51
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "inchi_no_stereo",
+   "system": "sygma",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "inchi_no_stereo",
+   "system": "metapredictor",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "inchi_no_stereo",
+   "system": "biotransformer",
+   "fallbacks": 84
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "tanimoto1",
+   "system": "whole bank",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "tanimoto1",
+   "system": "trained budget",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "tanimoto1",
+   "system": "sygma",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "tanimoto1",
+   "system": "metapredictor",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "tanimoto1",
+   "system": "biotransformer",
+   "fallbacks": 87
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "inchikey_tautomer",
+   "system": "whole bank",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "inchikey_tautomer",
+   "system": "trained budget",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "inchikey_tautomer",
+   "system": "sygma",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "inchikey_tautomer",
+   "system": "metapredictor",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "inchikey_tautomer",
+   "system": "biotransformer",
+   "fallbacks": 87
+  }
+ ],
+ "reference_keying": [
+  {
+   "population": "comparison291",
+   "criterion": "exact",
+   "fallbacks": 0,
+   "fallback_inputs": []
+  },
+  {
+   "population": "comparison291",
+   "criterion": "canonical",
+   "fallbacks": 0,
+   "fallback_inputs": []
+  },
+  {
+   "population": "comparison291",
+   "criterion": "inchikey",
+   "fallbacks": 0,
+   "fallback_inputs": []
+  },
+  {
+   "population": "comparison291",
+   "criterion": "inchi_no_stereo",
+   "fallbacks": 0,
+   "fallback_inputs": []
+  },
+  {
+   "population": "comparison291",
+   "criterion": "tanimoto1",
+   "fallbacks": 0,
+   "fallback_inputs": []
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "exact",
+   "fallbacks": 0,
+   "fallback_inputs": []
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "canonical",
+   "fallbacks": 0,
+   "fallback_inputs": []
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "inchikey",
+   "fallbacks": 0,
+   "fallback_inputs": []
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "inchi_no_stereo",
+   "fallbacks": 0,
+   "fallback_inputs": []
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "tanimoto1",
+   "fallbacks": 0,
+   "fallback_inputs": []
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "inchikey_tautomer",
+   "fallbacks": 0,
+   "fallback_inputs": []
+  }
+ ],
+ "pool_files": {
+  "comparison291": [
+   "results/widepools_implicit/w0.json",
+   "results/widepools_implicit/w1.json",
+   "results/widepools_implicit/w2.json",
+   "results/widepools_implicit/w3.json",
+   "results/widepools_implicit/w4.json",
+   "results/widepools_implicit/w5.json",
+   "results/widepools_k30/all.json"
+  ],
+  "evaluated1170": [
+   "results/widepools_fulltest/w0.json",
+   "results/widepools_fulltest/w1.json",
+   "results/widepools_fulltest/w2.json",
+   "results/widepools_fulltest/w3.json",
+   "results/widepools_fulltest/w4.json",
+   "results/widepools_fulltest/w5.json",
+   "results/widepools_k30_fulltest/w0.json",
+   "results/widepools_k30_fulltest/w1.json",
+   "results/widepools_k30_fulltest/w2.json",
+   "results/widepools_k30_fulltest/w3.json",
+   "results/widepools_k30_fulltest/w4.json",
+   "results/widepools_k30_fulltest/w5.json"
+  ]
+ }
+}
