@@ -256,6 +256,60 @@ def arm_key_lists(spec, subs, ordered_for_arm, parent, criterion):
     return keys_by_sub, rep, spec[1]
 
 
+def coverage_gaps(arms=None, members=None, populations=None):
+    """Declared list arms whose file exists but does not cover its population.
+
+    The invariant this table rests on. `arm_key_lists` reads a list arm with `preds.get(s, [])`,
+    so a substrate the file lacks arrives as an empty list and is scored as a miss rather than as
+    absent -- the comparator is understated and nothing says so. Every arm declared here covers
+    its population, and the GLORYx column over the evaluated set came within one edit of breaking
+    it: the service run's output holds only the substrates the published run lacked, so naming
+    that file directly would have understated GLORYx on the other 291.
+
+    An arm whose file is missing entirely is deliberately not a gap. `arm_key_lists` returns None
+    and the arm yields no cells at all, which is the right treatment of a comparator that was
+    never run; demanding coverage from it would demand a merge for something never attempted. The
+    dangerous case is the file that exists and is short, because it looks like data.
+
+    Pool arms are not checked this way: they are assembled from shards and indexed directly, so a
+    missing substrate raises rather than becoming an empty list.
+
+    `members` lets a caller supply each population's substrates; by default they are resolved
+    through this module's own accessor, because three comparator files here carry 291 keys and one
+    of them is a different 291, so a count is not a population.
+    """
+    arms = ARMS if arms is None else arms
+    populations = tuple(arms) if populations is None else populations
+    out = []
+    for population in populations:
+        if population not in arms:
+            continue
+        if members is not None and population in members:
+            subs = set(members[population])
+        else:
+            subs = set(_population(population)[0])
+        for arm, spec in arms[population].items():
+            if spec[0] != "list":
+                continue
+            path = ROOT / spec[1]
+            if not path.exists():
+                continue
+            blob = json.loads(path.read_text())
+            preds = blob[spec[2]] if spec[2] else blob
+            if not isinstance(preds, dict):
+                out.append({"population": population, "arm": arm, "file": spec[1],
+                            "n_missing": len(subs), "n_covered": 0,
+                            "first_missing": sorted(subs)[0] if subs else None,
+                            "why": "the declared accessor did not yield a substrate map"})
+                continue
+            missing = subs - set(preds)
+            if missing:
+                out.append({"population": population, "arm": arm, "file": spec[1],
+                            "n_missing": len(missing), "n_covered": len(subs) - len(missing),
+                            "first_missing": sorted(missing)[0]})
+    return out
+
+
 def _population(name):
     """Substrates, per-substrate reference SMILES, and the pool sources for one population."""
     truth = json.loads((ROOT / "results" / "test_references.json").read_text())
