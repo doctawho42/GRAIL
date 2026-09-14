@@ -1,0 +1,13 @@
+# Stored byte for byte, no newline normalisation.
+#
+# This directory is a submission: the files are handed to an external service and the join back to
+# ground truth is keyed on their contents, so what is committed should be exactly what the
+# producers wrote. Without this, git normalised the CRLF that csv.writer emits down to LF, and the
+# working tree went dirty the moment anyone re-ran the producer -- the committed deliverable was
+# not reproducible from its own producer.
+#
+# The two writers disagree on line endings and that is fine once nothing is rewritten:
+# substrates_to_submit.csv comes from revision/phase2_metatox_submission.py, which sets
+# lineterminator="\n"; substrate_map.csv comes from the repository's shared
+# scripts/make_metatox_input.py, which uses csv.writer's CRLF default and is not changed for this.
+* -text

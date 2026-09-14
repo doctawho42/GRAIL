@@ -84,11 +84,14 @@ def write_substrate_csv(path) -> Path:
     """A one-column CSV the existing builder can read, so the submission format cannot drift."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    # Newline "\n" rather than "": csv.writer terminates rows with CRLF by default, git stores the
-    # file normalised to LF, and the working tree then differs from the commit the moment anyone
-    # re-runs this. A producer whose own output makes the tree dirty is not rerunnable.
+    # LF, so the producer can reproduce its own committed output: git stores the file normalised to
+    # LF, and a CRLF-terminated one makes the working tree dirty the moment anyone re-runs this.
+    # Both settings are needed and only one was here before. `newline=""` (or "\n") governs whether
+    # Python translates newlines on write, but csv.writer emits its own terminator, and that
+    # defaults to "\r\n" -- so the carriage return came from the writer and passed straight
+    # through. Setting only the open() newline left the output unchanged.
     with open(path, "w", newline="\n") as fh:
-        w = csv.DictWriter(fh, fieldnames=["substrate"])
+        w = csv.DictWriter(fh, fieldnames=["substrate"], lineterminator="\n")
         w.writeheader()
         for s in to_submit():
             w.writerow({"substrate": s})
