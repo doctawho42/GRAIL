@@ -24,6 +24,7 @@ except Exception:
     _som_reacting_atoms = None
 from ..utils.preparation import MolFrame, _normalize_smiles_cached, generate_vectors, safe_run_reactants
 from ..utils.transform import EDGE_DIM, FINGERPRINT_DIM, SINGLE_NODE_DIM, from_rdmol, from_rule
+from .reaction_types import canonical_type
 
 
 def _pad_dims(values: Sequence[int], size: int, default: int) -> List[int]:
@@ -87,6 +88,7 @@ class RuleParse(nn.Module):
         molpath_cutoff: Optional[int] = None,
         molpath_y: Optional[float] = None,
         id_gate_lambda: float = 0.0,
+        type_shared_id: bool = False,
     ) -> None:
         super().__init__()
         del use_molpath, molpath_hidden, molpath_cutoff, molpath_y
@@ -114,6 +116,37 @@ class RuleParse(nn.Module):
                              torch.zeros(max(len(self.rule_keys), 1), dtype=torch.float32),
                              persistent=False)
         self.id_embedding = nn.Embedding(max(len(self.rule_keys), 1), embedding_dim)
+        # Queue point C: a second identity term shared by every rule of one reaction type, so a
+        # template the support gate suppresses can borrow what its type has learned elsewhere.
+        #
+        # Two kinds of rule are deliberately given NO type term, both by routing them to a
+        # padding row that stays zero and never accumulates gradient. A rule whose type is unique
+        # to it would receive a second per-rule identity, which is capacity in exactly the place
+        # the gate exists to remove; and an untypeable rule would be pooled with every other
+        # untypeable rule, which shares an index rather than a chemistry. On this bank that leaves
+        # the term acting on the rules that genuinely share a type with another.
+        self.type_embedding = None
+        self.n_shared_types = 0
+        if type_shared_id and self.rule_keys:
+            types = []
+            for rule in self.rule_keys:
+                try:
+                    kind = canonical_type(rule)
+                except Exception:
+                    kind = None
+                types.append(None if kind is None else str(kind))
+            counts: Dict[str, int] = {}
+            for kind in types:
+                if kind is not None:
+                    counts[kind] = counts.get(kind, 0) + 1
+            shared = sorted(k for k, c in counts.items() if c > 1)
+            lookup = {k: i for i, k in enumerate(shared)}
+            pad = len(shared)
+            index = [lookup.get(kind, pad) if kind is not None else pad for kind in types]
+            self.n_shared_types = len(shared)
+            self.type_embedding = nn.Embedding(pad + 1, embedding_dim, padding_idx=pad)
+            self.register_buffer("type_index", torch.tensor(index, dtype=torch.long),
+                                 persistent=False)
         self.meta_encoder = nn.Sequential(
             nn.Linear(6, embedding_dim),
             nn.GELU(),
@@ -135,6 +168,10 @@ class RuleParse(nn.Module):
             n = self.rule_support[: encoded.size(0)].to(device)
             gate = (n / (n + self.id_gate_lambda)).unsqueeze(1)
             ids = gate * ids
+        if self.type_embedding is not None:
+            # Added to the gated id, not multiplied into it: a suppressed rule keeps whatever its
+            # type has learned even when its own lookup is gated to nothing.
+            ids = ids + self.type_embedding(self.type_index.to(device)[: encoded.size(0)])
         return self.norm(encoded + ids + meta)
 
 
@@ -272,9 +309,11 @@ class Generator(GGenerator):
         applicability_penalty: float = 7.5,
         candidate_aggregation: Literal["max", "mean", "noisy_or", "hybrid"] = "noisy_or",
         id_gate_lambda: float = 0.0,
+        type_shared_id: bool = False,
     ) -> None:
         super().__init__()
         self.id_gate_lambda = float(id_gate_lambda)
+        self.type_shared_id = bool(type_shared_id)
         self._prime_rule_graph_cache(rule_dict)
         self.rules = {rule: graph for rule, graph in zip(rule_dict.keys(), self._get_rule_graphs(list(rule_dict.keys())))}
         self.rule_names = list(self.rules.keys())
@@ -299,6 +338,7 @@ class Generator(GGenerator):
             molpath_cutoff=molpath_cutoff,
             molpath_y=molpath_y,
             id_gate_lambda=id_gate_lambda,
+            type_shared_id=type_shared_id,
         )
         # Inference cache for the encoded rule bank (see _rule_embeddings). The rule graphs
         # and encoder weights are fixed during inference, so the ~7.5k-rule encode is done

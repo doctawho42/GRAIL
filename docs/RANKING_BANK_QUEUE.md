@@ -333,3 +333,39 @@ So the one lever the rank-invariance argument could not close is closed by measu
 Nothing is adopted, the release keeps its single model, and the campaign has no open ranking lever
 left: coverage, representation, filter objective, filter features, generator scores, the whole
 calibration family, and now ensembling across training runs.
+
+## Point C (type-shared rule id): IMPLEMENTED AND RUNNING, with a pre-check the panel did not have
+
+The mechanism, as registered: form the rule identity as `g(n_r) * template_id_r + type_id_{type(r)}`
+so a template the support gate suppresses borrows the pooled identity of templates doing the same
+kind of chemistry. `g` is the gate already shipped as `id_gate_lambda`, so the matched base is the
+lambda8 arm and NOT the plain baseline: `configs/rulegate/rulegate_cpu_typeid.yaml` differs from
+`rulegate_cpu_lambda8.yaml` in the arm name and one flag, `generator.type_shared_id: true`.
+
+Two rules get no type term at all, both routed to a padding row that stays zero. A type carried by
+a single rule would hand that rule a second per-rule identity, which is capacity in the one place
+the gate exists to remove it; and an untypeable rule pooled with every other untypeable rule shares
+an index rather than a chemistry (the `None` bucket is the largest single "type" in the bank at 341
+rules). Without those exclusions the arm would test "more id capacity" rather than the registered
+mechanism.
+
+The pre-check, measured before spending the compute, over 4,787 cached training label vectors on
+the full bank. `canonical_type` gives 4,418 distinct types over 7,581 rules, and 3,610 of those
+types carry exactly one rule, so 47.6% of rules have a type unique to them. Crossed with support:
+
+  positives in training   rules   type shared with another rule   untypeable
+    0                      4271            47.2%                     4.1%
+    1-2                    1910            34.9%                     1.9%
+    3-10                    734            63.6%                     6.3%
+    >10                     666            71.9%                    12.3%
+
+Sharing is ANTI-correlated with rarity. The pooled identity is available mostly to rules that
+already carry their own evidence (71.9% at support above ten) and unavailable to about two thirds
+of the rules at support one or two, which are the rules the gate suppresses and which C exists to
+help. It is not vacuous -- at zero support the gate zeroes the template id entirely, so the type
+term is the only identity those rules have, and it reaches 47.2% of them -- but the panel's premise
+that a rare template can borrow its type is true for a minority of the rare templates on this bank.
+
+Falsification stands as registered: C fails if the type term does not recover the depth loss
+without giving back the head gain, read against the lambda8 arm on validation
+(id_gate: r@1 -0.0093, r@3 +0.0079, r@15 -0.0050 against the matched baseline).

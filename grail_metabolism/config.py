@@ -93,6 +93,11 @@ class GeneratorConfig:
     # (graph + meta) and a frequent one keeps its lookup. id_gate_lambda = 0.0 is the deployed
     # model exactly (gate = 1 everywhere); a positive value is the intervention.
     id_gate_lambda: float = 0.0
+    # Queue point C: add the rule's reaction-type embedding to its identity, so a template the
+    # support gate suppresses can borrow the pooled identity of templates that do the same kind of
+    # chemistry. Only types carried by more than one rule contribute; a type unique to one rule
+    # would be a second per-rule identity, which is capacity where the gate is trying to remove it.
+    type_shared_id: bool = False
     # Generator training mode. "supervised" = multi-label rule classification (default).
     # "gflownet" = after supervised warm-start, train the generator as a forward flow
     # policy over the metabolic tree (Trajectory Balance), so terminal sampling is

@@ -1244,6 +1244,68 @@ def test_the_hyperparameter_table_names_the_runs_the_repository_ships():
             f"ships comes from {run!r}")
 
 
+def test_the_type_shared_id_is_off_by_default_and_pools_only_shared_types():
+    """Queue point C's identity term, held to the two properties that make it that term.
+
+    It has to be invisible unless asked for. Every measurement here and the deployed model build a
+    generator through this one class, so an identity term that defaulted to on would change all of
+    them at once and none of the checkpoints would say so.
+
+    And it has to pool only what is actually shared. A type carried by a single rule would hand
+    that rule a second per-rule identity, which is capacity in the one place the support gate
+    exists to remove it, and an untypeable rule pooled with every other untypeable rule shares an
+    index rather than a chemistry. Both are routed to a padding row that stays zero, so the term
+    acts only where a type is genuinely held in common.
+    """
+    from collections import Counter
+    from pathlib import Path
+
+    import torch
+
+    from grail_metabolism.config import GeneratorConfig
+    from grail_metabolism.model.reaction_types import canonical_type
+    from grail_metabolism.workflows.factory import build_generator
+
+    bank = (Path(__file__).resolve().parents[2]
+            / "grail_metabolism" / "resources" / "extended_smirks_released.txt")
+    rules = [line.strip() for line in bank.read_text().splitlines() if line.strip()][:60]
+
+    def make(flag):
+        config = GeneratorConfig()
+        config.id_gate_lambda = 8.0
+        config.type_shared_id = flag
+        torch.manual_seed(0)
+        return build_generator(config, rules)
+
+    off, on = make(False), make(True)
+    assert off.parser.type_embedding is None, "the type term must be off unless it is asked for"
+
+    types = []
+    for rule in rules:
+        try:
+            kind = canonical_type(rule)
+        except Exception:
+            kind = None
+        types.append(None if kind is None else str(kind))
+    counts = Counter(k for k in types if k is not None)
+
+    pad = on.parser.n_shared_types
+    assert on.parser.type_embedding.padding_idx == pad
+    assert torch.equal(on.parser.type_embedding.weight[pad],
+                       torch.zeros_like(on.parser.type_embedding.weight[pad]))
+    index = on.parser.type_index
+    for i, kind in enumerate(types):
+        shared = kind is not None and counts[kind] > 1
+        assert (int(index[i]) != pad) == shared, (
+            f"rule {i} has type {kind!r} carried by "
+            f"{0 if kind is None else counts[kind]} rules and was routed "
+            f"{'to a shared id' if int(index[i]) != pad else 'to the zero padding row'}")
+
+    with torch.no_grad():
+        assert (off.parser() - on.parser()).abs().sum() > 0, (
+            "with shared types present the term has to change the rule representation")
+
+
 def test_every_producer_partitions_the_bank_on_the_same_mined_file():
     """Two cuts of the mined half exist and the counts diverge by ten templates.
 

@@ -114,6 +114,7 @@ def build_generator(config: GeneratorConfig, rules: list[str]) -> Generator:
         applicability_penalty=config.applicability_penalty,
         candidate_aggregation=config.candidate_aggregation,
         id_gate_lambda=getattr(config, "id_gate_lambda", 0.0),
+        type_shared_id=getattr(config, "type_shared_id", False),
     )
 
 
