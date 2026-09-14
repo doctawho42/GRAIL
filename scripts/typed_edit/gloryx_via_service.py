@@ -133,11 +133,47 @@ def collect(job_id: str, n_entries: int) -> dict:
             for sub, rows in out.items()}
 
 
-def population() -> list:
-    """The same substrates the other comparators are read on."""
-    from vs_metatox import population as pop
-    subs, _, _ = pop()
-    return subs
+POPULATIONS = ("comparison291", "evaluated1170")
+
+
+def population(name: str = "comparison291") -> list:
+    """The substrates of one named population, in a deterministic order.
+
+    The comparison set is taken from the accessor every other comparator is read through, so this
+    column and theirs cannot drift apart. The evaluated set is the substrates the corpus holds
+    references for, which is the denominator the re-tabulation uses.
+
+    An unknown name raises rather than falling back to a default: a population chosen by accident
+    is the defect that makes two tables incomparable, and silently defaulting hides it.
+    """
+    if name == "comparison291":
+        from vs_metatox import population as pop
+        subs, _, _ = pop()
+        return subs
+    if name == "evaluated1170":
+        truth = json.loads((ROOT / "results" / "test_references.json").read_text())
+        return sorted(truth)
+    raise ValueError(f"unknown population {name!r}; known populations are "
+                     f"{', '.join(POPULATIONS)}")
+
+
+def pending(subs: list, held_path) -> list:
+    """Those substrates an existing output does not already carry, in the order given.
+
+    Phase 2 widens this column from the comparison set to the evaluated set, and the already
+    published run covers the narrower one. Asking the operator's service again for molecules whose
+    answers are already on disk is a cost to somebody else's machine for no information, so the
+    held set is subtracted. A missing or unreadable output means nothing is held, which is the safe
+    direction: it submits more rather than silently skipping molecules.
+    """
+    held: set = set()
+    path = Path(held_path)
+    if path.exists():
+        blob = json.loads(path.read_text())
+        inner = blob.get("predictions") if isinstance(blob, dict) else None
+        held = set(inner if isinstance(inner, dict)
+                   else (blob if isinstance(blob, dict) else ()))
+    return [s for s in subs if s not in held]
 
 
 def main() -> int:
@@ -145,11 +181,26 @@ def main() -> int:
     ap.add_argument("--smoke", action="store_true",
                     help="one molecule from the tool's own documentation, to check the flow")
     ap.add_argument("--limit", type=int, default=0)
-    ap.add_argument("--out", default=str(ROOT / "results" / "gloryx_service_preds.json"))
-    ap.add_argument("--checkpoint",
-                    default=str(ROOT / "results" / ".gloryx_service_partial.json"),
+    ap.add_argument("--population", choices=POPULATIONS, default="comparison291",
+                    help="which substrates to run; the wider one is what Phase 2 asks for")
+    ap.add_argument("--out", default=None,
+                    help="default depends on the population, so the published comparison-set "
+                         "artifact cannot be overwritten by a run over the wider one")
+    ap.add_argument("--checkpoint", default=None,
                     help="written after every chunk; a re-run resumes from it")
+    ap.add_argument("--skip-held", default=None,
+                    help="an existing output whose substrates are not asked for again; defaults "
+                         "to the published comparison-set run when the population is the wider one")
     args = ap.parse_args()
+
+    # Per population, so neither the output nor the checkpoint of one run can land on another's.
+    suffix = "" if args.population == "comparison291" else "_1170"
+    if args.out is None:
+        args.out = str(ROOT / "results" / f"gloryx_service_preds{suffix}.json")
+    if args.checkpoint is None:
+        args.checkpoint = str(ROOT / "results" / f".gloryx_service_partial{suffix}.json")
+    if args.skip_held is None and args.population == "evaluated1170":
+        args.skip_held = str(ROOT / "results" / "gloryx_service_preds.json")
 
     if args.smoke:
         jid = submit(["CC(=O)Nc1ccc(O)cc1"])
@@ -159,10 +210,13 @@ def main() -> int:
               f"{len(flat)} substrate")
         return 0
 
-    subs = population()
+    requested = population(args.population)
+    subs = pending(requested, args.skip_held) if args.skip_held else list(requested)
+    held_elsewhere = len(requested) - len(subs)
     if args.limit:
         subs = subs[:args.limit]
-    print(f"{len(subs)} substrates, chunks of {CHUNK}", flush=True)
+    print(f"{args.population}: {len(requested)} substrates, {held_elsewhere} already held in "
+          f"{args.skip_held or 'nothing'}, {len(subs)} to submit, chunks of {CHUNK}", flush=True)
 
     module = _get(f"{BASE}/modules/{MODULE}")
 
