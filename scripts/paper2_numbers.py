@@ -2148,17 +2148,37 @@ def build():
     # than the filter's or the rule id's. Curbing the multiplicity bonus to zero is compared to the
     # deployed value on validation; the run was trimmed after the decisive pair, so these are point
     # estimates the producer printed, read against the seed spread rather than a per-run interval.
+    # The sweep is now produced rather than transcribed, so these come from the producer's own
+    # schema: the deltas carry paired bootstrap intervals, and which column is the baseline is
+    # recorded in the artifact instead of assumed here.
     _ms = art("match_scale_sweep.json")
-    _curb = _ms["by_match_scale"]["0.0"]["recall"]
-    _dep = _ms["by_match_scale"]["0.25"]["recall"]
+    _dep_key = str(_ms["deployed_match_scale"])
+    _curb_key = next(k for k in _ms["by_match_scale"] if k != _dep_key)
+    _curb = _ms["by_match_scale"][_curb_key]["recall"]
+    _dep = _ms["by_match_scale"][_dep_key]["recall"]
+    _vs = _ms["by_match_scale"][_curb_key]["vs_deployed"]
     for _k in ("1", "5", "15"):
         n[f"matchscale.curb{_k}"] = _curb[_k]
         n[f"matchscale.dep{_k}"] = _dep[_k]
-        n[f"matchscale.diff{_k}"] = _ms["curb_minus_deployed"][_k]
+        n[f"matchscale.diff{_k}"] = _vs[_k]["delta"]
+        n[f"matchscale.lo{_k}"] = _vs[_k]["ci95"][0]
+        n[f"matchscale.hi{_k}"] = _vs[_k]["ci95"][1]
     n["matchscale.deployed"] = _ms["deployed_match_scale"]
-    n["matchscale.registered"] = _ms["reproduces_deployed_arm"]["registered_recall15"]
-    n["matchscale.reprohere"] = _ms["reproduces_deployed_arm"]["deployed_recall15_here"]
-    n["matchscale.reprodiff"] = _ms["reproduces_deployed_arm"]["difference"]
+    n["matchscale.curbvalue"] = float(_curb_key)
+    # The regenerated deployed arm against the registered validation arm it has to reproduce. The
+    # registered value is read from that arm's own artifact, not from the producer's mismatch list,
+    # whose entries exist only for the budgets that disagree.
+    _regarm = art("aggregation_ablation_validation.json")["by_rule"]["noisy_or"]["recall"]
+    n["matchscale.registered"] = _regarm["15"]
+    n["matchscale.reprohere"] = _dep["15"]
+    n["matchscale.reprodiff"] = round(_dep["15"] - float(_regarm["15"]), 4)
+    # Where the two arms agree exactly and where they do not: the whole disagreement is one
+    # reference of the population at three consecutive budgets, which is what makes it a single
+    # structure's rank shifting rather than a different measurement.
+    n["matchscale.refs"] = _ms["population"]["n_references"]
+    n["matchscale.budgets"] = len([_k for _k in _regarm if _k in _dep])
+    n["matchscale.agreebudgets"] = len([_k for _k, _v in _regarm.items()
+                                        if _k in _dep and abs(_dep[_k] - float(_v)) < 1e-9])
 
     # The three matched arms behind the head-versus-depth frontier the match_scale subsection
     # refers to. They are trained at a matched subsample scale, not at the deployed 5,000, and

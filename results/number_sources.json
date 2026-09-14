@@ -11,17 +11,15 @@
   "results/h12_verdict_validation.json <- scripts/typed_edit/h12_verdict.py",
   "results/h14_verdict.json <- scripts/typed_edit/h14_verdict.py",
   "results/h8_verdict.json <- scripts/typed_edit/h8_verdict.py",
+  "results/match_scale_sweep.json <- scripts/typed_edit/match_scale_sweep.py",
   "results/site_agreement.json <- scripts/typed_edit/site_agreement.py"
  ],
  "records_none_but_established_by_reproduction": [],
  "n_established_by_reproduction": 0,
- "n_recording_no_checkpoint": 8,
+ "n_recording_no_checkpoint": 9,
  "exempt": 3,
- "unpinned": [
-  "results/match_scale_sweep.json"
- ],
+ "unpinned": [],
  "unstamped": [
-  "results/match_scale_sweep.json",
   "results/uspto_type_overlap.json"
  ],
  "verifiable_by_inference_only": [
@@ -35,8 +33,8 @@
   "results/scheduled_release_comparison.json",
   "results/scored_predictions.json"
  ],
- "n_unpinned": 1,
- "n_unstamped": 2,
+ "n_unpinned": 0,
+ "n_unstamped": 1,
  "n_verifiable_by_inference_only": 9,
  "method": "paper2_numbers.build() is run with art() instrumented, so the count is of artifacts actually opened rather than of matches in the source",
  "artifacts": [
@@ -528,11 +526,11 @@
   },
   {
    "artifact": "results/match_scale_sweep.json",
-   "pinned": false,
+   "pinned": true,
    "stamped": true,
-   "verifiable": false,
-   "sweep_status": "unpinned",
-   "how": null,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
    "exempt": null
   },
   {

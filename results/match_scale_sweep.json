@@ -1,28 +1,152 @@
 {
   "provenance": {
-    "producer": "scripts/typed_edit/match_scale_sweep.py",
-    "recovered": "point estimates read from the producer's per-value log output; the run was trimmed after the decisive pair (v=0.0, v=0.25) completed and before v=0.5, so the producer's final JSON with bootstrap intervals was not written. The numbers below are the producer's own printed recall, not re-typed measurements of anything else.",
-    "population": "validation, val_pools.json, 293 substrates with references",
-    "generator": "artifacts/full5000_implicit (deployed), match_scale overridden at inference; candidate set and filter scores unchanged, only the generator score and thus the ranking move",
-    "ranking": "the release order (dedup by tautomer key, cap 100 by generator, reciprocal rank fusion, parent dropped)",
-    "seed": 0,
-    "bootstrap": "not computed (trimmed before the final pass); deltas are read against the seed-to-seed sd 0.0107 at k=15 from results/retraining_spread.json"
+    "script": "match_scale_sweep.py",
+    "script_path": "scripts/typed_edit/match_scale_sweep.py",
+    "source_sha256": "36f8cea65b1b2dc5d76c41dd51d78485528f35fac048c4ad7f494c66c805a6d2",
+    "git_commit": "9e10e6f5c870999a9809f49713abb0b2f79c8287",
+    "git_dirty": false
   },
+  "inputs": [
+    {
+      "path": "results/val_pools.json",
+      "exists": true,
+      "sha256_16": "b8a8c204834a2f70",
+      "bytes": 48646521
+    }
+  ],
+  "generator": "artifacts/full5000_implicit (deployed), match_scale overridden at inference",
+  "population": {
+    "split": "validation",
+    "n_substrates": 293,
+    "n_references": 655
+  },
+  "bootstrap": {
+    "n": 10000,
+    "seed": 0
+  },
+  "cap": 100,
+  "top_k": 7581,
   "deployed_match_scale": 0.25,
   "by_match_scale": {
-    "0.0": {"recall": {"1": 0.1115, "5": 0.2916, "15": 0.4748}},
-    "0.25": {"recall": {"1": 0.1053, "5": 0.2870, "15": 0.4763}}
+    "0.0": {
+      "recall": {
+        "1": 0.1115,
+        "3": 0.2168,
+        "5": 0.2916,
+        "8": 0.3771,
+        "10": 0.4092,
+        "15": 0.4748,
+        "20": 0.5344,
+        "30": 0.6076,
+        "50": 0.6931
+      },
+      "mean_ranked": 97.2,
+      "vs_deployed": {
+        "1": {
+          "delta": 0.0061,
+          "ci95": [
+            -0.0017,
+            0.0153
+          ],
+          "excludes_zero": false
+        },
+        "3": {
+          "delta": -0.0076,
+          "ci95": [
+            -0.0164,
+            0.0
+          ],
+          "excludes_zero": false
+        },
+        "5": {
+          "delta": 0.0046,
+          "ci95": [
+            -0.0043,
+            0.0146
+          ],
+          "excludes_zero": false
+        },
+        "8": {
+          "delta": 0.0122,
+          "ci95": [
+            0.0016,
+            0.0243
+          ],
+          "excludes_zero": true
+        },
+        "10": {
+          "delta": 0.0137,
+          "ci95": [
+            0.0049,
+            0.0248
+          ],
+          "excludes_zero": true
+        },
+        "15": {
+          "delta": -0.0015,
+          "ci95": [
+            -0.0122,
+            0.0079
+          ],
+          "excludes_zero": false
+        },
+        "20": {
+          "delta": 0.0031,
+          "ci95": [
+            -0.0029,
+            0.0097
+          ],
+          "excludes_zero": false
+        },
+        "30": {
+          "delta": 0.0031,
+          "ci95": [
+            -0.0041,
+            0.0107
+          ],
+          "excludes_zero": false
+        },
+        "50": {
+          "delta": 0.0076,
+          "ci95": [
+            0.0,
+            0.0161
+          ],
+          "excludes_zero": false
+        }
+      }
+    },
+    "0.25": {
+      "recall": {
+        "1": 0.1053,
+        "3": 0.2244,
+        "5": 0.287,
+        "8": 0.3649,
+        "10": 0.3954,
+        "15": 0.4763,
+        "20": 0.5313,
+        "30": 0.6046,
+        "50": 0.6855
+      },
+      "mean_ranked": 97.2
+    }
   },
-  "reproduces_deployed_arm": {
-    "deployed_recall15_here": 0.4763,
-    "registered_recall15": 0.4748,
-    "difference": 0.0015,
-    "note": "the regenerated deployed arm (match_scale 0.25) reproduces the registered validation recall of 0.4748 to within 0.0015, which certifies the regeneration is on the deployed model; the delta between match_scale values is internally consistent within this one pipeline"
-  },
-  "curb_minus_deployed": {
-    "1": 0.0062,
-    "5": 0.0046,
-    "15": -0.0015
-  },
-  "reading": "removing the multiplicity bonus entirely (match_scale 0.0) lifts recall at the head (k=1, k=5) and is flat to fractionally lower at the reported budget (k=15); every delta is well inside the seed-to-seed sd of 0.0107, so the generator-score lever, like the representation and filter levers, moves along the head-vs-depth frontier rather than raising it"
+  "reproduces_registered_arm": {
+    "reference": "results/aggregation_ablation_validation.json",
+    "matches": false,
+    "mismatches": {
+      "8": [
+        0.3649,
+        0.3634
+      ],
+      "10": [
+        0.3954,
+        0.3939
+      ],
+      "15": [
+        0.4763,
+        0.4748
+      ]
+    }
+  }
 }

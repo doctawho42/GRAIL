@@ -387,6 +387,12 @@
    "status": "current"
   },
   {
+   "artifact": "results/match_scale_sweep.json",
+   "script": "match_scale_sweep.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
    "artifact": "results/matched_length.json",
    "script": "matched_length.py",
    "how": "recorded source digest",
@@ -747,10 +753,10 @@
    "status": "current"
   }
  ],
- "n_pinned": 122,
+ "n_pinned": 123,
  "n_pinned_stale": 1,
  "sweep": {
-  "unstamped": 298,
+  "unstamped": 299,
   "producer_changed": 41,
   "current": 67,
   "producer_unknown": 26,
@@ -1545,11 +1551,6 @@
    "detail": "commit 822211935dc8 does not carry scripts/label_flip_inside_mask.py"
   },
   {
-   "artifact": "results/match_scale_sweep.json",
-   "status": "unstamped",
-   "detail": "no provenance block: nothing records which code wrote this"
-  },
-  {
    "artifact": "results/match_sens_cache/score_BioTransformer_48eafb817e4af31c.json",
    "status": "unstamped",
    "detail": "no provenance block: nothing records which code wrote this"
@@ -1616,6 +1617,16 @@
   },
   {
    "artifact": "results/match_sensitivity_fulln_paired.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/matchscale_partials/v0.0.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/matchscale_partials/v0.25.json",
    "status": "unstamped",
    "detail": "no provenance block: nothing records which code wrote this"
   },
@@ -2809,7 +2820,7 @@
    "detail": "no provenance block: nothing records which code wrote this"
   }
  ],
- "files_below_the_top_level": 202,
+ "files_below_the_top_level": 204,
  "of_those_named_as_an_input_by_a_pinned_artifact": 69,
  "named_inputs": [
   "results/aggregation_shards/s0.json",

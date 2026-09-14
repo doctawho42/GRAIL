@@ -1457,22 +1457,30 @@ could in principle raise the reported budget rather than trade within it.
 Because $\lambda_{m}$ is a parameter and not a data setting, it is overridden at inference on the
 deployed model, with the candidate set and the filter scores held fixed so that only the generator
 score and the resulting order change. Curbing it to zero is compared with the released value on the
-validation pools, under the release order. The released value reproduces the registered validation
-recall at the reported budget, \numMatchscaleReprohere{} against \numMatchscaleRegistered{}, a
-difference of \numMatchscaleReprodiff{}, which certifies the regenerated arm is the deployed model
-and makes the comparison between the two settings internally consistent.
+validation pools, under the release order. The released value reproduces the registered
+validation arm exactly at \numMatchscaleAgreebudgetsWord{} of the \numMatchscaleBudgetsWord{}
+budgets reported, and departs from it only at the three consecutive budgets $k=8$, $k=10$ and
+$k=15$, where it reads \numMatchscaleReprohere{} against \numMatchscaleRegistered{}. That departure
+is \numMatchscaleReprodiff{}, which is one reference of the \numMatchscaleRefs{}: a single
+annotated structure that this regeneration places inside fifteen and the registered arm places
+between sixteen and twenty, since the two agree again at $k=20$ and above. Exact agreement
+everywhere else is what certifies the regenerated arm is the deployed model.
 
 Curbing the bonus to zero lifts recall at the head and leaves the reported budget where it was:
 recall at $k=1$ rises by \numMatchscaleDiffOne{} and at $k=5$ by \numMatchscaleDiffFive{}, while at
 $k=15$ it moves by $\numMatchscaleDiffOneFive{}$, from \numMatchscaleDepOneFive{} to
-\numMatchscaleCurbOneFive{}. Every one of these is smaller than the seed-to-seed spread the release
-configuration shows elsewhere in this supplement, so the generator-score lever behaves as the
-representation and filter levers do: it moves along a head-versus-depth frontier the rule scores
-set, and does not raise the budget the headline is read at. The release keeps the trained scale.
+\numMatchscaleCurbOneFive{}. None of the three separates from zero: the paired bootstrap over
+substrates gives $[\numMatchscaleLoOne{}, \numMatchscaleHiOne{}]$ at $k=1$,
+$[\numMatchscaleLoFive{}, \numMatchscaleHiFive{}]$ at $k=5$ and
+$[\numMatchscaleLoOneFive{}, \numMatchscaleHiOneFive{}]$ at $k=15$. So the generator-score lever
+behaves as the representation and filter levers of Section~\ref{sec:si-survivors} do: it moves
+along a head-versus-depth frontier the rule scores set, and does not raise the budget the headline
+is read at. The release keeps the trained scale.
 
-The sweep was stopped after this decisive pair and before a third setting that amplifies the bonus,
-so the values here are the point estimates the producer reported rather than a per-run interval;
-they are read against the measured seed spread instead.
+Only the two decisive settings were swept. The settings above the released value, which amplify the
+multiplicity bonus rather than curb it, were not run: the curbed arm already shows what the bonus
+costs at the head, and amplifying it can only move the ranking further in the direction the
+comparison here finds unhelpful.
 
 \section{Three trained variants of the ranking, and the frontier they share}
 \label{sec:si-survivors}
