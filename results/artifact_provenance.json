@@ -756,7 +756,7 @@
  "n_pinned": 123,
  "n_pinned_stale": 1,
  "sweep": {
-  "unstamped": 299,
+  "unstamped": 302,
   "producer_changed": 41,
   "current": 67,
   "producer_unknown": 26,
@@ -2109,6 +2109,21 @@
    "detail": "no provenance block: nothing records which code wrote this"
   },
   {
+   "artifact": "results/rulegate_cpu/typeid/filter_training.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/rulegate_cpu/typeid/generator_training.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/rulegate_cpu/typeid/metrics.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
    "artifact": "results/seedpools/exhaustive_seed0.json",
    "script": "build_wide_pools.py",
    "how": "recorded source digest",
@@ -2820,8 +2835,8 @@
    "detail": "no provenance block: nothing records which code wrote this"
   }
  ],
- "files_below_the_top_level": 204,
- "of_those_named_as_an_input_by_a_pinned_artifact": 69,
+ "files_below_the_top_level": 207,
+ "of_those_named_as_an_input_by_a_pinned_artifact": 70,
  "named_inputs": [
   "results/aggregation_shards/s0.json",
   "results/aggregation_shards/s1.json",
@@ -2839,6 +2854,7 @@
   "results/rulegate_cpu/candfilter/metrics.json",
   "results/rulegate_cpu/diffreadout/metrics.json",
   "results/rulegate_cpu/lambda8/metrics.json",
+  "results/rulegate_cpu/typeid/metrics.json",
   "results/seedpools/exhaustive_seed0.json",
   "results/seedpools/exhaustive_seed1.json",
   "results/seedpools/exhaustive_seed2.json",
