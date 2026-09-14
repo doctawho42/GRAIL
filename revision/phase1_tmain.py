@@ -219,6 +219,43 @@ def _arm_keys(candidates, criterion):
     return match_keys([c["smiles"] for c in candidates], criterion)
 
 
+def arm_key_lists(spec, subs, ordered_for_arm, parent, criterion):
+    """One arm's per-substrate key lists, ready for scoring, or None when its file is absent.
+
+    Factored out of `build_rows` so the family-wise recomputation can reuse the assembly that the
+    reproduction gate certifies, instead of re-expressing it. Re-expressing it is how two analyses
+    of one quantity drift apart, and this repository has paid for that before.
+
+    A pool arm is ordered by the release ranking and keyed per criterion; a list arm is keyed,
+    deduplicated in rank order to `max(budget) + 5`, has the parent dropped, and is truncated to
+    `max(budget)`. Both drop the parent before any budget is applied, which is the published
+    convention and has to hold for every arm alike or the arms are not measured on one axis.
+    """
+    if spec[0] == "pool":
+        keys_by_sub = {}
+        rep = {"fallbacks": 0, "fallback_inputs": [], "from_pool_key": 0}
+        for s in subs:
+            ks, r = _arm_keys(ordered_for_arm[s], criterion)
+            rep["fallbacks"] += r["fallbacks"]
+            rep["from_pool_key"] += r.get("from_pool_key", 0)
+            keys_by_sub[s] = dedup_in_rank_order(drop_parent(ks, parent[s]))
+        return keys_by_sub, rep, spec[1]
+
+    path = ROOT / spec[1]
+    if not path.exists():
+        return None
+    blob = json.loads(path.read_text())
+    preds = blob[spec[2]] if spec[2] else blob
+    keys_by_sub = {}
+    rep = {"fallbacks": 0, "fallback_inputs": []}
+    for s in subs:
+        ks, r = match_keys(preds.get(s, []), criterion)
+        rep["fallbacks"] += r["fallbacks"]
+        cut = dedup_in_rank_order(ks, cap=max(KS) + 5)
+        keys_by_sub[s] = drop_parent(cut, parent[s])[:max(KS)]
+    return keys_by_sub, rep, spec[1]
+
+
 def _population(name):
     """Substrates, per-substrate reference SMILES, and the pool sources for one population."""
     truth = json.loads((ROOT / "results" / "test_references.json").read_text())
@@ -265,28 +302,10 @@ def build_rows(populations=("comparison291", "evaluated1170"), criteria=CRITERIA
                 s: k for s, k in zip(subs, match_keys(subs, criterion)[0])}
 
             for arm, spec in ARMS[population].items():
-                if spec[0] == "pool":
-                    keys_by_sub, rep = {}, {"fallbacks": 0, "fallback_inputs": [],
-                                            "from_pool_key": 0}
-                    for s in subs:
-                        ks, r = _arm_keys(ordered[arm][s], criterion)
-                        rep["fallbacks"] += r["fallbacks"]
-                        rep["from_pool_key"] += r.get("from_pool_key", 0)
-                        keys_by_sub[s] = dedup_in_rank_order(drop_parent(ks, parent[s]))
-                    source = spec[1]
-                else:
-                    path = ROOT / spec[1]
-                    if not path.exists():
-                        continue
-                    blob = json.loads(path.read_text())
-                    preds = blob[spec[2]] if spec[2] else blob
-                    keys_by_sub, rep = {}, {"fallbacks": 0, "fallback_inputs": []}
-                    for s in subs:
-                        ks, r = match_keys(preds.get(s, []), criterion)
-                        rep["fallbacks"] += r["fallbacks"]
-                        cut = dedup_in_rank_order(ks, cap=max(KS) + 5)
-                        keys_by_sub[s] = drop_parent(cut, parent[s])[:max(KS)]
-                    source = spec[1]
+                built = arm_key_lists(spec, subs, ordered.get(arm), parent, criterion)
+                if built is None:
+                    continue
+                keys_by_sub, rep, source = built
                 for k in KS:
                     hits = {s: len(set(keys_by_sub[s][:k]) & real[s]) for s in subs}
                     lo, hi = bootstrap_ci(hits, universe, n_boot=n_boot, seed=seed)
@@ -319,7 +338,13 @@ def build_rows(populations=("comparison291", "evaluated1170"), criteria=CRITERIA
 
 
 def main() -> int:
-    provenance = {"generated_by": "revision/phase1_tmain.py", "cap": CAP, "budgets": list(KS),
+    from _provenance import stamp
+    # Stamped like every other artifact here. The deposit recorded only the producer's filename,
+    # which cannot say whether the file was written by this version of it; the digest can, and a
+    # deposit that outlives an edit to its producer is the stale-artifact defect this repository
+    # has already paid for once.
+    provenance = {"provenance": stamp(__file__),
+                  "generated_by": "revision/phase1_tmain.py", "cap": CAP, "budgets": list(KS),
                   "n_boot": N_BOOT, "seed": SEED,
                   "mechanics_copied_from": "scripts/typed_edit/deployment_table.py",
                   "arms": {p: {a: s[1] for a, s in d.items()} for p, d in ARMS.items()},
@@ -331,8 +356,14 @@ def main() -> int:
     cols = ["system", "criterion", "k", "population", "recall", "ci_lo", "ci_hi",
             "n_substrates", "n_references", "mean_emitted_at_k", "mean_emitted_untruncated",
             "predictions_from", "references_from", "interval"]
-    with open(out, "w", newline="") as fh:
-        w = csv.DictWriter(fh, fieldnames=cols)
+    # LF, so a byte comparison against the committed table is meaningful instead of failing for a
+    # line ending and looking like a change in the numbers. Both settings are needed and the first
+    # attempt here set only one: `newline=` governs whether Python translates newlines on write,
+    # while csv.writer emits its own row terminator, and that defaults to CRLF. Setting only the
+    # open() newline left the output byte for byte unchanged -- measured, after it was claimed
+    # fixed once already.
+    with open(out, "w", newline="\n") as fh:
+        w = csv.DictWriter(fh, fieldnames=cols, lineterminator="\n")
         w.writeheader()
         w.writerows(rows)
     (ROOT / "revision" / "T_main_provenance.json").write_text(json.dumps(provenance, indent=1))
