@@ -33,7 +33,12 @@ OUT = ROOT / "revision" / "provenance_gloryx.json"
 POPULATION_FILE = "results/test_references.json"
 PUBLISHED_GLORYX = "results/gloryx_service_preds.json"
 PUBLISHED_METATOX = "results/metatox_smirks_preds.json"
-GLORYX_1170 = "results/gloryx_service_preds_1170.json"
+# The arm on the wider population is the MERGE of both GLORYx runs, not the service run's own
+# output. `gloryx_via_service.py --population evaluated1170` submits only what the published run
+# lacks, so its file holds 879 substrates; declaring that as the arm would hand an empty list back
+# for the other 291 and score them as misses.
+GLORYX_1170_RAW = "results/gloryx_service_preds_1170.json"
+GLORYX_1170 = "results/gloryx_service_preds_evaluated1170.json"
 # Named so coverage can report it absent. MetaTox is a manual web service, so this phase produces
 # its submission files and nothing more; this path is what a returned batch would be ingested to.
 METATOX_1170 = "results/metatox_1170_preds.json"
@@ -211,6 +216,29 @@ def _service_parameters():
 
 # --------------------------------------------------------------------------- blockers
 
+BLOCKER_FOR_STATE = {"absent": "gloryx_1170_run_incomplete",
+                     "incomplete": "gloryx_1170_incomplete_coverage"}
+
+
+def _default_column_state():
+    """Whether the GLORYx column over the evaluated population is on disk, and complete.
+
+    Three states, because two of them block for different reasons and each needs its own blocker:
+    the file is absent, it exists but covers only part of the population, or it covers all of it.
+    Both `blockers()` and `build()` read the state from here so they cannot disagree -- an earlier
+    version chose the incomplete-coverage id through a fallback in `build()` that named a blocker
+    `blockers()` never emitted, which would have put a dangling reference in the record.
+    """
+    path = ROOT / GLORYX_1170
+    gl_map = _read_arm(("list", GLORYX_1170, "predictions")) or {}
+    pop = set(_population("evaluated1170"))
+    if not path.exists():
+        return "absent", gl_map, pop
+    if not (pop <= set(gl_map)):
+        return "incomplete", gl_map, pop
+    return "complete", gl_map, pop
+
+
 def blockers():
     """Why each requested column is or is not here, each with evidence that can be rechecked.
 
@@ -220,7 +248,7 @@ def blockers():
     absent code.
     """
     svc = _service_parameters()
-    gl_1170 = (ROOT / GLORYX_1170).exists()
+    state, gl_map, pop = _default_column_state()
     out = [
         {
             "id": "strict_som_unavailable",
@@ -304,9 +332,9 @@ def blockers():
             ],
         },
     ]
-    if not gl_1170:
+    if state == "absent":
         out.append({
-            "id": "gloryx_1170_run_incomplete",
+            "id": BLOCKER_FOR_STATE["absent"],
             "binding": True,
             "finding": (f"the GLORYx column over the evaluated population is not yet on disk: "
                         f"{GLORYX_1170} does not exist"),
@@ -314,6 +342,24 @@ def blockers():
                 {"kind": "file", "detail": f"{GLORYX_1170} absent at build time"},
                 {"kind": "measurement", "detail": ("879 substrates were queued for submission in "
                                                    "chunks of 25 against the authors' service")},
+                {"kind": "file", "detail": (f"it is produced by revision/phase2_gloryx_merge.py "
+                                            f"from the published run and {GLORYX_1170_RAW}")},
+            ],
+        })
+    elif state == "incomplete":
+        out.append({
+            "id": BLOCKER_FOR_STATE["incomplete"],
+            "binding": True,
+            "finding": (f"{GLORYX_1170} exists but covers {len(set(gl_map) & pop)} of {len(pop)} "
+                        f"substrates, so it cannot stand as an arm: the ones it lacks would be "
+                        f"read as empty lists and scored as misses"),
+            "evidence": [
+                {"kind": "measurement",
+                 "detail": f"{len(pop - set(gl_map))} substrates of the population carry no row"},
+                {"kind": "file", "detail": (f"the service run's own output ({GLORYX_1170_RAW}) "
+                                            f"holds only what the published run lacked; both "
+                                            f"halves are merged by "
+                                            f"revision/phase2_gloryx_merge.py")},
             ],
         })
     return out
@@ -326,17 +372,20 @@ def build():
     cov = coverage()
     subs = submission_sets()
     blk = blockers()
-    by_id = {b["id"]: b for b in blk}
+
+    state, gl_map, pop = _default_column_state()
+    gl_covers = state == "complete"
 
     gl_path = ROOT / GLORYX_1170
-    gl_map = _read_arm(("list", GLORYX_1170, "predictions")) or {}
-    pop = set(_population("evaluated1170"))
-    gl_covers = bool(gl_map) and pop <= set(gl_map)
-
     jobs = []
     if gl_path.exists():
-        blob = json.loads(gl_path.read_text())
-        jobs = ((blob.get("obtained_from") or {}).get("jobs") or []) if isinstance(blob, dict) else []
+        blob = json.loads(gl_path.read_text()) if gl_path.exists() else {}
+        if isinstance(blob, dict):
+            # The service run records its jobs under obtained_from; the merge keeps one list per
+            # half, so both shapes are read rather than one being assumed.
+            found = (blob.get("obtained_from") or {}).get("jobs") or blob.get("jobs") or []
+            jobs = (sorted(j for half in found.values() for j in half)
+                    if isinstance(found, dict) else list(found))
 
     delivered = {
         "default": {
@@ -351,9 +400,9 @@ def build():
         },
     }
     if not gl_covers:
-        delivered["default"]["blocker_id"] = ("gloryx_1170_run_incomplete"
-                                              if "gloryx_1170_run_incomplete" in by_id
-                                              else "gloryx_1170_incomplete_coverage")
+        # From the same state `blockers()` read, so the id cannot name a blocker that was never
+        # emitted.
+        delivered["default"]["blocker_id"] = BLOCKER_FOR_STATE[state]
 
     report = {
         "what_this_is": ("the Phase 2 comparator record: coverage counted from files, the "

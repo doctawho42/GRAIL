@@ -158,6 +158,39 @@ def test_the_report_states_which_of_the_two_requested_columns_it_delivers():
             assert d.get("blocker_id"), f"{mode} undelivered with no blocker named"
 
 
+def test_every_named_blocker_id_resolves_to_a_blocker_in_every_state(monkeypatch):
+    """A blocker_id naming nothing makes the record read as explained when it is not.
+
+    The undelivered default column blocks for two different reasons -- the merged file is absent,
+    or it exists and covers only part of the population -- and `build()` used to choose the second
+    id through a fallback that named an id `blockers()` never emitted. Asserting only that the id
+    is truthy could not catch that, so all three states are forced and the id is resolved against
+    the report's own blocker list.
+    """
+    states = {"absent": ({}, {"x"}), "incomplete": ({"y": []}, {"x", "y"}),
+              "complete": ({"x": []}, {"x"})}
+    for state in states:
+        monkeypatch.setattr(P, "_default_column_state", lambda s=state: (s, states[s][0],
+                                                                         states[s][1]))
+        rep = P.build()
+        ids = {b["id"] for b in rep["blockers"]}
+        for mode, d in rep["delivered"].items():
+            if not d["delivered"]:
+                assert d.get("blocker_id") in ids, (
+                    f"state {state!r}, mode {mode!r}: blocker_id "
+                    f"{d.get('blocker_id')!r} names no blocker")
+        assert rep["delivered"]["default"]["delivered"] is (state == "complete"), state
+
+
+def test_the_evaluated_population_arm_is_the_merge_not_the_service_run():
+    """The service run's own file holds only what the published run lacked."""
+    assert P.GLORYX_1170.endswith("gloryx_service_preds_evaluated1170.json")
+    assert P.GLORYX_1170_RAW.endswith("gloryx_service_preds_1170.json")
+    assert P.GLORYX_1170 != P.GLORYX_1170_RAW
+    by_pop = {(c["population"], c["arm"]): c for c in P.coverage()}
+    assert by_pop[("evaluated1170", "gloryx")]["file"] == P.GLORYX_1170
+
+
 def test_nothing_is_reported_as_run_without_a_live_check():
     rep = P.build()
     for arm, d in rep["arms"].items():
