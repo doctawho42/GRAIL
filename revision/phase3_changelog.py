@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import subprocess
 from pathlib import Path
 
@@ -39,6 +40,48 @@ def load_numbers(path):
     blob = json.loads(Path(path).read_text())
     inner = blob.get("numbers") if isinstance(blob, dict) else None
     return inner if isinstance(inner, dict) else blob
+
+
+GENERATOR = "scripts/paper2_numbers.py"
+
+
+def generator_inputs(source=None):
+    """Every artifact the number generator reads, enumerated from its own source.
+
+    Read from the generator rather than from a list kept beside it: a list next to data that has
+    its own keys goes false the first time the generator gains an input.
+
+    Two of its `art()` call sites take a variable instead of a literal -- both loop over literal
+    tuples of filenames -- so a pattern matching only `art("name")` undercounts, and
+    `case_study_drawn.json` is named nowhere else. Every JSON literal in the source that resolves
+    under results/ is therefore included too. The authoritative enumeration is the runtime
+    instrumentation in scripts/check_number_provenance.py, which counts what was actually read
+    rather than what a pattern found; this is the static approximation of it, deliberately erring
+    towards including too much rather than too little.
+    """
+    src = Path(source or (ROOT / GENERATOR)).read_text()
+    direct = set(re.findall(r'art\(\s*"([^"]+)"', src))
+    literals = set(re.findall(r'"([A-Za-z0-9_./-]+\.json)"', src))
+    resolved = {s for s in literals if (ROOT / "results" / s).exists()}
+    # The generator's own output is a literal in its source as well, and counting it as an input
+    # would have this changelog report that it checked the very file it diffs -- circular, and an
+    # over-count that reads as thoroughness. Widening the net for the loop-tuple names catches it
+    # too, so it is removed by name rather than by hoping the pattern misses it.
+    output = {NUMBERS, Path(NUMBERS).name}
+    return sorted((direct | resolved) - output)
+
+
+def inputs_changed_since(rev, inputs=None):
+    """Which of the generator's inputs moved since a named revision, as repository paths."""
+    inputs = generator_inputs() if inputs is None else inputs
+    moved = []
+    for name in inputs:
+        rel = name if name.startswith(("results/", "artifacts/")) else f"results/{name}"
+        out = subprocess.run(["git", "log", "--oneline", f"{rev}..HEAD", "--", rel],
+                             cwd=ROOT, capture_output=True, text=True)
+        if out.returncode == 0 and out.stdout.strip():
+            moved.append(rel)
+    return moved
 
 
 def _numeric(v):
@@ -96,8 +139,13 @@ def compare(old, new):
     return entries
 
 
-def render(entries):
-    """The changelog, with nothing dropped and the unjudgeable counted rather than omitted."""
+def render(entries, inputs_checked=None, inputs_changed=None):
+    """The changelog, with nothing dropped and the unjudgeable counted rather than omitted.
+
+    `inputs_checked` and `inputs_changed` turn an empty table into a result: "no quoted number
+    changed" on its own cannot be told apart from a diff that never read anything, and the
+    stronger statement is that every input to the generator was checked and none of them moved.
+    """
     flagged = [e for e in entries if e["moved_beyond_interval"] is True]
     unjudged = [e for e in entries if e["kind"] == "changed"
                 and e["moved_beyond_interval"] is None]
@@ -119,6 +167,24 @@ def render(entries):
         f"- added: {len(added)}",
         f"- removed: {len(removed)}",
         "",
+    ]
+    if inputs_checked is not None:
+        lines += [
+            f"- generator inputs checked: {inputs_checked}",
+            f"- generator inputs that moved: {len(inputs_changed or [])}",
+            "",
+        ]
+        if inputs_changed:
+            lines.append("Inputs that moved:")
+            lines += [f"- `{p}`" for p in inputs_changed]
+            lines.append("")
+        else:
+            lines += [
+                f"No input to `{GENERATOR}` moved, so no quoted value could have. That is what "
+                "makes the table above a result rather than a check that never looked.",
+                "",
+            ]
+    lines += [
         "A value with no interval is reported as moved and marked as one this check cannot judge. "
         "It is not reported as unflagged: 2,198 of the 2,459 keys carry no interval, and calling "
         "those unflagged would read as checked and within tolerance.",
@@ -180,9 +246,13 @@ def main() -> int:
     old = load_numbers(args.old) if args.old else _numbers_at(args.old_rev)
     new = load_numbers(args.new)
     entries = compare(old, new)
-    OUT.write_text(render(entries))
+    inputs = generator_inputs()
+    moved = inputs_changed_since(args.old_rev, inputs) if not args.old else None
+    OUT.write_text(render(entries, inputs_checked=len(inputs), inputs_changed=moved))
 
     print(f"baseline: {args.old or args.old_rev}")
+    print(f"  generator inputs {len(inputs)}, of which moved "
+          f"{'not checked (--old given)' if moved is None else len(moved)}")
     print(f"  old keys {len(old)}  new keys {len(new)}  entries {len(entries)}")
     for kind in ("changed", "added", "removed"):
         print(f"  {kind:8} {len([e for e in entries if e['kind'] == kind])}")

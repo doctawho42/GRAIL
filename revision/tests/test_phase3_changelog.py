@@ -148,6 +148,59 @@ def test_the_rendering_drops_nothing_and_counts_what_it_cannot_judge():
     assert str(len(flagged)) in md, "the count of flagged moves must appear"
 
 
+def test_the_generator_s_inputs_are_enumerated_from_its_own_source():
+    """The quoted numbers come from one generator, and its inputs are what could move them.
+
+    Read from the `art("...")` calls in scripts/paper2_numbers.py rather than from a list kept
+    beside it: a hardcoded list next to data that has its own keys goes false the first time the
+    generator gains an input, and this repository has paid for that already.
+    """
+    got = C.generator_inputs()
+    assert len(got) > 50, f"only {len(got)} inputs found; the extraction is probably wrong"
+    assert any(g.endswith("multiplicity.json") for g in got)
+    assert any(g.endswith("deployment_table.json") for g in got)
+
+
+def test_the_enumeration_catches_a_loop_tuple_name_and_excludes_the_output():
+    """Two properties, not a total.
+
+    `case_study_drawn.json` is passed to art() through a loop variable and is named nowhere else,
+    so a pattern matching only `art("name")` drops it -- the enumeration must be wider than that.
+    Widening it also picks up `paper2_numbers.json`, which is the generator's OUTPUT: counting
+    that would have the changelog report it checked the file it is diffing.
+
+    The count itself is deliberately not asserted. A hardcoded total goes false the first time the
+    generator gains an input, which is the defect this function exists to avoid.
+    """
+    got = C.generator_inputs()
+    assert "case_study_drawn.json" in got, (
+        "an input reached only through a loop variable is still an input")
+    assert not any(g.endswith("paper2_numbers.json") for g in got), (
+        "the file being diffed is not an input to itself")
+
+
+def test_an_empty_changelog_distinguishes_nothing_moved_from_nothing_looked_at():
+    """An empty diff is a result only if it says what it checked.
+
+    "No quoted number changed" alone cannot be told apart from a diff that never read anything,
+    and the honest statement is the stronger one: every input to the generator was checked and
+    none of them moved, so no quoted value could have. The counts are rendered, not narrated.
+    """
+    md = C.render([], inputs_checked=98, inputs_changed=[])
+    assert "98" in md, "the number of inputs checked must appear"
+
+    moved = C.render([], inputs_checked=98, inputs_changed=["results/multiplicity.json"])
+    assert "results/multiplicity.json" in moved, (
+        "an input that moved while no number did is a different statement and must be named")
+    assert md != moved
+
+
+def test_rendering_without_the_input_accounting_still_works():
+    """The older call site passes entries only, and must keep working."""
+    md = C.render([])
+    assert "changed: 0" in md
+
+
 def test_comparing_a_file_against_itself_yields_an_empty_changelog(tmp_path):
     """The no-op case, which is what a re-run that changed nothing must produce."""
     p = tmp_path / "n.json"
