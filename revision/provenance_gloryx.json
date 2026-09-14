@@ -1,0 +1,338 @@
+{
+ "provenance": {
+  "script": "phase2_comparators.py",
+  "script_path": "revision/phase2_comparators.py",
+  "source_sha256": "ec1e552f1ae4bd4a3f74a7bae934445e6932d607b6a24c22859c9897c7b396d4",
+  "git_commit": "8e82dce1eda81bde657aa97763319f12abefcdca",
+  "git_dirty": true
+ },
+ "what_this_is": "the Phase 2 comparator record: coverage counted from files, the submission sets, and the evidence under every absence",
+ "requested": {
+  "populations": [
+   "evaluated1170"
+  ],
+  "modes": [
+   "default",
+   "strict-SOM"
+  ],
+  "systems": [
+   "GLORYx",
+   "GLORYxR",
+   "MetaTox"
+  ]
+ },
+ "delivered": {
+  "default": {
+   "delivered": false,
+   "file": "results/gloryx_service_preds_evaluated1170.json",
+   "substrates_held": 0,
+   "population": 1170,
+   "blocker_id": "gloryx_1170_run_incomplete"
+  },
+  "strict-SOM": {
+   "delivered": false,
+   "blocker_id": "strict_som_unavailable"
+  }
+ },
+ "arms": {
+  "gloryx": {
+   "ran": false,
+   "evidence_of_running": [],
+   "service": "https://nerdd.univie.ac.at/api/modules/gloryx",
+   "population": "evaluated1170"
+  },
+  "gloryxr": {
+   "ran": false,
+   "blocker_id": "gloryxr_no_code"
+  },
+  "metatox": {
+   "ran": false,
+   "blocker_id": "metatox_manual_submission"
+  }
+ },
+ "coverage": [
+  {
+   "population": "comparison291",
+   "arm": "metatox",
+   "file": "results/metatox_smirks_preds.json",
+   "substrates": 291,
+   "in_population": 291,
+   "absent": false
+  },
+  {
+   "population": "comparison291",
+   "arm": "sygma",
+   "file": "results/sygma_fulltest_predictions.json",
+   "substrates": 1170,
+   "in_population": 291,
+   "absent": false
+  },
+  {
+   "population": "comparison291",
+   "arm": "metapredictor",
+   "file": "artifacts/tier2_1170/metapredictor_preds.json",
+   "substrates": 1170,
+   "in_population": 291,
+   "absent": false
+  },
+  {
+   "population": "comparison291",
+   "arm": "biotransformer",
+   "file": "results/biotransformer_allhuman_one_step_preds.json",
+   "substrates": 291,
+   "in_population": 291,
+   "absent": false
+  },
+  {
+   "population": "comparison291",
+   "arm": "gloryx",
+   "file": "results/gloryx_service_preds.json",
+   "substrates": 291,
+   "in_population": 291,
+   "absent": false
+  },
+  {
+   "population": "evaluated1170",
+   "arm": "sygma",
+   "file": "results/sygma_fulltest_predictions.json",
+   "substrates": 1170,
+   "in_population": 1170,
+   "absent": false
+  },
+  {
+   "population": "evaluated1170",
+   "arm": "metapredictor",
+   "file": "artifacts/tier2_1170/metapredictor_preds.json",
+   "substrates": 1170,
+   "in_population": 1170,
+   "absent": false
+  },
+  {
+   "population": "evaluated1170",
+   "arm": "biotransformer",
+   "file": "results/biotransformer_fulltest_preds.json",
+   "substrates": 1170,
+   "in_population": 1170,
+   "absent": false
+  },
+  {
+   "population": "evaluated1170",
+   "arm": "metatox",
+   "file": "results/metatox_1170_preds.json",
+   "substrates": null,
+   "in_population": null,
+   "absent": true
+  },
+  {
+   "population": "evaluated1170",
+   "arm": "gloryx",
+   "file": "results/gloryx_service_preds_evaluated1170.json",
+   "substrates": null,
+   "in_population": null,
+   "absent": true
+  }
+ ],
+ "submission_sets": {
+  "gloryx": {
+   "population": "evaluated1170",
+   "source": "results/test_references.json",
+   "baseline": "results/gloryx_service_preds.json",
+   "held": 291,
+   "to_submit": 879,
+   "why_not_a_predictions_csv": "the full-test prediction CSVs hold 1169 of the 1170; one CoA thioester is absent from all of them"
+  },
+  "metatox": {
+   "population": "evaluated1170",
+   "source": "results/test_references.json",
+   "baseline": "results/metatox_smirks_preds.json",
+   "held": 291,
+   "to_submit": 879,
+   "why_not_a_predictions_csv": "the full-test prediction CSVs hold 1169 of the 1170; one CoA thioester is absent from all of them"
+  }
+ },
+ "model_archive": {
+  "present": true,
+  "checked_path": "/private/tmp/claude-501/-Users-nikitapolomosnov-PycharmProjects-GRAIL--claude-worktrees-hungry-pasteur-25d746/9095be4a-8361-44fa-85b9-7331dc770504/scratchpad/phase2/models",
+  "models": [
+   {
+    "name": "multi_models/CYP rules from GLORY (phase 1).joblib",
+    "bytes": 59522568,
+    "sha256": "2c186eb6f3e35fa99885d5ea96d706de1f17300b4cecb96c33d4e942bb57a1dc"
+   },
+   {
+    "name": "multi_models/GST rules (phase 2).joblib",
+    "bytes": 6392854,
+    "sha256": "f09663e0f11e50a094b920233f597bed6edc0d6a897af74442b11ae28628d926"
+   },
+   {
+    "name": "multi_models/MT rules (phase 2).joblib",
+    "bytes": 1074385,
+    "sha256": "0310ecbd901fbb1e39cd14ef4800fae4ddbe38d49993a170dc2ee037bb60bdc2"
+   },
+   {
+    "name": "multi_models/NAT rules (phase 2).joblib",
+    "bytes": 980481,
+    "sha256": "db1c170f23ecbd7bb4b1a2e086b488de9a881568b8161d72f67dc9881ca47cd3"
+   },
+   {
+    "name": "multi_models/Other phase 2 rules.joblib",
+    "bytes": 18849914,
+    "sha256": "8feaf9b7c3d759d89aa4103a5ec059e1b7c702e720906b9baa9b76b2db9002a2"
+   },
+   {
+    "name": "multi_models/Phase 1 SyGMa rules.joblib",
+    "bytes": 59522568,
+    "sha256": "2c186eb6f3e35fa99885d5ea96d706de1f17300b4cecb96c33d4e942bb57a1dc"
+   },
+   {
+    "name": "multi_models/SULT rules (phase 2).joblib",
+    "bytes": 1743291,
+    "sha256": "1a9fcdae90326c946887d23269fa9e65966c4985580b6f229fe00822e8cbcf51"
+   },
+   {
+    "name": "multi_models/UGT rules (phase 2).joblib",
+    "bytes": 7082036,
+    "sha256": "f1509731665036e485760b4fa16f294bbfa89f1762a1879690ab2a59e3393bb6"
+   },
+   {
+    "name": "single_model.joblib",
+    "bytes": 142032905,
+    "sha256": "68969cdeb1bf3770f581ffd3c0021af6099bbe4166e87d1b085a58608cb48b7b"
+   }
+  ],
+  "n_models": 9,
+  "byte_identical_groups": [
+   [
+    "multi_models/CYP rules from GLORY (phase 1).joblib",
+    "multi_models/Phase 1 SyGMa rules.joblib"
+   ]
+  ],
+  "carries_code_or_featuriser": false
+ },
+ "service": {
+  "read_live": true,
+  "version": "0.0.26",
+  "job_parameters": [
+   {
+    "name": "metabolism_phase",
+    "choices": [
+     "phase_1_and_2",
+     "phase_1",
+     "phase_2"
+    ]
+   }
+  ],
+  "result_properties_naming_a_site": [],
+  "n_result_properties": 16
+ },
+ "blockers": [
+  {
+   "id": "strict_som_unavailable",
+   "mode_requested": "strict-SOM",
+   "binding": true,
+   "finding": "no strict-SOM mode exists to run and no labels exist to score it against, so this mode is marked rather than approximated",
+   "evidence": [
+    {
+     "kind": "service",
+     "detail": "https://nerdd.univie.ac.at/api/modules/gloryx exposes 1 job parameter(s) ['metabolism_phase'] and 0 of 16 result properties name a site",
+     "read_live": true
+    },
+    {
+     "kind": "document",
+     "detail": "GLORYx's own README names site-of-metabolism only as the internal FAME 3 component; it documents no strict mode, threshold or SOM flag"
+    },
+    {
+     "kind": "file",
+     "detail": "results/what_each_arm_returns.json records GLORYx and MetaTox as naming no site"
+    },
+    {
+     "kind": "file",
+     "detail": "paper2/si.tex states this corpus carries no site-of-metabolism labels, so the mode could not be scored even if it could be run"
+    }
+   ]
+  },
+  {
+   "id": "gloryxr_no_code",
+   "binding": true,
+   "finding": "GLORYxR cannot be run: no implementation and no featuriser is available in this repository, on this machine, or in the delivered archive",
+   "evidence": [
+    {
+     "kind": "measurement",
+     "detail": "the delivered archive holds 11 entries, all of them .joblib models: no code, no featuriser"
+    },
+    {
+     "kind": "measurement",
+     "detail": "gloryxr, gloryx and glory_x are not importable here, and a scoped search of the usual checkout locations found no source tree"
+    },
+    {
+     "kind": "document",
+     "detail": "scripts/typed_edit/gloryx_via_service.py records that GLORYxR's production model dumps are 'to be published' and its documentation's Zenodo link is a literal TODO"
+    },
+    {
+     "kind": "measurement",
+     "detail": "the single model declares n_features_in_=5014 against 5006 for the rule models: two featurisations, neither of them present"
+    }
+   ]
+  },
+  {
+   "id": "gloryxr_sklearn_version",
+   "binding": false,
+   "finding": "the delivered models were pickled by scikit-learn 1.9.0 while this environment has 1.7.2; newer-to-older is unsupported, so their predictions could not be trusted here even if code existed",
+   "evidence": [
+    {
+     "kind": "measurement",
+     "detail": "every model warns 'unpickle ... from version 1.9.0'; the installed version is 1.7.2"
+    },
+    {
+     "kind": "measurement",
+     "detail": "scikit-learn 1.9.0 and 1.9.1 are published on PyPI and require Python >= 3.11; this interpreter is 3.10.8, whose ceiling is 1.7.2"
+    }
+   ]
+  },
+  {
+   "id": "gloryxr_duplicate_model",
+   "binding": false,
+   "finding": "two of the delivered models are byte-identical under different names, so they cannot be treated as distinct arms without asking the sender",
+   "evidence": [
+    {
+     "kind": "digest",
+     "detail": "'CYP rules from GLORY (phase 1).joblib' and 'Phase 1 SyGMa rules.joblib' both hash to 2c186eb6f3e35fa99885d5ea96d706de1f17300b4cecb96c33d4e942bb57a1dc"
+    }
+   ]
+  },
+  {
+   "id": "metatox_manual_submission",
+   "binding": true,
+   "finding": "MetaTox is a web service with no programmatic interface recorded here, so this phase writes its submission files and stops",
+   "evidence": [
+    {
+     "kind": "file",
+     "detail": "results/comparator_provenance.json records MetaTox as kind 'web service' publishing no version string"
+    },
+    {
+     "kind": "measurement",
+     "detail": "879 of the 1,170 substrates have no MetaTox row"
+    }
+   ]
+  },
+  {
+   "id": "gloryx_1170_run_incomplete",
+   "binding": true,
+   "finding": "the GLORYx column over the evaluated population is not yet on disk: results/gloryx_service_preds_evaluated1170.json does not exist",
+   "evidence": [
+    {
+     "kind": "file",
+     "detail": "results/gloryx_service_preds_evaluated1170.json absent at build time"
+    },
+    {
+     "kind": "measurement",
+     "detail": "879 substrates were queued for submission in chunks of 25 against the authors' service"
+    },
+    {
+     "kind": "file",
+     "detail": "it is produced by revision/phase2_gloryx_merge.py from the published run and results/gloryx_service_preds_1170.json"
+    }
+   ]
+  }
+ ]
+}
