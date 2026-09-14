@@ -2,8 +2,8 @@
   "provenance": {
     "script": "rulegate_survivors_summary.py",
     "script_path": "scripts/typed_edit/rulegate_survivors_summary.py",
-    "source_sha256": "85ed5c629b6be6095cee01fed3d6eba8d1ea38bef8257493a1bf3384f72c9059",
-    "git_commit": "4350bae8fc127349810d2deac19bd97e78fa54fe",
+    "source_sha256": "9b8779185ae7ba906128310dfe721e0a4a267418c76ab45fa49b77c3cc987997",
+    "git_commit": "9e063adf3926abd55372b8b736a11b575eb1533c",
     "git_dirty": true
   },
   "inputs": [
@@ -30,6 +30,12 @@
       "exists": true,
       "sha256_16": "7ae41e2ca55e700d",
       "bytes": 1862
+    },
+    {
+      "path": "results/rulegate_cpu/typeid/metrics.json",
+      "exists": true,
+      "sha256_16": "a0da725fd20e1456",
+      "bytes": 1864
     }
   ],
   "matched": {
@@ -44,31 +50,36 @@
         "baseline": 0.1647,
         "id_gate": -0.0093,
         "candfilter": 0.0075,
-        "diffreadout": 0.0148
+        "diffreadout": 0.0148,
+        "typeid": -0.0173
       },
       "r@3": {
         "baseline": 0.3018,
         "id_gate": 0.0079,
         "candfilter": 0.0102,
-        "diffreadout": 0.012
+        "diffreadout": 0.012,
+        "typeid": -0.029
       },
       "r@5": {
         "baseline": 0.4106,
         "id_gate": -0.0046,
         "candfilter": -0.0011,
-        "diffreadout": 0.0034
+        "diffreadout": 0.0034,
+        "typeid": -0.039
       },
       "r@10": {
         "baseline": 0.5267,
         "id_gate": 0.012,
         "candfilter": 0.0175,
-        "diffreadout": -0.0013
+        "diffreadout": -0.0013,
+        "typeid": -0.0078
       },
       "r@15": {
         "baseline": 0.5874,
         "id_gate": -0.005,
         "candfilter": -0.0037,
-        "diffreadout": -0.0119
+        "diffreadout": -0.0119,
+        "typeid": -0.0157
       }
     },
     "test_ensemble": {
@@ -76,31 +87,36 @@
         "baseline": 0.1015,
         "id_gate": -0.007,
         "candfilter": 0.0297,
-        "diffreadout": 0.0136
+        "diffreadout": 0.0136,
+        "typeid": -0.0066
       },
       "r@3": {
         "baseline": 0.2415,
         "id_gate": 0.0234,
         "candfilter": 0.0367,
-        "diffreadout": 0.0276
+        "diffreadout": 0.0276,
+        "typeid": 0.0069
       },
       "r@5": {
         "baseline": 0.3322,
         "id_gate": 0.0149,
         "candfilter": 0.0303,
-        "diffreadout": 0.0072
+        "diffreadout": 0.0072,
+        "typeid": 0.001
       },
       "r@10": {
         "baseline": 0.4637,
         "id_gate": -0.006,
         "candfilter": 0.012,
-        "diffreadout": -0.0045
+        "diffreadout": -0.0045,
+        "typeid": -0.0086
       },
       "r@15": {
         "baseline": 0.5242,
         "id_gate": -0.0212,
         "candfilter": -0.0129,
-        "diffreadout": -0.0052
+        "diffreadout": -0.0052,
+        "typeid": -0.0125
       }
     }
   },
@@ -119,12 +135,28 @@
       "head_delta_mean_k1_k3": 0.0134,
       "depth_delta_k15": -0.0119,
       "trades_head_for_depth": true
+    },
+    "typeid": {
+      "head_delta_mean_k1_k3": -0.0232,
+      "depth_delta_k15": -0.0157,
+      "trades_head_for_depth": false
     }
   },
   "seed_spread_caveat": {
     "sd_at_15": 0.0107,
     "source": "results/retraining_spread.json"
   },
-  "reading": "All three levers -- representation (id-gate), filter objective (train-on-candidates) and filter features (difference-readout) -- lift recall at the head (k=1,3) and lose it at k=15. None lifts the reported budget; each slides along a head-vs-depth frontier rather than raising it. Most single-arm deltas are within the seed sd, so no arm is an individually significant win at k=15, and the consistent shape across three unrelated mechanisms is the real result: at this scale the ranking ceiling is a frontier the generator's rule scores set, and reshaping the filter or the rule id moves along it. A headline gain would need either a multi-seed confirmation of a head lever at the k the product is read at, or a change to what the generator ranks, not how the filter reads it.",
-  "verdict": "no arm selected: head gains at k=1,3 within noise, all lose depth at k=15"
+  "typeid_against_its_matched_base": {
+    "base": "id_gate",
+    "why": "the type term is added to the gated identity, so the arm it refines is the id-gate arm and not the baseline the other rows are read against",
+    "validation_delta": {
+      "r@1": -0.0079,
+      "r@3": -0.037,
+      "r@5": -0.0344,
+      "r@10": -0.0198,
+      "r@15": -0.0107
+    }
+  },
+  "reading": "Four arms, and they do not all fail the same way. Three of them -- representation (the support-gated rule id), filter objective (train-on-candidates) and filter features (difference-readout) -- lift recall at the head (k=1,3) and give it back by k=15: none raises the reported budget, each slides along a head-versus-depth frontier rather than lifting it, and most single-arm deltas sit inside the seed spread. The fourth, the type-shared rule id, is a stronger negative than that: it loses at both ends, and it is worse than the arm it refines at every validation budget, so a pooled type identity neither recovers the depth the gate costs nor keeps the head. Filter discrimination is flat across all of them, so what moves is the generator's ranking. A headline gain would need a change to what the generator ranks, not another way to represent a rule or to read a candidate.",
+  "verdict": "no arm selected: three trade head for depth within noise, and the type-shared id loses at both ends"
 }

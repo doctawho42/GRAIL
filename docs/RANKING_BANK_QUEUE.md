@@ -334,7 +334,7 @@ Nothing is adopted, the release keeps its single model, and the campaign has no 
 left: coverage, representation, filter objective, filter features, generator scores, the whole
 calibration family, and now ensembling across training runs.
 
-## Point C (type-shared rule id): IMPLEMENTED AND RUNNING, with a pre-check the panel did not have
+## Point C (type-shared rule id): RESULT -- falsified on both halves of its own criterion
 
 The mechanism, as registered: form the rule identity as `g(n_r) * template_id_r + type_id_{type(r)}`
 so a template the support gate suppresses borrows the pooled identity of templates doing the same
@@ -366,6 +366,34 @@ help. It is not vacuous -- at zero support the gate zeroes the template id entir
 term is the only identity those rules have, and it reaches 47.2% of them -- but the panel's premise
 that a rare template can borrow its type is true for a minority of the rare templates on this bank.
 
-Falsification stands as registered: C fails if the type term does not recover the depth loss
-without giving back the head gain, read against the lambda8 arm on validation
-(id_gate: r@1 -0.0093, r@3 +0.0079, r@15 -0.0050 against the matched baseline).
+Falsification stood as registered: C fails if the type term does not recover the depth loss without
+giving back the head gain. It failed both halves, and not narrowly.
+
+  validation (the selection split)      r@1      r@3      r@5     r@10     r@15
+    baseline                          0.1647   0.3018   0.4106   0.5267   0.5874
+    lambda8 (the matched base)        0.1554   0.3097   0.4060   0.5387   0.5824
+    typeid (C)                        0.1474   0.2727   0.3716   0.5189   0.5717
+    C minus lambda8                  -0.0079  -0.0370  -0.0344  -0.0198  -0.0107
+    C minus baseline                 -0.0173  -0.0290  -0.0390  -0.0078  -0.0157
+
+Read against the registered criterion: the id-gate arm sat at head -0.0007 and depth -0.0050
+against the baseline, and adding the type term takes that to head -0.0232 and depth -0.0157. The
+depth loss the type term was supposed to recover is three times larger, and the head is given up as
+well. C is worse than its own base at every budget on the split selection is made on, by margins
+that exceed the seed spread of 0.0107 at k=3 and k=5. The test split is mixed (+0.0088 at k=15
+against lambda8, -0.0125 against the baseline) and does not rescue it, because selection is not
+made there.
+
+It is not a filter effect. Filter discrimination is flat across the three (mcc 0.2222 for C against
+0.2152 for lambda8 and 0.2197 for the baseline), so what moved is the generator's ranking.
+
+The pre-check predicted this shape and is the reason to keep it. A pooled identity that is
+available mostly to well-supported rules and unavailable to two thirds of the rare ones is extra
+capacity where the gate is trying to remove it: the rules that could exploit the shared parameter
+were the ones that already had their own evidence, and the rules it was written for got nothing.
+Excluding singleton and untypeable types stopped the term from being a second per-rule identity,
+which it had to, but nothing can make a shared type reach a rule that does not share one.
+
+So C is rejected, the last queued survivor is closed by measurement, and the run cost 3.5 hours
+(generator 86 min, filter 106 min, evaluation 16 min) after a first attempt died with the laptop's
+battery mid-filter; that interrupted run is kept at artifacts/rulegate_cpu_typeid_powerloss/.

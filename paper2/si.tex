@@ -1482,13 +1482,14 @@ multiplicity bonus rather than curb it, were not run: the curbed arm already sho
 costs at the head, and amplifying it can only move the ranking further in the direction the
 comparison here finds unhelpful.
 
-\section{Three trained variants of the ranking, and the frontier they share}
+\section{Four trained variants of the ranking: three on one frontier, one below it}
 \label{sec:si-survivors}
 
 The two settings swept above are inference-time: they change how a fixed pair of trained models is
-read. Three further variants change the training itself, one in each of the three places a ranking
-decision is made, and they are reported together because what they share is more informative than
-any of them alone.
+read. Four further variants change the training itself, three of them one in each of the three
+places a ranking decision is made and the fourth refining the first, and they are reported together
+because what they share, and the one that does not share it, are both more informative than any of
+them alone.
 
 They are measured at a matched subsample scale and not at the deployed one. Each arm and its
 baseline were trained on the same \numSurvivorsTrainsubs{} substrates at seed
@@ -1508,16 +1509,23 @@ candidates, so the filter is trained on the distribution it is actually asked to
 changes the filter's features. The deployed filter encodes substrate and product independently and
 concatenates the two embeddings; the arm appends their signed difference, so a transformation that
 changes little of the molecule is represented directly rather than having to be inferred from two
-absolute encodings.
+absolute encodings. The fourth refines the first instead of opening a new place. It adds to each
+rule's gated identity a second identity shared by every rule of the same reaction type, so a
+template the gate suppresses can borrow what its type has learned from better-supported templates;
+a type carried by a single rule contributes nothing, and neither does a rule whose type cannot be
+assigned, because either would hand that rule a second private identity in the one place the gate
+exists to take one away.
 
 On validation, which is the split selection is made on, the matched baseline reaches
 \numSurvivorsBaseOne{} at $k=1$, \numSurvivorsBaseThree{} at $k=3$ and
 \numSurvivorsBaseOneFive{} at $k=15$. Against it, gating the rule identity moves recall by
 $\numSurvivorsIdgateOne{}$, $+\numSurvivorsIdgateThree{}$ and $\numSurvivorsIdgateOneFive{}$ at
 those three budgets; training the filter on candidates moves it by $+\numSurvivorsCandfilterOne{}$,
-$+\numSurvivorsCandfilterThree{}$ and $\numSurvivorsCandfilterOneFive{}$; and appending the
+$+\numSurvivorsCandfilterThree{}$ and $\numSurvivorsCandfilterOneFive{}$; appending the
 difference readout moves it by $+\numSurvivorsDiffreadoutOne{}$,
-$+\numSurvivorsDiffreadoutThree{}$ and $\numSurvivorsDiffreadoutOneFive{}$.
+$+\numSurvivorsDiffreadoutThree{}$ and $\numSurvivorsDiffreadoutOneFive{}$; and sharing the
+identity across a reaction type moves it by $\numSurvivorsTypeidOne{}$,
+$\numSurvivorsTypeidThree{}$ and $\numSurvivorsTypeidOneFive{}$.
 
 One shape appears three times. Averaged over the two head budgets, the filter-objective arm gains
 $+\numSurvivorsCandfilterhead{}$ and the difference-readout arm $+\numSurvivorsDiffreadouthead{}$,
@@ -1528,14 +1536,27 @@ differences is smaller than the seed-to-seed spread the deployed configuration s
 budget, \numSurvivorsSdOneFive{} (Section~\ref{sec:si-retrain}), so no arm is an individually
 significant win where the headline is read.
 
-The consistent trade is the result. Three unrelated interventions, on the representation of a rule,
-on what the filter is trained against and on what the filter is shown, all lift the top of the
-ranking and all give it back by $k=15$. None lifts the whole curve. At this scale the ranking
-ceiling behaves as a frontier set by what the generator's rule scores can order, and reshaping how
-a candidate is read, or how a rule is named, moves along that frontier rather than raising it,
-which is the behaviour the inference-time generator setting of Section~\ref{sec:si-matchscale}
-also shows. Raising the reported budget would require changing what the generator ranks, not how
-its candidates are read.
+The type-shared identity does not share that shape, and it is the clearer result of the four. It
+loses at both ends, $\numSurvivorsTypeidhead{}$ at the head and $\numSurvivorsTypeiddepth{}$ at the
+reported budget, and read against the arm it refines rather than against the baseline it is lower
+at every budget measured: $\numSurvivorsTypeidvsgateOne{}$ at $k=1$,
+$\numSurvivorsTypeidvsgateThree{}$ at $k=3$, $\numSurvivorsTypeidvsgateFive{}$ at $k=5$ and
+$\numSurvivorsTypeidvsgateOneFive{}$ at $k=15$, two of them larger than that seed spread. The
+mechanism explains the direction. A pooled identity can only be borrowed by a rule that shares its
+reaction type with another, and on this bank sharing runs the wrong way: it is common among the
+rules that already carry enough of their own training evidence to be recognised by name, and absent
+for most of the rarely rewarded rules the term was written for. So the shared parameter adds
+capacity where the gate is removing it and supplies nothing where the gate bites.
+
+The trade, and the one failure that is not a trade, are the result together. Three unrelated
+interventions, on the representation of a rule, on what the filter is trained against and on what
+the filter is shown, all lift the top of the ranking and all give it back by $k=15$; a fourth,
+refining the first, gives up both. None lifts the whole curve. At this scale the ranking ceiling
+behaves as a frontier set by what the generator's rule scores can order: reshaping how a candidate
+is read, or how a rule is named, moves along that frontier rather than raising it, and enriching
+how a rule is named can fall below it. That is the behaviour the inference-time generator setting
+of Section~\ref{sec:si-matchscale} also shows. Raising the reported budget would require changing
+what the generator ranks, not how its candidates are read.
 
 \section{Model architectures and training}
 \label{sec:si-arch}

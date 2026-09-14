@@ -2187,15 +2187,22 @@ def build():
     _val = _sv["recall_delta_vs_baseline"]["validation_ensemble_val"]
     n["survivors.trainsubs"] = _sv["matched"]["train_substrates"]
     n["survivors.seed"] = _sv["matched"]["seed"]
+    _arms = ("id_gate", "candfilter", "diffreadout", "typeid")
     for _k in ("1", "3", "15"):
         n[f"survivors.base{_k}"] = _val[f"r@{_k}"]["baseline"]
-        for _arm in ("id_gate", "candfilter", "diffreadout"):
+        for _arm in _arms:
             n[f"survivors.{_arm.replace('_', '')}{_k}"] = _val[f"r@{_k}"][_arm]
-    for _arm in ("id_gate", "candfilter", "diffreadout"):
+    for _arm in _arms:
         _hd = _sv["head_vs_depth"][_arm]
         n[f"survivors.{_arm.replace('_', '')}head"] = _hd["head_delta_mean_k1_k3"]
         n[f"survivors.{_arm.replace('_', '')}depth"] = _hd["depth_delta_k15"]
     n["survivors.sd15"] = _sv["seed_spread_caveat"]["sd_at_15"]
+    # The type-shared id refines the id-gate arm, so its own contrast is against that arm rather
+    # than against the baseline the other rows are read against; the artifact reports it apart and
+    # so does the manuscript.
+    _vsbase = _sv["typeid_against_its_matched_base"]["validation_delta"]
+    for _k in ("1", "3", "5", "15"):
+        n[f"survivors.typeidvsgate{_k}"] = _vsbase[f"r@{_k}"]
     return n
 
 

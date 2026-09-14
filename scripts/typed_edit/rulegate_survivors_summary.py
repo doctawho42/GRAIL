@@ -36,6 +36,10 @@ ARMS = {
     "id_gate": CPU / "lambda8" / "metrics.json",
     "candfilter": CPU / "candfilter" / "metrics.json",
     "diffreadout": CPU / "diffreadout" / "metrics.json",
+    # Queue point C. Its matched base is the id-gate arm, not the plain baseline, because the type
+    # term is added to the gated identity; the deltas below are still taken against the baseline so
+    # every arm is read on one ruler, and the C-against-id_gate contrast is reported separately.
+    "typeid": CPU / "typeid" / "metrics.json",
 }
 KS = ("top_1_recall", "top_3_recall", "top_5_recall", "top_10_recall", "top_15_recall")
 SEED_SD_AT_15 = 0.0107
@@ -67,6 +71,20 @@ def main() -> int:
                             "depth_delta_k15": round(d15, 4),
                             "trades_head_for_depth": bool((d1 + d3) / 2 > 0 and d15 < 0)}
 
+    # Point C refines the id-gate arm rather than the plain baseline, so its own contrast is against
+    # that arm. Reported as its own field instead of by swapping the ruler under one row, which
+    # would leave the table comparing four arms against two different references.
+    against_matched_base = None
+    if "typeid" in arms and "id_gate" in arms:
+        against_matched_base = {
+            "base": "id_gate",
+            "why": ("the type term is added to the gated identity, so the arm it refines is the "
+                    "id-gate arm and not the baseline the other rows are read against"),
+            "validation_delta": {klabel(k): round(arms["typeid"]["ensemble_val"][k]
+                                                  - arms["id_gate"]["ensemble_val"][k], 4)
+                                 for k in KS},
+        }
+
     rep = {
         "provenance": stamp(__file__),
         "inputs": record_inputs([str(CPU / "baseline" / "metrics.json"), *[str(p) for p in ARMS.values()]]),
@@ -75,17 +93,21 @@ def main() -> int:
         "recall_delta_vs_baseline": table,
         "head_vs_depth": head_depth,
         "seed_spread_caveat": {"sd_at_15": SEED_SD_AT_15, "source": "results/retraining_spread.json"},
+        "typeid_against_its_matched_base": against_matched_base,
         "reading": (
-            "All three levers -- representation (id-gate), filter objective (train-on-candidates) and "
-            "filter features (difference-readout) -- lift recall at the head (k=1,3) and lose it at "
-            "k=15. None lifts the reported budget; each slides along a head-vs-depth frontier rather "
-            "than raising it. Most single-arm deltas are within the seed sd, so no arm is an "
-            "individually significant win at k=15, and the consistent shape across three unrelated "
-            "mechanisms is the real result: at this scale the ranking ceiling is a frontier the "
-            "generator's rule scores set, and reshaping the filter or the rule id moves along it. A "
-            "headline gain would need either a multi-seed confirmation of a head lever at the k the "
-            "product is read at, or a change to what the generator ranks, not how the filter reads it."),
-        "verdict": "no arm selected: head gains at k=1,3 within noise, all lose depth at k=15",
+            "Four arms, and they do not all fail the same way. Three of them -- representation "
+            "(the support-gated rule id), filter objective (train-on-candidates) and filter "
+            "features (difference-readout) -- lift recall at the head (k=1,3) and give it back by "
+            "k=15: none raises the reported budget, each slides along a head-versus-depth frontier "
+            "rather than lifting it, and most single-arm deltas sit inside the seed spread. The "
+            "fourth, the type-shared rule id, is a stronger negative than that: it loses at both "
+            "ends, and it is worse than the arm it refines at every validation budget, so a pooled "
+            "type identity neither recovers the depth the gate costs nor keeps the head. Filter "
+            "discrimination is flat across all of them, so what moves is the generator's ranking. A "
+            "headline gain would need a change to what the generator ranks, not another way to "
+            "represent a rule or to read a candidate."),
+        "verdict": ("no arm selected: three trade head for depth within noise, and the "
+                    "type-shared id loses at both ends"),
     }
     out = ROOT / "results" / "rulegate_survivors_summary.json"
     out.write_text(json.dumps(rep, indent=2))
