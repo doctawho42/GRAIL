@@ -84,7 +84,10 @@ def write_substrate_csv(path) -> Path:
     """A one-column CSV the existing builder can read, so the submission format cannot drift."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "w", newline="") as fh:
+    # Newline "\n" rather than "": csv.writer terminates rows with CRLF by default, git stores the
+    # file normalised to LF, and the working tree then differs from the commit the moment anyone
+    # re-runs this. A producer whose own output makes the tree dirty is not rerunnable.
+    with open(path, "w", newline="\n") as fh:
         w = csv.DictWriter(fh, fieldnames=["substrate"])
         w.writeheader()
         for s in to_submit():
