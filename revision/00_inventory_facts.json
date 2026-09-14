@@ -1,0 +1,428 @@
+{
+ "generated_by": "revision/00_inventory.py",
+ "populations": {
+  "evaluated1170": {
+   "source": "results/test_references.json",
+   "n": 1170,
+   "n_carrying_a_reference": 1170
+  },
+  "comparison291": {
+   "n": 291,
+   "recovered_from": [
+    "results/gloryx_service_preds.json",
+    "results/metatox_smirks_preds.json",
+    "results/sygma_standardised_predictions.json",
+    "results/wide_pools.json"
+   ],
+   "sources_disagreeing_on_membership": [],
+   "named_by": "results/comparison_set_members.json keys members by tautomer InChIKey, not by SMILES, so it cannot be joined to prediction files directly",
+   "draw_procedure_recorded": false
+  }
+ },
+ "prediction_coverage": [
+  {
+   "file": "artifacts/tier2_1170/metapredictor_preds.json",
+   "keys": 1170,
+   "of_evaluated1170": 1170,
+   "of_comparison291": 291
+  },
+  {
+   "file": "results/biotransformer_fulltest_preds.json",
+   "keys": 1170,
+   "of_evaluated1170": 1170,
+   "of_comparison291": 291
+  },
+  {
+   "file": "results/sygma_fulltest_predictions.json",
+   "keys": 1170,
+   "of_evaluated1170": 1170,
+   "of_comparison291": 291
+  },
+  {
+   "file": "results/widepools_fulltest",
+   "shards": 6,
+   "keys": 1170,
+   "of_evaluated1170": 1170,
+   "of_comparison291": 291
+  },
+  {
+   "file": "results/widepools_k30_fulltest",
+   "shards": 6,
+   "keys": 1170,
+   "of_evaluated1170": 1170,
+   "of_comparison291": 291
+  },
+  {
+   "file": "results/biotransformer_allhuman_one_step_natural_drawing_preds.json",
+   "keys": 291,
+   "of_evaluated1170": 291,
+   "of_comparison291": 291
+  },
+  {
+   "file": "results/biotransformer_allhuman_one_step_preds.json",
+   "keys": 291,
+   "of_evaluated1170": 291,
+   "of_comparison291": 291
+  },
+  {
+   "file": "results/gloryx_service_preds.json",
+   "keys": 291,
+   "of_evaluated1170": 291,
+   "of_comparison291": 291
+  },
+  {
+   "file": "results/metapredictor_wide_beam_preds.json",
+   "keys": 291,
+   "of_evaluated1170": 291,
+   "of_comparison291": 291
+  },
+  {
+   "file": "results/metatox_smirks_preds.json",
+   "keys": 291,
+   "of_evaluated1170": 291,
+   "of_comparison291": 291
+  },
+  {
+   "file": "results/seedpools",
+   "shards": 6,
+   "keys": 291,
+   "of_evaluated1170": 291,
+   "of_comparison291": 291
+  },
+  {
+   "file": "results/sygma_standardised_predictions.json",
+   "keys": 291,
+   "of_evaluated1170": 291,
+   "of_comparison291": 291
+  },
+  {
+   "file": "results/wide_pools.json",
+   "keys": 291,
+   "of_evaluated1170": 291,
+   "of_comparison291": 291
+  },
+  {
+   "file": "results/widepools",
+   "shards": 6,
+   "keys": 291,
+   "of_evaluated1170": 291,
+   "of_comparison291": 291
+  },
+  {
+   "file": "results/widepools_implicit",
+   "shards": 6,
+   "keys": 291,
+   "of_evaluated1170": 291,
+   "of_comparison291": 291
+  },
+  {
+   "file": "results/widepools_k30",
+   "shards": 1,
+   "keys": 291,
+   "of_evaluated1170": 291,
+   "of_comparison291": 291
+  },
+  {
+   "file": "results/widepools_k30_std",
+   "shards": 1,
+   "keys": 291,
+   "of_evaluated1170": 291,
+   "of_comparison291": 291
+  },
+  {
+   "file": "results/widepools_ship",
+   "shards": 6,
+   "keys": 291,
+   "of_evaluated1170": 291,
+   "of_comparison291": 291
+  },
+  {
+   "file": "results/metatox_preds.json",
+   "keys": 248,
+   "of_evaluated1170": 248,
+   "of_comparison291": 248
+  },
+  {
+   "file": "artifacts/tier2/biotransformer_preds.json",
+   "keys": 150,
+   "of_evaluated1170": 150,
+   "of_comparison291": 150
+  },
+  {
+   "file": "artifacts/tier2/metapredictor_preds.json",
+   "keys": 150,
+   "of_evaluated1170": 150,
+   "of_comparison291": 150
+  },
+  {
+   "file": "artifacts/tier2/metapredictor_preds_wide64.json",
+   "keys": 150,
+   "of_evaluated1170": 150,
+   "of_comparison291": 150
+  },
+  {
+   "file": "artifacts/tier2/metatrans_preds.json",
+   "keys": 150,
+   "of_evaluated1170": 150,
+   "of_comparison291": 150
+  },
+  {
+   "file": "results/widepools_std_fine",
+   "shards": 14,
+   "keys": 146,
+   "of_evaluated1170": 146,
+   "of_comparison291": 146
+  },
+  {
+   "file": "results/widepools_std",
+   "shards": 2,
+   "keys": 145,
+   "of_evaluated1170": 145,
+   "of_comparison291": 145
+  },
+  {
+   "file": "results/metapredictor_natural_drawing_preds.json",
+   "keys": 81,
+   "of_evaluated1170": 81,
+   "of_comparison291": 81
+  },
+  {
+   "file": "results/trainpools",
+   "shards": 8,
+   "keys": 349,
+   "of_evaluated1170": 0,
+   "of_comparison291": 0
+  },
+  {
+   "file": "results/valpool_shards",
+   "shards": 6,
+   "keys": 293,
+   "of_evaluated1170": 0,
+   "of_comparison291": 0
+  },
+  {
+   "file": "results/valpools",
+   "shards": 13,
+   "keys": 293,
+   "of_evaluated1170": 0,
+   "of_comparison291": 0
+  },
+  {
+   "file": "results/valpools_k10",
+   "shards": 1,
+   "keys": 294,
+   "of_evaluated1170": 0,
+   "of_comparison291": 0
+  },
+  {
+   "file": "results/valpools_k20",
+   "shards": 1,
+   "keys": 294,
+   "of_evaluated1170": 0,
+   "of_comparison291": 0
+  },
+  {
+   "file": "results/valpools_k30",
+   "shards": 1,
+   "keys": 294,
+   "of_evaluated1170": 0,
+   "of_comparison291": 0
+  },
+  {
+   "file": "results/valpools_k50",
+   "shards": 1,
+   "keys": 294,
+   "of_evaluated1170": 0,
+   "of_comparison291": 0
+  },
+  {
+   "file": "results/valpools_k7581",
+   "shards": 1,
+   "keys": 293,
+   "of_evaluated1170": 0,
+   "of_comparison291": 0
+  },
+  {
+   "file": "results/valseedpools",
+   "shards": 3,
+   "keys": 293,
+   "of_evaluated1170": 0,
+   "of_comparison291": 0
+  }
+ ],
+ "matching_criteria": {
+  "dispatch": "grail_metabolism/metrics.py:_match_keys",
+  "branches": {
+   "canonical": "_canonical_key",
+   "inchikey": "_inchikey",
+   "inchikey_tautomer": "_tautomer_inchikey",
+   "inchi_no_stereo": "_inchikey_skeleton",
+   "tanimoto1": "_morgan_key"
+  },
+  "fallback": "any other value compares the raw strings",
+  "declared_in_config": [
+   "exact",
+   "inchi_no_stereo",
+   "inchikey",
+   "inchikey_tautomer",
+   "tanimoto1"
+  ],
+  "declared_in_metrics": [
+   "canonical",
+   "exact",
+   "inchi_no_stereo",
+   "inchikey",
+   "inchikey_tautomer",
+   "tanimoto1"
+  ],
+  "precomputed_key_tables": {
+   "canonical": 108967,
+   "inchi_no_stereo": 108967,
+   "inchikey": 108967,
+   "inchikey_tautomer": 116882,
+   "tanimoto1": 108967
+  }
+ },
+ "family_wise_correction": {
+  "artifact": "results/multiplicity.json",
+  "family": "every GRAIL-arm-against-comparator contrast in the sweep: 2 arms by 3 comparators by 9 budgets",
+  "alpha": 0.05,
+  "procedure": "Holm step-down on two-sided bootstrap p-values, B and seed as the intervals",
+  "n_tests": 54,
+  "n_separating_per_comparison": 33,
+  "n_separating_after_holm": 22,
+  "arms": {
+   "whole bank": 27,
+   "trained budget": 27
+  },
+  "comparators": {
+   "metatox": 18,
+   "sygma": 18,
+   "metapredictor": 18
+  },
+  "budgets": [
+   1,
+   3,
+   5,
+   8,
+   10,
+   15,
+   20,
+   30,
+   50
+  ],
+  "records_its_population": false,
+  "n_cells_whose_verdict_changes": 11,
+  "n_leads_removed": 4,
+  "wider_family": {
+   "n_tests": 90,
+   "n_separating_after_holm": 29,
+   "comparators": [
+    "metatox",
+    "sygma",
+    "metapredictor",
+    "biotransformer",
+    "gloryx"
+   ]
+  },
+  "other_fwer_artifacts_not_quoted_by_the_manuscript": {
+   "results/multiplicity_holm.json": [
+    "alpha",
+    "external",
+    "external_grid",
+    "internal_as_tested",
+    "internal_conservative",
+    "internal_grid",
+    "p_value_note",
+    "selection_confirmatory"
+   ],
+   "results/union_multiplicity.json": [
+    "boards_where_the_union_is_the_more_permissive",
+    "certified_pairs",
+    "certified_pairs_the_published_cell_had_separated",
+    "certified_reversal_tests",
+    "config",
+    "n_boards",
+    "per_board",
+    "union_cutoff_p",
+    "union_family_size",
+    "union_tests_rejected"
+   ]
+  }
+ },
+ "documents": {
+  "inputs_by_document": {
+   "body": [
+    "si_table_chemistry",
+    "si_table_matched",
+    "table_case",
+    "table_grain",
+    "table_hypotheses",
+    "table_modes",
+    "table_sweep"
+   ],
+   "grail_jcim": [
+    "body",
+    "markers",
+    "numbers"
+   ],
+   "si": [
+    "markers",
+    "numbers",
+    "si_table_aggregation",
+    "si_table_applicability",
+    "si_table_budget",
+    "si_table_case",
+    "si_table_chemistry_matched",
+    "si_table_counts",
+    "si_table_criteria",
+    "si_table_criterion_levels",
+    "si_table_dialect",
+    "si_table_equalised",
+    "si_table_fusion_k",
+    "si_table_hyperparameters",
+    "si_table_intervals",
+    "si_table_macro",
+    "si_table_oracle",
+    "si_table_parentdrop",
+    "si_table_population_list",
+    "si_table_precision",
+    "si_table_ranking",
+    "si_table_short",
+    "si_table_splits",
+    "si_table_worked_structures"
+   ]
+  },
+  "tex_present_but_pulled_by_nothing": [
+   "claim"
+  ],
+  "figures_referenced": [
+   "fig_case",
+   "fig_ceiling",
+   "fig_cost",
+   "fig_criterion",
+   "fig_si_budget",
+   "fig_si_external",
+   "fig_si_rarefaction",
+   "fig_sweep",
+   "fig_toc"
+  ],
+  "figure_files_present": [
+   "fig_case.eps",
+   "fig_ceiling.eps",
+   "fig_cost.eps",
+   "fig_criterion.eps",
+   "fig_si_budget.eps",
+   "fig_si_external.eps",
+   "fig_si_rarefaction.eps",
+   "fig_sweep.eps",
+   "fig_toc.eps"
+  ],
+  "producers": {
+   "paper2/table_sweep.tex": "scripts/paper2_tables.py",
+   "paper2/table_modes.tex, table_grain.tex, table_hypotheses.tex, table_case.tex": "scripts/paper2_tables_more.py",
+   "paper2/si_table_*.tex": "scripts/paper2_si_tables.py",
+   "paper2/fig_*.eps": "scripts/paper2_figures.py"
+  }
+ }
+}
