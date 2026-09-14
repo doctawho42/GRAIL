@@ -1,0 +1,42 @@
+{
+ "provenance": {
+  "script": "phase2_metatox_submission.py",
+  "script_path": "revision/phase2_metatox_submission.py",
+  "source_sha256": "b7f22128208c1a9cd6c505aaac19165b8a7a89fe32c61a9315dfca53013fb0fa",
+  "git_commit": "05469c1577b5d67e511b70311dac31037a7e6bf2",
+  "git_dirty": true
+ },
+ "what_this_is": "the MetaTox submission set for the evaluated population: the substrates with no MetaTox row",
+ "population": "evaluated1170",
+ "source": "results/test_references.json",
+ "baseline": "results/metatox_smirks_preds.json",
+ "held": 291,
+ "to_submit": 879,
+ "join_key": "the substrate string exactly as the corpus stores it, which is what the scoring joins on; the builder submits the natural tautomer and asserts both share a tautomer InChIKey",
+ "why_not_a_predictions_csv": "the full-test prediction CSVs hold 1169 of the 1170; one CoA thioester is absent from all of them",
+ "next_step": "run this batch in MetaTox, layer 1, and return the predictions keyed by the id or the substrate string in substrate_map.csv",
+ "builder": {
+  "command": [
+   "scripts/make_metatox_input.py",
+   "--predictions",
+   "/Users/nikitapolomosnov/PycharmProjects/GRAIL/.claude/worktrees/hungry-pasteur-25d746/revision/metatox_submission_1170/substrates_to_submit.csv",
+   "--outdir",
+   "/Users/nikitapolomosnov/PycharmProjects/GRAIL/.claude/worktrees/hungry-pasteur-25d746/revision/metatox_submission_1170",
+   "--split",
+   "test-1170",
+   "--purpose",
+   "the Phase 2 MetaTox column on all 1,170 evaluated substrates"
+  ],
+  "returncode": 0,
+  "stdout_tail": [
+   "GRAIL test-1170 substrates: 879  |  shared-with-SyGMa: 0",
+   "wrote 879 rows -> /Users/nikitapolomosnov/PycharmProjects/GRAIL/.claude/worktrees/hungry-pasteur-25d746/revision/metatox_submission_1170",
+   "  substrates.smi / substrates.sdf / substrate_map.csv / README.md",
+   "  shared-150 flagged: 0   re-tautomerized: 257   unparseable(excluded): 0   identity-broken(excluded): 0"
+  ],
+  "stderr_tail": [
+   "/Users/nikitapolomosnov/anaconda3/lib/python3.10/site-packages/pandas/core/arrays/masked.py:60: UserWarning: Pandas requires version '1.3.6' or newer of 'bottleneck' (version '1.3.5' currently installed).",
+   "  from pandas.core import ("
+  ]
+ }
+}
