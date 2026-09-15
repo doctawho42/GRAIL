@@ -175,10 +175,15 @@ Three evaluation populations are drawn from these splits, and every figure in th
 one. The evaluated test set is the \numPopulationTestsubs{} test substrates that carry at least
 one reference, holding all \numPopulationTestrefs{} references of the split; the substrates it
 excludes, \numSplitTestSubstrates{} minus \numPopulationTestsubs{} of them, carry none. The
-validation draw is a sample of \numValdrawCap{} substrates at seed \numValdrawSeed{}, of which
-\numValdrawDeclared{} produced a candidate pool and \numValdrawPaired{} are held by both arms of a
-paired comparison. The comparison set is the \numPopulationN{} substrates on which every method
-predicts.
+validation draw is a sample of \numValdrawCap{} substrate records, drawn with the configuration's
+sampling seed set to \numValdrawSeed{}; the loader derives each split's own seed from that value
+rather than using it directly, so the draw is reproduced by setting the configuration seed and not
+by sampling at \numValdrawSeed{}. Of those records, \numValdrawDeclared{} are distinct structures
+carrying at least one reference; the remainder of the \numValdrawCap{} either carry no reference or
+repeat a structure already drawn. \numValdrawPaired{} of the \numValdrawDeclared{} have a
+whole-bank candidate pool and are held by both arms of a paired comparison, so paired and
+exhaustive-mode figures are measured on \numValdrawPaired{}. The comparison set is the \numPopulationN{} substrates on which
+every method predicts.
 
 No external evaluation set is reported. GLORYx is one of the four sources this corpus is
 assembled from, so its \numGloryxN{} parent substrates are not external to it, and the
@@ -195,8 +200,9 @@ this asymmetry, and neither does this work; it is reported because anyone compar
 published ones should know that the rule-based figures are, in this respect, optimistic.
 
 
-The \emph{validation draw} is a declared sample of \numValdrawCap{} substrates at seed
-\numValdrawSeed{}, of which \numValdrawPaired{} are held by both operating modes in a paired
+The \emph{validation draw} is a declared sample of \numValdrawCap{} substrate records, drawn with
+the configuration's sampling seed set to \numValdrawSeed{} and each split's own seed derived from
+it, of which \numValdrawPaired{} are held by both operating modes in a paired
 comparison; registered ranking and timing thresholds are checked here, because a threshold checked
 on the population that chose the setting it tests is not a check, and three of the ten reported predictions
 were in the event adjudicated on the comparison set instead, which Table~\ref{MS-tab:hyp} marks.
