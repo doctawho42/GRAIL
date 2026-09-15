@@ -64,8 +64,21 @@ COMPARATORS = {
     "MetaTox": {
         "kind": "web service",
         "version": None,
-        "configuration": "layer 1 only, without the SMIRKS-rule variant, per the supplier's note",
-        "predictions": "results/metatox_preds.json",
+        "configuration": ("SMIRKS rules, all 291 parents returned, ranked by the method's own Pa "
+                          "for the Metabolite class, descending -- the configuration recorded in "
+                          "the scored artifact's own config field"),
+        "predictions": "results/metatox_smirks_preds.json",
+        "a_second_run_exists_and_feeds_nothing": (
+            "results/metatox_preds.json is a separate run in a different configuration -- layer 1 "
+            "only, without the SMIRKS-rule variant, per the supplier's note. It carries 248 "
+            "substrates as TOP-LEVEL keys and has no `predictions` envelope, so reading it "
+            "through the accessor every other comparator uses returns nothing rather than "
+            "failing; that is how a reader mistakes it for empty. No published number comes from "
+            "it: deployment_table.py and the four-method population both read the SMIRKS "
+            "artifact above. This record described that side analysis as though it were the "
+            "column, with the wrong file and the wrong configuration, and the error outlived a "
+            "session in which it was diagnosed and reported as fixed, because nothing compared "
+            "the record against its source"),
         "version_note": ("the service publishes no version string to a user, so none can be "
                          "recorded; the submission set and the returned predictions are pinned "
                          "instead, and the service is the one running at way2drug.ru on the date "

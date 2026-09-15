@@ -3524,7 +3524,7 @@ jar, whose digest is pinned. MetaTox is a web service that publishes no version 
 and MetaPredictor is a source checkout with no release tag. For those two the record is
 what can be pinned rather than what would be convenient to claim: the exact submission
 set, the returned predictions frozen per substrate, their digests, and the date each entered
-this repository, which bounds when the run happened. Those dates are 2026-07-25 for
+this repository, which bounds when the run happened. Those dates are 2026-08-07 for
 MetaTox and 2026-07-13 for MetaPredictor, against 2026-07-27 and 2026-07-13 for the other
 two. A comparison against a service cannot be made reproducible by the party running the
 comparison; declaring what it can pin, and naming what it cannot, is the whole of what is
@@ -3533,7 +3533,7 @@ What the MetaTox arm is, item by item: a single file of 291 structures submitted
 
 S77
 
-service on 2026-07-25, and the file it returned, frozen per substrate and pinned by digest.
+service on 2026-08-07, and the file it returned, frozen per substrate and pinned by digest.
 That is the whole of what this repository holds about the run. The service publishes no
 version to a user, the returned file records no setting, and no setting was chosen by us, so
 nothing further about how those predictions were produced can be established from what is
@@ -3678,8 +3678,8 @@ maintains of the artifacts a check must find current. 123 files are pinned, and 
 pass the currency check. Of the pinned set, 101 are the ones this paper’s figures are drawn
 from, and none of those figures comes from outside it. The chain from artifact to printed
 macro runs end to end in a clone, which is not where it started (Section S36).
-The wider sweep is over 563 files and its parts are worth printing, since a total is easier to
-accept than to add up: 299 carry no stamp, 41 have a producer that has changed since, 26
+The wider sweep is over 566 files and its parts are worth printing, since a total is easier to
+accept than to add up: 302 carry no stamp, 41 have a producer that has changed since, 26
 
 S82
 
@@ -3697,8 +3697,8 @@ which hold every candidate the generator produced for every substrate of their p
 together with both component scores, and which are the deposit named above. The repository pins the SHA-256 of both the raw file and the uploaded archive in paper2/zenodo
 manifest.json, and the deposit script’s --verify mode checks a download against it, so
 the deposit is verifiable against the version used here rather than merely available.
-The guarantee covers the pinned set and not the directory: of 563 files under results/,
-299 carry no stamp and 41 were written by a producer that has since changed. Those files
+The guarantee covers the pinned set and not the directory: of 566 files under results/,
+302 carry no stamp and 41 were written by a producer that has since changed. Those files
 support no number in this paper.
 MetaTox is also the one comparator whose arm one of its own authors has read, since its
 first author S10 is a co-author here.
@@ -3824,8 +3824,8 @@ The candidate pools are the case that matters, and for them the gap is narrow ra
 open: they record by digest both checkpoints that scored them, the script that writes them
 stamps itself, and the pools behind the seed spread reproduce from those checkpoints under
 the recorded rule budget.
-The guarantee also covers the pinned set and not the directory: of 563 files under results/
-and everything below it, 299 carry no stamp and 41 were written by a producer that has
+The guarantee also covers the pinned set and not the directory: of 566 files under results/
+and everything below it, 302 carry no stamp and 41 were written by a producer that has
 since changed. None of those is among the 101 the numbers come from, which the gate is
 what establishes. The sweep reaches below the top level because most of what a published
 number is actually made of lives there: the candidate pools are written one shard at a time
@@ -3835,13 +3835,13 @@ is assembled from outside every check it makes. An unstamped file there is not t
 S87
 
 unaccounted for. A producer records the files it read by path and digest, so the guarantee
-extends one hop past the pinned set: 69 of the files below the top level are named as an input
+extends one hop past the pinned set: 70 of the files below the top level are named as an input
 by a pinned artifact, and a change to any of them makes that artifact fail rather than pass.
 A split manifest pins by digest the triple files, the substrate sets, the evaluated test set,
 the rule bank and every third-party artifact, and a verify mode recomputes and names any
 leaf that has moved.
 Numbers reach the page through macros generated from pinned artifacts: 228 distinct
-macros in the manuscript and 793 here. The claim is not that every number does. 37
+macros in the manuscript and 802 here. The claim is not that every number does. 37
 measurements are typed by hand, most of them in this document, and they are enumerated
 in the checker itself rather than folded into a wildcard, so a number typed by hand that
 is not already on that list still fails the check, and the list is the exact statement of what

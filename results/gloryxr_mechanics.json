@@ -1,0 +1,67 @@
+{
+ "provenance": {
+  "script": "phase2_gloryxr_mechanics.py",
+  "script_path": "revision/phase2_gloryxr_mechanics.py",
+  "source_sha256": "38d4e5b3070003105d1e0bfa3f8136a4bf15e8ba60c0fd7828033df0c9b65a6d",
+  "git_commit": "8d341458e385d9fe5a081ea4219b11073e0f0f9e",
+  "git_dirty": true,
+  "what_this_is": "one pass of GLORYxR's rule bank over the evaluated population, measured: how many products one firing of one rule returns",
+  "retracts": "the wording 'Reactor.react_one applies each rule once and the package has no recursion', published in revision/T_gloryxr_provenance.json (limitations, id=generation) and in revision/phase2_gloryxr_table.py. The second clause stands; the first is false, and the measurement below is what refutes it",
+  "python": "3.13.12",
+  "packages": {
+   "gloryxr": "0.1.0",
+   "fame3r": "2.1.0",
+   "cdpkit": "1.2.3",
+   "rdkit": "2026.3.5",
+   "scikit-learn": "1.9.0",
+   "numpy": "2.5.2"
+  },
+  "phase": "1+2",
+  "no_models_needed": "scoring loads the forests; one pass of the reactor does not score, so this measurement needs no model dumps"
+ },
+ "measured": {
+  "n_substrates": 1170,
+  "n_rule_firings": 20923,
+  "n_firings_yielding_more_than_one_product": 9230,
+  "share_of_firings_yielding_more_than_one_product": 0.4411,
+  "max_products_from_one_rule_firing": 46,
+  "median_of_the_per_substrate_worst_rule": 7,
+  "one_application_per_rule_holds": false,
+  "total_reactions_returned": 47108
+ },
+ "rule_table": {
+  "present": true,
+  "identified_by": "digest rather than path: the table is read out of a GLORYxR clone, which is as transient as the session that made it",
+  "sha256": "76091b6b57d45b359c2c014d08117c82020bb3924498a0be650e4f0593632282",
+  "file_name": "gloryx_reactionrules_connect.csv",
+  "n_rules": 260,
+  "n_uncommon": 54,
+  "n_common": 206,
+  "n_subsets": 8,
+  "by_subset": {
+   "Phase 1 SyGMa rules": 151,
+   "CYP rules from GLORY (phase 1)": 73,
+   "UGT rules (phase 2)": 13,
+   "SULT rules (phase 2)": 3,
+   "GST rules (phase 2)": 9,
+   "NAT rules (phase 2)": 5,
+   "MT rules (phase 2)": 2,
+   "Other phase 2 rules": 4
+  },
+  "by_rule_source": {
+   "SyGMa": 178,
+   "GLORY": 73,
+   "Current work": 9
+  }
+ },
+ "priority_factor": {
+  "factor": 0.2,
+  "source": "gloryxr/models/fame3r.py:59-62, applied at :76",
+  "provider": "MultiFAME3RModelProvider",
+  "applies_to": "rules whose Priority level is 'uncommon'",
+  "read_not_measured": true
+ },
+ "n_substrates_requested": 1170,
+ "n_substrates_unparsed": 0,
+ "unparsed": []
+}

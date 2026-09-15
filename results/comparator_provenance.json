@@ -2,8 +2,8 @@
  "provenance": {
   "script": "comparator_provenance.py",
   "script_path": "scripts/typed_edit/comparator_provenance.py",
-  "source_sha256": "1059c4e86a7370eb2430b41c9d4d3424e07c48743559855d16539a7e873788e8",
-  "git_commit": "e0cbc7f08c4ee49797ff5609c98187eaddca37aa",
+  "source_sha256": "3ca0149707b52688b898ebb5fb5f0135534744dca4466c3618371bc38156a20f",
+  "git_commit": "8d341458e385d9fe5a081ea4219b11073e0f0f9e",
   "git_dirty": true
  },
  "comparators": {
@@ -19,11 +19,12 @@
   "MetaTox": {
    "kind": "web service",
    "version": null,
-   "configuration": "layer 1 only, without the SMIRKS-rule variant, per the supplier's note",
-   "predictions": "results/metatox_preds.json",
+   "configuration": "SMIRKS rules, all 291 parents returned, ranked by the method's own Pa for the Metabolite class, descending -- the configuration recorded in the scored artifact's own config field",
+   "predictions": "results/metatox_smirks_preds.json",
+   "a_second_run_exists_and_feeds_nothing": "results/metatox_preds.json is a separate run in a different configuration -- layer 1 only, without the SMIRKS-rule variant, per the supplier's note. It carries 248 substrates as TOP-LEVEL keys and has no `predictions` envelope, so reading it through the accessor every other comparator uses returns nothing rather than failing; that is how a reader mistakes it for empty. No published number comes from it: deployment_table.py and the four-method population both read the SMIRKS artifact above. This record described that side analysis as though it were the column, with the wrong file and the wrong configuration, and the error outlived a session in which it was diagnosed and reported as fixed, because nothing compared the record against its source",
    "version_note": "the service publishes no version string to a user, so none can be recorded; the submission set and the returned predictions are pinned instead, and the service is the one running at way2drug.ru on the date below",
-   "predictions_sha256": "dbd9390da3cd2c89a2956f69ac4627b46ee8d5379278fdab95ec6efa061074f7",
-   "predictions_first_in_the_repository": "2026-07-25"
+   "predictions_sha256": "136d4bdc323a73725dde146b470b921a8cea3fd5be3faf2b715f5c0204a56a64",
+   "predictions_first_in_the_repository": "2026-08-07"
   },
   "MetaPredictor": {
    "kind": "source checkout, run locally",

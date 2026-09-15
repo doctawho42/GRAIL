@@ -2,8 +2,8 @@
  "provenance": {
   "script": "phase2_comparators.py",
   "script_path": "revision/phase2_comparators.py",
-  "source_sha256": "62893e433743acd37cefad142f77ab7a420f6d61aeaf77fa9d533139321747e1",
-  "git_commit": "e0cbc7f08c4ee49797ff5609c98187eaddca37aa",
+  "source_sha256": "a9977a6de5c5b52cff89a8042685e9723a29091267f93a1774e73d0cd069c5ff",
+  "git_commit": "8d341458e385d9fe5a081ea4219b11073e0f0f9e",
   "git_dirty": true
  },
  "what_this_is": "the Phase 2 comparator record: coverage counted from files, the submission sets, and the evidence under every absence",
@@ -217,7 +217,10 @@
  },
  "model_archive": {
   "present": true,
-  "checked_path": "/private/tmp/claude-501/-Users-nikitapolomosnov-PycharmProjects-GRAIL--claude-worktrees-hungry-pasteur-25d746/9095be4a-8361-44fa-85b9-7331dc770504/scratchpad/phase2/models",
+  "identified_by": "digest rather than path: the archive was delivered out of band and the location it arrived at is not reachable by a reader",
+  "manifest_sha256": "353a2666252f2c6cad098cdbf8578a6bd6d763ab99ac9127e734ea6fd504bedf",
+  "manifest_sha256_is": "sha256 of the sorted 'name:sha256' lines below, newline separated",
+  "tarball_sha256": "6936ec996d5455a96bf85c51f48cc89396c5c1c205cfa48e5d5e26087229e511",
   "models": [
    {
     "name": "multi_models/CYP rules from GLORY (phase 1).joblib",
@@ -372,7 +375,7 @@
   {
    "id": "gloryxr_duplicate_model",
    "binding": false,
-   "finding": "two of the eight delivered models are byte-identical under different names, so the eight rule subsets resolve to only seven distinct forests and a large part of the rule table is scored by one shared model. Whether that is the intended delivery only the sender can say",
+   "finding": "two of the eight per-subset dumps are byte-identical under different names, so the eight rule subsets resolve to only seven distinct forests and a large part of the rule table is scored by one shared model. Nine dumps arrived in all, those eight plus single_model.joblib, which is what n_models in this record counts. Whether that is the intended delivery only the sender can say",
    "evidence": [
     {
      "kind": "digest",

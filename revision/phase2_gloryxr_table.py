@@ -171,10 +171,16 @@ def provenance() -> dict:
                         "against 1,982 of 35,175 service ones. This is why only two criteria are "
                         "admitted.")},
             {"id": "generation",
-             "detail": ("the local column is strictly one generation: Reactor.react_one applies "
-                        "each rule once and the package has no recursion, while the service emits "
-                        "some products needing two applications. So GLORYxR is not GLORYx at "
-                        "fixed rules.")},
+             "detail": ("the local column is strictly one generation, measured rather than read "
+                        "off the source (results/gloryxr_mechanics.json): one pass of the bank "
+                        "over the parent, with RunReactants enumerating every match of a "
+                        "template, so a single firing of a single rule returns several products. "
+                        "Over the 1,170 substrates, 9,230 of 20,923 rule firings returned more "
+                        "than one product and the worst single firing returned 46. What does not "
+                        "happen is recursion: react_one has one call site and no product is fed "
+                        "back as a substrate. An earlier version of this record said each rule is "
+                        "applied once, which was false, and made a claim about the service's "
+                        "cascade that nothing here measured.")},
             {"id": "score_resolution",
              "detail": ("the service rounds scores to three decimals and the local column keeps "
                         "six, so on 298 shared substrates longer than 15 the k=15 cut is decided "
@@ -199,10 +205,16 @@ def provenance() -> dict:
                         "which rules fire, not merely how the result is written, on every affected "
                         "substrate.")},
             {"id": "duplicate_model",
-             "detail": ("two of the eight delivered dumps are byte-identical (sha256 2c186eb6...), "
-                        "so the 224 phase-1 rules across those two subsets are scored by one "
-                        "forest -- 86% of the rule table by rule count")},
+             "detail": ("two of the eight per-subset dumps in multi_models/ are byte-identical "
+                        "(sha256 2c186eb6...), so the 224 phase-1 rules across those two subsets "
+                        "are scored by one and the same trained forest, loaded twice under two "
+                        "keys -- 86% of the rule table by rule count. Nine dumps arrived in all, "
+                        "those eight plus single_model.joblib, which no reported number uses")},
         ],
+        "rule_bank_mechanics": (
+            "the numbers behind the generation limitation, the 0.2 factor applied to rules of "
+            "uncommon priority, and how many rules carry that priority are measured and recorded "
+            "in results/gloryxr_mechanics.json rather than asserted here"),
         "modes_share_coverage": ("identical product sets on 1170/1170 substrates, mean list 31.95 "
                                  "in both; order agrees on 32 (2.7%) and top-15 differs on 838 "
                                  "(71.6%) at mean Jaccard 0.795. Any coverage figure is equal "

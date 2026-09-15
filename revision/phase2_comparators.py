@@ -158,10 +158,21 @@ def model_archive(path):
 
     It arrived in a session scratchpad rather than in the repository, so its absence is recorded
     and is not an error: this record has to be reproducible from a clean checkout without it.
+
+    When it IS present the archive is identified by digest and not by where it was found. The path
+    it arrived at belongs to one session and will not exist for a reader, so writing it into the
+    field that exists to make this record checkable made the record uncheckable. `manifest_sha256`
+    is the sha256 of the sorted "name:sha256" lines of the dumps, newline separated -- computable
+    by hand from the listed digests, and unchanged by where the copy sits.
+
+    The absent branch keeps `checked_path`: whoever regenerates this record needs to know which
+    location came up empty, and that path is a repository-relative candidate rather than a
+    session one.
     """
     p = Path(path)
     if not p.exists():
         return {"present": False, "checked_path": str(path), "models": [],
+                "manifest_sha256": None,
                 "note": "not present at this path; the archive was delivered out of band"}
     models = []
     for f in sorted(p.rglob("*.joblib")):
@@ -170,10 +181,35 @@ def model_archive(path):
     by_digest = {}
     for m in models:
         by_digest.setdefault(m["sha256"], []).append(m["name"])
-    return {"present": True, "checked_path": str(path), "models": models,
+    lines = sorted(f"{m['name']}:{m['sha256']}" for m in models)
+    manifest = hashlib.sha256("\n".join(lines).encode()).hexdigest()
+    return {"present": True,
+            "identified_by": ("digest rather than path: the archive was delivered out of band and "
+                              "the location it arrived at is not reachable by a reader"),
+            "manifest_sha256": manifest,
+            "manifest_sha256_is": ("sha256 of the sorted 'name:sha256' lines below, newline "
+                                   "separated"),
+            "tarball_sha256": _tarball_digest(p),
+            "models": models,
             "n_models": len(models),
             "byte_identical_groups": [v for v in by_digest.values() if len(v) > 1],
             "carries_code_or_featuriser": False}
+
+
+def _tarball_digest(models_dir: Path):
+    """The delivered .tar.gz digest, when the archive it was unpacked from is still beside it.
+
+    Recorded because it is what the sender can match against on their side; absent when only the
+    unpacked copy survives, in which case manifest_sha256 still identifies the dumps.
+    """
+    for candidate in (models_dir.parent / "models.tar.gz", models_dir.with_suffix(".tar.gz")):
+        if candidate.exists():
+            h = hashlib.sha256()
+            with open(candidate, "rb") as handle:
+                for chunk in iter(lambda: handle.read(1 << 20), b""):
+                    h.update(chunk)
+            return h.hexdigest()
+    return None
 
 
 def _archive_path():
@@ -376,10 +412,12 @@ def blockers():
         {
             "id": "gloryxr_duplicate_model",
             "binding": False,
-            "finding": ("two of the eight delivered models are byte-identical under different "
+            "finding": ("two of the eight per-subset dumps are byte-identical under different "
                         "names, so the eight rule subsets resolve to only seven distinct forests "
-                        "and a large part of the rule table is scored by one shared model. Whether "
-                        "that is the intended delivery only the sender can say"),
+                        "and a large part of the rule table is scored by one shared model. Nine "
+                        "dumps arrived in all, those eight plus single_model.joblib, which is what "
+                        "n_models in this record counts. Whether that is the intended delivery "
+                        "only the sender can say"),
             "evidence": [
                 {"kind": "digest", "detail": ("'CYP rules from GLORY (phase 1).joblib' and "
                                               "'Phase 1 SyGMa rules.joblib' both hash to "

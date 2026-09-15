@@ -147,9 +147,57 @@ def test_the_comparison_with_grail_records_that_the_sign_changes():
 
 def test_the_limitations_travel_with_the_table():
     """Six measured limitations, each with its number. A table that carries the column without
-    them invites exactly the comparison the restriction exists to prevent."""
+    them invites exactly the comparison the restriction exists to prevent.
+
+    This check is presence-only, and that was not enough: it stayed green for two commits while
+    the `generation` limitation published a false sentence about GLORYxR's code, because the word
+    "generation" was in the text either way. The checks below pin the content.
+    """
     prov = T.provenance()
     text = json.dumps(prov).lower()
     for token in ("stereo", "generation", "resolution", "heavy", "tautomer", "duplicate"):
         assert token in text, f"limitation {token!r} not recorded"
     assert prov.get("why_not_an_arm_in_t_main")
+
+
+def _limitation(prov, ident):
+    return {row["id"]: row["detail"] for row in prov["limitations"]}[ident]
+
+
+def test_the_generation_limitation_agrees_with_the_measurement_artefact():
+    """The numbers live in one place and the prose must match it.
+
+    The retracted wording said `Reactor.react_one` applies each rule once. One firing of one rule
+    returns several products, because RunReactants enumerates every match of the template, so the
+    claim was false about someone else's code in a record a reader can download. The measurement
+    is results/gloryxr_mechanics.json; this asserts the limitation quotes that file rather than a
+    reading of the source, and fails if the two ever drift apart.
+    """
+    mech = json.loads((ROOT / "results" / "gloryxr_mechanics.json").read_text())
+    measured = mech["measured"]
+    assert measured["one_application_per_rule_holds"] is False, (
+        "the artefact no longer refutes the retracted wording; re-read it before trusting this")
+
+    detail = _limitation(T.provenance(), "generation")
+    assert "applies each rule once" not in detail, "the retracted wording is back in the record"
+    assert "RunReactants" in detail, "the mechanism that refutes it must be named"
+    for value in (f"{measured['n_firings_yielding_more_than_one_product']:,}",
+                  str(measured["max_products_from_one_rule_firing"])):
+        assert value in detail, f"the measured value {value!r} is missing from the limitation"
+
+
+def test_the_generation_limitation_claims_nothing_about_the_service_that_was_not_measured():
+    """It used to assert the service emits products needing two applications. Nothing here
+    measured that, and an unmeasured clause beside measured ones borrows their standing."""
+    detail = _limitation(T.provenance(), "generation")
+    assert "two applications" not in detail, (
+        "an unmeasured claim about the service is back in the record")
+
+
+def test_the_duplicate_limitation_scopes_the_delivery_it_counts():
+    """Nine dumps were delivered, eight per-subset plus single_model.joblib, and the repository's
+    own record says so in n_models. Saying "eight delivered" contradicts a field of its own
+    artefact and understates what arrived."""
+    detail = _limitation(T.provenance(), "duplicate_model")
+    assert "per-subset" in detail, "the duplicate pair must be scoped to the per-subset dumps"
+    assert "eight delivered" not in detail
