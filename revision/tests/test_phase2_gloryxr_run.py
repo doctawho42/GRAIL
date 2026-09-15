@@ -102,6 +102,29 @@ def test_pending_against_a_missing_output_is_the_whole_population(tmp_path):
     assert R.pending(subs, tmp_path / "nope.json") == subs
 
 
+def test_an_unprocessed_substrate_is_not_the_same_as_one_answered_with_nothing():
+    """The defect this guards is the most dangerous one in the runner.
+
+    Written AFTER the function, which is the wrong order and is recorded as such: the ground rule
+    is a failing test first. It is kept because the semantics it pins are exactly what went wrong.
+
+    The runner used to close with `for s in requested: flat.setdefault(s, [])`, so a run stopped
+    halfway wrote an artifact carrying all 1,170 keys with empty lists for everything it never
+    reached. `phase1_tmain.coverage_gaps` checks key PRESENCE only, so that artifact passes the
+    coverage gate while three quarters of it is silence recorded as "predicted nothing" -- every
+    recall figure downstream then understates the comparator.
+
+    A substrate RDKit cannot parse is different: it is reached, deliberately recorded as an empty
+    list inside the loop, and must NOT be reported as unprocessed.
+    """
+    requested = ["a", "b", "c", "d"]
+    # 'b' was reached and answered with nothing (e.g. unparseable); 'c' and 'd' never ran.
+    flat = {"a": ["CCO"], "b": []}
+    assert R.unprocessed(flat, requested) == ["c", "d"]
+    assert R.unprocessed({s: [] for s in requested}, requested) == []
+    assert R.unprocessed({}, requested) == requested
+
+
 def test_the_models_directory_is_required_and_its_absence_is_refused():
     """The delivered dumps are not in the repository, so the path is given rather than assumed."""
     try:

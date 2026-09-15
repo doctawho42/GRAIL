@@ -95,6 +95,24 @@ def rank(pairs) -> list:
     return [s for s, _ in sorted(best.items(), key=lambda kv: (-kv[1], kv[0]))]
 
 
+def unprocessed(flat, requested) -> list:
+    """Substrates the run never reached, as distinct from ones it answered with nothing.
+
+    The reason this exists. An earlier version closed with `for s in requested:
+    flat.setdefault(s, [])`, which filled every substrate the loop had not reached with an empty
+    list -- so a run stopped halfway wrote a file carrying all 1,170 keys, and
+    `phase1_tmain.coverage_gaps` checks key presence only, so the artifact passed the coverage gate
+    while three quarters of it was silence recorded as "no metabolites predicted". That is the
+    single most dangerous defect in this runner: it turns an incomplete run into a full column of
+    zero-recall substrates, and every recall figure downstream would be wrong in the direction of
+    making the comparator look worse.
+
+    A substrate RDKit cannot parse IS answered: it is recorded with an empty list on purpose, and
+    it reaches `flat` inside the loop, so it does not appear here.
+    """
+    return [s for s in requested if s not in flat]
+
+
 def load_models(models_path):
     """The delivered FAME3R model family, by reaction subset.
 
@@ -117,6 +135,24 @@ def load_models(models_path):
 def _predictor(models, strict: bool):
     from gloryxr import GLORYxR, Reactor
     return GLORYxR(models=models, reactor=Reactor.load_builtin(phase=PHASE, strict_soms=strict))
+
+
+def _package_versions() -> dict:
+    """The versions the numbers actually came from, read at run time rather than assumed.
+
+    Only the packages that can move a prediction: scikit-learn unpickles the forests, cdpkit and
+    fame3r compute the descriptors, rdkit parses and canonicalises. A name that is not installed
+    records None rather than being omitted, so a missing entry cannot be mistaken for an absent
+    dependency.
+    """
+    import importlib.metadata as md
+    out = {}
+    for name in ("scikit-learn", "cdpkit", "fame3r", "rdkit", "numpy", "scipy", "joblib"):
+        try:
+            out[name] = md.version(name)
+        except Exception:
+            out[name] = None
+    return out
 
 
 def _products(reactions) -> list:
@@ -186,8 +222,21 @@ def main() -> int:
                   f"mean list {sum(len(v) for v in flat.values()) / max(len(flat), 1):.1f}",
                   flush=True)
 
-    for s in requested:
-        flat.setdefault(s, [])
+    # Refuse to write a full-coverage artifact for a partial run. Filling the gap with empty
+    # lists would pass the coverage gate and read as a comparator that predicted nothing for
+    # those substrates.
+    missing = unprocessed(flat, requested)
+    if missing:
+        partial = out_path.with_name(out_path.stem + ".INCOMPLETE.json")
+        partial.write_text(json.dumps({"predictions": flat, "with_score": detail,
+                                       "n_requested": len(requested),
+                                       "n_processed": len(flat),
+                                       "n_unprocessed": len(missing)}, indent=1))
+        print(f"\nREFUSING to write {out_path.name}: {len(missing)} of {len(requested)} "
+              f"substrates were never processed. An artifact with all {len(requested)} keys "
+              f"would pass the coverage gate while recording silence as zero recall.")
+        print(f"  partial state in {partial.relative_to(ROOT)}; re-run to resume from the checkpoint")
+        return 1
 
     report = {
         "what_this_is": (f"GLORYxR's predictions on the evaluated population, {args.mode} SOM "
@@ -204,6 +253,18 @@ def main() -> int:
             "why_this_provider": ("its docstring states predictions will closely follow those of "
                                   "the original GLORYx implementation"),
             "interpreter": sys.version.split()[0],
+            # The versions actually loaded, because they are the open question about this column
+            # and not a formality. The delivered dumps were pickled by scikit-learn 1.9.0 while
+            # this environment resolves 1.9.1, and the project's own uv.lock pins 1.9.0; the
+            # riskier drift is cdpkit, which recomputes the descriptors at run time and is locked
+            # at 1.2.3. Widths match either way, so a value drift would fail silently -- which is
+            # precisely why the versions belong in the artifact rather than in a note.
+            "packages": _package_versions(),
+            "environment_note": ("the project pins its dependencies in uv.lock; an environment "
+                                 "built by a fresh resolve rather than `uv sync` may differ, and "
+                                 "scikit-learn grants no guarantee for reading a pickle written "
+                                 "by an older version -- its own warning says the load may give "
+                                 "invalid results"),
         },
         "drawing": "the substrate as the corpus stores it, which is what every other arm was handed",
         "n_substrates": len(flat),
