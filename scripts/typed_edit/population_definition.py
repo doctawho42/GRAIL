@@ -68,9 +68,18 @@ EXHAUSTIVE_FULLTEST = ROOT / "results/widepools_fulltest"
 # was run there: it is a jar this repository holds, and what had kept it on the comparison set
 # was the cost of the run rather than an impossibility. MetaTox is the one that cannot follow,
 # because a second submission to a web service is not ours to make.
+#
+# GLORYx joined later still, and its absence from this dict was an oversight rather than a
+# decision: the column over all 1,170 was assembled on 2026-09-15 by merging two runs of the
+# authors' service, twelve days after this file was last written, so the list could not have
+# named it. Nothing rejected it -- the coverage floor below drops an arm that reaches less than
+# 99% of the population, and GLORYx reaches 1,166 of 1,170 -- it was simply never offered.
+# revision/tests/test_population_axis_names_every_whole_split_arm.py now compares this dict
+# against the repository so the next such column cannot go missing in silence.
 WHOLE_TEST = {"sygma": ROOT / "results/sygma_fulltest_predictions.json",
               "metapredictor": ROOT / "artifacts/tier2_1170/metapredictor_preds.json",
-              "biotransformer": ROOT / "results/biotransformer_fulltest_preds.json"}
+              "biotransformer": ROOT / "results/biotransformer_fulltest_preds.json",
+              "gloryx": ROOT / "results/gloryx_service_preds_evaluated1170.json"}
 
 
 def main() -> int:
@@ -136,7 +145,16 @@ def main() -> int:
     for name, path in WHOLE_TEST.items():
         if path.exists():
             read_paths.append(path)
-            others[name] = json.loads(path.read_text())
+            # Read through the envelope when there is one. Three of these files are flat maps of
+            # substrate to candidates, written by producers that emit nothing else; the GLORYx
+            # column is a merge of two service runs and carries its provenance beside the
+            # predictions, so the top level holds sixteen metadata keys and no substrate. Without
+            # this accessor that file reads as covering zero of the population and is dropped by
+            # the floor below -- silently, because a dropped arm is a line on stderr and not a
+            # failure. A flat map has no "predictions" key, so the three keep reading as before.
+            blob = json.loads(path.read_text())
+            inner = blob.get("predictions") if isinstance(blob, dict) else None
+            others[name] = inner if isinstance(inner, dict) else blob
     # A comparator whose file is present but covers a fraction of the population would be read as
     # answering nothing on the rest, which is a recall of its own making. It is dropped with a
     # line rather than scored, and the artifact records which arms reached this population.
