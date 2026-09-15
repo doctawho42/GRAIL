@@ -225,8 +225,7 @@ and 100 is the smallest round number that satisfies it.
 How many templates the generator selects before any is applied is the \emph{rule budget}. It is
 not the output budget of Section~\ref{sec:evaluation}, which is how many candidates a system may
 return; where this paper writes \emph{budget} unqualified it means that one. The rule budget is one
-continuous setting, and the two modes reported throughout are two points on it rather than two
-designs. The \emph{interactive} mode applies the \numHOneZeroTopk{} templates the trained
+continuous setting, and the two modes reported throughout are two points on it. The \emph{interactive} mode applies the \numHOneZeroTopk{} templates the trained
 checkpoint records and returns in about a second, which is what a user waiting at a web form
 requires; the \emph{exhaustive} mode applies the whole bank, the \numBankParses{} of
 \numBankRules{} templates that parse, and takes tens of seconds. The interactive value is where
@@ -467,7 +466,7 @@ where against the stored drawing it did not. What is left after all three is one
 the exhaustive arm over SyGMa, an ordering result on a comparator whose own rules are largely
 inside this bank. That lead also survives the one test the comparator's own settings allow: run at its deeper scenario SyGMa emits more than five times what the exhaustive arm returns and the gap does not close (Section~\ref{SI-sec:si-comparators}).
 
-The advantage is at depth rather than at the head of the list. MetaPredictor is flat from $k=15$
+The exhaustive arm leads at depth rather than at the head of the list. MetaPredictor is flat from $k=15$
 because \numShortMetapredictorOneFive{} of its \numPopulationN{} lists are shorter than that
 budget, and SyGMa gains little between $k=15$ and $k=50$; GRAIL's exhaustive mode keeps rising
 because it keeps having candidates. Where a method runs out the budget has stopped measuring
@@ -504,7 +503,7 @@ a perfect group ordering through that gate is worse than the generator cap it re
 helps only where it adjusts an order that already exists, which is what P5 does and why P5 is a
 measurement rather than a confirmation (Section~\ref{SI-sec:si-oracle}).
 
-Every figure here comes from one trained checkpoint, so the intervals quantify the population and
+One trained checkpoint produced every figure here, so the intervals quantify the population and
 not the training. Retraining both stages under \numSpreadSeedsWord{} seeds at the configuration these tables report measures the training noise, and against the interactive arm's spread the rank fusion of P1 is \numSpreadPOneInsd{} times it, the pool cap of P2 \numSpreadPTwoInsd{} times it and the rule budget of P3 \numSpreadPThreeInsd{} times it rather than inside it, the last of these indicative rather than a test (Section~\ref{SI-sec:si-retrain}).
 
 \subsection{How much of the verdict is the criterion}
@@ -744,7 +743,7 @@ other systems stop. At a budget of three candidates SyGMa is the better choice; 
 work's exhaustive arm recovers more, and against SyGMa it does so for a reason that survives
 matching the two on list length, while against MetaTox and MetaPredictor it does not.
 
-The first half of that is a result about the field and not about this system. SyGMa is the
+SyGMa's lead at the tight budgets is a result about the field and not about this system. SyGMa is the
 oldest and by far the smallest method in the comparison, \numSygmaRules{} published rules against
 this bank's \numBankRules{}, and at every budget of five or fewer it recovers more of the
 annotated metabolites than any other method here, including two published since. A chemist
@@ -794,7 +793,7 @@ is the concrete case for leaderboards releasing per-item predictions rather than
 \citep{Rodriguez_2021, Mishra_2021}. Precision figures are bounded by annotation completeness. And the advantage at
 wide budgets is partly a statement about output length on all sides rather than about ranking.
 
-The argument made here about other people's figures was turned on this work's own release, and it
+This paper turned its argument about other people's figures on its own release, and it
 found settings that decide a number and were not declared. Six of them: the aggregation of the templates reaching one candidate, the fusion constant, a rule gate the released checkpoint carries, a set of pools scored by a checkpoint this repository no longer ships, the drawing of the substrate, and the pool cap. Each is declared and measured here rather than described, which may be read either way: as the
 discipline doing its work, or as a measure of how easily an undeclared setting survives even in a
 paper whose subject is undeclared settings. The second reading is why the first is worth

@@ -383,19 +383,19 @@ the output budget of Section 2.9, which is how
 many candidates a system may return; where
 this paper writes budget unqualified it means
 that one. The rule budget is one continuous
-setting, and the two modes reported throughout
-are two points on it rather than two designs.
-The interactive mode applies the 30 templates
-the trained checkpoint records and returns in
-about a second, which is what a user waiting at a
-web form requires; the exhaustive mode applies
-the whole bank, the 7,580 of 7,581 templates
-that parse, and takes tens of seconds. The interactive value is where the released checkpoint was
-trained, which is a fact about how the run was
-configured and not an argument for the number,
-so the curve either side of it is measured on validation (Section S16). What the difference buys
-was fixed in advance as prediction P3 and, on
-validation, came in under its ceiling (Table 6).
+setting, and the two modes reported throughout are two points on it. The interactive mode
+applies the 30 templates the trained checkpoint
+records and returns in about a second, which
+is what a user waiting at a web form requires;
+the exhaustive mode applies the whole bank, the
+7,580 of 7,581 templates that parse, and takes
+tens of seconds. The interactive value is where
+the released checkpoint was trained, which is
+a fact about how the run was configured and
+not an argument for the number, so the curve
+either side of it is measured on validation (Section S16). What the difference buys was fixed
+in advance as prediction P3 and, on validation,
+came in under its ceiling (Table 6).
 On the comparison set the same quantity is
 +0.0556, past the ceiling. The discrepancy is
 reported rather than resolved and it has a reading: at k ≤ 10 the whole bank buys nothing
@@ -1100,8 +1100,8 @@ That lead also survives the one test the comparator’s own settings allow: run 
 scenario SyGMa emits more than five times what
 the exhaustive arm returns and the gap does
 not close (Section S35).
-The advantage is at depth rather than at the
-head of the list. MetaPredictor is flat from
+The exhaustive arm leads at depth rather than
+at the head of the list. MetaPredictor is flat from
 k = 15 because 273 of its 291 lists are shorter
 than that budget, and SyGMa gains little between k = 15 and k = 50; GRAIL’s exhaustive
 mode keeps rising because it keeps having candi10
@@ -1347,13 +1347,14 @@ that gate is worse than the generator cap it replaces. The signal helps only whe
 an order that already exists, which is what P5
 does and why P5 is a measurement rather than
 a confirmation (Section S27).
-Every figure here comes from one trained
-checkpoint, so the intervals quantify the population and not the training. Retraining both
-stages under three seeds at the configuration
-these tables report measures the training noise,
-and against the interactive arm’s spread the
-rank fusion of P1 is 18.3 times it, the pool cap
-of P2 6.5 times it and the rule budget of P3 2.3
+One trained checkpoint produced every figure
+here, so the intervals quantify the population
+and not the training. Retraining both stages
+under three seeds at the configuration these
+tables report measures the training noise, and
+against the interactive arm’s spread the rank
+fusion of P1 is 18.3 times it, the pool cap of
+P2 6.5 times it and the rule budget of P3 2.3
 times it rather than inside it, the last of these
 indicative rather than a test (Section S32).
 
@@ -2177,7 +2178,7 @@ Discussion
 Where the advantage is, and
 where it is not
 
-ahead of every comparator (Table 2).
+exhaustive arm ahead of every comparator (Table 2).
 The division has a consequence for how such
 tools are compared. A single recall figure at
 a single budget would have named a different
@@ -2196,16 +2197,15 @@ at fifty this work’s exhaustive arm recovers more,
 and against SyGMa it does so for a reason that
 survives matching the two on list length, while
 against MetaTox and MetaPredictor it does not.
-The first half of that is a result about the field
-and not about this system. SyGMa is the oldest
-and by far the smallest method in the comparison, 175 published rules against this bank’s
-7,581, and at every budget of five or fewer it
-recovers more of the annotated metabolites than
-any other method here, including two published
-since. A chemist reading a short list is working
-at exactly those budgets. That is visible only
-because the budget is swept. At a budget of
-fifty the ordering reverses, the exhaustive arm
+SyGMa’s lead at the tight budgets is a result about the field and not about this system.
+SyGMa is the oldest and by far the smallest
+method in the comparison, 175 published rules
+against this bank’s 7,581, and at every budget
+of five or fewer it recovers more of the annotated
+metabolites than any other method here, including two published since. A chemist reading a
+short list is working at exactly those budgets.
+That is visible only because the budget is swept.
+At a budget of fifty the ordering reverses, the
 
 4.2
 
@@ -2223,7 +2223,6 @@ MetaTox, and by k = 20 many of its lists have
 already ended; a list that has ended cannot gain
 a hit from a wider window, so it trails MetaTox
 at every budget above fifteen with the interval
-excluding zero (Tables S8 and S12). A service
 
 17
 
@@ -2336,9 +2335,7 @@ synthetic templates could supply. Right: the share of the novel-type gap sitting
 once, against four definitions of a type; the label above each bar is that share and the count under
 each tick is how many distinct types the definition yields. The hatched bars are the definitions
 under which a type still names a transformation, so the distinction does not rest on colour.
-
-4.3
-
+excluding zero (Tables S8 and S12). A service
 deployed in that mode would recover less than
 the system it replaces wherever it answers with
 thirty candidates or more.
@@ -2351,7 +2348,10 @@ pays in runtime and in what a caller receives:
 at fifty the exhaustive arm’s precision is 0.0321,
 about thirty wrong structures for each right one.
 A list of that length is why the next property
+
 matters more than the recall figure does.
+
+4.3
 
 What is and is not distinctive
 
@@ -2363,15 +2363,19 @@ type and a site of metabolism 5 , so reporting one
 is the norm rather than a contribution. Checking it against the atoms that actually changed,
 against a null of the same size, is not done anywhere in this literature that we can find, and
 Section 3.4 is that check. Nor is ordering the
-whole output, which three of the five comparators also do. What is left, and it is the property
-this paper rests on, is that every evaluation
+
 18
 
-choice is declared with every cell of the resulting
+whole output, which three of the five comparators also do. What is left, and it is the property
+this paper rests on, is that every evaluation
+choice is declared with every cell of the resulting
 grid reported.
 
 4.4
 
+coverage: of the 475 references one application
+of this bank fails to reach, between 0.6253 and
+0.7095 are of a type the training annotation
 never holds. That is a bound rather than a
 point, and Section S18 gives the counts it rests
 on.
@@ -2419,18 +2423,18 @@ rather than aggregate scores 34,35 . Precision figures are bounded by annotation
 And the advantage at wide budgets is partly
 a statement about output length on all sides
 rather than about ranking.
-The argument made here about other people’s
-figures was turned on this work’s own release,
-and it found settings that decide a number and
-were not declared. Six of them: the aggregation
-of the templates reaching one candidate, the fusion constant, a rule gate the released checkpoint
-carries, a set of pools scored by a checkpoint this
-repository no longer ships, the drawing of the
-substrate, and the pool cap. Each is declared
-and measured here rather than described, which
-may be read either way: as the discipline doing
-its work, or as a measure of how easily an undeclared setting survives even in a paper whose
-subject is undeclared settings. The second reading is why the first is worth reporting.
+This paper turned its argument about other
+people’s figures on its own release, and it found
+settings that decide a number and were not declared. Six of them: the aggregation of the
+templates reaching one candidate, the fusion
+constant, a rule gate the released checkpoint
+carries, a set of pools scored by a checkpoint
+this repository no longer ships, the drawing of
+the substrate, and the pool cap. Each is declared and measured here rather than described,
+which may be read either way: as the discipline
+doing its work, or as a measure of how easily
+an undeclared setting survives even in a paper
+whose subject is undeclared settings. The second reading is why the first is worth reporting.
 
 4.5
 
@@ -2444,20 +2448,18 @@ Applying one template once is not the same as
 one enzymatic step. The registered instrument
 counts core-incident edits and calls a template
 composite at 5 or more, above every single enzymatic turnover; it flags 15.4% of the mined
-templates it can score, clearing the bar registered prediction P10 set at 13.4%. A second
-instrument counting reaction-centre loci flags
-8.9%, but errs in both directions with neither
+templates it can score, clearing the bar regis-
 
 The shortfall is a property of the corpus the
 templates are mined from, and it is measured
 directly rather than argued from the bank’s
-coverage: of the 475 references one application
-of this bank fails to reach, between 0.6253 and
-0.7095 are of a type the training annotation
 
 19
 
-error measured, so its share is neither a floor
+tered prediction P10 set at 13.4%. A second
+instrument counting reaction-centre loci flags
+8.9%, but errs in both directions with neither
+error measured, so its share is neither a floor
 nor a bound; the two agree on only 130 templates (Section S24). The coverage ceiling here
 is therefore a one-template ceiling and not a oneenzyme one, and the composite share is why a
 second application of the bank buys little: a
@@ -2494,11 +2496,11 @@ completely the corpus annotates, so every precision figure here is a lower bound
 depth; and every method runs out of candidates
 at wide budgets, so the widest columns measure
 list length on all sides as much as ordering. The
-comparison population is the 291 substrates every method has an entry for, a quarter of the
-evaluated test split, and how that quarter was
-drawn is not recorded (Section S30). Two com-
+comparison population is the 291 substrates ev-
 
-parators, BioTransformer and GLORYx, are
+ery method has an entry for, a quarter of the
+evaluated test split, and how that quarter was
+drawn is not recorded (Section S30). Two comparators, BioTransformer and GLORYx, are
 built on sources this corpus is assembled from,
 which favours both and is not corrected for.
 The deployed configuration is not the best
@@ -2534,12 +2536,12 @@ on one is not possible from what that benchmark publishes, because its reference
 appear only as drawings. Until it is, the comparison establishes an ordering within a corpus
 and not a ranking of the methods.
 The claim about evaluation is a different matter, and it is checked outside this corpus. Gao
-et al. 14 deposited the prediction files the six
-predictors they benchmarked returned, so what
-each emitted is counted rather than inferred.
 20
 
-Counted, across their 11 drugs the axis that
+et al. 14 deposited the prediction files the six
+predictors they benchmarked returned, so what
+each emitted is counted rather than inferred.
+Counted, across their 11 drugs the axis that
 benchmark leaves undeclared spans a factor of
 11.9, from 15.8 candidates per drug to 187.3: an
 undeclared quantity varying twelvefold between
@@ -2563,6 +2565,9 @@ vary it.
 
 6
 
+is what lets a third party recompute it.
+What one application of one template bank
+cannot reach is mostly chemistry the corpus
 does not contain: between 0.6253 and 0.7095
 of the 475-reference shortfall is of a type the
 training annotation never holds. Enlarging this
@@ -2619,19 +2624,17 @@ a single recall figure would have named a different leader depending on decision
 never had to state. Reporting the whole grid
 is what makes the comparison checkable, and
 releasing every arm’s per-substrate predictions
-is what lets a third party recompute it.
-What one application of one template bank
-cannot reach is mostly chemistry the corpus
+21
 
-7
+7
 
 Data and Software Availability
 
-Source code, the deployed checkpoints, the released rule bank, the split manifest, the an21
+cannot be compared against, which is why one of
+the 4 systems of 2025–26 is excluded here. Section S1 states what can and cannot be rebuilt,
+and the one step that cannot be reproduced.
 
-8
-
-notated references every recall figure is measured against, the frozen per-substrate predictions of every comparator, the evaluation harness, the provenance sweep and the preregistration with every hypothesis and its outcome
+Source code, the deployed checkpoints, the released rule bank, the split manifest, the annotated references every recall figure is measured against, the frozen per-substrate predictions of every comparator, the evaluation harness, the provenance sweep and the preregistration with every hypothesis and its outcome
 are at github.com/doctawho42/GRAIL, and are
 available to reviewers at submission. The train
 and validation candidate pools are deposited at
@@ -2659,9 +2662,8 @@ the descriptors the matching criteria are decided
 by, which lets anyone without those licences recompute every recall figure and every cell of the
 criterion sweep; a check reports zero disagreements between the two readings. Releasing the
 checkpoints is the bar this paper applies to others: a system whose weights cannot be obtained
-cannot be compared against, which is why one of
-the 4 systems of 2025–26 is excluded here. Section S1 states what can and cannot be rebuilt,
-and the one step that cannot be reproduced.
+
+8
 
 Author contributions
 
@@ -2695,16 +2697,23 @@ is stated in the Supporting Information.
 
 References
 (1) Ridder, L.; Wagener, M. SyGMa: Combining Expert Knowledge and Empirical
-Scoring in the Prediction of Metabolites.
+
+22
+
+Scoring in the Prediction of Metabolites.
 ChemMedChem 2008, 3, 821–832.
+
+model for drug metabolite prediction. Artificial Intelligence in the Life Sciences
+2025, 8, 100142.
+
 (2) Djoumbou-Feunang, Y.; Fiamoncini, J.;
 Gil-de-la Fuente, A.; Greiner, R.; Manach, C.; Wishart, D. S. BioTransformer:
 a comprehensive computational tool for
-22
-
-small molecule metabolism prediction and
+small molecule metabolism prediction and
 metabolite identification. Journal of Cheminformatics 2019, 11 .
 
+(9) Zhou, Y.; Jiang, D.; Wei, X.; Yi, J.;
+Wang, Y.; Deng, Y.; Cao, D. DeepMetab:
 a comprehensive and mechanistically informed graph learning framework for endto-end drug metabolism prediction. Chemical Science 2025, 16, 18884–18902.
 
 (3) de Bruyn Kops, C.; Stork, C.; Šı́cho, M.;
@@ -2729,14 +2738,6 @@ of Xenobiotics. Chemical Research in Toxicology 2021, 34, 286–299.
 Class, and Metabolite Structures Using
 Graph Neural Networks. 2026; ChemRxiv
 preprint, posted 6 May 2026.
-
-(5) Rudik, A. V.; Bezhentsev, V. M.;
-Dmitriev, A. V.; Druzhilovskiy, D. S.;
-Lagunin, A. A.; Filimonov, D. A.;
-Poroikov, V. V. MetaTox: Web Application for Predicting Structure and Toxicity of Xenobiotics’ Metabolites. Journal of
-Chemical Information and Modeling 2017,
-57, 638–642.
-
 (12) Boyce, M.; Meyer, B.; Grulke, C.;
 Lizarraga, L.; Patlewicz, G. Comparing
 the performance and coverage of selected
@@ -2746,6 +2747,12 @@ analogue selection in read-across: A case
 study. Computational Toxicology 2022, 21,
 100208.
 
+(5) Rudik, A. V.; Bezhentsev, V. M.;
+Dmitriev, A. V.; Druzhilovskiy, D. S.;
+Lagunin, A. A.; Filimonov, D. A.;
+Poroikov, V. V. MetaTox: Web Application for Predicting Structure and Toxicity of Xenobiotics’ Metabolites. Journal of
+Chemical Information and Modeling 2017,
+57, 638–642.
 (6) Litsa, E. E.; Das, P.; Kavraki, L. E. Prediction of drug metabolites using neural machine translation. Chemical Science 2020,
 11, 12777–12788.
 
@@ -2766,24 +2773,20 @@ Metabolite Prediction Tools against Human Radiolabeled ADME Data for SmallMolecu
 (8) Larsson, S.; Carlsson, M.; Beckmann, R.;
 Miljković, F.; Mercado, R. LAGOM:
 A transformer-based chemical language
-model for drug metabolite prediction. Artificial Intelligence in the Life Sciences
-2025, 8, 100142.
 
 (15) Ash, J. R.; Wognum, C.; Rodrı́guezPérez, R.; Aldeghi, M.; Cheng, A. C.;
 Clevert, D.-A.; Engkvist, O.; Fang, C.;
-Price, D. A.; Hughes-Oliver, J. M.; Walters, W. P. Practically Significant Method
-Comparison Protocols for Machine Learning in Small Molecule Drug Discovery.
-Journal of Chemical Information and Modeling 2025, 65, 9398–9411.
-
-(9) Zhou, Y.; Jiang, D.; Wei, X.; Yi, J.;
-Wang, Y.; Deng, Y.; Cao, D. DeepMetab:
 
 23
 
-(16) Özçelik, R.; Grisoni, F. How evaluation
-choices distort the outcome of generative
-drug discovery. Journal of Cheminformatics 2025, 17 .
+Price, D. A.; Hughes-Oliver, J. M.; Walters, W. P. Practically Significant Method
+Comparison Protocols for Machine Learning in Small Molecule Drug Discovery.
+Journal of Chemical Information and Modeling 2025, 65, 9398–9411.
 
+and open-source QSAR-ready workflow
+for automated standardization of chemical
+structures in support of QSAR modeling.
+Journal of Cheminformatics 2024, 16 .
 (25) Cormack, G. V.; Clarke, C. L. A.;
 Buettcher, S. Reciprocal rank fusion outperforms condorcet and individual rank
 learning methods. Proceedings of the 32nd
@@ -2791,6 +2794,9 @@ International ACM SIGIR Conference on
 Research and Development in Information
 Retrieval. 2009; pp 758–759.
 
+(16) Özçelik, R.; Grisoni, F. How evaluation
+choices distort the outcome of generative
+drug discovery. Journal of Cheminformatics 2025, 17 .
 (17) Steegen, S.; Tuerlinckx, F.; Gelman, A.;
 Vanpaemel, W. Increasing Transparency
 Through a Multiverse Analysis. Perspectives on Psychological Science 2016, 11,
@@ -2815,10 +2821,6 @@ Medicinal Chemistry Letters 2010, 1, 96–
 100.
 
 (19) Joeres, R.; Blumenthal, D. B.; Kalinina, O. V. Data splitting to avoid information leakage with DataSAIL. Nature Communications 2025, 16 .
-(20) Kretschmer, F.; Seipp, J.; Ludwig, M.;
-Klau, G. W.; Böcker, S. Coverage bias in
-small molecule machine learning. Nature
-Communications 2025, 16, 554.
 
 (28) Šı́cho, M.; Stork, C.; Mazzolari, A.;
 de Bruyn Kops, C.; Pedretti, A.; Testa, B.;
@@ -2828,6 +2830,10 @@ Synthetic Compounds and Natural Products for Phase 1 and Phase 2 Metabolic
 Enzymes. Journal of Chemical Information
 and Modeling 2019, 59, 3400–3412.
 
+(20) Kretschmer, F.; Seipp, J.; Ludwig, M.;
+Klau, G. W.; Böcker, S. Coverage bias in
+small molecule machine learning. Nature
+Communications 2025, 16, 554.
 (21) Zdrazil, B. et al. The ChEMBL Database
 in 2023: a drug discovery platform spanning multiple bioactivity data types and
 time periods. Nucleic Acids Research 2024,
@@ -2842,29 +2848,24 @@ Modeling 2025, 65, 8462–8474.
 (22) Wishart, D. S. et al. DrugBank 5.0: a major update to the DrugBank database for
 2018. Nucleic Acids Research 2018, 46,
 D1074–D1082.
-(23) Hähnke, V. D.; Kim, S.; Bolton, E. E. PubChem chemical structure standardization.
-Journal of Cheminformatics 2018, 10 .
 
 (30) Mazzolari, A.; Afzal, A. M.; Pedretti, A.;
 Testa, B.; Vistoli, G.; Bender, A. Prediction of UGT-mediated Metabolism Using the Manually Curated MetaQSAR
 Database. ACS Medicinal Chemistry Letters 2019, 10, 633–638.
 
+(23) Hähnke, V. D.; Kim, S.; Bolton, E. E. PubChem chemical structure standardization.
+Journal of Cheminformatics 2018, 10 .
 (24) Mansouri, K.; Moreira-Filho, J. T.;
 Lowe, C. N.; Charest, N.; Martin, T.;
 Tkachenko, V.; Judson, R.; Conway, M.;
 Kleinstreuer, N. C.; Williams, A. J. Free
-and open-source QSAR-ready workflow
-for automated standardization of chemical
-structures in support of QSAR modeling.
-Journal of Cheminformatics 2024, 16 .
 
 (31) Jacob, R. A.; Mazzolari, A.; Kirchmair, J. Automated Annotation of Sites of
-Metabolism from Biotransformation Data.
-Journal of Chemical Information and Modeling 2025, 65, 7065–7080.
-
 24
 
-(32) Maziarz, K.; Tripp, A.; Liu, G.; Stanley, M.; Xie, S.; Gaiński, P.; Seidl, P.;
+Metabolism from Biotransformation Data.
+Journal of Chemical Information and Modeling 2025, 65, 7065–7080.
+(32) Maziarz, K.; Tripp, A.; Liu, G.; Stanley, M.; Xie, S.; Gaiński, P.; Seidl, P.;
 Segler, M. H. S. Re-evaluating retrosynthesis algorithms with Syntheseus. Faraday
 Discussions 2025, 256, 568–586.
 (33) Tanovic, S.; Wieczorek, E.; Duarte, F. An
