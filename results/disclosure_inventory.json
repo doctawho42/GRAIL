@@ -3,7 +3,7 @@
   "script": "disclosure_inventory.py",
   "script_path": "scripts/disclosure_inventory.py",
   "source_sha256": "7178c28f48f37a1fa08c5afd3e14e375980532953fb019937a2ae63c28f9bcf7",
-  "git_commit": "ffc3524e7632a424116301c4887d67e1d9bf3183",
+  "git_commit": "3b407966efa18f8ba276e7872774fda01e84eb03",
   "git_dirty": true
  },
  "reviewed_and_accepted": [
@@ -335,6 +335,20 @@
     "paper2/grail_jcim.tex"
    ],
    "reason": "the title changed again; the extractor keys the preamble together with the sentence after it, and nothing in the preamble moved"
+  },
+  {
+   "text": "The validation draw is a declared sample of N substrates at seed N , of which N are held by both operating modes in a paired comparison; registered ranking and timing thresholds are checked here, because a threshold checked on the population that chose the setting it tests is not a check, and three ",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded, not retracted. Both sentences described the validation draw and were rewritten in 6fb527b because the old wording claimed the draw is taken at seed 0 directly, which is false: the loader derives each split's own seed from the configuration value. Each element survives and was located by hand before this was recorded. The reason the draw exists (a threshold checked on the population that chose the setting it tests is not a check) is at body.tex:94 and si.tex:207. The paired-comparison fact (held by both operating modes) is at si.tex:205. The seed, now stated correctly with the derivation, is at si.tex:179-180 and si.tex:204. The whole-bank-pool fact is at body.tex:94. Nothing in either sentence is dropped; the seed claim is corrected."
+  },
+  {
+   "text": "The validation draw is a declared sample of N substrates on which the registered ranking and timing thresholds are checked, because a threshold checked on the population that chose the setting it tests is not a check; Table records the population each prediction was in the event checked on, and Sect",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "Reworded, not retracted. Both sentences described the validation draw and were rewritten in 6fb527b because the old wording claimed the draw is taken at seed 0 directly, which is false: the loader derives each split's own seed from the configuration value. Each element survives and was located by hand before this was recorded. The reason the draw exists (a threshold checked on the population that chose the setting it tests is not a check) is at body.tex:94 and si.tex:207. The paired-comparison fact (held by both operating modes) is at si.tex:205. The seed, now stated correctly with the derivation, is at si.tex:179-180 and si.tex:204. The whole-bank-pool fact is at body.tex:94. Nothing in either sentence is dropped; the seed claim is corrected."
   }
  ],
  "question": "every sentence in which this work concedes something, recorded before a cut so that what a cut costs is visible rather than invisible",
@@ -374,7 +388,7 @@
   "paper2/table_hypotheses.tex",
   "paper2/table_grain.tex"
  ],
- "n": 236,
+ "n": 243,
  "reading": "a disclosure counts as present if it survives in ANY of the sources: moving one to the Supporting Information shortens the manuscript without retracting anything, and deleting one shortens it by retracting something",
  "disclosures": {
   "achemso amsmath amssymb booktabs threeparttable graphicx microtype xr si nikita l polomoshnov faculty of bioengineering and bioinformatics lomonosov moscow state university leninskie gory moscow russia nikitapol fbb msu ru anastasia v rudik department of bioinformatics institute of biomedical chemistry pogodinskaya str moscow russia metabolite predictors have a multiverse problem document abstract published predictors of metabolite structure cannot be compared with one another because recall depends on how a predicted structure is judged to match a reference and on how many candidates a system may return and papers in this area declare neither": {
@@ -449,8 +463,8 @@
     "paper2/si.tex"
    ]
   },
-  "the validation draw is a declared sample of substrates at seed of which are held by both operating modes in a paired comparison registered ranking and timing thresholds are checked here because a threshold checked on the population that chose the setting it tests is not a check and three of the ten reported predictions were in the event adjudicated on the comparison set instead which table marks": {
-   "text": "The validation draw is a declared sample of N substrates at seed N , of which N are held by both operating modes in a paired comparison; registered ranking and timing thresholds are checked here, because a threshold checked on the population that chose the setting it tests is not a check, and three ",
+  "the validation draw is a declared sample of substrate records drawn with the configuration s sampling seed set to and each split s own seed derived from it of which are held by both operating modes in a paired comparison registered ranking and timing thresholds are checked here because a threshold checked on the population that chose the setting it tests is not a check and three of the ten reported predictions were in the event adjudicated on the comparison set instead which table marks": {
+   "text": "The validation draw is a declared sample of N substrate records, drawn with the configuration's sampling seed set to N and each split's own seed derived from it, of which N are held by both operating modes in a paired comparison; registered ranking and timing thresholds are checked here, because a t",
    "in": [
     "paper2/si.tex"
    ]
@@ -877,6 +891,48 @@
   },
   "at an output budget of it is not a null where k falls short so flatness holds at three of the four budgets and not at all of them section": {
    "text": "At an output budget of 30 it is not a null, where K= N falls N [ N , N ] short, so flatness holds at three of the four budgets and not at all of them (Section )",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the deployed combination is reciprocal rank fusion where r i c is the rank of c under scorer i the aggregation taken from the budget measured and not adopted the blend of equation is better than the released rule at the head of the list and no better at depth so its sign turns along the output budget and one fixed rule runs the weaker of the two over half the range": {
+   "text": "The deployed combination is reciprocal rank fusion , where r i(c) is the rank of c under scorer i . The aggregation taken from the budget, measured and not adopted The blend of Equation is better than the released rule at the head of the list and no better at depth, so its sign turns along the outpu",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "its cell at a budget of eight is which does not separate": {
+   "text": "Its cell at a budget of eight is + N [ N , + N ] , which does not separate",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "under the schedule neither arm trails sygma with an interval excluding zero at any budget of ten or below of the exhaustive arm s five such cells separate and of the interactive arm s the widest trail being the interactive arm s at a budget of the trail section reports at one three and five would become unresolved rather than established": {
+   "text": "Under the schedule neither arm trails SyGMa with an interval excluding zero at any budget of ten or below: N of the exhaustive arm's five such cells separate and N of the interactive arm's, the widest trail being the interactive arm's N [ N , + N ] at a budget of N . The trail Section reports at one",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "artifacts are reachable from the ranking and carry a rate keyed at a budget of ten or below more are possible and a further record no inputs and cannot be placed in that graph at all": {
+   "text": "N artifacts are reachable from the ranking and carry a rate keyed at a budget of ten or below, N more are possible, and a further N record no inputs and cannot be placed in that graph at all",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the released value reproduces the registered validation arm exactly at of the budgets reported and departs from it only at the three consecutive budgets k k and k where it reads against that departure is which is one reference of the a single annotated structure that this regeneration places inside fifteen and the registered arm places between sixteen and twenty since the two agree again at k and above": {
+   "text": "The released value reproduces the registered validation arm exactly at N of the N budgets reported, and departs from it only at the three consecutive budgets k=8 , k=10 and k=15 , where it reads N against N . That departure is N , which is one reference of the N : a single annotated structure that t",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "it adds to each rule s gated identity a second identity shared by every rule of the same reaction type so a template the gate suppresses can borrow what its type has learned from better supported templates a type carried by a single rule contributes nothing and neither does a rule whose type cannot be assigned because either would hand that rule a second private identity in the one place the gate exists to take one away": {
+   "text": "It adds to each rule's gated identity a second identity shared by every rule of the same reaction type, so a template the gate suppresses can borrow what its type has learned from better-supported templates; a type carried by a single rule contributes nothing, and neither does a rule whose type cann",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the trade and the one failure that is not a trade are the result together": {
+   "text": "The trade, and the one failure that is not a trade, are the result together",
    "in": [
     "paper2/si.tex"
    ]
@@ -1349,8 +1405,8 @@
     "paper2/body.tex"
    ]
   },
-  "the validation draw is a declared sample of substrates on which the registered ranking and timing thresholds are checked because a threshold checked on the population that chose the setting it tests is not a check table records the population each prediction was in the event checked on and section states that all but one of the ten fixed a threshold in advance and not a population": {
-   "text": "The validation draw is a declared sample of N substrates on which the registered ranking and timing thresholds are checked, because a threshold checked on the population that chose the setting it tests is not a check; Table records the population each prediction was in the event checked on, and Sect",
+  "the registered ranking and timing thresholds are checked on it because a threshold checked on the population that chose the setting it tests is not a check table records the population each prediction was in the event checked on and section states that all but one of the ten fixed a threshold in advance and not a population": {
+   "text": "The registered ranking and timing thresholds are checked on it, because a threshold checked on the population that chose the setting it tests is not a check; Table records the population each prediction was in the event checked on, and Section states that all but one of the ten fixed a threshold in ",
    "in": [
     "paper2/body.tex"
    ]
