@@ -1,4 +1,11 @@
 {
+ "provenance": {
+  "script": "phase1_tmain.py",
+  "script_path": "revision/phase1_tmain.py",
+  "source_sha256": "adce5e917503612a610146049fa56663531177c3d9f4da726de70c569b8413b3",
+  "git_commit": "1d96cfc5965119ced527455b889ff4127b768033",
+  "git_dirty": true
+ },
  "generated_by": "revision/phase1_tmain.py",
  "cap": 100,
  "budgets": [
@@ -30,15 +37,15 @@
    "trained budget": "results/widepools_k30_fulltest/w*.json",
    "sygma": "results/sygma_fulltest_predictions.json",
    "metapredictor": "artifacts/tier2_1170/metapredictor_preds.json",
-   "biotransformer": "results/biotransformer_fulltest_preds.json"
+   "biotransformer": "results/biotransformer_fulltest_preds.json",
+   "gloryx": "results/gloryx_service_preds_evaluated1170.json"
   }
  },
  "cells_absent_by_construction": {
   "evaluated1170": [
-   "metatox",
-   "gloryx"
+   "metatox"
   ],
-  "why": "no prediction file covers this population; Phase 2 produces them"
+  "why": "MetaTox is a web service with no programmatic interface recorded here, so Phase 2 wrote its submission files and stopped; GLORYx was produced and is no longer absent"
  },
  "keying": [
   {
@@ -325,6 +332,12 @@
   },
   {
    "population": "evaluated1170",
+   "criterion": "exact",
+   "system": "gloryx",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
    "criterion": "canonical",
    "system": "whole bank",
    "fallbacks": 0
@@ -351,6 +364,12 @@
    "population": "evaluated1170",
    "criterion": "canonical",
    "system": "biotransformer",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "canonical",
+   "system": "gloryx",
    "fallbacks": 0
   },
   {
@@ -385,6 +404,12 @@
   },
   {
    "population": "evaluated1170",
+   "criterion": "inchikey",
+   "system": "gloryx",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
    "criterion": "inchi_no_stereo",
    "system": "whole bank",
    "fallbacks": 72
@@ -415,6 +440,12 @@
   },
   {
    "population": "evaluated1170",
+   "criterion": "inchi_no_stereo",
+   "system": "gloryx",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
    "criterion": "tanimoto1",
    "system": "whole bank",
    "fallbacks": 0
@@ -445,6 +476,12 @@
   },
   {
    "population": "evaluated1170",
+   "criterion": "tanimoto1",
+   "system": "gloryx",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
    "criterion": "inchikey_tautomer",
    "system": "whole bank",
    "fallbacks": 0
@@ -472,6 +509,12 @@
    "criterion": "inchikey_tautomer",
    "system": "biotransformer",
    "fallbacks": 87
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "inchikey_tautomer",
+   "system": "gloryx",
+   "fallbacks": 0
   }
  ],
  "reference_keying": [

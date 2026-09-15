@@ -75,8 +75,15 @@ ARMS = {
         "sygma": ("list", "results/sygma_fulltest_predictions.json", None),
         "metapredictor": ("list", "artifacts/tier2_1170/metapredictor_preds.json", None),
         "biotransformer": ("list", "results/biotransformer_fulltest_preds.json", None),
-        # metatox and gloryx have no file on this population. Phase 2 exists to produce them; until
-        # it does, the cells must be absent rather than filled from a narrower population.
+        # Produced by Phase 2. This is the MERGE of both GLORYx runs, not the service run's own
+        # output: that one holds the 879 substrates the published comparison-set run lacked, so
+        # naming it here would read an empty list for the other 291 and score them as misses.
+        # revision/phase2_gloryx_merge.py refuses a union that does not cover the population, and
+        # coverage_gaps() checks the arm as declared.
+        "gloryx": ("list", "results/gloryx_service_preds_evaluated1170.json", "predictions"),
+        # metatox still has no file on this population: it is a web service with no programmatic
+        # interface recorded here, so Phase 2 wrote its submission files and stopped. The cells
+        # stay absent rather than being filled from a narrower population.
     },
 }
 
@@ -403,8 +410,10 @@ def main() -> int:
                   "mechanics_copied_from": "scripts/typed_edit/deployment_table.py",
                   "arms": {p: {a: s[1] for a, s in d.items()} for p, d in ARMS.items()},
                   "cells_absent_by_construction": {
-                      "evaluated1170": ["metatox", "gloryx"],
-                      "why": "no prediction file covers this population; Phase 2 produces them"}}
+                      "evaluated1170": ["metatox"],
+                      "why": ("MetaTox is a web service with no programmatic interface recorded "
+                              "here, so Phase 2 wrote its submission files and stopped; GLORYx "
+                              "was produced and is no longer absent")}}
     rows = build_rows(provenance=provenance)
     out = ROOT / "revision" / "T_main.csv"
     cols = ["system", "criterion", "k", "population", "recall", "ci_lo", "ci_hi",
