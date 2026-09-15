@@ -17,11 +17,19 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-BODY = ROOT / "paper" / "grail_iclr.tex"
+# The JCIM manuscript, not the ICLR one. This pointed at paper/grail_iclr.tex, so
+# results/prose_metrics.json reported a mean of 16.22 words for a document nobody is submitting
+# while the manuscript under review sat unmeasured at 25.4.
+BODY = ROOT / "paper2" / "body.tex"
 
 
 def strip_latex(s: str) -> str:
-    s = s[s.index(r"\begin{abstract}"):s.index(r"\subsubsection*{Reproducibility")]
+    # The ICLR file was one document with its own front matter, so the prose was cut out of it by
+    # two landmarks. body.tex is already prose-only and carries neither, so the slice is taken
+    # only when both are present rather than assumed.
+    a, b = r"\begin{abstract}", r"\subsubsection*{Reproducibility"
+    if a in s and b in s:
+        s = s[s.index(a):s.index(b)]
     # floats and their captions are not read in sequence
     for env in ("figure", "table", "tabular", "tikzpicture", "itemize", "center"):
         s = re.sub(rf"\\begin\{{{env}\}}.*?\\end\{{{env}\}}", " ", s, flags=re.S)
@@ -41,8 +49,21 @@ def strip_latex(s: str) -> str:
 
 
 def sentences(text: str) -> list:
-    parts = re.split(r"(?<=[.!?])\s+(?=[A-Z(])", text)
-    return [p.strip() for p in parts if len(p.split()) >= 3]
+    """Deferred to the gate's splitter rather than repeated here.
+
+    This file used to split on a full stop followed by a capital. Pointed at body.tex that
+    reports a longest "sentence" of 251 words where check_prose_density reports 64, because it
+    runs across section boundaries and glues a heading to the paragraph after it. Commit 892692b
+    hit the same thing at 340 words and fixed the splitter before changing a word of prose; the
+    lesson applies to a report as much as to an edit, since a tracked artifact carrying 251 is a
+    number about the instrument and not about the manuscript.
+    """
+    import sys
+
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import check_prose_density as cpd
+
+    return [s for b in cpd.blocks(text) for s in cpd.sentences(b)]
 
 
 def syllables(word: str) -> int:
@@ -62,8 +83,12 @@ def main() -> int:
     ap.add_argument("--out", default=str(ROOT / "results" / "prose_metrics.json"))
     args = ap.parse_args()
 
-    text = strip_latex(BODY.read_text())
-    sents = sentences(text)
+    # Not through strip_latex. Deferring the splitter was not enough on its own: strip_latex runs
+    # first and flattens \section{...} to a space, so the block boundaries the gate's splitter
+    # cuts on are gone by the time it sees the text, and the longest "sentence" stayed at 251
+    # words while the mean moved. The aggregate absorbed the defect and the extremum did not,
+    # which is the general shape: check the maximum, never the mean, when a splitter is suspect.
+    sents = sentences(BODY.read_text())
     lens = [len(s.split()) for s in sents]
     words = sum(lens)
     syl = sum(syllables(w) for s in sents for w in s.split())

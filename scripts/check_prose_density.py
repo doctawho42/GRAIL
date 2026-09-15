@@ -33,7 +33,28 @@ ROOT = Path(__file__).resolve().parent.parent
 LIMITS = {
     "paper2/body.tex": {"mean": 28.0, "over45_share": 0.10, "longest": 75},
     "paper2/grail_jcim.tex": {"mean": 30.0, "over45_share": 0.20, "longest": 60},
+    # The Supporting Information was absent from this dict while the reviewer who prompted the
+    # pass named it explicitly ("your manuscript and SI"). Between the pass that set these
+    # ceilings and now, the manuscript went 31 pages to 26 and the SI went 87 to 101: what was
+    # measured shrank and what was not measured grew. The mean is NOT the defect and its ceiling
+    # matches the manuscript's, because eight comparable papers put the whole-document mean at
+    # 23.2-28.5 (median 26.3) and this file sits at 27.4, inside that range. What sits outside is
+    # the tail: 12 per cent of its sentences run past 45 words and its longest is 96. So the two
+    # tail ceilings are set where the manuscript's are, this file does not meet them today, and
+    # that is recorded as an open debt rather than accommodated by a ceiling drawn around it.
+    "paper2/si.tex": {"mean": 28.0, "over45_share": 0.10, "longest": 75},
 }
+
+# A file-level mean cannot fail on one section. The Conclusions were reported elsewhere at 48
+# words a sentence, which would have dissolved into the manuscript's 25.4 and tripped nothing;
+# measured through this splitter they are 27.5, so that figure was an artefact of another
+# instrument and no ceiling is set to catch it. What the same measurement does find is real and
+# local: of 26 manuscript sections the highest mean is 30.5, while the Supporting Information
+# runs to 42.0 and 39.9 in two of its 42. The ceiling is therefore set above every section of the
+# manuscript and above the whole-document range those eight papers occupy, so it flags a genuine
+# local outlier and nothing else. Sections under four sentences are not measured: a mean over
+# three sentences is noise.
+SECTION_LIMITS = {"mean": 32.0, "min_sentences": 4}
 # A sentence that is one long list by format rather than by prose. The Supporting Information
 # listing is required to enumerate every section in one sentence, and cutting it up would break the
 # format the journal asks for.
@@ -92,6 +113,35 @@ def measure(rel: str) -> dict | None:
             "worst": sorted(ss, key=lambda s: -len(s.split()))[:6]}
 
 
+def by_section(rel: str) -> list:
+    """The same measurement, per sectioning unit, because a file mean cannot fail on a section.
+
+    Every ceiling above is an average over a whole document, and an average has no way to refuse
+    one heavy section: a section at 42 words a sentence inside a file at 27.4 moves the file by a
+    fraction of a word. Titles are kept so the refusal names the section a person has to open,
+    and each unit is measured through the same blocks/sentences pair as the file, so a section
+    figure and a file figure are the same quantity at two scales.
+    """
+    p = ROOT / rel
+    if not p.exists():
+        return []
+    src = p.read_text()
+    marks = [(m.start(), re.sub(r"\\[a-zA-Z]+\*?|[{}]", "", m.group(1)).strip())
+             for m in re.finditer(r"\\(?:sub)*section\*?\{([^}]*)\}", src)]
+    if not marks:
+        return []
+    marks.append((len(src), ""))
+    out = []
+    for (a, title), (b, _) in zip(marks, marks[1:]):
+        ss = [s for blk in blocks(src[a:b]) for s in sentences(blk)]
+        if len(ss) < SECTION_LIMITS["min_sentences"]:
+            continue
+        L = [len(s.split()) for s in ss]
+        out.append({"title": title or "(untitled)", "n": len(ss), "mean": st.mean(L),
+                    "longest": max(L)})
+    return out
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--worst", action="store_true", help="print the sentences nearest the ceiling")
@@ -111,6 +161,13 @@ def main() -> int:
                            ("longest", "the longest sentence")):
             if m[key] > lim[key]:
                 bad.append(f"{rel}: {label} is {m[key]:.2f}, over the ceiling of {lim[key]}")
+
+        heavy = [s for s in by_section(rel) if s["mean"] > SECTION_LIMITS["mean"]]
+        for s in sorted(heavy, key=lambda s: -s["mean"]):
+            bad.append(f"{rel}: section \"{s['title'][:60]}\" means {s['mean']:.1f} words over "
+                       f"{s['n']} sentences, over the section ceiling of "
+                       f"{SECTION_LIMITS['mean']}")
+
         if args.worst:
             for s in m["worst"]:
                 print(f"      [{len(s.split()):3d}] {s[:150]}")

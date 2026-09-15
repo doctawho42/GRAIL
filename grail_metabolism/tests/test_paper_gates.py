@@ -60,12 +60,40 @@ GATES = [
     # spelled-out word is invisible to the numbers gate.
     ("check_register_tally.py", []),
     ("check_register_tally.py", ["--self-test"]),
+    # How often the prose reaches for two constructions, against what eight comparable papers do.
+    # A reviewer called the manuscript machine-written; the reply that each hedge is individually
+    # defensible answers a different question, because the complaint is about a rate. Measured,
+    # "rather than" runs at 5.5 per 1000 words against a corpus range of 0.00-0.57.
+    ("check_prose_rate.py", []),
 ]
 
 
 # What a gate reads that a fresh clone may not have. A missing input is a skip, not a failure.
 NEEDS = {
     "check_paper2_build.py": ("paper2/si.log", "paper2/grail_jcim.log"),
+}
+
+# A gate may be red on purpose, and that has to be said here rather than left to whoever reads
+# the suite. Two of these were written to fail: the density gate gained the Supporting
+# Information, which does not meet the tail ceilings the manuscript meets, and the rate gate
+# exists precisely because the rate is out. A red gate nobody has declared is indistinguishable
+# from a broken one, and a suite that is permanently red stops being read at all -- which is the
+# same defect as a gate nobody runs, one step further along.
+#
+# The list is not a licence. If a declared gate PASSES, this test fails and demands its removal,
+# so a debt cannot be paid and left on the books, and cannot be added to silence a real
+# regression: the moment the prose reaches the ceiling, the entry has to go.
+DECLARED_DEBT = {
+    "check_prose_density.py":
+        "paper2/si.tex: 12 per cent of sentences over 45 words against a ceiling of 10, longest "
+        "96 against 75, and four sections over the section mean ceiling of 32. The file was "
+        "absent from LIMITS while the reviewer named it explicitly; its mean (27.4) is inside "
+        "the range eight comparable papers occupy and is not the defect. Closes in W4.",
+    "check_prose_rate.py":
+        "'rather than' occurs 62 times in the manuscript against a ceiling of 8 and 155 times in "
+        "the Supporting Information against 20; the four self-grading tics are over a ceiling of "
+        "zero in both. The ceilings are the comparison corpus's bounds, not this document's "
+        "counts. Closes in W3 for the manuscript and W4 for the Supporting Information.",
 }
 
 
@@ -88,6 +116,15 @@ def test_paper_gate_exits_zero(script, args):
             pytest.skip(f"{script} needs {needed}, which this checkout has not built")
     run = subprocess.run([sys.executable, str(path), *args], cwd=ROOT,
                          capture_output=True, text=True, timeout=600)
+
+    debt = DECLARED_DEBT.get(script)
+    if debt is not None:
+        assert run.returncode != 0, (
+            f"{script} passes, so it is no longer a declared debt: remove its entry from "
+            f"DECLARED_DEBT in this file. Leaving a paid debt on the books is how a gate stops "
+            f"meaning anything.\nThe entry said: {debt}")
+        pytest.xfail(f"declared debt -- {debt}")
+
     assert run.returncode == 0, (
         f"{script} exited {run.returncode}\n"
         f"--- stdout ---\n{run.stdout[-4000:]}\n--- stderr ---\n{run.stderr[-2000:]}")

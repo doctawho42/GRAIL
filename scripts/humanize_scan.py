@@ -60,12 +60,20 @@ FAMILIES = {
 }
 
 
+# Both manuscripts, because this scan was written for the first one and never read the second.
+# It swept paper/ only, so every count it reported was about the ICLR submission while the
+# document under review was paper2/ -- a detector that cannot go red on the file it is quoted
+# about. The JCIM manuscript is listed first because it is the one being submitted.
+TREES = ("paper2", "paper")
+
+
 def texts() -> dict:
     out = {}
-    for p in sorted((ROOT / "paper").rglob("*.tex")):
-        if "iclr2026_conference" in p.name:
-            continue
-        out[str(p.relative_to(ROOT))] = p.read_text(errors="ignore")
+    for tree in TREES:
+        for p in sorted((ROOT / tree).rglob("*.tex")):
+            if "iclr2026_conference" in p.name or "iclr2027_conference" in p.name:
+                continue
+            out[str(p.relative_to(ROOT))] = p.read_text(errors="ignore")
     return out
 
 
