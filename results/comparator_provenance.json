@@ -2,8 +2,8 @@
  "provenance": {
   "script": "comparator_provenance.py",
   "script_path": "scripts/typed_edit/comparator_provenance.py",
-  "source_sha256": "d24d53fe7bd95813ba51de18f725663cf8b53bc1e4632b745ff3e9a0dbbad688",
-  "git_commit": "6c947921438e46c0002b09650144580460b719fb",
+  "source_sha256": "1059c4e86a7370eb2430b41c9d4d3424e07c48743559855d16539a7e873788e8",
+  "git_commit": "e0cbc7f08c4ee49797ff5609c98187eaddca37aa",
   "git_dirty": true
  },
  "comparators": {
@@ -49,7 +49,7 @@
    "version": "0.0.26",
    "configuration": "phase 1 and phase 2, the service's default",
    "predictions": "results/gloryx_service_preds.json",
-   "version_note": "this is the only arm not run on this machine. Its source is public and GPL-3 and its command line takes an SDF in batch, so submission cost is not what kept it out; what does is that the FAME 3 models it needs are not distributed with it and its README directs a user to the FAME 3 authors for them. The successor GLORYxR installs but ships no production model. So the column comes from the service, which reports a module version, and that version is recorded beside the job identifiers the run used",
+   "version_note": "this is the only arm not run on this machine. Its source is public and GPL-3 and its command line takes an SDF in batch, so submission cost is not what kept it out; what does is that the FAME 3 models it needs are not distributed with it and its README directs a user to the FAME 3 authors for them. So this column comes from the service, which reports a module version, and that version is recorded beside the job identifiers the run used. The successor GLORYxR installs and runs and ships no production model either, but its dumps were supplied privately by its first author for this work, so GLORYxR is additionally run locally as its own arm in both site-of-metabolism modes. Those columns are recorded in revision/T_gloryxr.csv and not beside this one: the local arm emits no stereochemistry at all, so it is comparable to this service column under the stereo-insensitive criteria only",
    "service": "https://nerdd.univie.ac.at/api/gloryx",
    "jobs": [
     "b842a8ad-eece-4c24-b855-abc80b91e6a5",
@@ -66,7 +66,7 @@
     "52a3fa1d-fa2a-46f1-8131-1a2e923888ec"
    ],
    "predictions_sha256": "61383272c0066045743a374c9215d4ab3a734649150a6ce7bd53cf033b184cd3",
-   "predictions_first_in_the_repository": null
+   "predictions_first_in_the_repository": "2026-09-04"
   }
  },
  "n_comparators": 5,

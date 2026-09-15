@@ -96,10 +96,15 @@ COMPARATORS = {
                          "GPL-3 and its command line takes an SDF in batch, so submission cost is "
                          "not what kept it out; what does is that the FAME 3 models it needs are "
                          "not distributed with it and its README directs a user to the FAME 3 "
-                         "authors for them. The successor GLORYxR installs but ships no "
-                         "production model. So the column comes from the service, which reports a "
+                         "authors for them. So this column comes from the service, which reports a "
                          "module version, and that version is recorded beside the job identifiers "
-                         "the run used"),
+                         "the run used. The successor GLORYxR installs and runs and ships no "
+                         "production model either, but its dumps were supplied privately by its "
+                         "first author for this work, so GLORYxR is additionally run locally as "
+                         "its own arm in both site-of-metabolism modes. Those columns are recorded "
+                         "in revision/T_gloryxr.csv and not beside this one: the local arm emits "
+                         "no stereochemistry at all, so it is comparable to this service column "
+                         "under the stereo-insensitive criteria only"),
     },
 }
 
