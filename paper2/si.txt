@@ -3554,16 +3554,19 @@ defect this paper is about.
 Its source is public and GPL-3, and its command line takes an SDF in batch, so the cost
 of submission was never the obstacle for this system. What blocks a local build is stated in
 its own repository: the FAME 3 models it needs for site prediction are not distributed with
-it, and a user is directed to the authors of FAME 3 for them, free of charge for non-profit use.
-Its successor, GLORYxR, installs and runs, but ships no production model either; the model
-dumps its documentation points to are, at the time of writing, unpublished, and the model it
-does ship is one its own tutorial says is not trained on the full dataset. So a local build is
-possible only after a request this work has not made.
-What remains is the service the authors themselves operate, which runs the real system.
+it, and a user is directed to the authors of FAME 3 for them, free of charge for non-profit
+use. Its successor, GLORYxR, installs and runs, but ships no production model either; the
+model dumps its documentation points to are, at the time of writing, unpublished, and the
+model it does ship is one its own tutorial says is not trained on the full dataset. That request
+was made for this work and granted: the dumps were supplied privately by GLORYxR’s
+first author, and the successor is therefore run here, locally, over the whole evaluated set in
 
 S78
 
-It is used here, at module version 0.0.26, over the same 291 substrates as every other arm
+both of its site-of-metabolism modes. The dumps remain unpublished, so that column is
+reproducible from the artifacts deposited with this work but not from public sources alone.
+What remains is the service the authors themselves operate, which runs the real system.
+It is used here, at module version 0.0.26, over the same 291 substrates as every other arm
 and on the drawing the corpus stores, in twelve jobs whose identifiers the artifact records;
 the service’s published anonymous quota is far above what this needed. That is a weaker
 provenance than the other four arms have and it is stated rather than smoothed over: what
@@ -3587,13 +3590,13 @@ partitions on: the core rule file this repository reads holds 668 of them, and 6
 in this bank character for character.
 It carries a column. Supplying no ranked predictions would not have excluded it, since
 that does not separate it from MetaPredictor, whose list is also unranked and shorter than the
-budget on nearly every substrate. Running it takes one thing worth recording for anyone who
-tries: the native InChI library its distribution caches is built for one processor architecture,
-so on another the tool aborts at load, and an x86-64 Java 8 runtime resolves it. It is the
 
 S79
 
-comparator that bears most on the rule bank, since 611 of its templates are inside that
+budget on nearly every substrate. Running it takes one thing worth recording for anyone who
+tries: the native InChI library its distribution caches is built for one processor architecture,
+so on another the tool aborts at load, and an x86-64 Java 8 runtime resolves it. It is the
+comparator that bears most on the rule bank, since 611 of its templates are inside that
 bank, so its column measures how much of this work’s reach is BioTransformer’s reach under
 another name.
 It is run at allHuman for one step, which is one application of its own rules and the closest
@@ -3617,13 +3620,13 @@ rather than by the argument: running the same Holm procedure over all 90 contras
 paper prints removes three of the cells the declared family licenses, the exhaustive arm’s trail
 against SyGMa at a budget of five, which is a trail and not a lead and is reported either way.
 And the deeper scenario is not swept for this comparator as it is for SyGMa. That asymmetry
-was decided after the matched-length control had been read, which is worth stating because
-it is exactly the kind of choice this work asks other papers to declare: the control removes
-list length as a variable and finds no separation, so a scenario that emits more would narrow
 
 S80
 
-a gap this paper does not claim as an ordering result and would change no verdict here. On
+was decided after the matched-length control had been read, which is worth stating because
+it is exactly the kind of choice this work asks other papers to declare: the control removes
+list length as a variable and finds no separation, so a scenario that emits more would narrow
+a gap this paper does not claim as an ordering result and would change no verdict here. On
 that basis the absence is unforced.
 Its templates are also measured for reach, which is a different quantity from its recall,
 on the same 150-substrate subset drawn for the earlier MetaTrans evaluation (Section S30):
@@ -3647,13 +3650,13 @@ them has to be stated and it is a weak one. It is not reproducibility: neither s
 are recorded here, and Section S35 says as much for MetaTox. It is not availability: both
 are reachable. It is the cost of submission, that MetaTox accepts a file of 291 structures and
 returns a file where DeepCYP takes one substrate at a time. That is a statement about our
-effort and not about either system, and it is the kind of reason this paper asks other work
-not to leave implicit, so it is written here rather than left out. On that basis DeepCYP’s
-absence is unforced, and the same applies to GLORYx, whose distribution was not sought.
 
 S81
 
-Metabolite-Gen S14 is a preprint with no repository we could find. The list is closed by a rule:
+effort and not about either system, and it is the kind of reason this paper asks other work
+not to leave implicit, so it is written here rather than left out. On that basis DeepCYP’s
+absence is unforced, and the same applies to GLORYx, whose distribution was not sought.
+Metabolite-Gen S14 is a preprint with no repository we could find. The list is closed by a rule:
 a comparator that could not be obtained is reported as unavailable with its reason, is not
 dropped silently, and the list is not extended after the first run.
 The hydrogen convention is an argument to the rule-application entry point rather than a
@@ -3677,13 +3680,13 @@ from, and none of those figures comes from outside it. The chain from artifact t
 macro runs end to end in a clone, which is not where it started (Section S36).
 The wider sweep is over 563 files and its parts are worth printing, since a total is easier to
 accept than to add up: 299 carry no stamp, 41 have a producer that has changed since, 26
-have a producer the sweep cannot identify, 8 changed only cosmetically, 67 are stamped and
-current without being pinned, and 122 are the pinned files that live under the results directory
-the total names. Those six add to the total. A split manifest pins by digest the triple files,
 
 S82
 
-the substrate sets, the evaluated test set, the rule bank and every third-party artifact, and
+have a producer the sweep cannot identify, 8 changed only cosmetically, 67 are stamped and
+current without being pinned, and 122 are the pinned files that live under the results directory
+the total names. Those six add to the total. A split manifest pins by digest the triple files,
+the substrate sets, the evaluated test set, the rule bank and every third-party artifact, and
 a verify mode recomputes and names any file that has moved. Candidate pools record, by
 digest, the two checkpoints that scored them; both stages of the released system come from
 one training run, and for the pools frozen before that field existed the run is established by
@@ -3708,13 +3711,13 @@ Provenance and reproduction
 
 results/four method 291.json defines the comparison population, gates the MetaTox
 column and carries the deployed interactive arm from the pools the comparison itself is read
-from, reproducing Table 2 in every cell of both. It also records, beside that arm, the one it
-replaced: an early dump ranked by the product of the two component scores over a narrower
-pool, which reached 0.2677 at k = 50. No number in this paper derives from that column,
 
 S83
 
-and it is kept rather than deleted so that the column can still be identified in an older copy.
+from, reproducing Table 2 in every cell of both. It also records, beside that arm, the one it
+replaced: an early dump ranked by the product of the two component scores over a narrower
+pool, which reached 0.2677 at k = 50. No number in this paper derives from that column,
+and it is kept rather than deleted so that the column can still be identified in an older copy.
 Table 2 is supplied by deployment table.json, which carries a gate asserting the two agree
 on MetaTox.
 123 artifacts are pinned. Most record the script that wrote them, the SHA-256 of that
@@ -3738,13 +3741,13 @@ by running the number generator with its artifact reader instrumented, so the co
 files actually opened and not of matches in the source. Of the 101, the sweep finds none
 unpinned and one whose producer it cannot identify. Of the rest, nine predate stamping
 and are verified by recovering their producer’s source from the history rather than from a
-recorded digest, which the sweep labels as inferred; that is a weaker check and is counted
-separately for that reason. A further three are exempt with a stated reason, each an output
-of the checking apparatus itself, which cannot verify its own inputs without circularity.
 
 S84
 
-Which model produced an artifact is checked separately, because a producer whose source
+recorded digest, which the sweep labels as inferred; that is a weaker check and is counted
+separately for that reason. A further three are exempt with a stated reason, each an output
+of the checking apparatus itself, which cannot verify its own inputs without circularity.
+Which model produced an artifact is checked separately, because a producer whose source
 has not moved can still have been pointed at a checkpoint nobody deployed, and one was:
 the worked example was ranked by a filter from a neighbouring training run for as long as
 the example existed, and its own artifact said so in plain text. 0 of the 101 now name a
@@ -3768,13 +3771,13 @@ missing. It now refuses when a declared directory yields no shard it can read, t
 of those pools refuse a shard that does not record the released pair, and the invariant that
 exposed it is checked on every run: a substrate the standardiser does not move is the same
 molecule in both arms, so the two must return the same list on it.
-Bringing those artifacts inside the guarantee meant re-running their producers, which is a
-rerun and not a relabel, so what moved is reported. One number moved. The train split’s
-clean triple count is 345,028 where the committed artifact recorded three more: three records
 
 S85
 
-of train.sdf that the RDKit version used here no longer parses, which the loader reports
+Bringing those artifacts inside the guarantee meant re-running their producers, which is a
+rerun and not a relabel, so what moved is reported. One number moved. The train split’s
+clean triple count is 345,028 where the committed artifact recorded three more: three records
+of train.sdf that the RDKit version used here no longer parses, which the loader reports
 and which affect no substrate, no annotated pair and no figure in this paper. Every other
 field of every re-run artifact is byte-identical to what was committed, including the leakage
 audit’s overlap counts, the contamination audit and the population-defining comparison.
@@ -3798,13 +3801,13 @@ both counts stay traceable to what they were counted from.
 One thing had to be repaired before any of that meant anything. An input’s digest is
 taken over the bytes on disk, and git normalises line endings when a file is committed without
 reporting the working copy as modified, so eight tracked data files here carried bytes no
-clone would ever materialise. Three artifacts therefore verified in this checkout and reported
-a moved input in a fresh one: the guarantee was reproducible only for us. The files were
-re-materialised from the repository, the artifacts that named them re-run, and a check now
 
 S86
 
-compares every tracked file’s bytes against the committed ones, since a digest that means
+clone would ever materialise. Three artifacts therefore verified in this checkout and reported
+a moved input in a fresh one: the guarantee was reproducible only for us. The files were
+re-materialised from the repository, the artifacts that named them re-run, and a check now
+compares every tracked file’s bytes against the committed ones, since a digest that means
 one thing here and another in a clone is not a guarantee at all.
 Third, and it bounds the hop described below: naming a file as an input, by digest, is a
 guarantee about fixity and not about provenance. It establishes that the file has not moved
@@ -3828,13 +3831,13 @@ what establishes. The sweep reaches below the top level because most of what a p
 number is actually made of lives there: the candidate pools are written one shard at a time
 into their own directories, and a sweep that did not enter them would leave the files a curve
 is assembled from outside every check it makes. An unstamped file there is not therefore
-unaccounted for. A producer records the files it read by path and digest, so the guarantee
-extends one hop past the pinned set: 69 of the files below the top level are named as an input
-by a pinned artifact, and a change to any of them makes that artifact fail rather than pass.
 
 S87
 
-A split manifest pins by digest the triple files, the substrate sets, the evaluated test set,
+unaccounted for. A producer records the files it read by path and digest, so the guarantee
+extends one hop past the pinned set: 69 of the files below the top level are named as an input
+by a pinned artifact, and a change to any of them makes that artifact fail rather than pass.
+A split manifest pins by digest the triple files, the substrate sets, the evaluated test set,
 the rule bank and every third-party artifact, and a verify mode recomputes and names any
 leaf that has moved.
 Numbers reach the page through macros generated from pinned artifacts: 228 distinct
@@ -3858,13 +3861,13 @@ number and so matched nothing in a document whose pages are numbered S1, S2 and 
 which is how an unresolved pointer reached page S10; and until recently it was not among the
 checks the test suite runs, which is how a manuscript shipped a pointer printing ?? through
 a green suite. Both are closed, and the checker now also refuses a Type 3 font in either
-compiled document.
-Three things it still does not see. It counts overfull horizontal boxes, so a table that
-overruns its text block vertically passes: one did, and its page folio printed on top of a data
 
 S88
 
-cell. It compares the digest of every source against what the build recorded, which catches
+compiled document.
+Three things it still does not see. It counts overfull horizontal boxes, so a table that
+overruns its text block vertically passes: one did, and its page folio printed on top of a data
+cell. It compares the digest of every source against what the build recorded, which catches
 an edit but says nothing about whether the numbers in that source are right, since that is
 a different checker’s job. And it reads the compiled log rather than the rendered page, so
 anything that goes wrong in the geometry rather than in the references is outside it. The
@@ -3888,13 +3891,13 @@ InChIKey before the archive is built, so the deposit holds no source structure; 
 structures beside the keys are this work’s own output and are released as they are. The
 transform is part of the deposit tool and its counts are recorded in the manifest (how many
 substrates went in, how many came out, how many could not be keyed and how many keys
-collided) because a silent drop there would be a silent loss of population. The manifest also
-pins the SHA-256 of both the archive and the file inside it together with the record counts, so
-a download can be verified against the version used here. The tool refuses to build an archive
 
 S89
 
-from a pool whose substrates were not keyed, and refuses to publish one at all without a
+collided) because a silent drop there would be a silent loss of population. The manifest also
+pins the SHA-256 of both the archive and the file inside it together with the record counts, so
+a download can be verified against the version used here. The tool refuses to build an archive
+from a pool whose substrates were not keyed, and refuses to publish one at all without a
 licence: a Zenodo record cannot be withdrawn once published, so the last gate before one
 exists is that it carries nothing that cannot be redistributed.
 
@@ -3917,12 +3920,12 @@ Scantlebury, J.; Jasinski, M.; Ackerman, D.; Jewison, T.; Sajed, T.; Gautam, V.;
 Wishart, D. S. DrugBank 5.0: a major update to the DrugBank database for 2018.
 Nucleic Acids Research 2018, 46, D1074–D1082.
 (S3) Djoumbou-Feunang, Y.; Fiamoncini, J.; Gil-de-la Fuente, A.; Greiner, R.; Manach, C.;
-Wishart, D. S. BioTransformer: a comprehensive computational tool for small molecule
-metabolism prediction and metabolite identification. Journal of Cheminformatics 2019,
-11 .
 S90
 
-(S4) de Bruyn Kops, C.; Šı́cho, M.; Mazzolari, A.; Kirchmair, J. GLORYx: Prediction of the
+Wishart, D. S. BioTransformer: a comprehensive computational tool for small molecule
+metabolism prediction and metabolite identification. Journal of Cheminformatics 2019,
+11 .
+(S4) de Bruyn Kops, C.; Šı́cho, M.; Mazzolari, A.; Kirchmair, J. GLORYx: Prediction of the
 Metabolites Resulting from Phase 1 and Phase 2 Biotransformations of Xenobiotics.
 Chemical Research in Toxicology 2021, 34, 286–299.
 (S5) Dhaked, D. K.; Ihlenfeldt, W.-D.; Patel, H.; Delannée, V.; Nicklaus, M. C. Toward a
@@ -3940,13 +3943,14 @@ machine translation. Chemical Science 2020, 11, 12777–12788.
 (S9) Gao, L.; Yan, S.; Feng, K.; Liu, H.; Zhang, Z.; Diao, X. Benchmarking In Silico
 Metabolite Prediction Tools against Human Radiolabeled ADME Data for SmallMolecule Drugs. Journal of Chemical Information and Modeling 2026, 66, 2918–2928.
 (S10) Rudik, A. V.; Bezhentsev, V. M.; Dmitriev, A. V.; Druzhilovskiy, D. S.; Lagunin, A. A.;
-Filimonov, D. A.; Poroikov, V. V. MetaTox: Web Application for Predicting Structure and Toxicity of Xenobiotics’ Metabolites. Journal of Chemical Information and
-Modeling 2017, 57, 638–642.
-(S11) Larsson, S.; Carlsson, M.; Beckmann, R.; Miljković, F.; Mercado, R. LAGOM: A
+Filimonov, D. A.; Poroikov, V. V. MetaTox: Web Application for Predicting Struc-
 
 S91
 
-transformer-based chemical language model for drug metabolite prediction. Artificial
+ture and Toxicity of Xenobiotics’ Metabolites. Journal of Chemical Information and
+Modeling 2017, 57, 638–642.
+(S11) Larsson, S.; Carlsson, M.; Beckmann, R.; Miljković, F.; Mercado, R. LAGOM: A
+transformer-based chemical language model for drug metabolite prediction. Artificial
 Intelligence in the Life Sciences 2025, 8, 100142.
 (S12) Zhou, Y.; Jiang, D.; Wei, X.; Yi, J.; Wang, Y.; Deng, Y.; Cao, D. DeepMetab: a
 comprehensive and mechanistically informed graph learning framework for end-to-end
