@@ -1,0 +1,91 @@
+system,criterion,k,population,recall,n_substrates,n_references,mean_emitted_at_k,predictions_from,route
+gloryxr default,inchi_no_stereo,1,evaluated1170,0.0932,1170,2596,0.999,results/gloryxr_local_preds_default.json,"run locally from the public source with the author-supplied model dumps, one generation, scores at six decimals"
+gloryxr default,inchi_no_stereo,3,evaluated1170,0.2292,1170,2596,2.997,results/gloryxr_local_preds_default.json,"run locally from the public source with the author-supplied model dumps, one generation, scores at six decimals"
+gloryxr default,inchi_no_stereo,5,evaluated1170,0.329,1170,2596,4.991,results/gloryxr_local_preds_default.json,"run locally from the public source with the author-supplied model dumps, one generation, scores at six decimals"
+gloryxr default,inchi_no_stereo,8,evaluated1170,0.4156,1170,2596,7.947,results/gloryxr_local_preds_default.json,"run locally from the public source with the author-supplied model dumps, one generation, scores at six decimals"
+gloryxr default,inchi_no_stereo,10,evaluated1170,0.4565,1170,2596,9.866,results/gloryxr_local_preds_default.json,"run locally from the public source with the author-supplied model dumps, one generation, scores at six decimals"
+gloryxr default,inchi_no_stereo,15,evaluated1170,0.5239,1170,2596,14.334,results/gloryxr_local_preds_default.json,"run locally from the public source with the author-supplied model dumps, one generation, scores at six decimals"
+gloryxr default,inchi_no_stereo,20,evaluated1170,0.5647,1170,2596,18.111,results/gloryxr_local_preds_default.json,"run locally from the public source with the author-supplied model dumps, one generation, scores at six decimals"
+gloryxr default,inchi_no_stereo,30,evaluated1170,0.5982,1170,2596,23.859,results/gloryxr_local_preds_default.json,"run locally from the public source with the author-supplied model dumps, one generation, scores at six decimals"
+gloryxr default,inchi_no_stereo,50,evaluated1170,0.6148,1170,2596,28.885,results/gloryxr_local_preds_default.json,"run locally from the public source with the author-supplied model dumps, one generation, scores at six decimals"
+gloryxr strict,inchi_no_stereo,1,evaluated1170,0.1198,1170,2596,0.999,results/gloryxr_local_preds_strict.json,"the same run with strict SOM annotation, which restricts the site to the most relevant atoms and changes ranking but not coverage"
+gloryxr strict,inchi_no_stereo,3,evaluated1170,0.2627,1170,2596,2.997,results/gloryxr_local_preds_strict.json,"the same run with strict SOM annotation, which restricts the site to the most relevant atoms and changes ranking but not coverage"
+gloryxr strict,inchi_no_stereo,5,evaluated1170,0.354,1170,2596,4.991,results/gloryxr_local_preds_strict.json,"the same run with strict SOM annotation, which restricts the site to the most relevant atoms and changes ranking but not coverage"
+gloryxr strict,inchi_no_stereo,8,evaluated1170,0.431,1170,2596,7.947,results/gloryxr_local_preds_strict.json,"the same run with strict SOM annotation, which restricts the site to the most relevant atoms and changes ranking but not coverage"
+gloryxr strict,inchi_no_stereo,10,evaluated1170,0.473,1170,2596,9.866,results/gloryxr_local_preds_strict.json,"the same run with strict SOM annotation, which restricts the site to the most relevant atoms and changes ranking but not coverage"
+gloryxr strict,inchi_no_stereo,15,evaluated1170,0.525,1170,2596,14.334,results/gloryxr_local_preds_strict.json,"the same run with strict SOM annotation, which restricts the site to the most relevant atoms and changes ranking but not coverage"
+gloryxr strict,inchi_no_stereo,20,evaluated1170,0.5574,1170,2596,18.111,results/gloryxr_local_preds_strict.json,"the same run with strict SOM annotation, which restricts the site to the most relevant atoms and changes ranking but not coverage"
+gloryxr strict,inchi_no_stereo,30,evaluated1170,0.589,1170,2596,23.859,results/gloryxr_local_preds_strict.json,"the same run with strict SOM annotation, which restricts the site to the most relevant atoms and changes ranking but not coverage"
+gloryxr strict,inchi_no_stereo,50,evaluated1170,0.6125,1170,2596,28.885,results/gloryxr_local_preds_strict.json,"the same run with strict SOM annotation, which restricts the site to the most relevant atoms and changes ranking but not coverage"
+gloryx,inchi_no_stereo,1,evaluated1170,0.0836,1170,2596,0.997,results/gloryx_service_preds_evaluated1170.json,"the authors' web service at module version 0.0.26, phase_1_and_2; its scores are rounded to three decimals and it emits some products a single rule application cannot reach"
+gloryx,inchi_no_stereo,3,evaluated1170,0.2069,1170,2596,2.99,results/gloryx_service_preds_evaluated1170.json,"the authors' web service at module version 0.0.26, phase_1_and_2; its scores are rounded to three decimals and it emits some products a single rule application cannot reach"
+gloryx,inchi_no_stereo,5,evaluated1170,0.3074,1170,2596,4.979,results/gloryx_service_preds_evaluated1170.json,"the authors' web service at module version 0.0.26, phase_1_and_2; its scores are rounded to three decimals and it emits some products a single rule application cannot reach"
+gloryx,inchi_no_stereo,8,evaluated1170,0.4149,1170,2596,7.929,results/gloryx_service_preds_evaluated1170.json,"the authors' web service at module version 0.0.26, phase_1_and_2; its scores are rounded to three decimals and it emits some products a single rule application cannot reach"
+gloryx,inchi_no_stereo,10,evaluated1170,0.4626,1170,2596,9.845,results/gloryx_service_preds_evaluated1170.json,"the authors' web service at module version 0.0.26, phase_1_and_2; its scores are rounded to three decimals and it emits some products a single rule application cannot reach"
+gloryx,inchi_no_stereo,15,evaluated1170,0.5378,1170,2596,14.323,results/gloryx_service_preds_evaluated1170.json,"the authors' web service at module version 0.0.26, phase_1_and_2; its scores are rounded to three decimals and it emits some products a single rule application cannot reach"
+gloryx,inchi_no_stereo,20,evaluated1170,0.5759,1170,2596,18.129,results/gloryx_service_preds_evaluated1170.json,"the authors' web service at module version 0.0.26, phase_1_and_2; its scores are rounded to three decimals and it emits some products a single rule application cannot reach"
+gloryx,inchi_no_stereo,30,evaluated1170,0.6071,1170,2596,23.926,results/gloryx_service_preds_evaluated1170.json,"the authors' web service at module version 0.0.26, phase_1_and_2; its scores are rounded to three decimals and it emits some products a single rule application cannot reach"
+gloryx,inchi_no_stereo,50,evaluated1170,0.6233,1170,2596,29.025,results/gloryx_service_preds_evaluated1170.json,"the authors' web service at module version 0.0.26, phase_1_and_2; its scores are rounded to three decimals and it emits some products a single rule application cannot reach"
+whole bank,inchi_no_stereo,1,evaluated1170,0.1071,1170,2596,1.0,results/widepools_fulltest/w*.json,
+whole bank,inchi_no_stereo,3,evaluated1170,0.2288,1170,2596,2.998,results/widepools_fulltest/w*.json,
+whole bank,inchi_no_stereo,5,evaluated1170,0.3062,1170,2596,4.997,results/widepools_fulltest/w*.json,
+whole bank,inchi_no_stereo,8,evaluated1170,0.3975,1170,2596,7.994,results/widepools_fulltest/w*.json,
+whole bank,inchi_no_stereo,10,evaluated1170,0.4403,1170,2596,9.992,results/widepools_fulltest/w*.json,
+whole bank,inchi_no_stereo,15,evaluated1170,0.5308,1170,2596,14.988,results/widepools_fulltest/w*.json,
+whole bank,inchi_no_stereo,20,evaluated1170,0.5847,1170,2596,19.984,results/widepools_fulltest/w*.json,
+whole bank,inchi_no_stereo,30,evaluated1170,0.6506,1170,2596,29.971,results/widepools_fulltest/w*.json,
+whole bank,inchi_no_stereo,50,evaluated1170,0.72,1170,2596,49.877,results/widepools_fulltest/w*.json,
+trained budget,inchi_no_stereo,1,evaluated1170,0.1167,1170,2596,1.0,results/widepools_k30_fulltest/w*.json,
+trained budget,inchi_no_stereo,3,evaluated1170,0.2473,1170,2596,2.996,results/widepools_k30_fulltest/w*.json,
+trained budget,inchi_no_stereo,5,evaluated1170,0.3286,1170,2596,4.954,results/widepools_k30_fulltest/w*.json,
+trained budget,inchi_no_stereo,8,evaluated1170,0.4025,1170,2596,7.669,results/widepools_k30_fulltest/w*.json,
+trained budget,inchi_no_stereo,10,evaluated1170,0.4395,1170,2596,9.2,results/widepools_k30_fulltest/w*.json,
+trained budget,inchi_no_stereo,15,evaluated1170,0.4877,1170,2596,11.949,results/widepools_k30_fulltest/w*.json,
+trained budget,inchi_no_stereo,20,evaluated1170,0.5054,1170,2596,13.458,results/widepools_k30_fulltest/w*.json,
+trained budget,inchi_no_stereo,30,evaluated1170,0.5146,1170,2596,14.923,results/widepools_k30_fulltest/w*.json,
+trained budget,inchi_no_stereo,50,evaluated1170,0.5158,1170,2596,16.058,results/widepools_k30_fulltest/w*.json,
+gloryxr default,inchikey_tautomer,1,evaluated1170,0.0936,1170,2597,0.999,results/gloryxr_local_preds_default.json,"run locally from the public source with the author-supplied model dumps, one generation, scores at six decimals"
+gloryxr default,inchikey_tautomer,3,evaluated1170,0.2333,1170,2597,2.997,results/gloryxr_local_preds_default.json,"run locally from the public source with the author-supplied model dumps, one generation, scores at six decimals"
+gloryxr default,inchikey_tautomer,5,evaluated1170,0.3331,1170,2597,4.991,results/gloryxr_local_preds_default.json,"run locally from the public source with the author-supplied model dumps, one generation, scores at six decimals"
+gloryxr default,inchikey_tautomer,8,evaluated1170,0.4182,1170,2597,7.944,results/gloryxr_local_preds_default.json,"run locally from the public source with the author-supplied model dumps, one generation, scores at six decimals"
+gloryxr default,inchikey_tautomer,10,evaluated1170,0.4605,1170,2597,9.86,results/gloryxr_local_preds_default.json,"run locally from the public source with the author-supplied model dumps, one generation, scores at six decimals"
+gloryxr default,inchikey_tautomer,15,evaluated1170,0.5306,1170,2597,14.299,results/gloryxr_local_preds_default.json,"run locally from the public source with the author-supplied model dumps, one generation, scores at six decimals"
+gloryxr default,inchikey_tautomer,20,evaluated1170,0.5703,1170,2597,18.007,results/gloryxr_local_preds_default.json,"run locally from the public source with the author-supplied model dumps, one generation, scores at six decimals"
+gloryxr default,inchikey_tautomer,30,evaluated1170,0.6057,1170,2597,23.544,results/gloryxr_local_preds_default.json,"run locally from the public source with the author-supplied model dumps, one generation, scores at six decimals"
+gloryxr default,inchikey_tautomer,50,evaluated1170,0.6219,1170,2597,28.113,results/gloryxr_local_preds_default.json,"run locally from the public source with the author-supplied model dumps, one generation, scores at six decimals"
+gloryxr strict,inchikey_tautomer,1,evaluated1170,0.1205,1170,2597,0.999,results/gloryxr_local_preds_strict.json,"the same run with strict SOM annotation, which restricts the site to the most relevant atoms and changes ranking but not coverage"
+gloryxr strict,inchikey_tautomer,3,evaluated1170,0.2649,1170,2597,2.997,results/gloryxr_local_preds_strict.json,"the same run with strict SOM annotation, which restricts the site to the most relevant atoms and changes ranking but not coverage"
+gloryxr strict,inchikey_tautomer,5,evaluated1170,0.3577,1170,2597,4.991,results/gloryxr_local_preds_strict.json,"the same run with strict SOM annotation, which restricts the site to the most relevant atoms and changes ranking but not coverage"
+gloryxr strict,inchikey_tautomer,8,evaluated1170,0.4343,1170,2597,7.944,results/gloryxr_local_preds_strict.json,"the same run with strict SOM annotation, which restricts the site to the most relevant atoms and changes ranking but not coverage"
+gloryxr strict,inchikey_tautomer,10,evaluated1170,0.4771,1170,2597,9.86,results/gloryxr_local_preds_strict.json,"the same run with strict SOM annotation, which restricts the site to the most relevant atoms and changes ranking but not coverage"
+gloryxr strict,inchikey_tautomer,15,evaluated1170,0.5306,1170,2597,14.299,results/gloryxr_local_preds_strict.json,"the same run with strict SOM annotation, which restricts the site to the most relevant atoms and changes ranking but not coverage"
+gloryxr strict,inchikey_tautomer,20,evaluated1170,0.5645,1170,2597,18.007,results/gloryxr_local_preds_strict.json,"the same run with strict SOM annotation, which restricts the site to the most relevant atoms and changes ranking but not coverage"
+gloryxr strict,inchikey_tautomer,30,evaluated1170,0.5961,1170,2597,23.544,results/gloryxr_local_preds_strict.json,"the same run with strict SOM annotation, which restricts the site to the most relevant atoms and changes ranking but not coverage"
+gloryxr strict,inchikey_tautomer,50,evaluated1170,0.6203,1170,2597,28.113,results/gloryxr_local_preds_strict.json,"the same run with strict SOM annotation, which restricts the site to the most relevant atoms and changes ranking but not coverage"
+gloryx,inchikey_tautomer,1,evaluated1170,0.0836,1170,2597,0.997,results/gloryx_service_preds_evaluated1170.json,"the authors' web service at module version 0.0.26, phase_1_and_2; its scores are rounded to three decimals and it emits some products a single rule application cannot reach"
+gloryx,inchikey_tautomer,3,evaluated1170,0.2091,1170,2597,2.99,results/gloryx_service_preds_evaluated1170.json,"the authors' web service at module version 0.0.26, phase_1_and_2; its scores are rounded to three decimals and it emits some products a single rule application cannot reach"
+gloryx,inchikey_tautomer,5,evaluated1170,0.3123,1170,2597,4.979,results/gloryx_service_preds_evaluated1170.json,"the authors' web service at module version 0.0.26, phase_1_and_2; its scores are rounded to three decimals and it emits some products a single rule application cannot reach"
+gloryx,inchikey_tautomer,8,evaluated1170,0.4193,1170,2597,7.926,results/gloryx_service_preds_evaluated1170.json,"the authors' web service at module version 0.0.26, phase_1_and_2; its scores are rounded to three decimals and it emits some products a single rule application cannot reach"
+gloryx,inchikey_tautomer,10,evaluated1170,0.4682,1170,2597,9.839,results/gloryx_service_preds_evaluated1170.json,"the authors' web service at module version 0.0.26, phase_1_and_2; its scores are rounded to three decimals and it emits some products a single rule application cannot reach"
+gloryx,inchikey_tautomer,15,evaluated1170,0.5445,1170,2597,14.289,results/gloryx_service_preds_evaluated1170.json,"the authors' web service at module version 0.0.26, phase_1_and_2; its scores are rounded to three decimals and it emits some products a single rule application cannot reach"
+gloryx,inchikey_tautomer,20,evaluated1170,0.5845,1170,2597,18.026,results/gloryx_service_preds_evaluated1170.json,"the authors' web service at module version 0.0.26, phase_1_and_2; its scores are rounded to three decimals and it emits some products a single rule application cannot reach"
+gloryx,inchikey_tautomer,30,evaluated1170,0.6157,1170,2597,23.615,results/gloryx_service_preds_evaluated1170.json,"the authors' web service at module version 0.0.26, phase_1_and_2; its scores are rounded to three decimals and it emits some products a single rule application cannot reach"
+gloryx,inchikey_tautomer,50,evaluated1170,0.6307,1170,2597,28.256,results/gloryx_service_preds_evaluated1170.json,"the authors' web service at module version 0.0.26, phase_1_and_2; its scores are rounded to three decimals and it emits some products a single rule application cannot reach"
+whole bank,inchikey_tautomer,1,evaluated1170,0.107,1170,2597,1.0,results/widepools_fulltest/w*.json,
+whole bank,inchikey_tautomer,3,evaluated1170,0.2287,1170,2597,2.998,results/widepools_fulltest/w*.json,
+whole bank,inchikey_tautomer,5,evaluated1170,0.3057,1170,2597,4.997,results/widepools_fulltest/w*.json,
+whole bank,inchikey_tautomer,8,evaluated1170,0.3962,1170,2597,7.994,results/widepools_fulltest/w*.json,
+whole bank,inchikey_tautomer,10,evaluated1170,0.439,1170,2597,9.992,results/widepools_fulltest/w*.json,
+whole bank,inchikey_tautomer,15,evaluated1170,0.5295,1170,2597,14.988,results/widepools_fulltest/w*.json,
+whole bank,inchikey_tautomer,20,evaluated1170,0.5834,1170,2597,19.984,results/widepools_fulltest/w*.json,
+whole bank,inchikey_tautomer,30,evaluated1170,0.6484,1170,2597,29.971,results/widepools_fulltest/w*.json,
+whole bank,inchikey_tautomer,50,evaluated1170,0.7174,1170,2597,49.88,results/widepools_fulltest/w*.json,
+trained budget,inchikey_tautomer,1,evaluated1170,0.1167,1170,2597,1.0,results/widepools_k30_fulltest/w*.json,
+trained budget,inchikey_tautomer,3,evaluated1170,0.2472,1170,2597,2.996,results/widepools_k30_fulltest/w*.json,
+trained budget,inchikey_tautomer,5,evaluated1170,0.3285,1170,2597,4.954,results/widepools_k30_fulltest/w*.json,
+trained budget,inchikey_tautomer,8,evaluated1170,0.4024,1170,2597,7.669,results/widepools_k30_fulltest/w*.json,
+trained budget,inchikey_tautomer,10,evaluated1170,0.4394,1170,2597,9.2,results/widepools_k30_fulltest/w*.json,
+trained budget,inchikey_tautomer,15,evaluated1170,0.4875,1170,2597,11.949,results/widepools_k30_fulltest/w*.json,
+trained budget,inchikey_tautomer,20,evaluated1170,0.5052,1170,2597,13.458,results/widepools_k30_fulltest/w*.json,
+trained budget,inchikey_tautomer,30,evaluated1170,0.5144,1170,2597,14.923,results/widepools_k30_fulltest/w*.json,
+trained budget,inchikey_tautomer,50,evaluated1170,0.5156,1170,2597,16.058,results/widepools_k30_fulltest/w*.json,

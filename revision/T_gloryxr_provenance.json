@@ -1,0 +1,52 @@
+{
+ "provenance": {
+  "script": "phase2_gloryxr_table.py",
+  "script_path": "revision/phase2_gloryxr_table.py",
+  "source_sha256": "66f2faa1eec63931bba0d22f7f0261c48289fc23fd4c63b76b4752b1d9eab9f9",
+  "git_commit": "e0cbc7f08c4ee49797ff5609c98187eaddca37aa",
+  "git_dirty": true
+ },
+ "what_this_is": "GLORYxR's two SOM modes beside the service-derived GLORYx column and GRAIL's two arms, on the evaluated population, under the two criteria where the columns share an alphabet",
+ "population": "evaluated1170",
+ "criteria_admitted": [
+  "inchi_no_stereo",
+  "inchikey_tautomer"
+ ],
+ "criteria_refused": {
+  "exact": "25-26% disagreement, always against the local arm",
+  "canonical": "12-14% disagreement, always against the local arm",
+  "inchikey": "9-10% disagreement, always against the local arm"
+ },
+ "why_not_an_arm_in_t_main": "phase1_tmain.ARMS cannot restrict an arm to a subset of criteria, so a gloryxr arm there would emit four knowingly invalid rows per mode under exact, canonical and inchikey. The restriction is a measurement, not a preference.",
+ "limitations": [
+  {
+   "id": "stereo",
+   "detail": "0 of 14,755 local predictions carry a stereo InChIKey block against 725 of 14,784 service ones, and 0 of 11,072 local SMILES contain @, / or \\ against 1,982 of 35,175 service ones. This is why only two criteria are admitted."
+  },
+  {
+   "id": "generation",
+   "detail": "the local column is strictly one generation: Reactor.react_one applies each rule once and the package has no recursion, while the service emits some products needing two applications. So GLORYxR is not GLORYx at fixed rules."
+  },
+  {
+   "id": "score_resolution",
+   "detail": "the service rounds scores to three decimals and the local column keeps six, so on 298 shared substrates longer than 15 the k=15 cut is decided by a lexicographic tie-break in 128 of 298 service lists against 106 local ones -- a systematic difference in how the budget bites"
+  },
+  {
+   "id": "heavy_atom_floor",
+   "detail": "GLORYxR discards products below 3 heavy atoms (reactions.py), while GRAIL's own floor is 2 -- an undocumented asymmetry in coverage ceiling"
+  },
+  {
+   "id": "tautomer_drawing",
+   "detail": "GLORYxR applies no tautomer canonicalisation to its output while GRAIL does, and the corpus stores 155 of the 1,170 substrates as imidic acids. Measured over all of them -- 122 pairs, 33 skipped where canonicalisation leaves the string unchanged or the molecule will not parse -- by predicting each substrate in both the corpus and the natural-tautomer drawing: Jaccard of the product sets is a median 0.028 on raw SMILES (mean 0.030, max 0.091) and a median 0.725 on the tautomer key (mean 0.704, min 0.125, max 0.933). So the key absorbs most of the difference but not all of it, and NOT ONE of the 122 reaches full agreement: 0 of 122. In absolute terms a median 3 products appear only for the corpus drawing (mean 5.84, max 21) and a median 7 only for the natural one (mean 11.52, max 49), against a median 38 products in total. The drawing therefore changes which rules fire, not merely how the result is written, on every affected substrate."
+  },
+  {
+   "id": "duplicate_model",
+   "detail": "two of the eight delivered dumps are byte-identical (sha256 2c186eb6...), so the 224 phase-1 rules across those two subsets are scored by one forest -- 86% of the rule table by rule count"
+  }
+ ],
+ "modes_share_coverage": "identical product sets on 1170/1170 substrates, mean list 31.95 in both; order agrees on 32 (2.7%) and top-15 differs on 838 (71.6%) at mean Jaccard 0.795. Any coverage figure is equal between them by construction.",
+ "what_the_mode_costs_and_buys": "strict SOM annotation is better at small budgets and worse at large ones, and the crossing sits near k=15. Under inchikey_tautomer the strict-minus-default difference runs +0.0269, +0.0316, +0.0246, +0.0161, +0.0166 at k=1,3,5,8,10, exactly 0.0000 at k=15, then -0.0058, -0.0096, -0.0016 at k=20,30,50; under inchi_no_stereo the same shape, differing on 9 of 9 budgets. That is what the tool's own tutorial predicts: restricting the site removes scores inflated by promiscuous atom matching, which cleans the head of the list and costs depth. Reading the pair at k=15 alone would suggest the mode does not affect retrieval at all, because k=15 is the one budget where the difference vanishes.",
+ "against_grail_the_sign_changes_with_budget": "the service-derived gloryx column leads GRAIL's whole bank on 5 of 9 budgets under inchikey_tautomer and 4 of 9 under inchi_no_stereo, and the sign is not random: gloryx is ahead through k=5..20 (by as much as +0.0292 at k=10) and behind at k=30 and k=50 (by 0.0327 and 0.0867). So neither system dominates; the ordering depends on the budget, which is the same budget-dependent reversal this work reports for its other comparators, and a single-budget statement in either direction would misdescribe it.",
+ "environment": "both columns computed under the project's own uv.lock (scikit-learn 1.9.0, cdpkit 1.2.3) and again under a fresh resolve (1.9.1, 1.3.0); the substrate maps are byte-identical in both modes, so the version drift moves no number on this population",
+ "intervals": "none. These columns were obtained by different routes -- a web service and a local run of a successor -- and an interval around each would invite the paired reading the routes do not support."
+}
