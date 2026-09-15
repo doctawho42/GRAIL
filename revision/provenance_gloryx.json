@@ -3,7 +3,7 @@
   "script": "phase2_comparators.py",
   "script_path": "revision/phase2_comparators.py",
   "source_sha256": "ec1e552f1ae4bd4a3f74a7bae934445e6932d607b6a24c22859c9897c7b396d4",
-  "git_commit": "8e82dce1eda81bde657aa97763319f12abefcdca",
+  "git_commit": "1d96cfc5965119ced527455b889ff4127b768033",
   "git_dirty": true
  },
  "what_this_is": "the Phase 2 comparator record: coverage counted from files, the submission sets, and the evidence under every absence",
@@ -23,11 +23,10 @@
  },
  "delivered": {
   "default": {
-   "delivered": false,
+   "delivered": true,
    "file": "results/gloryx_service_preds_evaluated1170.json",
-   "substrates_held": 0,
-   "population": 1170,
-   "blocker_id": "gloryx_1170_run_incomplete"
+   "substrates_held": 1170,
+   "population": 1170
   },
   "strict-SOM": {
    "delivered": false,
@@ -36,8 +35,57 @@
  },
  "arms": {
   "gloryx": {
-   "ran": false,
-   "evidence_of_running": [],
+   "ran": true,
+   "evidence_of_running": [
+    "021ad72a-88c5-4369-9e5a-c409025ea0e9",
+    "1717dbec-ed8f-4b81-b1c0-72fa397a87d0",
+    "19f2f509-2ca6-4c62-9950-8f6f10a9994e",
+    "1df426ba-366f-4a0f-99ba-f5e0ffe0050a",
+    "1edb72db-331c-4519-ac1f-9e17a356ecf6",
+    "2466aebc-6b78-42c8-a6ee-6efb8cd1d9df",
+    "26fa2ea0-a730-4a75-9d49-65e121622972",
+    "2e91108f-c065-4b41-a8b7-2a2abea8567e",
+    "34384db0-5a59-4793-934e-060700e4335d",
+    "35410d30-6f6f-4585-8cc0-20562d30123d",
+    "3a691084-ef45-48c2-b9bd-1821fc031119",
+    "40a65710-e760-41dd-b350-ae2a35122d18",
+    "431c178f-ff6a-47fd-ba11-902c2f3d42d7",
+    "46491698-866b-4921-9cf2-c541186e043c",
+    "476a63e1-fe32-414b-ab02-6f2bde18bb26",
+    "4f4dac05-05eb-41d3-977c-c0dea1e6b04e",
+    "51de0516-fd3d-4e02-8714-e64334eebb3d",
+    "52a3fa1d-fa2a-46f1-8131-1a2e923888ec",
+    "538d742f-e321-4945-bfca-71b2f6618824",
+    "55ce9972-a4e0-4a60-87be-3b03553fe47f",
+    "55d0adbe-9719-440e-9ade-fb057a0823db",
+    "58d868bf-c6d2-48fe-8bff-d0573e9f0110",
+    "5a1c18d3-e8f5-40f1-bbfb-f35c1f120eee",
+    "639d2ffe-1989-48f2-8445-3def0f5ea2b2",
+    "667a85a7-825b-434d-94a6-dd73ff52e6a8",
+    "6af08743-b3a4-47f5-9437-e12523b72629",
+    "726cce60-8336-4c6d-8807-885c0965e5a4",
+    "89da16ed-3818-4bff-b178-e25a81a11f68",
+    "8aba1a37-c1b6-4bc9-aafc-87befe681538",
+    "8c083b18-8180-4408-bf26-ca22668673ed",
+    "912b72ad-d840-4f4d-942e-bb70029a831d",
+    "a2f9e7a8-f557-435b-a859-3569050daeb5",
+    "a5714339-6f55-42c1-82b9-34357b6ca6ad",
+    "b590b746-597f-4df1-abcb-6331b9d914d0",
+    "b842a8ad-eece-4c24-b855-abc80b91e6a5",
+    "bf6db61e-c4b3-4ef4-bcda-9f7a5dc370ea",
+    "c3fc2ead-0a63-499d-9dc9-985052d03ceb",
+    "c599fc84-b895-4e3e-9a2b-66903dc3ea29",
+    "c65c506a-e068-4d1a-8d4d-68f559a439bf",
+    "c6af2508-2856-434a-a60b-ca5232191cdc",
+    "d27cac12-cc92-4c25-8a77-570b6162a8d0",
+    "dafb5280-54da-4c79-9911-cb0611b42b0b",
+    "db91d37c-9246-48b0-ade7-a54277c38fc2",
+    "e74c3d15-f100-4d22-838d-39f9c67f91fa",
+    "f2820cdd-ccb4-47ee-bb49-e9d4af5f8f65",
+    "f4969856-299e-462e-bd45-31bad9a0c776",
+    "f8e94a52-7b02-463e-a4da-2ffca3bf5648",
+    "fe26efb2-cca6-48dd-9f73-4f9e6b95a762"
+   ],
    "service": "https://nerdd.univie.ac.at/api/modules/gloryx",
    "population": "evaluated1170"
   },
@@ -127,9 +175,9 @@
    "population": "evaluated1170",
    "arm": "gloryx",
    "file": "results/gloryx_service_preds_evaluated1170.json",
-   "substrates": null,
-   "in_population": null,
-   "absent": true
+   "substrates": 1170,
+   "in_population": 1170,
+   "absent": false
   }
  ],
  "submission_sets": {
@@ -312,25 +360,6 @@
     {
      "kind": "measurement",
      "detail": "879 of the 1,170 substrates have no MetaTox row"
-    }
-   ]
-  },
-  {
-   "id": "gloryx_1170_run_incomplete",
-   "binding": true,
-   "finding": "the GLORYx column over the evaluated population is not yet on disk: results/gloryx_service_preds_evaluated1170.json does not exist",
-   "evidence": [
-    {
-     "kind": "file",
-     "detail": "results/gloryx_service_preds_evaluated1170.json absent at build time"
-    },
-    {
-     "kind": "measurement",
-     "detail": "879 substrates were queued for submission in chunks of 25 against the authors' service"
-    },
-    {
-     "kind": "file",
-     "detail": "it is produced by revision/phase2_gloryx_merge.py from the published run and results/gloryx_service_preds_1170.json"
     }
    ]
   }
