@@ -34,8 +34,17 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "scripts" / "typed_edit"
         sys.path.insert(0, _p)
 
 import population_definition as P  # noqa: E402
+import _population as shared  # noqa: E402
 
-POPULATION = ROOT / "results" / "test_references.json"
+# The population comes from the shared helper, not from a file named here. results/
+# test_references.json holds the references as structures and is deliberately not released
+# (NOTICE.md, docs/ICLR_SUBMISSION.md): the source licences do not let this repository ship the
+# corpus, so a clone has results/test_reference_descriptors.json instead. _population's own
+# docstring records that reading the structural file directly is how every population became
+# unloadable once the release stopped shipping it, and that the failure surfaced as a swallowed
+# exception. This test read it directly in its first form, which would have made its positive
+# control raise FileNotFoundError in any clone -- a completeness gate that cannot run is worse
+# than no gate, because its silence reads as a pass.
 
 # Candidate columns: a prediction file is a candidate if it carries per-substrate predictions for
 # the evaluated population. Named explicitly rather than globbed, because a glob over results/
@@ -51,8 +60,15 @@ CANDIDATES = {
 COVERAGE_FLOOR = 0.99
 
 
-def _population() -> set:
-    return set(json.loads(POPULATION.read_text()))
+def _evaluated_population() -> set:
+    """The evaluated test set, through the accessor that works with or without the structures.
+
+    load_population("clean_test") reads the reference counts from whichever of the two files is
+    present and asserts the split is the 1,170 substrates / 2,597 references the paper reports, so
+    a disagreement about the population fails here rather than silently changing what the counts
+    below are a share of.
+    """
+    return set(shared.load_population("clean_test"))
 
 
 def _substrates(rel: str) -> set:
@@ -68,7 +84,7 @@ def _substrates(rel: str) -> set:
 def test_the_population_is_readable_so_a_zero_below_means_something():
     """Positive control. Every count in this file is a share of this set, and a gate that cannot
     read it would pass by finding nothing."""
-    pop = _population()
+    pop = _evaluated_population()
     assert len(pop) > 1000, f"the evaluated population reads as {len(pop)} substrates"
 
 
@@ -79,7 +95,7 @@ def test_every_arm_covering_the_population_is_offered_to_the_axis():
     smaller comparison than the repository holds, and the count the manuscript prints is short by
     however many such arms exist.
     """
-    pop = _population()
+    pop = _evaluated_population()
     offered = set(P.WHOLE_TEST)
     missing = []
     for name, rel in CANDIDATES.items():
