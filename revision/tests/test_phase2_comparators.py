@@ -17,6 +17,7 @@ must be reported as absence rather than crash.
 """
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 
@@ -116,23 +117,83 @@ def test_every_blocker_carries_evidence_that_can_be_checked():
             assert item.get("detail"), f"evidence with no detail in {b.get('id')!r}"
 
 
-def test_strict_som_is_reported_unavailable_with_the_service_s_own_parameters():
-    """Marked, not invented: the mode was asked for and no user for it exists here."""
+def test_strict_som_is_reported_as_a_gloryxr_mode_that_was_run():
+    """It exists, it ran, and the record says where it exists -- not that it exists nowhere.
+
+    The earlier test pinned the opposite and passed, because the service genuinely has no such
+    parameter. Absence on one route was read as absence everywhere, which is the same
+    wider-than-the-evidence error the GLORYxR blockers made.
+    """
     b = {x["id"]: x for x in P.blockers()}
-    assert "strict_som_unavailable" in b
-    ev = b["strict_som_unavailable"]["evidence"]
-    kinds = {e["kind"] for e in ev}
-    assert "service" in kinds, "the service's parameter list is what establishes the absence"
-    assert b["strict_som_unavailable"].get("mode_requested") == "strict-SOM"
+    entry = b["strict_som_is_a_gloryxr_mode_not_a_service_one"]
+    assert entry.get("mode_requested") == "strict-SOM"
+    assert entry["binding"] is False
+    kinds = {e["kind"] for e in entry["evidence"]}
+    assert "service" in kinds, "the service's parameter list still belongs here, as a contrast"
+    assert "file" in kinds, "the code that exposes the mode must be cited"
+    assert entry.get("what_the_mode_does_not_change"), (
+        "coverage is identical between the modes and the record must say so")
 
 
-def test_gloryxr_is_blocked_on_code_and_says_so_rather_than_on_the_interpreter():
-    """The version mismatch is real but not the binding constraint, and the record must not imply
-    that a newer interpreter would unblock the arm: the featuriser and the code are absent."""
+def test_the_strict_column_is_delivered_by_gloryxr_not_by_the_service():
+    rep = P.build()
+    strict = rep["delivered"]["strict-SOM"]
+    assert strict["delivered"] is True
+    assert strict["file"].endswith("gloryxr_local_preds_strict.json")
+    assert "GLORYxR" in strict["system"]
+    arms = rep["arms"]
+    assert arms["gloryxr strict"]["ran"] is True
+    assert arms["gloryxr default"]["ran"] is True
+    assert arms["gloryxr strict"]["evidence_of_running"]
+
+
+def test_the_record_states_where_the_local_columns_are_comparable():
+    """Without this the reader would put a GLORYxR row beside gloryx under every criterion."""
+    rep = P.build()
+    text = rep["comparability"]
+    assert "inchikey_tautomer" in text and "inchi_no_stereo" in text
+    assert "stereo" in text.lower()
+    assert "T_gloryxr.csv" in text
+
+
+def test_the_retracted_gloryxr_blockers_are_gone_and_name_what_they_retract():
+    """Both earlier GLORYxR blockers were false and are replaced, not quietly edited.
+
+    `gloryxr_no_code` claimed the arm could not be run for want of code and a featuriser, with
+    binding=True; the code is public, the featuriser arrives as a dependency, and both columns have
+    since been produced. `gloryxr_sklearn_version` claimed the predictions could not be trusted
+    because newer-to-older is unsupported, comparing against an interpreter the run never used.
+    A record that simply dropped them would leave no trace of having been wrong, so each
+    replacement names the id it retracts.
+    """
     b = {x["id"]: x for x in P.blockers()}
-    assert "gloryxr_no_code" in b
-    assert b["gloryxr_no_code"]["binding"] is True
-    assert b.get("gloryxr_sklearn_version", {}).get("binding") is False
+    assert "gloryxr_no_code" not in b
+    assert "gloryxr_sklearn_version" not in b
+    assert "strict_som_unavailable" not in b
+
+    retracted = {x.get("retracts") for x in P.blockers() if x.get("retracts")}
+    assert {"gloryxr_no_code", "gloryxr_sklearn_version"} <= retracted
+
+    env = b["gloryxr_environment_not_guaranteed"]
+    assert env["binding"] is False
+    assert "measured" in env["finding"] or "moves no number" in env["finding"]
+    for x in (env, b["gloryxr_dumps_unpublished"]):
+        assert x.get("what_was_wrong_before"), f"{x['id']} does not say what it corrects"
+
+
+def test_the_remaining_gloryxr_constraint_binds_only_a_third_party():
+    """The arm exists here; what a third party cannot do is reproduce it from public sources."""
+    b = {x["id"]: x for x in P.blockers()}
+    dumps = b["gloryxr_dumps_unpublished"]
+    assert dumps["binding"] is False
+    assert dumps["binding_for_a_third_party"] is True
+
+
+def test_the_duplicate_model_blocker_carries_how_much_of_the_rule_table_it_covers():
+    """Two keys on one forest is only interpretable with the share of rules affected."""
+    b = {x["id"]: x for x in P.blockers()}
+    text = json.dumps(b["gloryxr_duplicate_model"])
+    assert "224" in text and "260" in text
 
 
 def test_the_model_archive_is_optional_and_its_absence_is_recorded_not_fatal():
@@ -146,16 +207,35 @@ def test_the_model_archive_is_optional_and_its_absence_is_recorded_not_fatal():
 # --------------------------------------------------------------------------- the report
 
 def test_the_report_states_which_of_the_two_requested_columns_it_delivers():
+    """Both requested modes are accounted for, each either delivered with its file or blocked
+    with a blocker that exists.
+
+    This test used to pin `delivered["strict-SOM"] is False`, written while the record wrongly
+    held that no strict-SOM mode existed anywhere. The mode does exist -- it is GLORYxR's, it has
+    been run over all 1,170 substrates -- so that assertion became a gate defending a false
+    claim. It is replaced by the invariant rather than by the opposite constant, so it does not
+    need rewriting again the next time the state changes.
+    """
     rep = P.build()
     asked = rep["requested"]
     assert asked["populations"] == ["evaluated1170"]
     assert set(asked["modes"]) == {"default", "strict-SOM"}
+
     delivered = rep["delivered"]
-    assert "default" in delivered and "strict-SOM" in delivered
-    assert delivered["strict-SOM"]["delivered"] is False
+    assert set(delivered) == {"default", "strict-SOM"}, (
+        "every requested mode must be accounted for, delivered or not")
+    ids = {b["id"] for b in rep["blockers"]}
     for mode, d in delivered.items():
-        if not d["delivered"]:
-            assert d.get("blocker_id"), f"{mode} undelivered with no blocker named"
+        assert isinstance(d["delivered"], bool)
+        if d["delivered"]:
+            assert d.get("file"), f"{mode} delivered without naming its file"
+            assert d.get("system"), f"{mode} delivered without naming the system that produced it"
+            assert d.get("substrates_held") == d.get("population"), (
+                f"{mode} reported delivered while holding "
+                f"{d.get('substrates_held')} of {d.get('population')} substrates")
+        else:
+            assert d.get("blocker_id") in ids, (
+                f"{mode} undelivered and its blocker_id {d.get('blocker_id')!r} names nothing")
 
 
 def test_every_named_blocker_id_resolves_to_a_blocker_in_every_state(monkeypatch):

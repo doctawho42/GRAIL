@@ -2,8 +2,8 @@
  "provenance": {
   "script": "phase2_comparators.py",
   "script_path": "revision/phase2_comparators.py",
-  "source_sha256": "ec1e552f1ae4bd4a3f74a7bae934445e6932d607b6a24c22859c9897c7b396d4",
-  "git_commit": "1d96cfc5965119ced527455b889ff4127b768033",
+  "source_sha256": "62893e433743acd37cefad142f77ab7a420f6d61aeaf77fa9d533139321747e1",
+  "git_commit": "e0cbc7f08c4ee49797ff5609c98187eaddca37aa",
   "git_dirty": true
  },
  "what_this_is": "the Phase 2 comparator record: coverage counted from files, the submission sets, and the evidence under every absence",
@@ -26,11 +26,15 @@
    "delivered": true,
    "file": "results/gloryx_service_preds_evaluated1170.json",
    "substrates_held": 1170,
-   "population": 1170
+   "population": 1170,
+   "system": "GLORYx, via the authors' service"
   },
   "strict-SOM": {
-   "delivered": false,
-   "blocker_id": "strict_som_unavailable"
+   "delivered": true,
+   "file": "results/gloryxr_local_preds_strict.json",
+   "substrates_held": 1170,
+   "population": 1170,
+   "system": "GLORYxR, run locally"
   }
  },
  "arms": {
@@ -89,15 +93,28 @@
    "service": "https://nerdd.univie.ac.at/api/modules/gloryx",
    "population": "evaluated1170"
   },
-  "gloryxr": {
-   "ran": false,
-   "blocker_id": "gloryxr_no_code"
+  "gloryxr default": {
+   "ran": true,
+   "evidence_of_running": [
+    "results/gloryxr_local_preds_default.json"
+   ],
+   "substrates": 1170,
+   "population": "evaluated1170"
+  },
+  "gloryxr strict": {
+   "ran": true,
+   "evidence_of_running": [
+    "results/gloryxr_local_preds_strict.json"
+   ],
+   "substrates": 1170,
+   "population": "evaluated1170"
   },
   "metatox": {
    "ran": false,
    "blocker_id": "metatox_manual_submission"
   }
  },
+ "comparability": "the GLORYxR columns are comparable to the service-derived gloryx column under inchi_no_stereo and inchikey_tautomer only: the local arm emits no stereochemistry at all, which puts exact at 25-26% disagreement, canonical at 12-14% and inchikey at 9-10%, always against the local arm. They are therefore reported in revision/T_gloryxr.csv rather than as arms in phase1_tmain.ARMS, which cannot restrict an arm to a subset of criteria",
  "coverage": [
   {
    "population": "comparison291",
@@ -275,76 +292,115 @@
  },
  "blockers": [
   {
-   "id": "strict_som_unavailable",
+   "id": "strict_som_is_a_gloryxr_mode_not_a_service_one",
    "mode_requested": "strict-SOM",
-   "binding": true,
-   "finding": "no strict-SOM mode exists to run and no labels exist to score it against, so this mode is marked rather than approximated",
+   "binding": false,
+   "finding": "strict-SOM exists and has been run, on GLORYxR rather than on the GLORYx service. An earlier record here said no such mode existed anywhere; that was false, and the mistake was looking for it on the service and concluding from its absence there",
    "evidence": [
+    {
+     "kind": "file",
+     "detail": "gloryxr/reactions.py exposes Reactor.load_builtin(phase, strict_soms=bool) and som.py derives the restricted site set in _get_strict_som_indices"
+    },
+    {
+     "kind": "document",
+     "detail": "GLORYxR's own tutorial demonstrates both modes and states that strict annotation removes scores inflated by promiscuous atom matching"
+    },
+    {
+     "kind": "measurement",
+     "detail": "both modes were run over all 1,170 substrates: results/gloryxr_local_preds_default.json and results/gloryxr_local_preds_strict.json"
+    },
     {
      "kind": "service",
-     "detail": "https://nerdd.univie.ac.at/api/modules/gloryx exposes 1 job parameter(s) ['metabolism_phase'] and 0 of 16 result properties name a site",
+     "detail": "the service remains without such a parameter -- https://nerdd.univie.ac.at/api/modules/gloryx exposes 1 job parameter(s) ['metabolism_phase'] and 0 of 16 result properties name a site -- so the service-derived column exists in one mode only",
      "read_live": true
-    },
-    {
-     "kind": "document",
-     "detail": "GLORYx's own README names site-of-metabolism only as the internal FAME 3 component; it documents no strict mode, threshold or SOM flag"
-    },
-    {
-     "kind": "file",
-     "detail": "results/what_each_arm_returns.json records GLORYx and MetaTox as naming no site"
-    },
-    {
-     "kind": "file",
-     "detail": "paper2/si.tex states this corpus carries no site-of-metabolism labels, so the mode could not be scored even if it could be run"
     }
-   ]
+   ],
+   "what_the_mode_does_not_change": "coverage. Measured over all 1,170: identical product sets on 1170/1170 substrates and mean list 31.95 in both, while the order agrees on only 32 (2.7%) and the top-15 differs on 838 (71.6%) at mean Jaccard 0.795. Any coverage figure is equal between the modes by construction; only rank-sensitive measures separate them.",
+   "not_scoreable_against_labels": "paper2/si.tex states this corpus carries no site-of-metabolism labels, so neither mode can be judged on whether its sites are right -- only on what it retrieves"
   },
   {
-   "id": "gloryxr_no_code",
-   "binding": true,
-   "finding": "GLORYxR cannot be run: no implementation and no featuriser is available in this repository, on this machine, or in the delivered archive",
-   "evidence": [
-    {
-     "kind": "measurement",
-     "detail": "the delivered archive holds 11 entries, all of them .joblib models: no code, no featuriser"
-    },
-    {
-     "kind": "measurement",
-     "detail": "gloryxr, gloryx and glory_x are not importable here, and a scoped search of the usual checkout locations found no source tree"
-    },
-    {
-     "kind": "document",
-     "detail": "scripts/typed_edit/gloryx_via_service.py records that GLORYxR's production model dumps are 'to be published' and its documentation's Zenodo link is a literal TODO"
-    },
-    {
-     "kind": "measurement",
-     "detail": "the single model declares n_features_in_=5014 against 5006 for the rule models: two featurisations, neither of them present"
-    }
-   ]
-  },
-  {
-   "id": "gloryxr_sklearn_version",
+   "id": "gloryxr_dumps_unpublished",
    "binding": false,
-   "finding": "the delivered models were pickled by scikit-learn 1.9.0 while this environment has 1.7.2; newer-to-older is unsupported, so their predictions could not be trusted here even if code existed",
+   "binding_for_a_third_party": true,
+   "retracts": "gloryxr_no_code",
+   "finding": "GLORYxR runs here, and the arm exists. What remains is that its production model dumps are not published: they were supplied privately by the author, so a third party cannot reproduce this column from public sources alone",
+   "what_was_wrong_before": "an earlier record in this file claimed GLORYxR could not be run for want of an implementation and a featuriser, with binding=True. Four parts of that were false. The implementation is public and GPL-3 at molinfo-vienna/GLORYxR -- and this repository already said 'GLORYxR installs and runs' in three places, one of which the old blocker quoted half of. The featuriser is not missing: it arrives as the fame3r dependency. The 5014-against-5006 feature gap was arithmetic, not incompatibility: SingleFAME3RModelProvider one-hot encodes its 8 reaction classes on top of the same 5006-wide vectoriser. And the interpreter was never the binding constraint. The error was drawing a conclusion wider than the evidence: the search covered this machine and the delivered archive, not the public source",
    "evidence": [
     {
      "kind": "measurement",
-     "detail": "every model warns 'unpickle ... from version 1.9.0'; the installed version is 1.7.2"
+     "detail": "installed from the clone under Python 3.13 and run over all 1,170 substrates in both SOM modes; 1,169 carry a prediction, mean list 31.95, none unparseable"
     },
     {
      "kind": "measurement",
-     "detail": "scikit-learn 1.9.0 and 1.9.1 are published on PyPI and require Python >= 3.11; this interpreter is 3.10.8, whose ceiling is 1.7.2"
+     "detail": "the archive IS the missing dumps: the rule table declares exactly 8 'Name of rule subset' values, multi_models/ holds exactly 8 dumps, the sets are identical with nothing on either side, and MultiFAME3RModelProvider indexes models by that same key"
+    },
+    {
+     "kind": "document",
+     "detail": "GLORYxR's tutorial directs a user to 'our Zenodo archive (to be published)' and docs/source/citation.rst is a TODO stub, so the dumps have no public checksum to match against and GLORYxR cannot yet be cited by publication"
+    },
+    {
+     "kind": "document",
+     "detail": "the archive was sent by the first author named in GLORYxR's pyproject.toml, so identity with the deployment's dumps rests on private provenance plus an exact name and dimension fit -- inferred, not certified"
+    }
+   ]
+  },
+  {
+   "id": "gloryxr_environment_not_guaranteed",
+   "binding": false,
+   "retracts": "gloryxr_sklearn_version",
+   "finding": "the configuration is not a 'supported' one -- no such guarantee exists -- but the version drift is measured and moves no number on this population",
+   "what_was_wrong_before": "the earlier entry said the models 'could not be trusted here even if code existed' because newer-to-older is unsupported, comparing 1.9.0 pickles against the repository's own 1.7.2. Two errors. The run does not happen on the repository's interpreter: GLORYxR requires Python >= 3.13 and runs in an isolated environment, so 1.7.2 was never in play. And 'supported' was a policy I invented: scikit-learn grants no old-to-new carve-out anywhere, and its own warning says the load 'might lead to breaking code or invalid results. Use at your own risk.' The honest position is not 'supported, so trusted' but 'unguaranteed by policy, measured as identical'",
+   "evidence": [
+    {
+     "kind": "measurement",
+     "detail": "the columns were computed twice: under the project's own uv.lock (scikit-learn 1.9.0, cdpkit 1.2.3; 0 InconsistentVersionWarning) and under a fresh resolve (1.9.1, 1.3.0; 2016 of them)"
+    },
+    {
+     "kind": "digest",
+     "detail": "the substrate maps are byte-identical across the two environments in both modes: sha256 8f75ddc067a1a4f8d3671ad934e49e64 for strict and d7584d276ff440fd40f6733f7f4fda2d for default, 1170/1170 identical sets AND orders, 0 differing scores at max |difference| 0.00000000"
+    },
+    {
+     "kind": "measurement",
+     "detail": "that also closes the channel nothing warns about: descriptors are recomputed at run time by cdpkit, locked at 1.2.3 against the 1.3.0 a fresh resolve installs, and the vector width matches either way, so a value drift would have been silent -- on this population there is none"
+    },
+    {
+     "kind": "file",
+     "detail": "the published columns are the locked-environment ones, and each records the version of every package that can move a prediction"
     }
    ]
   },
   {
    "id": "gloryxr_duplicate_model",
    "binding": false,
-   "finding": "two of the delivered models are byte-identical under different names, so they cannot be treated as distinct arms without asking the sender",
+   "finding": "two of the eight delivered models are byte-identical under different names, so the eight rule subsets resolve to only seven distinct forests and a large part of the rule table is scored by one shared model. Whether that is the intended delivery only the sender can say",
    "evidence": [
     {
      "kind": "digest",
-     "detail": "'CYP rules from GLORY (phase 1).joblib' and 'Phase 1 SyGMa rules.joblib' both hash to 2c186eb6f3e35fa99885d5ea96d706de1f17300b4cecb96c33d4e942bb57a1dc"
+     "detail": "'CYP rules from GLORY (phase 1).joblib' and 'Phase 1 SyGMa rules.joblib' both hash to 2c186eb6f3e35fa99885d5ea96d706de1f17300b4cecb96c33d4e942bb57a1dc, and the duplicate exists inside the delivered tar, not as a local copy error"
+    },
+    {
+     "kind": "measurement",
+     "detail": "those two subsets carry 224 of the 260 rules in gloryx_reactionrules_connect.csv -- 86% by rule count, and every phase-1 rule -- so they are all scored by the same forest"
+    },
+    {
+     "kind": "measurement",
+     "detail": "it is not a packaging accident on this side: the eight file names match the eight rule subsets exactly, so the pair is two keys pointing at one trained model rather than a missing file"
+    }
+   ]
+  },
+  {
+   "id": "gloryxr_strict_column_absent",
+   "binding": true,
+   "emitted_only_when": "the strict column is missing or short of the population; it is declared unconditionally so the id `build()` names can never dangle",
+   "finding": "the GLORYxR strict-SOM column is not on disk or does not cover the population: results/gloryxr_local_preds_strict.json",
+   "evidence": [
+    {
+     "kind": "file",
+     "detail": "results/gloryxr_local_preds_strict.json is produced by revision/phase2_gloryxr_run.py --mode strict under the isolated Python 3.13 environment"
+    },
+    {
+     "kind": "measurement",
+     "detail": "the runner refuses to write a full-coverage artifact for a partial run, so an absent file means the run did not finish rather than that the mode returned nothing"
     }
    ]
   },
