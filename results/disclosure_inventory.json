@@ -2,8 +2,8 @@
  "provenance": {
   "script": "disclosure_inventory.py",
   "script_path": "scripts/disclosure_inventory.py",
-  "source_sha256": "7178c28f48f37a1fa08c5afd3e14e375980532953fb019937a2ae63c28f9bcf7",
-  "git_commit": "c87bca45a800ef0a7afefa3e75c18f358beea1d3",
+  "source_sha256": "57711e9fbacf046bf1cd50779a253e72006b9e0ce3d5977098b5be5dcf0eb864",
+  "git_commit": "80cfc09fe250a6d35bcd1d6ccd44b7f55295d6be",
   "git_dirty": true
  },
  "reviewed_and_accepted": [
@@ -384,6 +384,41 @@
     "paper2/body.tex"
    ],
    "reason": "Branch (c), a welded heading changed by a MOVE, with no prose touched. The concession is the fig_cost caption, collected on 'did not finish inside the ... deadline'. Its text is byte-identical before and after; what changed is the section heading that _plain welds to the front of it, because the block moved from body.tex \\subsection{Runtime} into si.tex under \\subsection{Cost at the tail}. The common tail between the old and new keys is the whole caption, and only the heads differ -- the mechanical signature of a rename rather than an edit. Recording it as 'reworded' would be false: nothing was reworded, and the justification in this file is what a reader meets six months from now instead of the diff. Note also that a whole-block move was measured neutral (gone=0/new=0); this move was a SPLIT with a retitled destination, and that measurement did not cover it."
+  },
+  {
+   "text": "The registered ranking and timing thresholds are checked on it, because a threshold checked on the population that chose the setting it tests is not a check; Table records the population each prediction was in the event checked on, and Section states that all but one of the ten fixed a threshold in ",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "Reworded positively, claim unchanged. All 23 'and not' occurrences in paper2/body.tex were rewritten as positive assertions or had the negative half deleted; the construction is measured at ZERO in all 49,637 words of the eight-paper comparison corpus, so it was the starkest remaining LLM marker in the manuscript. Nothing was deleted from the argument: a symmetric-difference diff over _norm(_sentences(_plain(.))) between HEAD and this tree gives 22 keys gone and 22 new, one-to-one, each replacement in the same position as the sentence it replaces. Three of the five flagged concessions broke for a reason that is not a reword of the concession at all: _plain merges each of them with an adjacent sentence into a single key (the stereochemistry default with the sentence that follows it, the two-convention loop with 'Choosing the convention', the corpus-bound sentence with the suppinfo block), so the concession text is byte-identical and only its neighbour moved. The two genuine rewords are 'fixed a threshold in advance and not a population' -> 'while leaving the population open', and 'the cause is the pool and not the ranking' -> 'the cause is the pool, whose size bounds what any ranking can return', which states the mechanism the original only implied. 'an underfitting signature and not a converged run' lost its second half because the first half entails it."
+  },
+  {
+   "text": "The last is the default, because the references neither carry stereochemistry nor distinguish tautomers, and because standard identifiers normalise only a subset of tautomers . That the annotation carries no stereochemistry is also a limit on what any of these systems can be asked for: nothing in th",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "Reworded positively, claim unchanged. All 23 'and not' occurrences in paper2/body.tex were rewritten as positive assertions or had the negative half deleted; the construction is measured at ZERO in all 49,637 words of the eight-paper comparison corpus, so it was the starkest remaining LLM marker in the manuscript. Nothing was deleted from the argument: a symmetric-difference diff over _norm(_sentences(_plain(.))) between HEAD and this tree gives 22 keys gone and 22 new, one-to-one, each replacement in the same position as the sentence it replaces. Three of the five flagged concessions broke for a reason that is not a reword of the concession at all: _plain merges each of them with an adjacent sentence into a single key (the stereochemistry default with the sentence that follows it, the two-convention loop with 'Choosing the convention', the corpus-bound sentence with the suppinfo block), so the concession text is byte-identical and only its neighbour moved. The two genuine rewords are 'fixed a threshold in advance and not a population' -> 'while leaving the population open', and 'the cause is the pool and not the ranking' -> 'the cause is the pool, whose size bounds what any ranking can return', which states the mechanism the original only implied. 'an underfitting signature and not a converged run' lost its second half because the first half entails it."
+  },
+  {
+   "text": "What that answer covers should be said exactly: it covers the N misses of absent type and not the other N plus N of the N . A miss whose type the bank holds and whose rule did not fire is an implementation failure by construction",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "Reworded positively, claim unchanged. All 23 'and not' occurrences in paper2/body.tex were rewritten as positive assertions or had the negative half deleted; the construction is measured at ZERO in all 49,637 words of the eight-paper comparison corpus, so it was the starkest remaining LLM marker in the manuscript. Nothing was deleted from the argument: a symmetric-difference diff over _norm(_sentences(_plain(.))) between HEAD and this tree gives 22 keys gone and 22 new, one-to-one, each replacement in the same position as the sentence it replaces. Three of the five flagged concessions broke for a reason that is not a reword of the concession at all: _plain merges each of them with an adjacent sentence into a single key (the stereochemistry default with the sentence that follows it, the two-convention loop with 'Choosing the convention', the corpus-bound sentence with the suppinfo block), so the concession text is byte-identical and only its neighbour moved. The two genuine rewords are 'fixed a threshold in advance and not a population' -> 'while leaving the population open', and 'the cause is the pool and not the ranking' -> 'the cause is the pool, whose size bounds what any ranking can return', which states the mechanism the original only implied. 'an underfitting signature and not a converged run' lost its second half because the first half entails it."
+  },
+  {
+   "text": "Beyond a short list that setting is the weaker one, and the cause is the pool and not the ranking",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "Reworded positively, claim unchanged. All 23 'and not' occurrences in paper2/body.tex were rewritten as positive assertions or had the negative half deleted; the construction is measured at ZERO in all 49,637 words of the eight-paper comparison corpus, so it was the starkest remaining LLM marker in the manuscript. Nothing was deleted from the argument: a symmetric-difference diff over _norm(_sentences(_plain(.))) between HEAD and this tree gives 22 keys gone and 22 new, one-to-one, each replacement in the same position as the sentence it replaces. Three of the five flagged concessions broke for a reason that is not a reword of the concession at all: _plain merges each of them with an adjacent sentence into a single key (the stereochemistry default with the sentence that follows it, the two-convention loop with 'Choosing the convention', the corpus-bound sentence with the suppinfo block), so the concession text is byte-identical and only its neighbour moved. The two genuine rewords are 'fixed a threshold in advance and not a population' -> 'while leaving the population open', and 'the cause is the pool and not the ranking' -> 'the cause is the pool, whose size bounds what any ranking can return', which states the mechanism the original only implied. 'an underfitting signature and not a converged run' lost its second half because the first half entails it."
+  },
+  {
+   "text": "Both learned stages are trained short of what the split allows, on a subsample of it and with early stopping that never engaged, which is an underfitting signature and not a converged run; retraining on the full split is not reported (Section )",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "Reworded positively, claim unchanged. All 23 'and not' occurrences in paper2/body.tex were rewritten as positive assertions or had the negative half deleted; the construction is measured at ZERO in all 49,637 words of the eight-paper comparison corpus, so it was the starkest remaining LLM marker in the manuscript. Nothing was deleted from the argument: a symmetric-difference diff over _norm(_sentences(_plain(.))) between HEAD and this tree gives 22 keys gone and 22 new, one-to-one, each replacement in the same position as the sentence it replaces. Three of the five flagged concessions broke for a reason that is not a reword of the concession at all: _plain merges each of them with an adjacent sentence into a single key (the stereochemistry default with the sentence that follows it, the two-convention loop with 'Choosing the convention', the corpus-bound sentence with the suppinfo block), so the concession text is byte-identical and only its neighbour moved. The two genuine rewords are 'fixed a threshold in advance and not a population' -> 'while leaving the population open', and 'the cause is the pool and not the ranking' -> 'the cause is the pool, whose size bounds what any ranking can return', which states the mechanism the original only implied. 'an underfitting signature and not a converged run' lost its second half because the first half entails it."
   }
  ],
  "question": "every sentence in which this work concedes something, recorded before a cut so that what a cut costs is visible rather than invisible",
@@ -423,7 +458,7 @@
   "paper2/table_hypotheses.tex",
   "paper2/table_grain.tex"
  ],
- "n": 244,
+ "n": 245,
  "reading": "a disclosure counts as present if it survives in ANY of the sources: moving one to the Supporting Information shortens the manuscript without retracting anything, and deleting one shortens it by retracting something",
  "disclosures": {
   "achemso amsmath amssymb booktabs threeparttable graphicx microtype xr si nikita l polomoshnov faculty of bioengineering and bioinformatics lomonosov moscow state university leninskie gory moscow russia nikitapol fbb msu ru anastasia v rudik department of bioinformatics institute of biomedical chemistry pogodinskaya str moscow russia metabolite predictors have a multiverse problem document abstract published predictors of metabolite structure cannot be compared with one another because recall depends on how a predicted structure is judged to match a reference and on how many candidates a system may return and papers in this area declare neither": {
@@ -1111,7 +1146,7 @@
    ]
   },
   "on the comparison set over the budgets the deployment table audits it separates for this work in cells and against it in on the wider population the quantity does not exist because a second submission to that web service is not the authors to make": {
-   "text": "On the comparison set, over the N budgets the deployment table audits, it separates for this work in N cells and against it in N ; on the wider population the quantity does not exist, because a second submission to that web service is not the authors' to make",
+   "text": "On the comparison set, over the N budgets the deployment table audits, it separates for this work in N cells and against it in N . On the wider population the quantity does not exist, because a second submission to that web service is not the authors' to make",
    "in": [
     "paper2/si.tex"
    ]
@@ -1452,7 +1487,7 @@
     "paper2/body.tex"
    ]
   },
-  "the registered ranking and timing thresholds are checked on it because a threshold checked on the population that chose the setting it tests is not a check table records the population each prediction was in the event checked on and section states that all but one of the ten fixed a threshold in advance and not a population": {
+  "the registered ranking and timing thresholds are checked on it because a threshold checked on the population that chose the setting it tests is not a check table records the population each prediction was in the event checked on and section states that all but one of the ten fixed a threshold in advance while leaving the population open": {
    "text": "The registered ranking and timing thresholds are checked on it, because a threshold checked on the population that chose the setting it tests is not a check; Table records the population each prediction was in the event checked on, and Section states that all but one of the ten fixed a threshold in ",
    "in": [
     "paper2/body.tex"
@@ -1518,7 +1553,7 @@
     "paper2/body.tex"
    ]
   },
-  "the last is the default because the references neither carry stereochemistry nor distinguish tautomers and because standard identifiers normalise only a subset of tautomers that the annotation carries no stereochemistry is also a limit on what any of these systems can be asked for nothing in this pipeline is stereochemistry aware so sulfoxidation epoxide hydrolysis and most conjugation are predicted as constitutions and not as configurations": {
+  "the last is the default because the references neither carry stereochemistry nor distinguish tautomers and because standard identifiers normalise only a subset of tautomers that the annotation carries no stereochemistry is also a limit on what any of these systems can be asked for nothing in this pipeline is stereochemistry aware so sulfoxidation epoxide hydrolysis and most conjugation are predicted as constitutions with configuration left unspecified": {
    "text": "The last is the default, because the references neither carry stereochemistry nor distinguish tautomers, and because standard identifiers normalise only a subset of tautomers . That the annotation carries no stereochemistry is also a limit on what any of these systems can be asked for: nothing in th",
    "in": [
     "paper2/body.tex"
@@ -1668,8 +1703,8 @@
     "paper2/body.tex"
    ]
   },
-  "what that answer covers should be said exactly it covers the misses of absent type and not the other plus of the a miss whose type the bank holds and whose rule did not fire is an implementation failure by construction": {
-   "text": "What that answer covers should be said exactly: it covers the N misses of absent type and not the other N plus N of the N . A miss whose type the bank holds and whose rule did not fire is an implementation failure by construction",
+  "what that answer covers should be said exactly it covers the misses of absent type and none of the other plus of the a miss whose type the bank holds and whose rule did not fire is an implementation failure by construction": {
+   "text": "What that answer covers should be said exactly: it covers the N misses of absent type, and none of the other N plus N of the N . A miss whose type the bank holds and whose rule did not fire is an implementation failure by construction",
    "in": [
     "paper2/body.tex"
    ]
@@ -1680,8 +1715,8 @@
     "paper2/body.tex"
    ]
   },
-  "beyond a short list that setting is the weaker one and the cause is the pool and not the ranking": {
-   "text": "Beyond a short list that setting is the weaker one, and the cause is the pool and not the ranking",
+  "beyond a short list that setting is the weaker one and the cause is the pool whose size bounds what any ranking can return": {
+   "text": "Beyond a short list that setting is the weaker one, and the cause is the pool, whose size bounds what any ranking can return",
    "in": [
     "paper2/body.tex"
    ]
@@ -1740,8 +1775,8 @@
     "paper2/body.tex"
    ]
   },
-  "both learned stages are trained short of what the split allows on a subsample of it and with early stopping that never engaged which is an underfitting signature and not a converged run retraining on the full split is not reported section": {
-   "text": "Both learned stages are trained short of what the split allows, on a subsample of it and with early stopping that never engaged, which is an underfitting signature and not a converged run; retraining on the full split is not reported (Section )",
+  "both learned stages are trained short of what the split allows on a subsample of it and with early stopping that never engaged which is an underfitting signature retraining on the full split is not reported section": {
+   "text": "Both learned stages are trained short of what the split allows, on a subsample of it and with early stopping that never engaged, which is an underfitting signature; retraining on the full split is not reported (Section )",
    "in": [
     "paper2/body.tex"
    ]
@@ -1778,6 +1813,12 @@
   },
   "every figure is measured on one corpus assembled from four sources of which the only published reference set is one of the four so a held out split of it is not an independent test of the chemistry": {
    "text": "Every figure is measured on one corpus assembled from four sources, of which the only published reference set is one of the four, so a held-out split of it is not an independent test of the chemistry",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "until it is the comparison establishes an ordering within a corpus which is weaker than a ranking of the methods": {
+   "text": "Until it is, the comparison establishes an ordering within a corpus, which is weaker than a ranking of the methods",
    "in": [
     "paper2/body.tex"
    ]

@@ -103,11 +103,21 @@ DECLARED_DEBT = {
     "check_prose_rate.py":
         "TWO criteria are red and both are accepted, with the second accepted by the author after "
         "being shown these numbers.\n"
-        "LENGTH. paper2/body.tex is 10,068 words against 11,131 at the start of the pass: 1,063 "
-        "removed, 9.5 per cent, against a 25 per cent target of 8,349. The author accepted roughly "
-        "-14 per cent and recorded the rest here; the pass then reached -9.5, and the gap between "
-        "the acceptance and the outcome is part of the debt rather than hidden in it. Why the "
-        "remaining 1,719 words were not taken, each figure measured: every sentence in the file "
+        "LENGTH. paper2/body.tex is 10,048 words against 11,131 at the start of the pass: 1,083 "
+        "removed, 9.7 per cent, against a 25 per cent target of 8,349. The author accepted roughly "
+        "-14 per cent and recorded the rest here; the pass reached -9.7, and the 475-word gap "
+        "between the acceptance and the outcome is part of the debt rather than hidden in it. That "
+        "gap was then tested for closure by three instruments and none closes it without removing "
+        "content. A near-duplicate search over all 403 sentences, Jaccard on content words at or "
+        "above 0.40, returns TWO pairs worth about 60 words together. Of 28 classic filler "
+        "constructions -- 'in order to', 'due to the fact that', 'it is important to note that' "
+        "and the rest -- the file contains ZERO. And the longest sentences are dense rather than "
+        "padded: the 54-word one is the list of released artifacts, which cannot shorten without "
+        "dropping an artifact. The only blocks large enough to cover 475 words are a worked "
+        "example carrying two concessions and a sensitivity analysis defending the matching "
+        "criterion, and moving a concession into the Supporting Information to satisfy a word "
+        "count is the burying a reviewer punishes, so transfer was rejected as the instrument. Why "
+        "the remaining 1,699 words were not taken, each figure measured: every sentence in the file "
         "reaching for one of the eight constructions weighs about 1,600 words in total, so the "
         "construction work cannot supply the volume even if all of it were deleted; 440 words of "
         "the counted prose are ACS-mandated blocks -- Data and Software Availability 326, "
@@ -120,7 +130,7 @@ DECLARED_DEBT = {
         "was wrong twice over: a boundary regex of \\(?:sub)*section\\{ does not match "
         "\\section*{Notes}, so Notes was reported absent and its 84 words were silently absorbed "
         "into Author contributions; and suppinfo was credited 196 words although cpd.blocks drops "
-        "environment bodies entirely, so NONE of its 209 ACS-mandated words are inside the 10,068 "
+        "environment bodies entirely, so NONE of its 209 ACS-mandated words are inside the 10,048 "
         "this target is measured against -- counting them as untouchable was double-counting an "
         "exclusion. The concession figure is given as 'about 2,100' deliberately: 2,102 is the sum "
         "over the 'text' field of every results/disclosure_inventory.json entry whose 'in' list "
@@ -148,9 +158,16 @@ DECLARED_DEBT = {
         "25 occurrences out of 'rather than' into 'and not', which occurs ZERO times in the "
         "49,637-word comparison corpus, while the share of sentences defining by exclusion moved "
         "barely at all. That share is now the criterion, over eight probes since 'instead of' was "
-        "added on the author's decision: paper2/body.tex 76 of 433 sentences (17.55%) against a "
-        "ceiling of 8 at digest e87f5d53, paper2/si.tex 257 of 1080 (23.80%) against 23 at digest "
-        "36bad88c, where the corpus runs at 18 of 1,841 sentences, 0.98%. The second figure is "
+        "added on the author's decision: paper2/body.tex 28 of 403 sentences (6.95%) against a "
+        "ceiling of 8 at digest 4b4e4cc9, paper2/si.tex 259 of 1097 (23.61%) against 24 at digest "
+        "83ac498e, where the corpus runs at 18 of 1,841 sentences, 0.98%. Digest is sha256 of the "
+        "file, first eight hex characters, because two agents reading the same file minutes apart "
+        "reported 79 and 82 and only a file identity settles which state was read. The body figure "
+        "fell 49 -> 28 in a pass that rewrote all 23 'and not' occurrences positively or deleted "
+        "the negative half, so that construction now stands at ZERO in the manuscript as well as "
+        "across the corpus, and epistemic self-grading fell 17 -> 9 with it. That pass removed 20 "
+        "words, which is the point: it is not a volume instrument and was not used as one. At the "
+        "earlier si.tex state, digest 36bad88c, the figure was 257 of 1080 and was "
         "reproduced by a second reader as 251, and the six-carrier difference is now explained: "
         "that reader's 'worth V-ing' was the probe's earlier form, missing 'naming', 'printing', "
         "'recording' and 'setting'. Restoring exactly that omission moves this file 257 -> 251, a "
@@ -311,3 +328,56 @@ def test_h1_primary_stratum_is_the_intersection():
     assert not set(listed) & set(other)
     # the ceiling the registration quotes has to be the one the arithmetic gives
     assert d["feasibility"]["max_gain_for_K"]["2.5"] == int(d["n_typeable_pairs"] // 2.5)
+
+
+# --refresh-text rewrites the `text` snapshot in the concession registry for keys whose identity
+# has not changed. That is a writer pointed at the one artifact this project has already destroyed
+# once, so the refusals matter more than the feature: refreshing on a tree whose disclosures have
+# MOVED would leave a green --check and a freshened snapshot, removing both signals a retraction
+# leaves behind, and rewriting reviewed_and_accepted would rewrite what a human agreed to and the
+# text they agreed it against. Asserting the flag works proves nothing about either; the test
+# therefore perturbs the artifact and demands a refusal. It restores the bytes in a finally.
+def test_refresh_text_refuses_what_it_must():
+    import json
+    art = ROOT / "results" / "disclosure_inventory.json"
+    if not art.exists():
+        pytest.skip("the concession registry is not in this checkout")
+    orig = art.read_bytes()
+
+    def run():
+        return subprocess.run([sys.executable, "scripts/disclosure_inventory.py", "--refresh-text"],
+                              cwd=ROOT, capture_output=True, text=True)
+    try:
+        # a disclosure the documents no longer hold: a retraction, and never a text refresh
+        d = json.loads(orig)
+        d["disclosures"]["a key no document holds any more, recorded so this cannot pass"] = {
+            "text": "A sentence that was retracted and must not be refreshed away.",
+            "in": ["paper2/si.tex"]}
+        art.write_text(json.dumps(d, indent=1))
+        r = run()
+        assert r.returncode == 1, f"a retracted disclosure was not refused:\n{r.stdout}"
+        assert "no longer agree" in r.stderr and "gone:" in r.stderr, r.stderr
+
+        # a disclosure the record does not hold: the key sets disagree the other way
+        d = json.loads(orig)
+        d["disclosures"].pop(next(iter(d["disclosures"])))
+        art.write_text(json.dumps(d, indent=1))
+        r = run()
+        assert r.returncode == 1, f"an unrecorded disclosure was not refused:\n{r.stdout}"
+        assert "no longer agree" in r.stderr, r.stderr
+
+        # the decisions and the text they were taken against are never rewritten
+        d = json.loads(orig)
+        if d.get("reviewed_and_accepted"):
+            keep = "DELIBERATELY STALE record of what was agreed, which must survive a refresh."
+            d["reviewed_and_accepted"][0]["text"] = keep
+            art.write_text(json.dumps(d, indent=1))
+            r = run()
+            assert r.returncode == 0, r.stderr
+            back = json.loads(art.read_text())
+            assert back["reviewed_and_accepted"][0]["text"] == keep, \
+                "--refresh-text rewrote what a human accepted"
+            assert len(back["reviewed_and_accepted"]) == len(d["reviewed_and_accepted"])
+    finally:
+        art.write_bytes(orig)
+        assert art.read_bytes() == orig, "the registry was not restored"

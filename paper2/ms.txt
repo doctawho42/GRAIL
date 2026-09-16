@@ -141,12 +141,12 @@ any application of the rule bank could reach at
 all, and the census of the chemistry the remainder needs. The validation draw is a declared
 sample of 300 validation records, holding 294
 distinct substrates of which 293 carry a wholebank pool. The registered ranking and timing
-thresholds are checked on it, because a threshold checked on the population that chose the
-setting it tests is not a check; Table 6 records
-the population each prediction was in the event
-checked on, and Section S26 states that all but
-one of the ten fixed a threshold in advance and
-not a population. The comparison set is the
+thresholds are checked on it, because a threshold
+checked on the population that chose the setting
+it tests is not a check; Table 6 records the population each prediction was in the event checked
+on, and Section S26 states that all but one of the
+ten fixed a threshold in advance while leaving
+the population open. The comparison set is the
 291 substrates every method has an entry for,
 carrying 665 references, and every comparison
 against a published predictor is measured on it.
@@ -226,10 +226,9 @@ small metabolite such as formate. No annotated
 metabolite in the evaluated test set is multicomponent, so the convention decides what is
 offered, not whether a reference is reached. A
 scorer scores each (substrate, candidate) pair,
-encoding the two molecules as separate graphs
-and not as one merged graph, and the candidates
-are ordered by a rank fusion of that scorer’s and
-the generator’s orderings.
+encoding each of the two molecules in its own
+graph, and the candidates are ordered by a rank
+fusion of that scorer’s and the generator’s orderings.
 A candidate reachable by several rules, or by
 one rule firing at several sites, receives a single
 score. Writing R(c) for the rules that produce c
@@ -250,12 +249,12 @@ it holds published rule sets verbatim and the
 mined half is full of near-duplicates. What that
 costs is swept over the four aggregation rules
 the implementation offers (Section S20).
-Both learned stages were trained on a subsample of the training split, fixed when the run was
-configured and not a consequence of anything
-measured here, so what the ablations compare
+Both learned stages were trained on a subsample of the training split, fixed when the run
+was configured, before anything reported here
+was measured, so what the ablations compare
 (Section S28) is the value of each stage at that
-training budget and not at the split’s full size.
-Every setting is in Section S22.
+training budget, which is smaller than the split
+allows. Every setting is in Section S22.
 
 2.3
 
@@ -501,11 +500,11 @@ the default, because the references neither carry
 stereochemistry nor distinguish tautomers, and
 because standard identifiers normalise only a
 subset of tautomers 26 . That the annotation carries no stereochemistry is also a limit on what
-any of these systems can be asked for: nothing in this pipeline is stereochemistry-aware, so
-sulfoxidation, epoxide hydrolysis and most conjugation are predicted as constitutions and not
-as configurations. All five are reported for every
-comparison, with the levels behind every verdict
-in Table S13.
+any of these systems can be asked for: nothing in
+this pipeline is stereochemistry-aware, so sulfoxidation, epoxide hydrolysis and most conjugation
+are predicted as constitutions, with configuration left unspecified. All five are reported for
+every comparison, with the levels behind every
+verdict in Table S13.
 A third choice sits behind both declared axes,
 the matching criterion and the output budget:
 how the substrate itself is drawn. Templates are
@@ -1785,12 +1784,11 @@ different ranks, and both drawings are given in Section S31.
 The ceiling, and how much of
 it is the corpus
 
-to the templates, 404 of the 2,575 pairs those
-instruments can type, 15.7%, are flagged as
-reached in more than one turnover and recorded
-by the corpus as one pair. A hit on one of
-those is a single template standing in for several
-turnovers, so 0.8171 is not the share of annotated metabolism one enzymatic step reaches.
+themselves, 404 of the 2,575 pairs those instruments can type, 15.7%, are flagged as reached in
+more than one turnover and recorded by the corpus as one pair. A hit on one of those is a single
+template standing in for several turnovers, so
+0.8171 is not the share of annotated metabolism
+one enzymatic step reaches.
 How hydrogen is presented to a template
 changes what fires, so the convention is named
 here. The bound stated above, 475 uncovered,
@@ -1806,9 +1804,8 @@ completed to match leave 469. Choosing the
 convention per template, which no caller can
 request, leaves 460. A fourth arm, hydrogens
 made explicit without completing the templates,
-is an incomplete loop and not a convention and
-leaves 688 uncovered, more than any of the other
-three; the instrument’s own record excludes it.
+is an incomplete loop and leaves 688 uncovered,
+more than any of the other three; the instrument’s own record excludes it.
 The first two are the same convention measured through two different loops, and they disagree by two references because the two loops
 clean products differently. All four span 17 references of 2,597, which is 0.0065 of recall and
 so 24.2% of 0.0271, the narrowest margin that
@@ -1839,10 +1836,9 @@ take is 0.1082; the headroom no ranking can
 take, because the bank does not produce those
 structures at all, is 0.1895. The census below is
 about the second and the larger.
-What the ceiling counts is one application of
-one template and not one enzymatic step, which
-matters for how the number reads. The annotation itself is not all single steps: applying the
-composite instruments to the references and not
+The ceiling counts one application of one template, where an enzymatic step may take several,
+and that matters for how the number reads. The
+annotation itself is not all single steps: applying the composite instruments to the references
 
 14
 
@@ -1987,8 +1983,8 @@ carry 87.2% of the mass. The objection that
 this is a consequence of how finely a type is
 defined is answered by varying the definition.
 What that answer covers should be said exactly:
-it covers the 337 misses of absent type and not
-the other 98 plus 40 of the 475. A miss whose
+it covers the 337 misses of absent type, and none
+of the other 98 plus 40 of the 475. A miss whose
 type the bank holds and whose rule did not
 fire is an implementation failure by construction. Three of the 98 were recovered by relaxing
 convention-dependent primitives, so that arm is
@@ -2003,7 +1999,7 @@ definition of a type, and a coarser one collapses
 it. What it supports is the different claim that
 the bound is invariant to the definition across
 the whole range in which that definition is meaningful. That makes the census of the gap a fact
-about the annotation corpus and not about our
+about the annotation corpus, independent of our
 own choice of definition; what the engine contributes is the hydrogen convention measured
 above.
 Nor is the missing chemistry available in the
@@ -2133,7 +2129,8 @@ Discussion
 Where the advantage is, and
 where it is not
 
-SyGMa’s lead at the tight budgets is a result about the field and not about this system.
+SyGMa’s lead at the tight budgets is a result
+about the field, which this system only inherits.
 SyGMa is the oldest and by far the smallest
 method in the comparison, 175 published rules
 against this bank’s 7,581, and at every budget
@@ -2163,7 +2160,7 @@ choices would have been defensible.
 
 4.2
 
-tors also do. What is left, and it is the property
+whole output, which three of the five comparators also do. What is left, and it is the property
 this paper rests on, is that every evaluation
 choice is declared with every cell of the resulting
 grid reported.
@@ -2175,23 +2172,25 @@ the interactive mode is the right setting, and
 the faster of the two by the margin Figure S3
 reports.
 Beyond a short list that setting is the weaker
-one, and the cause is the pool and not the ranking. It returns far fewer candidates than MetaTox, and by k = 20 many of its lists have already
-ended; a list that has ended cannot gain a hit
-from a wider window, so it trails MetaTox at
-every budget above fifteen with the interval excluding zero (Tables S8 and S12). A service
-deployed in that mode would recover less than
-the system it replaces wherever it answers with
-thirty candidates or more.
+one, and the cause is the pool, whose size bounds
+what any ranking can return. It returns far fewer
+candidates than MetaTox, and by k = 20 many
+of its lists have already ended; a list that has
+ended cannot gain a hit from a wider window,
+so it trails MetaTox at every budget above fifteen with the interval excluding zero (Tables S8
+and S12). A service deployed in that mode
+would recover less than the system it replaces
+wherever it answers with thirty candidates or
+more.
 A service answering with thirty or fifty candidates must therefore either run the exhaustive
 mode, which leads MetaTox at both, or raise
 the rule budget, which is the same knob the exhaustive mode turns to its limit. On validation
-that gain appears at an output budget of thirty
-and not at fifteen (Section S16). Either way it
-pays in runtime and in what a caller receives:
-at fifty the exhaustive arm’s precision is 0.0321,
-about thirty wrong structures for each right one.
-A list of that length is why the next property
-matters more than the recall figure does.
+that gain requires an output budget of thirty
+(Section S16). Either way it pays in runtime
+and in what a caller receives: at fifty the exhaustive arm’s precision is 0.0321, about thirty
+wrong structures for each right one. A list of
+that length is why the next property matters
+more than the recall figure does.
 
 4.3
 
@@ -2210,9 +2209,9 @@ No ranking in this literature can presently be
 verified independently, which is the concrete case
 for leaderboards releasing per-item predictions
 rather than aggregate scores 34,35 . Precision figures are bounded by annotation completeness.
-And the advantage at wide budgets is partly a
-statement about output length on all sides and
-not about ranking.
+And the advantage at wide budgets is partly
+a statement about output length on all sides,
+independent of ranking.
 This paper turned its argument about other
 people’s figures on its own release, and it found
 settings that decide a number and were not
@@ -2235,7 +2234,6 @@ type and a site of metabolism 5 , so reporting one
 is the norm rather than a contribution. Checking it against the atoms that actually changed,
 against a null of the same size, is not done anywhere in this literature that we can find, and
 Section 3.4 is that check. Nor is ordering the
-whole output, which three of the five compara-
 
 The ceiling bounds this formulation, not the task
 
@@ -2247,10 +2245,11 @@ of this bank fails to reach, between 0.6253 and
 never holds. That is a bound rather than a
 point, and Section S18 gives the counts it rests
 on.
-Extending coverage therefore requires new reaction corpora, and the census narrows the
+
 17
 
-search. Synthetic corpora are excluded by measurement, which leaves enzymatic and regulatory sources. The regulatory ones are the interesting half: metabolite identifications from
+Extending coverage therefore requires new reaction corpora, and the census narrows the
+search. Synthetic corpora are excluded by measurement, which leaves enzymatic and regulatory sources. The regulatory ones are the interesting half: metabolite identifications from
 radiolabelled human ADME studies are human
 in vivo data on exactly the population predicted
 here, they have been used to benchmark this
@@ -2279,17 +2278,22 @@ metabolism.
 
 5
 
-second application of the bank buys little: a
-fifth of the mined bank already carries the compositions a second pass would have to discover.
-A depth-two probe put the lift in the low percent at several times the candidate cost, and no
-figure from it is quoted, because its result file
-names no producer and predates the provenance
-apparatus the rest of this work is held to.
+therefore a one-template ceiling, where a single
+enzymatic step may take several templates, and
+the composite share is why a second application
+of the bank buys little: a fifth of the mined bank
+already carries the compositions a second pass
+would have to discover. A depth-two probe put
+the lift in the low percent at several times the
+candidate cost, and no figure from it is quoted,
+because its result file names no producer and
+predates the provenance apparatus the rest of
+this work is held to.
 Both learned stages are trained short of what
 the split allows, on a subsample of it and with
 early stopping that never engaged, which is an
-underfitting signature and not a converged run;
-retraining on the full split is not reported (Section S32).
+underfitting signature; retraining on the full split
+is not reported (Section S32).
 The register is weaker than its count of confirmations suggests. Three of the six confirmed
 predictions clear the falsification condition as
 written, which compares a point estimate to a
@@ -2316,8 +2320,6 @@ which favours both and is not corrected for.
 The deployed configuration is not the best
 one this work knows of. A blend that discounts
 duplication beats the released noisy-or on the
-validation draw at every budget from one to 20,
-with the interval excluding zero, which includes
 
 Limitations
 
@@ -2329,26 +2331,27 @@ templates it can score, clearing the bar registered prediction P10 set at 13.4%.
 instrument counting reaction-centre loci flags
 8.9%, but errs in both directions with neither
 error measured, so its share is neither a floor
-nor a bound; the two agree on only 130 templates (Section S24). The coverage ceiling here
-is therefore a one-template ceiling and not a oneenzyme one, and the composite share is why a
+nor a bound; the two agree on only 130 templates (Section S24). The coverage ceiling here is
 18
 
-the budget the headline is read at (Section S20).
+validation draw at every budget from one to 20,
+with the interval excluding zero, which includes
+the budget the headline is read at (Section S20).
 The release keeps the noisy-or because every
 number here is measured under it and switching would leave the paper describing a system
-nobody ran; the choice is a parameter and not
-a retraining, so the blend can be selected without retraining anything. GLORYx is the one
-arm not run on this machine: the models it
-needs are not distributed with its source, so
-its column comes from the service its authors
-operate (Section S35). Stereochemistry and protonation are bounded and not priced. 36.1%
-of annotated pairs produce a metabolite carrying a stereogenic element its substrate does not
-have, and 7.8% of annotated metabolites carry
-a formal charge. The criterion sweep cannot
-price a configuration-aware criterion, because
-no reference in this corpus carries a configuration for one to read. What separates the two
-settings that differ in that layer, on this annotation, is protonation and not stereochemistry
-(Section S13).
+nobody ran; the choice is a parameter, so the
+blend can be selected without retraining anything. GLORYx is the one arm not run on this
+machine: the models it needs are not distributed
+with its source, so its column comes from the
+service its authors operate (Section S35). Stereochemistry and protonation are bounded; what
+they cost is left open. 36.1% of annotated pairs
+produce a metabolite carrying a stereogenic element its substrate does not have, and 7.8%
+of annotated metabolites carry a formal charge.
+The criterion sweep cannot price a configurationaware criterion, because no reference in this
+corpus carries a configuration for one to read.
+What separates the two settings that differ in
+that layer, on this annotation, is protonation
+alone (Section S13).
 No measurement of a system here is external. Every figure is measured on one corpus
 assembled from four sources, of which the only
 published reference set is one of the four, so a
@@ -2357,22 +2360,19 @@ of the chemistry. The set that would serve is
 metabolite identifications from radiolabelled human ADME studies, already used to benchmark
 this class of tool 14 ; measuring a system here
 on one is not possible from what that benchmark publishes, because its reference structures
-appear only as drawings. Until it is, the comparison establishes an ordering within a corpus
-and not a ranking of the methods.
-The claim about evaluation is a different
-matter, and it is checked outside this corpus.
-Gao et al. 14 deposited the prediction files the
-six predictors they benchmarked returned, so
-what each emitted is counted and not inferred.
-Counted, across their 11 drugs the axis that
-benchmark leaves undeclared spans a factor of
-11.9, from 15.8 candidates per drug to 187.3: an
-undeclared quantity varying twelvefold between
-the arms of a comparison is part of what the
-comparison measures. The arms that emit more
-score higher. Shuffling emission among the arms
-of a drug, which breaks only which arm is paired
+appear only as drawings. Until it is, the comparison establishes an ordering within a corpus,
+which is weaker than a ranking of the methods.
+The claim about evaluation is a different matter, and it is checked outside this corpus. Gao
+et al. 14 deposited the prediction files the six predictors they benchmarked returned, so what
+each emitted is counted directly. Counted,
+across their 11 drugs the axis that benchmark
+leaves undeclared spans a factor of 11.9, from
+15.8 candidates per drug to 187.3: an undeclared
+quantity varying twelvefold between the arms
+of a comparison is part of what the comparison measures. The arms that emit more score
+higher. Shuffling emission among the arms of
 
+a drug, which breaks only which arm is paired
 with which emission, does not reproduce that
 association (Section S34).
 It lives mostly between the arms, which is
@@ -2398,9 +2398,9 @@ does not contain: between 0.6253 and 0.7095
 of the 475-reference shortfall is of a type the
 training annotation never holds. Enlarging this
 bank from this corpus would not supply that
-chemistry. The bound is therefore a property
-of the corpus this field trains on and not of any
-one bank.
+chemistry. The bound is therefore a property of
+the corpus this field trains on, and every bank
+inherits it.
 
 Supporting
 Available
@@ -2418,10 +2418,10 @@ precision at every budget; every comparison difference with its paired interval,
 length and under the other aggregation; how
 the substrate is drawn and where that changes a
 verdict; the rule bank, its mining and the provenance of each collection; what the rule budget
-buys and two parameters of the ranking, swept;
 19
 
-four trained variants of the ranking, three on one
+buys and two parameters of the ranking, swept;
+four trained variants of the ranking, three on one
 frontier and one below it; architecture, training
 and settings of both learned stages; whether the
 site a prediction names is the site that changed;
@@ -2435,7 +2435,8 @@ independent benchmark; provenance and reproduction procedure (PDF)
 
 7
 
-ing GPL templates permit and not a preference,
+the bank redistributes admit, which is the only
+licence the remaining GPL templates permit,
 and NOTICE.md carries the decisions file by file.
 The corpus, whose four sources and versions
 Section 2.1 names, is not redistributed as a corpus: ShareAlike and NonCommercial terms cannot both be satisfied by one derivative, so its
@@ -2461,14 +2462,14 @@ The released bank is not the measured bank.
 This paper’s figures are measured on 7,581 templates, of which 611 are also in BioTransformer’s
 published set; that distribution’s licence grants
 redistribution with attribution and reserves permission for commercial use, so the shipped bank
-drops them as a courtesy rather than an obligation and 6,970 ship. The removal is free: every
-reference those templates reach is reached by another in the bank. Dropping them from the bank
-is not the same as not carrying them, and of
-1,158 tracked files four hold at least one, which
-a check reports rather than the repository asserting otherwise. The repository’s licence is the
-GNU General Public License, version 3, which
-is what the GPL and LGPL templates the bank
-redistributes admit, which is what the remain-
+drops them as a courtesy rather than an obligation and 6,970 ship. The removal is free: every reference those templates reach is reached
+by another in the bank. Dropping them from
+the bank is not the same as not carrying them,
+and of 1,158 tracked files four hold at least one,
+which a check reports rather than the repository
+asserting otherwise. The repository’s licence
+is the GNU General Public License, version 3,
+which is what the GPL and LGPL templates
 
 8
 

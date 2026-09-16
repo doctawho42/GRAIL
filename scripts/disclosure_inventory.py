@@ -19,6 +19,20 @@ only what survives in neither.
 
     python scripts/disclosure_inventory.py            # record the inventory
     python scripts/disclosure_inventory.py --check    # refuse if a recorded one is now in neither
+    python scripts/disclosure_inventory.py --refresh-text   # re-read the prose for unchanged keys
+
+The `text` field is a snapshot taken when the inventory was last written, not the prose as it
+stands. `_norm` deletes every character outside [a-z ] so that a key survives reflowing,
+renumbering and a macro change -- which is what makes the guard usable during an edit, and also
+what lets the stored sentence drift out of date silently. A semicolon raised to a full stop, a
+capital, a rewrapped line: the key is identical, `--check` is green, and the recorded sentence is
+no longer the one in the document. Anyone then reading `text` instead of the .tex reads the past.
+
+`--refresh-text` re-reads the prose for keys whose identity is unchanged. It refuses outright if
+any key has appeared or disappeared, because updating text on a tree whose disclosures have moved
+would leave a green check and a freshened snapshot -- destroying both signals that a retraction
+had happened. It never touches `reviewed_and_accepted`: the `text` inside those records is the
+state a human was looking at when they accepted, and rewriting it would rewrite what was agreed.
 """
 from __future__ import annotations
 
@@ -135,6 +149,10 @@ def main() -> int:
                          "reading every one the check named: the extractor cannot tell a rewrite "
                          "from a deletion, so a rewritten sentence looks exactly like a dropped "
                          "one and only a reader can say which it was")
+    ap.add_argument("--refresh-text", action="store_true",
+                    help="re-read the prose into the `text` field for keys whose identity is "
+                         "unchanged, and re-stamp. Refuses if any key appeared or disappeared, "
+                         "and never touches reviewed_and_accepted")
     args = ap.parse_args()
 
     out = ROOT / "results" / "disclosure_inventory.json"
@@ -162,6 +180,86 @@ def main() -> int:
         added = [k for k in now if k not in before]
         if added:
             print(f"  {len(added)} new disclosure(s) since the inventory was recorded")
+        return 0
+
+    if args.refresh_text:
+        if not out.exists():
+            print(f"REFUSING: {out.relative_to(ROOT)} has not been recorded, so there is no "
+                  f"snapshot to refresh. Run this without a flag first.", file=sys.stderr)
+            return 1
+        prior = json.loads(out.read_text())
+        before = prior.get("disclosures") or {}
+
+        # The refusal this flag exists around. Refreshing text on a tree whose disclosures have
+        # moved would leave a green --check AND a freshened snapshot, which is strictly worse than
+        # either alone: it removes both of the signals a retraction leaves behind. So the key sets
+        # must match exactly, and a disagreement is adjudicated by a reader through --accept.
+        gone = [k for k in before if k not in now]
+        added = [k for k in now if k not in before]
+        if gone or added:
+            print(f"\nREFUSING: the recorded keys and the documents no longer agree "
+                  f"({len(gone)} gone, {len(added)} new), so this is not a text refresh.",
+                  file=sys.stderr)
+            for k in gone[:5]:
+                print(f"    gone: {before[k]['text'][:130]}", file=sys.stderr)
+            for k in added[:5]:
+                print(f"    new:  {now[k]['text'][:130]}", file=sys.stderr)
+            print("\n  Refreshing here would hide exactly what --check is for. Read what the "
+                  "check names and settle it with --accept; then refresh.", file=sys.stderr)
+            return 1
+
+        drift = [k for k in before if before[k].get("text") != now[k]["text"]]
+        moved = [k for k in before if before[k].get("in") != now[k]["in"]]
+        was = (prior.get("provenance") or {}).get("source_sha256")
+        fresh = stamp(__file__)
+        stale_producer = was != fresh.get("source_sha256")
+
+        if not drift and not stale_producer:
+            print(f"  {len(before)} recorded, key sets agree, no text has drifted and the "
+                  f"producer is unchanged: nothing to refresh")
+            return 0
+
+        # `before` is prior["disclosures"], not a copy of it, so the assignment below reaches the
+        # old text through the alias and destroys it. Keep what is about to be overwritten first,
+        # or the report prints the new sentence twice and claims no difference.
+        was_text = {k: before[k].get("text", "") for k in drift}
+        for k in drift:
+            prior["disclosures"][k]["text"] = now[k]["text"]
+        prior["provenance"] = fresh
+
+        # Intending not to touch the accepted decisions is not a mechanism. Compare them.
+        keep = json.dumps(json.loads(out.read_text()).get("reviewed_and_accepted") or [],
+                          sort_keys=True)
+        if json.dumps(prior.get("reviewed_and_accepted") or [], sort_keys=True) != keep:
+            print("REFUSING: this run would have altered reviewed_and_accepted, which records "
+                  "what a human agreed to and the text they agreed it against. Nothing written.",
+                  file=sys.stderr)
+            return 1
+
+        out.write_text(json.dumps(prior, indent=1))
+        print(f"  {len(before)} recorded, key sets agree, {len(drift)} sentence(s) refreshed"
+              + (f", producer re-stamped ({str(was)[:8]} -> {fresh['source_sha256'][:8]})"
+                 if stale_producer else ""))
+        # Print a window around the FIRST difference, not the first 120 characters: the drift that
+        # motivated this flag sat at offset 129 of its sentence, where a leading slice shows two
+        # identical lines and hides the one character that moved.
+        for k in drift[:10]:
+            a, b = was_text[k], now[k]["text"]
+            i = next((j for j, (x, y) in enumerate(zip(a, b)) if x != y), min(len(a), len(b)))
+            lo, hi = max(0, i - 55), i + 55
+            head = "" if lo == 0 else "..."
+            print(f"    at offset {i}:")
+            print(f"      was: {head}{a[lo:hi]}...")
+            print(f"      now: {head}{b[lo:hi]}...")
+        if moved:
+            print(f"  {len(moved)} disclosure(s) now appear in a different set of files; the `in` "
+                  f"field is left as recorded so the move stays visible, not normalised away:")
+            for k in moved[:10]:
+                print(f"    {before[k].get('in')} -> {now[k]['in']}")
+        if list(prior.get("sources") or []) != list(SOURCES):
+            print(f"  the \\input chain has changed since the inventory was recorded; `sources` is "
+                  f"left as recorded. Re-record deliberately if that is real.")
+        print(f"wrote {out.relative_to(ROOT)}")
         return 0
 
     accepted = []
