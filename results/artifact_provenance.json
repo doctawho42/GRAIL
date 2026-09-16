@@ -251,7 +251,9 @@
    "artifact": "results/gloryx_service_preds.json",
    "script": "gloryx_via_service.py",
    "how": "recorded source digest",
-   "status": "current"
+   "status": "producer_changed",
+   "detail": "producer was 20283cd90ddf, is now 13eadf57502c",
+   "diff_note": "scripts/typed_edit/gloryx_via_service.py is not in commit 6c947921438e"
   },
   {
    "artifact": "results/group_decode.json",
@@ -754,11 +756,11 @@
   }
  ],
  "n_pinned": 123,
- "n_pinned_stale": 1,
+ "n_pinned_stale": 2,
  "sweep": {
-  "unstamped": 302,
+  "unstamped": 303,
   "producer_changed": 41,
-  "current": 67,
+  "current": 72,
   "producer_unknown": 26,
   "cosmetic_only": 8
  },
@@ -1838,6 +1840,11 @@
   },
   {
    "artifact": "results/prose_metrics.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/prose_rate_corpus.json",
    "status": "unstamped",
    "detail": "no provenance block: nothing records which code wrote this"
   },

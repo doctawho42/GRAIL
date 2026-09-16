@@ -388,6 +388,10 @@ def main() -> int:
            "of_those_named_as_an_input_by_a_pinned_artifact": len(reached),
            "named_inputs": reached}
     Path(args.out).write_text(json.dumps(rep, indent=1))
+    # Say where the output went. This script's default --out is a tracked artifact, so a caller
+    # that forgets to redirect it rewrites the file other gates verify against -- which happened,
+    # silently, from the paper-gate suite, and took an hour to attribute.
+    print(f"  wrote {args.out}")
 
     if bad:
         print(f"\nFAIL: {len(bad)} pinned artifacts are not current")

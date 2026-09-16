@@ -14,6 +14,37 @@ import pytest
 ROOT = Path(__file__).resolve().parents[2]
 
 
+@pytest.fixture(autouse=True)
+def _leave_the_tree_as_we_found_it():
+    """Restore any tracked artifact a test rewrote, and say which.
+
+    Three scripts this file invokes write a tracked file as a side effect of being asked a
+    question: check_paper2_numbers.py writes results/number_provenance.json, check_number_
+    provenance.py writes results/number_sources.json, and paper2_macros.py writes
+    paper2/numbers.tex -- the printed page. A measured run of the suite left all three dirty in
+    the working tree, and one of them is the page other tests then verify against, so the suite
+    could not distinguish "the numbers are right" from "I just wrote them".
+
+    Fixing the three call sites one at a time was the wrong shape: two of the scripts have no
+    output flag at all, and the next writer added to this file would reopen the hole. A snapshot
+    and restore closes it for writers not yet written, which is the property worth having.
+
+    It PRINTS what it restored rather than restoring quietly. A fixture that silently undoes a
+    write is itself a place a side effect can hide, and the whole point of this one is that the
+    side effect becomes visible.
+    """
+    watched = [p for p in list((ROOT / "results").glob("*.json")) + [ROOT / "paper2" / "numbers.tex"]
+               if p.is_file()]
+    before = {p: p.read_bytes() for p in watched}
+    yield
+    restored = sorted(p.name for p, b in before.items() if p.read_bytes() != b)
+    for p, b in before.items():
+        if p.read_bytes() != b:
+            p.write_bytes(b)
+    if restored:
+        print("\n  [restored after a test wrote them: " + ", ".join(restored) + "]")
+
+
 def _run(script, *args):
     return subprocess.run([sys.executable, str(ROOT / "scripts" / script), *args],
                           capture_output=True, text=True, cwd=ROOT)
@@ -45,10 +76,22 @@ def test_the_draft_numbers_can_be_traced():
                     reason="the numbers artifact is not in this checkout")
 def test_the_macros_regenerate_identically():
     """A stale numbers.tex is a stale paper; regenerating must be a no-op."""
-    before = (ROOT / "paper2/numbers.tex").read_text()
-    r = _run("paper2_macros.py")
-    assert r.returncode == 0, r.stdout + r.stderr
-    assert (ROOT / "paper2/numbers.tex").read_text() == before, (
+    # The write is the point here, so redirecting the output -- the fix used for the two gates
+    # that wrote their artifacts pointlessly -- would leave this test asserting nothing. What was
+    # wrong is that the write was not undone: a measured run of the suite rewrote paper2/numbers.tex,
+    # the printed page, and left it dirty in the working tree. A test that regenerates the page and
+    # then verifies the page cannot distinguish "the macros are current" from "I just wrote them"
+    # unless the file it leaves behind is the file it found. So the comparison stays and the
+    # restore is unconditional.
+    path = ROOT / "paper2/numbers.tex"
+    before = path.read_text()
+    try:
+        r = _run("paper2_macros.py")
+        assert r.returncode == 0, r.stdout + r.stderr
+        after = path.read_text()
+    finally:
+        path.write_text(before)
+    assert after == before, (
         "paper2/numbers.tex is out of date with results/paper2_numbers.json; "
         "re-run scripts/paper2_numbers.py then scripts/paper2_macros.py")
 

@@ -112,6 +112,15 @@ def _claims() -> list:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--list", action="store_true", help="name every carrier and what it holds")
+    # This script had no way to run without writing, and the paper-gate suite calls it with no
+    # arguments -- so running the tests rewrote a tracked artifact as a side effect. That cost an
+    # hour of cross-checking a census nobody had deliberately regenerated, and the worse form is
+    # obvious once seen: the suite could re-baseline an artifact immediately before another gate
+    # verifies against it. The verdict here is computed before the write and does not read the
+    # file back, so redirecting the output changes nothing the check concludes.
+    ap.add_argument("--out", default=str(ROOT / "results" / "withheld_template_carriers.json"),
+                    help="where to write the census; point it elsewhere to leave the tracked "
+                         "artifact untouched, which is what a test run should do")
     args = ap.parse_args()
 
     withheld = _withheld()
@@ -132,7 +141,7 @@ def main() -> int:
             carriers.append((rel, len(hit), sorted(hit)[:3]))
 
     claims = _claims()
-    (ROOT / "results" / "withheld_template_carriers.json").write_text(json.dumps({
+    Path(args.out).write_text(json.dumps({
         "provenance": stamp(__file__),
         "question": ("which tracked files carry a template the released bank removes, since "
                      "removing the bank's own file does not remove what other files hold"),
@@ -147,6 +156,10 @@ def main() -> int:
                     "correctly, and the removal is a courtesy rather than a requirement"),
     }, indent=1))
 
+    # Name the path written. "Who wrote this file?" came up three times in one evening here and
+    # once cost an hour of two people cross-checking a census neither had asked for; a producer
+    # that says where it put its output answers that question before it is asked.
+    print(f"  wrote {args.out}")
     print(f"  {len(withheld)} withheld templates, {len(tracked)} tracked files scanned")
     print(f"  {len(carriers)} tracked file(s) carry at least one of them:")
     for rel, n, sample in carriers:

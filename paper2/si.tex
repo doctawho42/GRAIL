@@ -1982,8 +1982,8 @@ is a jar this repository holds and it runs here under the x86\_64 Java 8 runtime
 InChI artefact is built for, so what had kept it off this population was the cost of the run and
 that cost was paid. MetaTox is the one arm that is not here. Taking it to this population means a
 second submission of the substrates outside the comparison set, it was not made, and the reason
-is the cost of a submission rather than an inability: this paper counts two other absences as
-unforced for the same reason and this one is the third. Both arms are read there, which matters because the wide-budget
+is the cost of a submission rather than an inability: this paper counts one other absence as
+unforced for the same reason and this one is the second. Both arms are read there, which matters because the wide-budget
 leads this work claims are the exhaustive arm's and that arm existed only on the comparison set
 until its pools were built for the whole split.
 
@@ -1992,7 +1992,8 @@ $\numPopdefWholeSygmaOneFive$ $[\numPopdefWholeSygmaOneFiveLo,
 \numPopdefWholeSygmaOneFiveHi]$ at a budget of fifteen over the whole set, against
 $\numPopdefCompSygmaOneFive$ $[\numPopdefCompSygmaOneFiveLo, +\numPopdefCompSygmaOneFiveHi]$ on
 the comparison set: the wider population turns a tie into a small deficit that separates. Against
-MetaPredictor neither population separates.
+MetaPredictor the comparison set separates at no budget and the wider population separates at two,
+both against this arm.
 
 The exhaustive arm's leads mostly survive the move, and the exception is named. Of the
 \numPopdefLeadstotalWord{} separating leads it holds on the comparison set against the
@@ -2011,7 +2012,50 @@ $+\numPopdefExhwholemetapredictorFiveZero$ at thirty and fifty, and against BioT
 every budget this section sweeps, where the wider population separates the two more strongly than
 the comparison set does.
 
-Two things bound that count and neither is visible from the table. This section sweeps
+What that count is, and what it is not, has to be said beside it. It is built from the cells in
+which this work's exhaustive arm leads a comparator on the comparison set with the interval
+excluding zero, and it asks of each whether it still separates on the wider population. So it
+counts leads kept and leads lost, and it counts no losses: a cell in which a comparator separates
+against either of this work's arms is outside its definition and enters no total there. The count
+that does include them is this. This axis holds \numPopdefCellswhole{} contrast cells on the wider
+population, of which \numPopdefSeparatingwhole{} separate: \numPopdefForthisworkwholeWord{} for
+this work and \numPopdefAgainstthisworkwholeWord{} against it. On the comparison set
+\numPopdefSeparatingcomp{} of \numPopdefCellscomp{} separate, \numPopdefForthisworkcompWord{} for
+and \numPopdefAgainstthisworkcompWord{} against. The comparison set's cells can be read one at a
+time from Table~\ref{tab:si-intervals}; the wider population's cells are in no table in this paper.
+
+Both favourable totals rest on one comparator. Without BioTransformer the wider population reads
+\numPopdefWithoutbtforwholeWord{} for this work and \numPopdefWithoutbtagainstwholeWord{} against
+it, and the comparison set \numPopdefWithoutbtforcompWord{} and
+\numPopdefWithoutbtagainstcompWord{}. The unfavourable totals do not move, so every cell
+BioTransformer contributes to either count is a favourable one, and it is also the comparator that
+answers nothing for \numPopdefBtsilent{} of the \numPopdefWholesubs{} substrates. MetaTox enters
+neither total. On the comparison set, over the \numPopdefMetatoxbudgetsWord{} budgets the
+deployment table audits, it separates for this work in \numPopdefMetatoxforWord{} cells and
+against it in \numPopdefMetatoxagainstWord{}; on the wider population the quantity does not exist,
+because a second submission to that web service is not the authors' to make. Its absence therefore
+removes more from the favourable side of the comparison set than from the other, and the wider
+population's totals omit it entirely. These are counts of cells and not of independent tests,
+because the budgets are nested and the intervals come from one bootstrap; the family declared for
+multiplicity is a different sweep of \numHolmTests{} contrasts, and no total here is corrected over
+it. The \numPopdefLeadstotalWord{} leads counted above are one-sided by construction, and these
+totals are the same grid read in both directions.
+
+GLORYx's cells on the wider population are among those no table carries, so they are set out here.
+The interactive arm trails it at every budget this axis audits above five:
+$\numPopdefWholeGloryxOneZero$ $[\numPopdefWholeGloryxOneZeroLo,
+\numPopdefWholeGloryxOneZeroHi]$ at ten, $\numPopdefWholeGloryxOneFive$
+$[\numPopdefWholeGloryxOneFiveLo, \numPopdefWholeGloryxOneFiveHi]$ at fifteen,
+$\numPopdefWholeGloryxThreeZero$ $[\numPopdefWholeGloryxThreeZeroLo,
+\numPopdefWholeGloryxThreeZeroHi]$ at thirty and $\numPopdefWholeGloryxFiveZero$
+$[\numPopdefWholeGloryxFiveZeroLo, \numPopdefWholeGloryxFiveZeroHi]$ at fifty. The exhaustive arm
+trails it at ten, $\numPopdefExhwholegloryxOneZero$ $[\numPopdefExhwholegloryxOneZeroLo,
+\numPopdefExhwholegloryxOneZeroHi]$, and leads it at thirty and fifty,
+$+\numPopdefExhwholegloryxThreeZero$ $[+\numPopdefExhwholegloryxThreeZeroLo,
++\numPopdefExhwholegloryxThreeZeroHi]$ and $+\numPopdefExhwholegloryxFiveZero$
+$[+\numPopdefExhwholegloryxFiveZeroLo, +\numPopdefExhwholegloryxFiveZeroHi]$.
+
+Two things bound the lead count and neither is visible from the table. This section sweeps
 \numSTwoNineBudgets{} budgets and Table~\ref{tab:si-intervals} sweeps
 \numSTwoNineTablebudgets{}; the four it adds, at \numSTwoNineBudgetsunaudited{}, have no
 whole-test-set counterpart, so a lead at one of them cannot be followed across the move and is not
@@ -2172,6 +2216,25 @@ substrates on purpose, and the net of the two is not established here. The slowe
 for a third reason: a deadline is defined only for the sweep, so a $>$ entry can come from nowhere
 else, and the two modes' slowest cells are therefore not measured on the same substrates. On the
 test split, where no deadline is imposed, the exhaustive mode fails on none.
+
+\subsection{Cost at the tail}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{fig_cost}
+\caption{Left: generator seconds against substrate size at the whole bank, both axes logarithmic,
+with the substrates that did not finish inside the \numCostDeadline{}-second deadline drawn on the
+dashed line marking it. Right: wall-clock seconds per substrate for each operating mode on the
+validation split, log scale; the first four bars are the interactive mode's median, mean, ninetieth
+percentile and slowest substrate, the fifth the exhaustive mode's median.}
+\label{fig:cost}
+\end{figure*}
+
+Three other candidates for that constraint were tested and rejected by measurement.
+
+Cost is reported at the tail as well as at the median, because a service is used at both. The
+interactive mode's tail is far heavier than its median (Table~\ref{MS-tab:modes}), so a service
+answering a web form should impose a deadline and fall back and not size itself on the median.
 
 \section{The evaluation claim, checked outside this corpus}
 \label{sec:si-external}
@@ -2408,10 +2471,7 @@ the same relation to MetXBioDB, \numAssemblyMetxsharePct{} of whose pairs are in
 corpus, and it carries a column with its advantage stated and uncorrected; excluding one system
 for an overlap while seating another with a comparable one would be a rule applied in whichever
 direction suited the result. The overlap is therefore reported for both and corrected for
-neither, and GLORYx's absence stands on obtainability alone. It is a standard arm in this
-journal's recent benchmarks of this tool class \citep{Gao_2026}, so the absence is a real
-weakness of this comparison rather than a neutral one, and it is recorded as such in the
-manuscript's Limitations.
+neither.
 
 BioTransformer is pinned by digest rather than by version string, because ``3.0'' names several
 builds: jar \texttt{c70cad91}, 115{,}415{,}197 bytes, upstream commit \texttt{6432cf88} of
@@ -2487,8 +2547,8 @@ availability: both are reachable. It is the cost of submission, that MetaTox acc
 \numPopulationN{} structures and returns a file where DeepCYP takes one substrate at a time.
 That is a statement about our effort and not about either system, and it is the kind of reason this paper asks other work not to leave implicit, so it is written
 here rather than left out.
-On that basis DeepCYP's absence is unforced, and the same
-applies to GLORYx, whose distribution was not sought. Metabolite-Gen \citep{Chavan_2026} is a preprint with no repository we could
+On that basis DeepCYP's absence is unforced: the service cannot take a batch, and a submission
+one substrate at a time was not attempted. Metabolite-Gen \citep{Chavan_2026} is a preprint with no repository we could
 find. The list is closed by a rule: a comparator that could not be obtained is reported as
 unavailable with its reason, is not dropped silently, and the list is not extended after the
 first run.

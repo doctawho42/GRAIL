@@ -1,0 +1,539 @@
+{
+  "what_this_is": "per-paper rates of six prose constructions in eight comparison papers, with the planted-case control that makes a zero in this table a measurement rather than a property of the regex. scripts/check_prose_rate.py reads its ceilings from here.",
+  "corpus": {
+    "papers": 8,
+    "words": 49637,
+    "how_obtained": "PMC open-access XML via NCBI efetch, body paragraphs and headings only, references/captions/tables excluded",
+    "unobtainable": {
+      "paper": "Benchmarking In Silico Metabolite Prediction Tools against Human Radiolabeled ADME Data (JCIM 2026, PMID 41677243)",
+      "why": "no PMCID; not in the open-access subset. Not measured and not estimated, although it is the most comparable paper in existence and this work cites it."
+    }
+  },
+  "probes": {
+    "rather than": "\\brather\\s+than\\b",
+    "is/are not a": "\\b(?:is|are)\\s+not\\s+a\\b",
+    "epistemic self-grading": "\\brather\\s+than\\s+a\\b|\\band\\s+not\\s+a\\b|\\brather\\s+than\\s+of\\b|\\bis\\s+reported\\b|\\bis\\s+stated\\b",
+    "worth V-ing": "\\bworth\\s+(?:stating|saying|naming|printing|recording|having|carrying|putting|setting)\\b",
+    "which is why": "\\bwhich\\s+is\\s+why\\b",
+    "the objection": "\\bthe\\s+objection\\b",
+    "and not": "\\band\\s+not\\b",
+    "instead of": "\\binstead\\s+of\\b"
+  },
+  "per_paper": {
+    "rather than": {
+      "PMC12117554": {
+        "words": 6133,
+        "count": 1
+      },
+      "PMC12198081": {
+        "words": 4229,
+        "count": 0
+      },
+      "PMC12226175": {
+        "words": 3897,
+        "count": 2
+      },
+      "PMC12344697": {
+        "words": 8229,
+        "count": 4
+      },
+      "PMC12392614": {
+        "words": 8342,
+        "count": 1
+      },
+      "PMC12690583": {
+        "words": 6138,
+        "count": 2
+      },
+      "PMC12977048": {
+        "words": 3853,
+        "count": 1
+      },
+      "PMC13292216": {
+        "words": 8816,
+        "count": 6
+      }
+    },
+    "is/are not a": {
+      "PMC12117554": {
+        "words": 6133,
+        "count": 0
+      },
+      "PMC12198081": {
+        "words": 4229,
+        "count": 0
+      },
+      "PMC12226175": {
+        "words": 3897,
+        "count": 0
+      },
+      "PMC12344697": {
+        "words": 8229,
+        "count": 0
+      },
+      "PMC12392614": {
+        "words": 8342,
+        "count": 0
+      },
+      "PMC12690583": {
+        "words": 6138,
+        "count": 0
+      },
+      "PMC12977048": {
+        "words": 3853,
+        "count": 0
+      },
+      "PMC13292216": {
+        "words": 8816,
+        "count": 1
+      }
+    },
+    "epistemic self-grading": {
+      "PMC12117554": {
+        "words": 6133,
+        "count": 0
+      },
+      "PMC12198081": {
+        "words": 4229,
+        "count": 0
+      },
+      "PMC12226175": {
+        "words": 3897,
+        "count": 0
+      },
+      "PMC12344697": {
+        "words": 8229,
+        "count": 0
+      },
+      "PMC12392614": {
+        "words": 8342,
+        "count": 0
+      },
+      "PMC12690583": {
+        "words": 6138,
+        "count": 0
+      },
+      "PMC12977048": {
+        "words": 3853,
+        "count": 1
+      },
+      "PMC13292216": {
+        "words": 8816,
+        "count": 0
+      }
+    },
+    "worth V-ing": {
+      "PMC12117554": {
+        "words": 6133,
+        "count": 0
+      },
+      "PMC12198081": {
+        "words": 4229,
+        "count": 0
+      },
+      "PMC12226175": {
+        "words": 3897,
+        "count": 0
+      },
+      "PMC12344697": {
+        "words": 8229,
+        "count": 0
+      },
+      "PMC12392614": {
+        "words": 8342,
+        "count": 0
+      },
+      "PMC12690583": {
+        "words": 6138,
+        "count": 0
+      },
+      "PMC12977048": {
+        "words": 3853,
+        "count": 0
+      },
+      "PMC13292216": {
+        "words": 8816,
+        "count": 0
+      }
+    },
+    "which is why": {
+      "PMC12117554": {
+        "words": 6133,
+        "count": 0
+      },
+      "PMC12198081": {
+        "words": 4229,
+        "count": 0
+      },
+      "PMC12226175": {
+        "words": 3897,
+        "count": 0
+      },
+      "PMC12344697": {
+        "words": 8229,
+        "count": 0
+      },
+      "PMC12392614": {
+        "words": 8342,
+        "count": 0
+      },
+      "PMC12690583": {
+        "words": 6138,
+        "count": 0
+      },
+      "PMC12977048": {
+        "words": 3853,
+        "count": 0
+      },
+      "PMC13292216": {
+        "words": 8816,
+        "count": 0
+      }
+    },
+    "the objection": {
+      "PMC12117554": {
+        "words": 6133,
+        "count": 0
+      },
+      "PMC12198081": {
+        "words": 4229,
+        "count": 0
+      },
+      "PMC12226175": {
+        "words": 3897,
+        "count": 0
+      },
+      "PMC12344697": {
+        "words": 8229,
+        "count": 0
+      },
+      "PMC12392614": {
+        "words": 8342,
+        "count": 0
+      },
+      "PMC12690583": {
+        "words": 6138,
+        "count": 0
+      },
+      "PMC12977048": {
+        "words": 3853,
+        "count": 0
+      },
+      "PMC13292216": {
+        "words": 8816,
+        "count": 0
+      }
+    },
+    "and not": {
+      "PMC12117554": {
+        "words": 6133,
+        "count": 0
+      },
+      "PMC12198081": {
+        "words": 4229,
+        "count": 0
+      },
+      "PMC12226175": {
+        "words": 3897,
+        "count": 0
+      },
+      "PMC12344697": {
+        "words": 8229,
+        "count": 0
+      },
+      "PMC12392614": {
+        "words": 8342,
+        "count": 0
+      },
+      "PMC12690583": {
+        "words": 6138,
+        "count": 0
+      },
+      "PMC12977048": {
+        "words": 3853,
+        "count": 0
+      },
+      "PMC13292216": {
+        "words": 8816,
+        "count": 0
+      }
+    },
+    "instead of": {
+      "PMC12117554": {
+        "words": 6133,
+        "count": 0
+      },
+      "PMC12198081": {
+        "words": 4229,
+        "count": 0
+      },
+      "PMC12226175": {
+        "words": 3897,
+        "count": 0
+      },
+      "PMC12344697": {
+        "words": 8229,
+        "count": 1
+      },
+      "PMC12392614": {
+        "words": 8342,
+        "count": 0
+      },
+      "PMC12690583": {
+        "words": 6138,
+        "count": 0
+      },
+      "PMC12977048": {
+        "words": 3853,
+        "count": 0
+      },
+      "PMC13292216": {
+        "words": 8816,
+        "count": 0
+      }
+    }
+  },
+  "pooled": {
+    "rather than": {
+      "count": 17,
+      "per_1000": 0.3425
+    },
+    "is/are not a": {
+      "count": 1,
+      "per_1000": 0.0201
+    },
+    "epistemic self-grading": {
+      "count": 1,
+      "per_1000": 0.0201
+    },
+    "worth V-ing": {
+      "count": 0,
+      "per_1000": 0.0
+    },
+    "which is why": {
+      "count": 0,
+      "per_1000": 0.0
+    },
+    "the objection": {
+      "count": 0,
+      "per_1000": 0.0
+    },
+    "and not": {
+      "count": 0,
+      "words": 49637,
+      "per_1000": 0.0
+    },
+    "instead of": {
+      "count": 1,
+      "words": 49637,
+      "per_1000": 0.0201
+    }
+  },
+  "per_paper_max_per_1000": {
+    "rather than": 0.6806,
+    "is/are not a": 0.1134,
+    "epistemic self-grading": 0.2595,
+    "worth V-ing": 0.0,
+    "which is why": 0.0,
+    "the objection": 0.0,
+    "and not": 0.0,
+    "instead of": 0.1215
+  },
+  "planted_case_control": {
+    "rather than": {
+      "planted": 3,
+      "found": 3,
+      "probe_can_see": true
+    },
+    "is/are not a": {
+      "planted": 3,
+      "found": 3,
+      "probe_can_see": true
+    },
+    "epistemic self-grading": {
+      "planted": 3,
+      "found": 3,
+      "probe_can_see": true
+    },
+    "worth V-ing": {
+      "planted": 3,
+      "found": 3,
+      "probe_can_see": true
+    },
+    "which is why": {
+      "planted": 2,
+      "found": 2,
+      "probe_can_see": true
+    },
+    "the objection": {
+      "planted": 1,
+      "found": 1,
+      "probe_can_see": true
+    }
+  },
+  "corpus_sha256": {
+    "PMC12117554": "1fb53c8da0f71bde",
+    "PMC12198081": "d4859aa2c263d655",
+    "PMC12226175": "58cff4e0ec59930d",
+    "PMC12344697": "125ae39939e029d3",
+    "PMC12392614": "68313eaa4325f52e",
+    "PMC12690583": "f8469891454625d6",
+    "PMC12977048": "d613b3e5d6049346",
+    "PMC13292216": "45f69be325de24c4"
+  },
+  "splitter": {
+    "module": "scripts/check_prose_density.py",
+    "functions": "blocks() then sentences(); \\num* macros become ' N ', citations ' C ', floats and maths are cut at block boundaries",
+    "sha256": "89aaa15a86a6c083",
+    "why_recorded": "this repository contains three word-counting conventions and they disagree by up to 5 per cent on the same file: this splitter gives 10,937 words for paper2/body.tex where the disclosure inventory's de-TeXer gives 11,526 and a raw split gives more again. Every rate here is counted in these words, and a rate recounted in other words is a different number. The ceilings were checked under both conventions and none of the four moved."
+  },
+  "ceiling_caveats": {
+    "is/are not a": {
+      "corpus_count": 1,
+      "max_per_1000_comes_from": {
+        "paper": "PMC13292216",
+        "words": 8816,
+        "occurrences": 1
+      },
+      "what_it_measures": "a per-paper maximum computed from a single occurrence is an estimate of that paper's length, not of how often the construction is used: the same one occurrence in a 20,000-word paper would give 0.05 per 1000 instead of 0.11. The ceiling derived from it is still taken from data rather than chosen, and it rests on the shortest carrying paper in the corpus. Read it as such."
+    },
+    "epistemic self-grading": {
+      "corpus_count": 1,
+      "max_per_1000_comes_from": {
+        "paper": "PMC12977048",
+        "words": 3853,
+        "occurrences": 1
+      },
+      "what_it_measures": "a per-paper maximum computed from a single occurrence is an estimate of that paper's length, not of how often the construction is used: the same one occurrence in a 20,000-word paper would give 0.05 per 1000 instead of 0.26. The ceiling derived from it is still taken from data rather than chosen, and it rests on the shortest carrying paper in the corpus. Read it as such."
+    },
+    "worth V-ing": {
+      "corpus_count": 0,
+      "what_it_measures": "zero in all eight papers, and the planted-case control shows the probe finds real occurrences when they are present, so this zero is a fact about the literature and not about the pattern."
+    },
+    "which is why": {
+      "corpus_count": 0,
+      "what_it_measures": "zero in all eight papers, and the planted-case control shows the probe finds real occurrences when they are present, so this zero is a fact about the literature and not about the pattern."
+    },
+    "the objection": {
+      "corpus_count": 0,
+      "what_it_measures": "zero in all eight papers, and the planted-case control shows the probe finds real occurrences when they are present, so this zero is a fact about the literature and not about the pattern."
+    }
+  },
+  "ceiling_basis": {
+    "used": "per_paper_max_per_1000",
+    "also_recorded": "pooled",
+    "why": "The ceiling is the highest rate any single comparison paper reaches, not the pooled rate, and the difference is large enough to matter: for 'rather than' the pooled rate is 0.34 per 1000 words and the maximum is 0.68, which is 3 allowed in the manuscript against 7. The maximum is chosen because the claim this gate can support is the falsifiable one -- a document inside the range eight comparable papers occupy is not an outlier on this axis -- and because with eight papers a maximum is a tolerance while a pooled rate is a central tendency, and a gate that refuses at the centre would refuse half the literature it was measured on. It is nonetheless the generous of the two, and it was chosen in this work's favour, so both numbers are recorded here and the gate prints the distance to the pooled rate on every run. 'No worse than the most generous of eight' is a weaker statement than 'at the level of the literature', and a reader should be able to see which one is being made.",
+    "stricter_target_if_wanted": {
+      "rather than": {
+        "pooled_per_1000": 0.3425,
+        "max_per_1000": 0.6806
+      },
+      "is/are not a": {
+        "pooled_per_1000": 0.0201,
+        "max_per_1000": 0.1134
+      },
+      "epistemic self-grading": {
+        "pooled_per_1000": 0.0201,
+        "max_per_1000": 0.2595
+      },
+      "worth V-ing": {
+        "pooled_per_1000": 0.0,
+        "max_per_1000": 0.0
+      },
+      "which is why": {
+        "pooled_per_1000": 0.0,
+        "max_per_1000": 0.0
+      },
+      "the objection": {
+        "pooled_per_1000": 0.0,
+        "max_per_1000": 0.0
+      }
+    }
+  },
+  "carrier_sentences": {
+    "what_this_is": "Sentences carrying at least one of the seven constructions. Chosen over the per-phrase counts because those OVERLAP by construction (rather-than-a is a subset of rather-than), so their residues can be neither summed nor compared, and a reword can clear one probe while the construction stays in the text. This quantity cannot double-count and does not migrate under rewording.",
+    "splitter": "check_prose_density.blocks then .sentences, applied to the RAW file. The count is CONVENTION-DEPENDENT: the disclosure inventory's splitter over de-TeXed prose gives 142 where this gives 144 on si.tex, so the measure must always be named together with this splitter.",
+    "probe_set": {
+      "rather than": "\\brather\\s+than\\b",
+      "is/are not a": "\\b(?:is|are)\\s+not\\s+a\\b",
+      "epistemic self-grading": "\\brather\\s+than\\s+a\\b|\\band\\s+not\\s+a\\b|\\brather\\s+than\\s+of\\b|\\bis\\s+reported\\b|\\bis\\s+stated\\b",
+      "worth V-ing": "\\bworth\\s+(?:stating|saying|naming|printing|recording|having|carrying|putting|setting)\\b",
+      "which is why": "\\bwhich\\s+is\\s+why\\b",
+      "the objection": "\\bthe\\s+objection\\b",
+      "and not": "\\band\\s+not\\b",
+      "instead of": "\\binstead\\s+of\\b"
+    },
+    "per_paper": {
+      "PMC12117554": {
+        "sentences": 247,
+        "carriers": 1,
+        "words": 5881,
+        "share": 0.00405,
+        "per_1000": 0.17
+      },
+      "PMC12198081": {
+        "sentences": 147,
+        "carriers": 0,
+        "words": 4193,
+        "share": 0.0,
+        "per_1000": 0.0
+      },
+      "PMC12226175": {
+        "sentences": 99,
+        "carriers": 1,
+        "words": 2644,
+        "share": 0.0101,
+        "per_1000": 0.3782
+      },
+      "PMC12344697": {
+        "sentences": 314,
+        "carriers": 5,
+        "words": 8158,
+        "share": 0.01592,
+        "per_1000": 0.6129
+      },
+      "PMC12392614": {
+        "sentences": 264,
+        "carriers": 1,
+        "words": 6864,
+        "share": 0.00379,
+        "per_1000": 0.1457
+      },
+      "PMC12690583": {
+        "sentences": 249,
+        "carriers": 2,
+        "words": 6059,
+        "share": 0.00803,
+        "per_1000": 0.3301
+      },
+      "PMC12977048": {
+        "sentences": 173,
+        "carriers": 1,
+        "words": 3851,
+        "share": 0.00578,
+        "per_1000": 0.2597
+      },
+      "PMC13292216": {
+        "sentences": 348,
+        "carriers": 7,
+        "words": 8727,
+        "share": 0.02011,
+        "per_1000": 0.8021
+      }
+    },
+    "pooled": {
+      "sentences": 1841,
+      "carriers": 18,
+      "words": 46377,
+      "share": 0.00978,
+      "per_1000": 0.3881
+    },
+    "per_paper_max_per_1000": 0.8021,
+    "per_paper_max_share": 0.02011,
+    "max_from": "PMC13292216",
+    "ceiling_basis": "per-paper maximum, named -- the same basis chosen for the six phrase probes, and the generous of the two, recorded in this work's own favour. Pooled is 0.3666/1k.",
+    "planted_case_control": "4-sentence text with 2 carriers by construction: counter returns 4 and 2.",
+    "eighth_probe": "'instead of' was added to the criterion on the author's decision. It is the same habit in a third spelling, and unlike 'and not' the corpus does use it, so it carries a real rate. Adding it moved OUR count and the CORPUS norm together, so the ceiling moved too: this was recorded as a choice with a cost, not as a free tightening."
+  },
+  "zero_vs_unmeasured": "'and not' is measured at zero in all eight papers. 'instead of' is measured at one occurrence in PMC12344697. These are different facts and the gate must not print the first about the second: an asserted absence that has not been measured overstates the case against this manuscript, which is the direction an author's own instrument must never fail in."
+}

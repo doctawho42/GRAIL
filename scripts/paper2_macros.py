@@ -82,8 +82,20 @@ def fmt(v, key: str = ""):
 # reach for it without anyone typing the word, which is the one way it could drift.
 # 0 is "none" rather than "no": the word appears as the object of a preposition ("differ in
 # none of them"), where "no" is ungrammatical.
+# The table stopped at twelve, and that is a silent trap rather than a style choice. A count
+# whose value leaves this range loses its \...Word macro without a word of warning, and the
+# manuscript is already pressed against the ceiling: \numGxarmJobsWord prints twelve in the
+# Supporting Information and three more cited word forms stand at eleven. The population axis
+# gaining a fourth comparator moves popdef.leadstotal from eleven to thirteen, which would have
+# deleted \numPopdefLeadstotalWord while si.tex cites it twice, and check_paper2_numbers.py would
+# have reported "macros used and not defined" with no hint that a dictionary was the cause.
+# Extending to twenty rather than to thirteen so the next count to cross the line does not
+# reopen this: the cost is that 21 integers elsewhere in the artefact gain a word form none of
+# them is cited in, against the 2,797 generated macros the manuscript already does not cite.
 WORDS = {0: "none", 1: "one", 2: "two", 3: "three", 4: "four", 5: "five",
-         6: "six", 7: "seven", 8: "eight", 9: "nine", 10: "ten", 11: "eleven", 12: "twelve"}
+         6: "six", 7: "seven", 8: "eight", 9: "nine", 10: "ten", 11: "eleven", 12: "twelve",
+         13: "thirteen", 14: "fourteen", 15: "fifteen", 16: "sixteen", 17: "seventeen",
+         18: "eighteen", 19: "nineteen", 20: "twenty"}
 
 
 def main() -> int:

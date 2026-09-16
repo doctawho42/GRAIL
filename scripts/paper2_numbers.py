@@ -836,19 +836,43 @@ def build():
     # What actually defines the comparison population, and what the rest of the test set says.
     # The manuscript described an emission rule the code does not apply.
     pop = art("population_definition.json")
+
+    _ARMS = ("deployed_minus_comparator", "exhaustive_minus_comparator")
+
+    def _comparator_rows(_row):
+        """Every comparator a population row carries a contrast block for, named by the artifact.
+
+        Structural rather than by name: a comparator is a key whose value is a mapping holding at
+        least one arm sub-block. The row's bookkeeping (n_substrates, n_references, arms_present)
+        and this work's own two recall series carry none, so they fall out without being listed,
+        and a comparator the artifact gains is measured and printed in the same run.
+
+        Four literals used to name this list, and each could only subtract from it. That is how
+        the GLORYx column came to be measured over all 1,170 substrates and left out of every
+        count and every macro: nothing compared the names in this file against the artifact. The
+        alternative of excluding known bookkeeping names by hand is the same defect mirrored -- a
+        list the data can only add to -- so the test is what a comparator row looks like, not what
+        it is called.
+        """
+        return sorted(k for k, v in _row.items()
+                      if isinstance(v, dict) and any(a in v for a in _ARMS))
+
     # The exhaustive arm on both populations. It is the arm that carries every wide-budget lead
     # this work claims, and until it existed on the whole evaluated test set those leads had been
     # read only off the 291 nobody can reconstruct the draw of.
     for pop_key, tag in (("the comparison set", "Comp"), ("the whole evaluated test set", "Whole")):
         row = pop["contrasts"].get(pop_key, {})
-        for comp in ("sygma", "metapredictor"):
+        for comp in _comparator_rows(row):
             cell = (row.get(comp) or {}).get("exhaustive_minus_comparator") or {}
-            for k in ("5", "10", "15", "30", "50"):
-                if k in cell:
-                    n[f"popdef.exh{tag}{comp}{k}"] = cell[k]["difference"]
-                    n[f"popdef.exh{tag}{comp}{k}.lo"] = cell[k]["ci95"][0]
-                    n[f"popdef.exh{tag}{comp}{k}.hi"] = cell[k]["ci95"][1]
-                    n[f"popdef.exh{tag}{comp}{k}.sep"] = cell[k]["excludes_zero"]
+            # Budgets from the cell rather than from a list here, for the same reason: the list
+            # held exactly the artifact's five, so it changed no number while it stood, and it
+            # could only ever drop a budget the artifact gained. The guard it needed, "if k in
+            # cell", could not fail once the keys come from the cell itself.
+            for k in sorted(cell, key=int):
+                n[f"popdef.exh{tag}{comp}{k}"] = cell[k]["difference"]
+                n[f"popdef.exh{tag}{comp}{k}.lo"] = cell[k]["ci95"][0]
+                n[f"popdef.exh{tag}{comp}{k}.hi"] = cell[k]["ci95"][1]
+                n[f"popdef.exh{tag}{comp}{k}.sep"] = cell[k]["excludes_zero"]
     _whole = pop["contrasts"].get("the whole evaluated test set", {})
     n["popdef.wholesubstrates"] = _whole.get("n_substrates")
     n["popdef.wholereferences"] = _whole.get("n_references")
@@ -857,7 +881,7 @@ def build():
     # named here, because a comparator added to that population and not to this loop would be
     # measured on it and left out of the count the paper quotes.
     _kept = _lost = 0
-    _comps = [c for c in ("sygma", "metapredictor", "biotransformer") if c in _whole]
+    _comps = _comparator_rows(_whole)
     n["popdef.wholearms"] = len(_comps)
     for comp in _comps:
         a = ((pop["contrasts"]["the comparison set"].get(comp) or {})
@@ -872,6 +896,99 @@ def build():
     n["popdef.leadskept"] = _kept
     n["popdef.leadslost"] = _lost
     n["popdef.leadstotal"] = _kept + _lost
+
+    # The same axis counted in the other direction, because the count above cannot report a loss
+    # it never claimed. It selects cells where the exhaustive arm led on the comparison set and
+    # asks whether they survive; a cell that separates AGAINST this work on the wider population
+    # without having separated on the narrower one is outside its domain and enters no total.
+    # Measured, that is not a hypothetical: the exhaustive arm trails GLORYx at a budget of ten
+    # over the whole set by -0.0293 [-0.0522, -0.0067] where the same cell on the comparison set
+    # is +0.0150 and does not separate. Reporting leads kept and lost while nothing counts the
+    # adverse cells is the asymmetry this paper's own argument is against, and fixing the four
+    # literals alone would have made it worse: the lead count rises from eleven to thirteen while
+    # the adverse side stays uncounted.
+    #
+    # Both directions over both arms and both populations, from the artifact's own comparator
+    # list. Counts of cells, not of tests: budgets are nested on the same substrates under one
+    # bootstrap, these are not family-wise corrected, and the Holm family the main text declares
+    # is a different sweep of nine budgets over three comparators.
+    for _pop_key, _short in (("the comparison set", "comp"),
+                             ("the whole evaluated test set", "whole")):
+        _row = pop["contrasts"].get(_pop_key, {})
+        _for = _against = _sep = _cells = _neither = 0
+        for _c in _comparator_rows(_row):
+            for _arm in _ARMS:
+                for _cell in (_row[_c].get(_arm) or {}).values():
+                    _cells += 1
+                    if not _cell["excludes_zero"]:
+                        continue
+                    _sep += 1
+                    # Three buckets, not two. The first form of this counted a zero difference
+                    # as favourable through an else branch, which made the check below unable to
+                    # fail on the one input it exists for: a cell marked separating whose
+                    # difference is zero would have been counted for this work and the totals
+                    # would still have added up. Perturbing such a cell is the test, and it
+                    # passed until this was three-way.
+                    if _cell["difference"] < 0:
+                        _against += 1
+                    elif _cell["difference"] > 0:
+                        _for += 1
+                    else:
+                        _neither += 1
+        n[f"popdef.cells{_short}"] = _cells
+        n[f"popdef.separating{_short}"] = _sep
+        n[f"popdef.againstthiswork{_short}"] = _against
+        n[f"popdef.forthiswork{_short}"] = _for
+        # The same two counts with BioTransformer left out, because the sign of the favourable
+        # total depends on it: it supplies ten of the seventeen favourable cells on the wider
+        # population and none of the adverse ones, and it is the arm that answers nothing for 107
+        # of the 1,170 substrates, scored as zero rather than removed. A reader told "seventeen
+        # for and fourteen against" reads a majority; the same grid without that one comparator
+        # runs two to one the other way. Printing the pair is the only way the sentence carries
+        # its own dependence.
+        _nf = _na = 0
+        for _c in _comparator_rows(_row):
+            if _c == "biotransformer":
+                continue
+            for _arm in _ARMS:
+                for _cell in (_row[_c].get(_arm) or {}).values():
+                    if _cell["excludes_zero"]:
+                        _nf += _cell["difference"] > 0
+                        _na += _cell["difference"] < 0
+        n[f"popdef.withoutbtfor{_short}"] = _nf
+        n[f"popdef.withoutbtagainst{_short}"] = _na
+        # A partition the reader can add up, and one that can actually fail: the two directions
+        # and the cells that separate in neither have to exhaust the grid. Recomputed here from
+        # independent counters rather than asserted, because a sum of the same walk's own buckets
+        # is an identity and would hold under a dropped comparator or a reversed sign.
+        if _sep != _against + _for or _cells < _sep:
+            raise SystemExit(
+                f"popdef: on {_pop_key} the axis holds {_cells} cells of which {_sep} separate, "
+                f"{_against} against this work and {_for} for it, which do not add up")
+
+    # What the comparator that did not make the move would have contributed, over the budgets this
+    # axis audits. MetaTox is in neither population row, so no cell of its enters either direction
+    # of the count above, and the direction of that omission is not the one a reader would assume:
+    # on the comparison set, where it can be measured at all, it separates for this work in six of
+    # the cells and against it in two. Leaving it out therefore understates the favourable side,
+    # and the sentence that reports the axis has to say so rather than let the absence read as
+    # caution. Read from the deployment table, which is where its contrasts live; on the wider
+    # population the quantity does not exist, because the second submission was never made.
+    _mtx = art("deployment_table.json")["contrasts"]
+    # The budgets this axis audits, emitted as a count rather than spelled in the prose: a
+    # sentence saying "over the five budgets" would be a number typed by hand, and would go on
+    # saying five after this tuple changed.
+    _MTX_BUDGETS = ("5", "10", "15", "30", "50")
+    n["popdef.metatoxbudgets"] = len(_MTX_BUDGETS)
+    _mf = _ma = 0
+    for _k in _MTX_BUDGETS:
+        for _arm in ("whole bank", "trained budget"):
+            _c = _mtx.get(_k, {}).get(f"{_arm} - metatox")
+            if _c and _c["excludes_zero"]:
+                _mf += _c["gap"] > 0
+                _ma += _c["gap"] < 0
+    n["popdef.metatoxfor"] = _mf
+    n["popdef.metatoxagainst"] = _ma
 
     n["popdef.metatox"] = pop["emission"]["comparison_set"]["metatox"]
     n["popdef.sygmainside"] = pop["emission"]["comparison_set"]["sygma"]
@@ -980,17 +1097,26 @@ def build():
     if _whole:
         n["popdef.wholesubs"] = _whole["n_substrates"]
         n["popdef.wholerefs"] = _whole["n_references"]
-        for name in ("sygma", "metapredictor"):
-            for k in ("15", "30"):
-                c = _whole[name]["deployed_minus_comparator"][k]
+        # The interactive arm, from the artifact's comparators and the cell's own budgets. This
+        # pair of literals named two comparators and two budgets, which is why the arm had no
+        # macro at 5, 10 or 50 for anybody: si.tex had to hand-count "the wider population
+        # separates at two, both against this arm" because the two cells it means -- MetaPredictor
+        # at 5 and at 10 over the whole set -- had no printable value. Indexing the arm and the
+        # budget directly would raise on a comparator carrying only one arm, so both are read
+        # through .get and skipped when absent.
+        for name in _comparator_rows(_whole):
+            _cells = (_whole[name].get("deployed_minus_comparator") or {})
+            for k in sorted(_cells, key=int):
+                c = _cells[k]
                 n[f"popdef.whole.{name}.{k}"] = c["difference"]
                 n[f"popdef.whole.{name}.{k}.lo"] = c["ci95"][0]
                 n[f"popdef.whole.{name}.{k}.hi"] = c["ci95"][1]
                 n[f"popdef.whole.{name}.{k}.sep"] = c["excludes_zero"]
         _comp = pop["contrasts"]["the comparison set"]
-        for name in ("sygma", "metapredictor"):
-            for k in ("15", "30"):
-                c = _comp[name]["deployed_minus_comparator"][k]
+        for name in _comparator_rows(_comp):
+            _cells = (_comp[name].get("deployed_minus_comparator") or {})
+            for k in sorted(_cells, key=int):
+                c = _cells[k]
                 n[f"popdef.comp.{name}.{k}"] = c["difference"]
                 n[f"popdef.comp.{name}.{k}.lo"] = c["ci95"][0]
                 n[f"popdef.comp.{name}.{k}.hi"] = c["ci95"][1]

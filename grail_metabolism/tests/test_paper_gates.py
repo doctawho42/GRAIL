@@ -26,7 +26,17 @@ GATES = [
     ("check_prereg.py", ["--prereg", "paper2/preregistration.md"]),
     ("polish_audit.py", []),           # no injected instruction, reader address or diary prose
     # every number the registration leans on still traces to the code that wrote it
-    ("audit_artifact_provenance.py", []),
+    # Both of these WRITE a tracked artifact when run with no arguments, so the suite was
+    # regenerating results/artifact_provenance.json and results/withheld_template_carriers.json
+    # every time it ran -- a test producing the artifacts other tests verify against. It cost an
+    # hour of two people cross-checking a census neither had deliberately regenerated. Both
+    # verdicts are computed before the write and neither reads its file back, so the output goes
+    # to a scratch name under results/, which .gitignore already covers.
+    # Consequence worth stating rather than discovering: `make test` no longer refreshes those two
+    # artifacts. That is the point -- regenerating them is a producer's job and a decision, not a
+    # side effect of running the tests.
+    ("audit_artifact_provenance.py",
+     ["--out", str(ROOT / "results" / ".gate_scratch_provenance.json")]),
     # a swept row whose numbers move with the clock names which ones, and the SI says so
     ("check_wallclock_fields.py", []),
     # the word around a number makes a claim too: superlatives and separation verdicts
@@ -50,7 +60,8 @@ GATES = [
     ("check_prose_density.py", []),
     # no document may claim the withheld templates are not redistributed while a tracked file
     # carries them
-    ("check_no_withheld_templates.py", []),
+    ("check_no_withheld_templates.py",
+     ["--out", str(ROOT / "results" / ".gate_scratch_withheld.json")]),
     # the ignore rules name what the repository deposits, instead of being overridden by a
     # flag 372 times, which is how a released artifact goes missing from a release
     ("sync_tracked_artifacts.py", ["--check"]),
@@ -90,10 +101,72 @@ DECLARED_DEBT = {
         "absent from LIMITS while the reviewer named it explicitly; its mean (27.4) is inside "
         "the range eight comparable papers occupy and is not the defect. Closes in W4.",
     "check_prose_rate.py":
-        "'rather than' occurs 62 times in the manuscript against a ceiling of 8 and 155 times in "
-        "the Supporting Information against 20; the four self-grading tics are over a ceiling of "
-        "zero in both. The ceilings are the comparison corpus's bounds, not this document's "
-        "counts. Closes in W3 for the manuscript and W4 for the Supporting Information.",
+        "TWO criteria are red and both are accepted, with the second accepted by the author after "
+        "being shown these numbers.\n"
+        "LENGTH. paper2/body.tex is 10,068 words against 11,131 at the start of the pass: 1,063 "
+        "removed, 9.5 per cent, against a 25 per cent target of 8,349. The author accepted roughly "
+        "-14 per cent and recorded the rest here; the pass then reached -9.5, and the gap between "
+        "the acceptance and the outcome is part of the debt rather than hidden in it. Why the "
+        "remaining 1,719 words were not taken, each figure measured: every sentence in the file "
+        "reaching for one of the eight constructions weighs about 1,600 words in total, so the "
+        "construction work cannot supply the volume even if all of it were deleted; 440 words of "
+        "the counted prose are ACS-mandated blocks -- Data and Software Availability 326, "
+        "\\section*{Notes} 84, Author contributions 30 -- which duplicate the SI by design; and "
+        "about 2,100 words are recorded concessions, where deleting one is a retraction rather "
+        "than a cut.\n"
+        "Those two figures are the only ones here this gate does not print, so the derivation is "
+        "written out rather than the number trusted, and writing it out corrected the same figure "
+        "THREE times. It was first 634, taken from a conversation. Re-deriving gave 636, and that "
+        "was wrong twice over: a boundary regex of \\(?:sub)*section\\{ does not match "
+        "\\section*{Notes}, so Notes was reported absent and its 84 words were silently absorbed "
+        "into Author contributions; and suppinfo was credited 196 words although cpd.blocks drops "
+        "environment bodies entirely, so NONE of its 209 ACS-mandated words are inside the 10,068 "
+        "this target is measured against -- counting them as untouchable was double-counting an "
+        "exclusion. The concession figure is given as 'about 2,100' deliberately: 2,102 is the sum "
+        "over the 'text' field of every results/disclosure_inventory.json entry whose 'in' list "
+        "contains paper2/body.tex, but that field is _plain-normalised and so is a THIRD word "
+        "convention, not this gate's, and the three disagree by up to five per cent. To re-derive "
+        "the 440, take each block between headings matched WITH \\*? and count it through "
+        "cpd.blocks + cpd.sentences, the same splitter as the length figures above. A number a "
+        "reader cannot re-derive is a number that stays wrong, and this one stayed wrong twice "
+        "after being written down. "
+        "Two adversarial passes then bounded what remained: sentence-level, 101 candidates of "
+        "which 60 were adjudicated and 24 killed on claims stated nowhere else (40 per cent); "
+        "paragraph-level, 29 proposals of which 28 were adjudicated and 20 killed (71 per cent), "
+        "and all 8 nominal survivors carry reasons arguing the opposite of their boolean, so that "
+        "route yielded nothing. What it did establish is that paragraph-sized blocks each hold "
+        "something unique -- the only definition of the parent-drop convention, the only statement "
+        "of the third correction, the only place the title's own term is defined. Relocation to "
+        "the SI supplied the rest of what was safe: the runtime figure and its deployment detail "
+        "moved, registry-neutral. The worked example and the site-consistency section were "
+        "examined and declined -- the first is the paper's only concrete illustration, and the "
+        "second's caveats are concessions whose place is beside the claim, not in a supplement.\n"
+        "CONSTRUCTIONS. The criterion is no longer the per-phrase counts and the reason is a "
+        "defect in them: they "
+        "overlap by construction, so two residues can be neither summed nor compared, and a "
+        "reword clears one probe while the construction stays on the page. Measured: a pass moved "
+        "25 occurrences out of 'rather than' into 'and not', which occurs ZERO times in the "
+        "49,637-word comparison corpus, while the share of sentences defining by exclusion moved "
+        "barely at all. That share is now the criterion, over eight probes since 'instead of' was "
+        "added on the author's decision: paper2/body.tex 76 of 433 sentences (17.55%) against a "
+        "ceiling of 8 at digest e87f5d53, paper2/si.tex 257 of 1080 (23.80%) against 23 at digest "
+        "36bad88c, where the corpus runs at 18 of 1,841 sentences, 0.98%. The second figure is "
+        "reproduced by a second reader as 251, and the six-carrier difference is now explained: "
+        "that reader's 'worth V-ing' was the probe's earlier form, missing 'naming', 'printing', "
+        "'recording' and 'setting'. Restoring exactly that omission moves this file 257 -> 251, a "
+        "delta of six, which is the figure this file's own docstring already recorded for that "
+        "same omission. So the discrepancy was in the instrument and never in the text, and a "
+        "synchronised re-measure would have reproduced it. Two earlier explanations were wrong "
+        "and are kept here because what was ruled out is worth more than what was guessed: the "
+        "file state (si.tex has not moved all session) and a truncated epistemic probe, which "
+        "would cost 19 carriers rather than six. The ceiling is the "
+        "most generous single paper (0.80 per 1000 "
+        "words, PMC13292216) carried across each file's length, derived at every run from "
+        "results/prose_rate_corpus.json and never typed here. Counts here are named with the file "
+        "they describe and nothing else: body.tex moves under this pass, and two agents reading "
+        "the same file minutes apart got 79 and 82 until the probe count and the file digest were "
+        "stated alongside. Closes by deletion and positive assertion, not by rewording: W3 for "
+        "the manuscript, W4 for the Supporting Information.",
 }
 
 
@@ -116,6 +189,18 @@ def test_paper_gate_exits_zero(script, args):
             pytest.skip(f"{script} needs {needed}, which this checkout has not built")
     run = subprocess.run([sys.executable, str(path), *args], cwd=ROOT,
                          capture_output=True, text=True, timeout=600)
+
+    # A crash and a refusal both exit non-zero, so this has to come BEFORE the debt branch.
+    # Without it, a gate that cannot even be parsed exits non-zero, matches its declared debt, and
+    # is recorded as the failure it was expected to have: the suite would stop distinguishing "the
+    # prose is unfixed" from "the gate is unparseable", and the debt mechanism -- written to keep
+    # red gates honest -- would be the thing hiding a broken one. That is not hypothetical; a
+    # docstring edit left check_prose_rate.py with two closing quote triples and a SyntaxError,
+    # and this branch is what separates that from an unpaid debt.
+    crashed = "Traceback (most recent call last)" in run.stderr or "SyntaxError" in run.stderr
+    assert not crashed, (
+        f"{script} did not run at all -- it crashed rather than reaching a verdict, so this tells "
+        f"you nothing about the paper.\n--- stderr ---\n{run.stderr[-2000:]}")
 
     debt = DECLARED_DEBT.get(script)
     if debt is not None:

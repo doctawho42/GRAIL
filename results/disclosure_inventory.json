@@ -3,7 +3,7 @@
   "script": "disclosure_inventory.py",
   "script_path": "scripts/disclosure_inventory.py",
   "source_sha256": "7178c28f48f37a1fa08c5afd3e14e375980532953fb019937a2ae63c28f9bcf7",
-  "git_commit": "3b407966efa18f8ba276e7872774fda01e84eb03",
+  "git_commit": "c87bca45a800ef0a7afefa3e75c18f358beea1d3",
   "git_dirty": true
  },
  "reviewed_and_accepted": [
@@ -349,6 +349,41 @@
     "paper2/body.tex"
    ],
    "reason": "Reworded, not retracted. Both sentences described the validation draw and were rewritten in 6fb527b because the old wording claimed the draw is taken at seed 0 directly, which is false: the loader derives each split's own seed from the configuration value. Each element survives and was located by hand before this was recorded. The reason the draw exists (a threshold checked on the population that chose the setting it tests is not a check) is at body.tex:94 and si.tex:207. The paired-comparison fact (held by both operating modes) is at si.tex:205. The seed, now stated correctly with the derivation, is at si.tex:179-180 and si.tex:204. The whole-bank-pool fact is at body.tex:94. Nothing in either sentence is dropped; the seed claim is corrected."
+  },
+  {
+   "text": "Below about ten candidates the interactive mode is the right setting and the faster of the two by the margin Figure reports; Beyond a short list that setting is the weaker one, and the cause is the pool rather than the ranking",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "Reworded in the W3 prose pass, not retracted. The recorded entry was one 42-word run joined by a semicolon across two sentences; the semicolon was removed because the first half ended in a dangling clause and no sentence followed it. Each element survives in body.tex: that below about ten candidates the interactive mode is the right setting and the faster of the two is in the same paragraph, verbatim; that beyond a short list it is the weaker one is the next sentence, verbatim; and the concession itself, that the cause is the pool and not the ranking, is that sentence's own clause with 'rather than' replaced by 'and not' to meet the measured rate ceiling. Nothing is dropped: the claim that the weakness is the pool rather than the ranking is the unfavourable half and it stands."
+  },
+  {
+   "text": "The arms did not all meet that choice the same way, and the asymmetry belongs here rather than in a sweep",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "Reworded in the W3 prose pass to meet the measured rate ceiling, not retracted, and the replacement is the stronger admission of the two. Recorded: 'The arms did not all meet that choice the same way, and the asymmetry belongs here rather than in a sweep.' Now: 'The arms did not all meet that choice the same way, and no sweep here removes the asymmetry.' The first half survives verbatim in body.tex. The second half changed what it asserts and the change is worth stating: the recorded wording is about PLACEMENT, that the asymmetry is stated in this section instead of being handled by a sweep, which a reader can take as an editorial decision; the replacement is about RESULT, that no sweep removes the asymmetry, which is a claim about the measurement and cannot be read as a choice about where to put it. Nothing conceded is withdrawn: the arms differ in the drawing they were handed, MetaTox was not handed the corpus form, and that difference is not removed anywhere in this paper."
+  },
+  {
+   "text": "Taking it to this population means a second submission of the substrates outside the comparison set, it was not made, and the reason is the cost of a submission rather than an inability: this paper counts two other absences as unforced for the same reason and this one is the third",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Two entries changed as a consequence of a user-approved factual correction, not a shortening. (1) 'this paper counts two other absences as unforced for the same reason and this one is the third' is reworded to 'one other absence ... the second': GLORYx left the unforced set because it is not absent -- it carries a column from the service its authors operate (body.tex Limitations) and GLORYxR was run locally -- and because its stated reason, that its distribution was not sought, was never the cost-of-submission reason the sentence counts. The concession itself is unchanged: MetaTox is still declared absent from the wider population and still declared unforced. (2) 'On that basis DeepCYP's absence is unforced, and the same applies to GLORYx, whose distribution was not sought' loses only the GLORYx clause, which asserted an absence the paper contradicts in three places. DeepCYP's concession is still printed verbatim. It is no longer COLLECTIBLE: the recorded key matched this detector only through 'not sought', a phrase belonging to the false clause, so the registry's hold on it was incidental. That is a fact about detector coverage, not a retraction, and it is recorded here rather than repaired by rewording the sentence until the regex matches -- writing to the detector would restore the number and nothing else."
+  },
+  {
+   "text": "On that basis DeepCYP's absence is unforced, and the same applies to GLORYx, whose distribution was not sought",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Two entries changed as a consequence of a user-approved factual correction, not a shortening. (1) 'this paper counts two other absences as unforced for the same reason and this one is the third' is reworded to 'one other absence ... the second': GLORYx left the unforced set because it is not absent -- it carries a column from the service its authors operate (body.tex Limitations) and GLORYxR was run locally -- and because its stated reason, that its distribution was not sought, was never the cost-of-submission reason the sentence counts. The concession itself is unchanged: MetaTox is still declared absent from the wider population and still declared unforced. (2) 'On that basis DeepCYP's absence is unforced, and the same applies to GLORYx, whose distribution was not sought' loses only the GLORYx clause, which asserted an absence the paper contradicts in three places. DeepCYP's concession is still printed verbatim. It is no longer COLLECTIBLE: the recorded key matched this detector only through 'not sought', a phrase belonging to the false clause, so the registry's hold on it was incidental. That is a fact about detector coverage, not a retraction, and it is recorded here rather than repaired by rewording the sentence until the regex matches -- writing to the detector would restore the number and nothing else."
+  },
+  {
+   "text": "Runtime figure* [t] Left: generator seconds against substrate size at the whole bank, both axes logarithmic, with the substrates that did not finish inside the N -second deadline drawn on the dashed line marking it",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "Branch (c), a welded heading changed by a MOVE, with no prose touched. The concession is the fig_cost caption, collected on 'did not finish inside the ... deadline'. Its text is byte-identical before and after; what changed is the section heading that _plain welds to the front of it, because the block moved from body.tex \\subsection{Runtime} into si.tex under \\subsection{Cost at the tail}. The common tail between the old and new keys is the whole caption, and only the heads differ -- the mechanical signature of a rename rather than an edit. Recording it as 'reworded' would be false: nothing was reworded, and the justification in this file is what a reader meets six months from now instead of the diff. Note also that a whole-block move was measured neutral (gone=0/new=0); this move was a SPLIT with a retitled destination, and that measurement did not cover it."
   }
  ],
  "question": "every sentence in which this work concedes something, recorded before a cut so that what a cut costs is visible rather than invisible",
@@ -388,7 +423,7 @@
   "paper2/table_hypotheses.tex",
   "paper2/table_grain.tex"
  ],
- "n": 243,
+ "n": 244,
  "reading": "a disclosure counts as present if it survives in ANY of the sources: moving one to the Supporting Information shortens the manuscript without retracting anything, and deleting one shortens it by retracting something",
  "disclosures": {
   "achemso amsmath amssymb booktabs threeparttable graphicx microtype xr si nikita l polomoshnov faculty of bioengineering and bioinformatics lomonosov moscow state university leninskie gory moscow russia nikitapol fbb msu ru anastasia v rudik department of bioinformatics institute of biomedical chemistry pogodinskaya str moscow russia metabolite predictors have a multiverse problem document abstract published predictors of metabolite structure cannot be compared with one another because recall depends on how a predicted structure is judged to match a reference and on how many candidates a system may return and papers in this area declare neither": {
@@ -1069,8 +1104,14 @@
     "paper2/si.tex"
    ]
   },
-  "taking it to this population means a second submission of the substrates outside the comparison set it was not made and the reason is the cost of a submission rather than an inability this paper counts two other absences as unforced for the same reason and this one is the third": {
-   "text": "Taking it to this population means a second submission of the substrates outside the comparison set, it was not made, and the reason is the cost of a submission rather than an inability: this paper counts two other absences as unforced for the same reason and this one is the third",
+  "taking it to this population means a second submission of the substrates outside the comparison set it was not made and the reason is the cost of a submission rather than an inability this paper counts one other absence as unforced for the same reason and this one is the second": {
+   "text": "Taking it to this population means a second submission of the substrates outside the comparison set, it was not made, and the reason is the cost of a submission rather than an inability: this paper counts one other absence as unforced for the same reason and this one is the second",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "on the comparison set over the budgets the deployment table audits it separates for this work in cells and against it in on the wider population the quantity does not exist because a second submission to that web service is not the authors to make": {
+   "text": "On the comparison set, over the N budgets the deployment table audits, it separates for this work in N cells and against it in N ; on the wider population the quantity does not exist, because a second submission to that web service is not the authors' to make",
    "in": [
     "paper2/si.tex"
    ]
@@ -1125,6 +1166,12 @@
   },
   "the slowest cell is marked for a third reason a deadline is defined only for the sweep so a entry can come from nowhere else and the two modes slowest cells are therefore not measured on the same substrates": {
    "text": "The slowest cell is marked for a third reason: a deadline is defined only for the sweep, so a > entry can come from nowhere else, and the two modes' slowest cells are therefore not measured on the same substrates",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "cost at the tail figure t left generator seconds against substrate size at the whole bank both axes logarithmic with the substrates that did not finish inside the second deadline drawn on the dashed line marking it": {
+   "text": "Cost at the tail figure* [t] Left: generator seconds against substrate size at the whole bank, both axes logarithmic, with the substrates that did not finish inside the N -second deadline drawn on the dashed line marking it",
    "in": [
     "paper2/si.tex"
    ]
@@ -1225,8 +1272,8 @@
     "paper2/si.tex"
    ]
   },
-  "on that basis deepcyp s absence is unforced and the same applies to gloryx whose distribution was not sought": {
-   "text": "On that basis DeepCYP's absence is unforced, and the same applies to GLORYx, whose distribution was not sought",
+  "on that basis deepcyp s absence is unforced the service cannot take a batch and a submission one substrate at a time was not attempted": {
+   "text": "On that basis DeepCYP's absence is unforced: the service cannot take a batch, and a submission one substrate at a time was not attempted",
    "in": [
     "paper2/si.tex"
    ]
@@ -1477,8 +1524,8 @@
     "paper2/body.tex"
    ]
   },
-  "the arms did not all meet that choice the same way and the asymmetry belongs here rather than in a sweep": {
-   "text": "The arms did not all meet that choice the same way, and the asymmetry belongs here rather than in a sweep",
+  "the arms did not all meet that choice the same way and no sweep here removes the asymmetry": {
+   "text": "The arms did not all meet that choice the same way, and no sweep here removes the asymmetry",
    "in": [
     "paper2/body.tex"
    ]
@@ -1603,12 +1650,6 @@
     "paper2/body.tex"
    ]
   },
-  "runtime figure t left generator seconds against substrate size at the whole bank both axes logarithmic with the substrates that did not finish inside the second deadline drawn on the dashed line marking it": {
-   "text": "Runtime figure* [t] Left: generator seconds against substrate size at the whole bank, both axes logarithmic, with the substrates that did not finish inside the N -second deadline drawn on the dashed line marking it",
-   "in": [
-    "paper2/body.tex"
-   ]
-  },
   "the remainder divides by the reaction centre change it requires need a transformation type the bank does not hold need a type it holds whose rule did not fire and cannot be typed": {
    "text": "The remainder divides by the reaction-centre change it requires: N need a transformation type the bank does not hold, N need a type it holds whose rule did not fire, and N cannot be typed",
    "in": [
@@ -1639,8 +1680,8 @@
     "paper2/body.tex"
    ]
   },
-  "below about ten candidates the interactive mode is the right setting and the faster of the two by the margin figure reports beyond a short list that setting is the weaker one and the cause is the pool rather than the ranking": {
-   "text": "Below about ten candidates the interactive mode is the right setting and the faster of the two by the margin Figure reports; Beyond a short list that setting is the weaker one, and the cause is the pool rather than the ranking",
+  "beyond a short list that setting is the weaker one and the cause is the pool and not the ranking": {
+   "text": "Beyond a short list that setting is the weaker one, and the cause is the pool and not the ranking",
    "in": [
     "paper2/body.tex"
    ]

@@ -15,8 +15,28 @@ generated table, counts the verdict column and the marked rows, reads the senten
 those counts, and refuses when they differ. The marked rows are here because the population section
 counts them a hundred lines before the table, which is the same exposure with a longer fuse.
 
+Three ways this one guarantee has failed, all three found by reading the prose rather than by any
+check, and worth keeping together because they are the same defect at three depths.
+
+1. No check at all. The paragraph above: the numbers gate cannot see a spelled-out word and
+   nothing read the table, so seven stood against six across a page for as long as it took a
+   person to notice. This file is the answer to that one.
+2. A pattern list with no completeness over the forms the claim takes. The manuscript states the
+   count three ways, and only two were listed here. "Six are confirmed and three failed" was
+   right and checked; "which of the seven confirmations", four lines later, was wrong and matched
+   nothing. Both sentences were present, both were typeset, and the gate passed.
+3. A form listed and never compared. Adding the third pattern to CLAIMS made the count readable
+   and left check() with four comparisons for five forms, so the gate then guarded that the
+   sentence still existed and not that its number was right. Presence without value reads exactly
+   like a guarantee.
+
+The self-test is built against the third: every form is perturbed twice, once so the value moves
+while the pattern still matches, once so the sentence is gone, and each perturbation must produce
+its own kind of complaint. A self-test that moves one form of five certifies one comparison of
+five, which is defect 2 again, one level in.
+
     python scripts/check_register_tally.py
-    python scripts/check_register_tally.py --self-test   # the check fails on a wrong count
+    python scripts/check_register_tally.py --self-test   # every form, both branches
 """
 from __future__ import annotations
 
@@ -75,6 +95,14 @@ CLAIMS = (
      re.compile(rf"({NUM})\s+are\s+confirmed\s+and\s+({NUM})\s+failed", re.I)),
     ("of_the_confirmed",
      re.compile(rf"({NUM})\s+of\s+the\s+({NUM})\s+confirmed\s+predictions", re.I)),
+    # A third phrasing of the same count, which this check did not cover and which was therefore
+    # wrong in the manuscript while the two patterns above were right: "states which of the seven
+    # confirmations a stricter reading leaves undecided", four lines after "Six are confirmed".
+    # The gate is not blind to a spelled-out word -- WORDS is right there -- it was blind to a
+    # sentence form, which is the same defect one level up: a pattern list with no completeness
+    # over the ways the claim can be written.
+    ("which_of_the_confirmations",
+     re.compile(rf"which\s+of\s+the\s+({NUM})\s+confirmations", re.I)),
     # The population section counts the rows the table marks, a hundred lines before the table.
     ("adjudicated_after",
      re.compile(rf"({NUM})\s+of\s+the\s+({NUM})\s+reported\s+predictions\s+were\s+in\s+the\s+"
@@ -122,6 +150,17 @@ def check(table_tex: str, body_tex: str) -> list:
         bad.append(f"the manuscript says '{c['of_the_confirmed'][0]} of the "
                    f"{c['of_the_confirmed'][1]} confirmed predictions' and the table's verdict "
                    f"column carries {t['confirmed']} confirmations")
+    # The fifth form, and the reason it is worth a comment. Its pattern was added to CLAIMS while
+    # this branch was not, and the loop above only asks whether the sentence is still present. So
+    # for one revision the gate guarded the existence of "states which of the N confirmations" and
+    # not its value: the manuscript said seven four lines after saying six, both sentences were
+    # present, and the check passed. Presence without value is the half of a guarantee that reads
+    # as a guarantee.
+    if ("which_of_the_confirmations" in c
+            and c["which_of_the_confirmations"][0] != t["confirmed"]):
+        bad.append(f"the manuscript says 'which of the "
+                   f"{c['which_of_the_confirmations'][0]} confirmations' and the table's verdict "
+                   f"column carries {t['confirmed']} confirmations")
     return bad
 
 
@@ -138,21 +177,68 @@ def main() -> int:
     body_tex = "\n\n".join(p.read_text() for p in PROSE)
 
     if args.self_test:
-        # A gate that cannot fail is not a gate. Move the count by one and require a refusal.
-        broken = re.sub(r"\b(Six|six) are confirmed", "Seven are confirmed", body_tex, count=1)
-        if broken == body_tex:
-            print("REFUSING: the self-test could not perturb the manuscript, so it proves "
-                  "nothing about whether this check can fail.", file=sys.stderr)
+        # A gate that cannot fail is not a gate, and a self-test that perturbs one form cannot
+        # certify a list of forms. This used to move "six are confirmed" alone, one of the five
+        # patterns in CLAIMS, and it stayed green through a revision in which a fifth pattern was
+        # read and never compared: the sentence "which of the seven confirmations" sat four lines
+        # from "Six are confirmed" and nothing refused. So every form is perturbed in turn and
+        # each one has to produce a refusal of its own. A form that survives its perturbation is
+        # a comparison nobody wrote.
+        PERTURBATIONS = {
+            "checked": (r"\b(Ten|ten) of the sixteen", "Eleven of the sixteen"),
+            "confirmed_failed": (r"\b(Six|six) are confirmed", "Seven are confirmed"),
+            "of_the_confirmed": (r"\b(Three|three) of the six confirmed",
+                                 "Three of the seven confirmed"),
+            "which_of_the_confirmations": (r"which of the six confirmations",
+                                           "which of the seven confirmations"),
+            "adjudicated_after": (r"\b(Three|three) of the ten reported",
+                                  "Four of the ten reported"),
+        }
+        missing = [n for n, _ in CLAIMS if n not in PERTURBATIONS]
+        if missing:
+            print(f"REFUSING: {missing} are in CLAIMS with no perturbation here, so the self-test "
+                  f"cannot say whether their comparison exists.", file=sys.stderr)
             return 1
-        if not check(table_tex, broken):
-            print("REFUSING: the count was moved by one and this check still passed, so it is "
-                  "not reading the table.", file=sys.stderr)
-            return 1
+        # Two perturbations per form, and the complaint's KIND is what is asserted. Checking only
+        # that some complaint appeared conflates the two branches: a perturbation that happens to
+        # break the pattern match refuses through "the sentence is not in the manuscript any
+        # more", which reads like success while testing nothing about the comparison. Presence and
+        # value have to be provoked separately, because their being indistinguishable is what let
+        # a form be read and never compared.
+        for name, (find, repl) in PERTURBATIONS.items():
+            absent = f"the sentence carrying {name!r}"
+
+            moved = re.sub(find, repl, body_tex, count=1)
+            if moved == body_tex:
+                print(f"REFUSING: the self-test could not perturb the sentence carrying {name!r}, "
+                      f"so it proves nothing about that form. Either the sentence was reworded "
+                      f"and this perturbation needs updating, or the form is gone.",
+                      file=sys.stderr)
+                return 1
+            disagreements = [c for c in check(table_tex, moved) if absent not in c]
+            if not disagreements:
+                print(f"REFUSING: {name!r} was moved by one and no disagreement was reported. Its "
+                      f"pattern is read into read_claims and never compared in check(); a form "
+                      f"listed without a comparison guards the sentence's presence and not its "
+                      f"value.", file=sys.stderr)
+                return 1
+
+            removed = re.sub(find, "", body_tex, count=1)
+            if removed == body_tex:
+                print(f"REFUSING: the self-test could not remove the sentence carrying {name!r}.",
+                      file=sys.stderr)
+                return 1
+            if not any(absent in c for c in check(table_tex, removed)):
+                print(f"REFUSING: the sentence carrying {name!r} was deleted and nothing said so, "
+                      f"so this tally can stop being checked without a word of warning.",
+                      file=sys.stderr)
+                return 1
         if check(table_tex, body_tex):
-            print("self-test: OK on the perturbation but the manuscript itself does not pass; "
+            print("self-test: OK on every perturbation but the manuscript itself does not pass; "
                   "run without --self-test for the reason.", file=sys.stderr)
             return 1
-        print("self-test: OK (fails on a count moved by one, passes on the manuscript)")
+        print(f"self-test: OK ({len(PERTURBATIONS)} forms, each perturbed by one and each "
+              f"refused; the manuscript itself passes)")
         return 0
 
     t = tally(table_tex)

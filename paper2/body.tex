@@ -4,9 +4,7 @@ A drug that reaches the bloodstream does not stay the compound that was administ
 chiefly in the liver, convert it into other compounds carrying their own activity, toxicity and
 persistence: a metabolite can be the agent that makes a drug work, as with the antiviral prodrugs
 activated by phosphorylation, or the agent that makes one fail, as with the reactive intermediates
-behind several withdrawals. The same question arises outside the clinic, where what an
-environmental chemical becomes in an organism determines how far it travels and how long it lasts.
-Knowing which metabolites will form, as chemical structures rather than as a count or a rate, is
+behind several withdrawals. Knowing which metabolites will form, as chemical structures rather than as a count or a rate, is
 therefore useful early, when a compound exists only on paper.
 
 Two families of method now dominate. Rule-based systems, among them SyGMa \citep{Ridder_2008},
@@ -20,7 +18,7 @@ informed graph framework \citep{Zhou_2025}, a server predicting pathway, site an
 families are used for different reasons. A template names the transformation it applied and the
 atoms it acted on, so a chemist can see why a structure was proposed and reject it on mechanistic
 grounds; that is what makes rule-based systems usable in a discovery workflow, where a prediction
-has to be defended to a medicinal chemist rather than only scored. A sequence model is not built to
+has to be defended to a medicinal chemist. A sequence model is not built to
 say that, and is expected instead to reach chemistry no template bank encodes.
 
 What is missing is not another predictor but a way to tell these apart. The usual measure is
@@ -40,9 +38,9 @@ bound what this paper adds. \citet{Ash_2025} give a protocol for method comparis
 drug discovery, arguing that a difference should be shown practically significant rather than
 merely significant, and prescribing how a comparison ought to be set up. \citet{Ozcelik_2025} show
 what happens when it is not, in generative design: the size of the library and the choice of metric
-reorder the models. The gap between the two is where this work sits. Reporting the whole space of defensible
-analysis choices instead of one chosen cell is the multiverse and specification-curve discipline
-\citep{Steegen_2016, Simonsohn_2020}; what follows applies it to metabolite prediction, where the
+reorder the models. The multiverse and specification-curve discipline
+\citep{Steegen_2016, Simonsohn_2020} reports the whole space of defensible analysis
+choices; what follows applies it to metabolite prediction, where the
 two choices that move the ordering are how a match is judged and how much a system may return. A protocol tells an author
 what to declare; a demonstration on generative metrics does not transfer to recall against an
 incomplete annotation, where the axis that reorders methods is how many candidates each may emit
@@ -53,26 +51,9 @@ corpus could reach.
 This work addresses that. We present GRAIL (Graph-scored Rule Application with Inspectable
 Localisation), a metabolite structure predictor built from a bank of reaction templates, a learned
 model that selects which templates to apply, and a learned model that ranks the resulting
-candidates. Every prediction it emits carries the template that produced it and the atoms that
-template acted on, so a chemist can accept or reject a candidate on mechanistic grounds rather
-than on a score. We evaluate it with the two decisions above promoted to declared axes: each is
+candidates. We evaluate it with the two decisions above promoted to declared axes: each is
 stated and varied across its full range instead of being fixed silently. The comparison is against
-\numComparatorsColumnsWord{} published predictors we obtained and ran on the same substrates. It
-does not produce a winner: which system leads depends on how many candidates it is allowed to
-return, and we report that dependence rather than a single figure. We further measure how much of
-the recorded chemistry lies outside the reach of any single template application, and find that
-most of what is missing is chemistry the training corpus does not contain, which no template mined
-from that corpus could supply.
-
-The article is organised as follows. Section~\ref{sec:methods} describes the corpus, the three
-stages of the system and the evaluation protocol. Section~\ref{sec:results} reports the
-comparison against published predictors, the contribution of each stage, the sensitivity of the
-result to the evaluation choices, a worked example, and the coverage bound.
-Section~\ref{sec:discussion} discusses where the advantage lies and what the measurements do not
-establish, Section~\ref{sec:limitations} the limitations and
-Section~\ref{sec:conclusions} the conclusions. Procedures, ablations and supporting measurements are in the Supporting Information.
-
-\section{Materials and methods}
+\numComparatorsColumnsWord{} published predictors we obtained and ran on the same substrates.\section{Materials and methods}
 \label{sec:methods}
 
 \subsection{Which population carries which number}
@@ -104,7 +85,7 @@ evaluated test set, \numPopdefWholesubstrates{} substrates, against the
 \numPopdefWholearmsWord{} comparators that ran over all of it
 (Section~\ref{SI-sec:si-population}). The wide-budget leads survive that move and the narrower lead
 over SyGMa at a budget of fifteen does not, so that one is restricted to the comparison set wherever
-it is stated. The move also costs more than it takes. An \emph{arm} here is one column of the comparison, and
+it is stated. An \emph{arm} here is one column of the comparison, and
 this system contributes two of them: the \emph{exhaustive} arm, which applies the whole bank, and
 the \emph{interactive} arm, which applies a fixed number of the highest-scoring rules
 (Section~\ref{sec:modes}). At a budget of ten the exhaustive arm trails SyGMa by
@@ -121,7 +102,7 @@ ChEMBL and DrugBank are the other two sources, neither is held here, and nothing
 statement in this paper about what the corpus does and does not contain is a statement about a
 corpus assembled that way.
 
-How the corpus was assembled has a consequence for the comparison which no split can remove. Rule-based comparators have
+Rule-based comparators have
 no training set to hold out, and their expert rules may encode the same metabolism reported in
 these sources; BioTransformer is built on MetXBioDB, and GLORYx was developed against the
 reference set of the same name. Their knowledge therefore overlaps the test substrates by construction, in a direction that
@@ -131,9 +112,7 @@ how much of a rule set a reference set produced, which nothing here supplies. Th
 therefore contains two arms whose development sources this corpus draws on, with the advantage
 stated and left in place; the comparison without them is the other three columns.
 The remaining three arms are not measured against this corpus and are not thereby cleared:
-MetaTox and MetaPredictor publish no development set that could be intersected with it. What is
-reported is the one overlap that could be computed, not a survey of all four.
-
+MetaTox and MetaPredictor publish no development set that could be intersected with it.
 \subsection{Overview}
 
 Each design choice below is given with the measurement that decided it and the prediction it was registered as; those predictions, each with a threshold and a falsification condition fixed before the check, are the \emph{register} (Table~\ref{tab:hyp}).
@@ -145,12 +124,11 @@ applied with RDKit 2022.09.5, and their products are
 standardised \citep{Hahnke_2018, Mansouri_2024} and deduplicated. A template that breaks a bond returns more than one species. Every product, and every disconnected
 component of it, enters the pool separately provided it has at least \numFragmentFloorWord{} heavy
 atoms. That drops a lone leaving group and keeps a small metabolite such as formate. No annotated
-metabolite in the evaluated test set is multi-component, so the convention decides what is offered
-rather than whether a reference is reached. A scorer scores each
-(substrate, candidate) pair, encoding the two molecules as separate graphs rather than as one
+metabolite in the evaluated test set is multi-component, so the convention decides what is offered,
+not whether a reference is reached. A scorer scores each
+(substrate, candidate) pair, encoding the two molecules as separate graphs and not as one
 merged graph, and the candidates are ordered by a rank fusion of that scorer's and the generator's
-orderings.  Every emitted candidate carries the identity of the rule that produced
-it and the site at which it fired.
+orderings.
 
 A candidate reachable by several rules, or by one rule firing at several sites, receives a single
 score. Writing $R(c)$ for the rules that produce $c$ and $p_r$ for the generator's probability
@@ -164,7 +142,7 @@ assumption this bank does not satisfy, since it holds published rule sets verbat
 half is full of near-duplicates. What that costs is swept over the four aggregation rules
 the implementation offers (Section~\ref{SI-sec:si-knobs}).
 
-Both learned stages were trained on a subsample of the training split, fixed when the run was configured and not a consequence of anything measured here, so what the ablations compare (Section~\ref{SI-sec:si-ablations}) is the value of each stage at that training budget rather than at the split's full size. Every setting is in Section~\ref{SI-sec:si-arch}.
+Both learned stages were trained on a subsample of the training split, fixed when the run was configured and not a consequence of anything measured here, so what the ablations compare (Section~\ref{SI-sec:si-ablations}) is the value of each stage at that training budget and not at the split's full size. Every setting is in Section~\ref{SI-sec:si-arch}.
 
 \subsection{What this system does not represent}
 \label{sec:methods-scope}
@@ -186,9 +164,9 @@ and \emph{rule} names the same object here and in the released files. The bank i
 deduplicated union of \numAttribNamed{} templates
 from three curated collections and \numMinedRules{} mined from the training split alone,
 together with \numAttribUnattributed{} that were carried as a fourth curated collection and are
-not one: they are an earlier machine extraction from the same annotated pairs, The bank therefore holds two machine extractions and one curated body (Section~\ref{SI-sec:si-bank}). Most of that body is not this work's chemistry: at least \numThirdpartyBorrowed{} of the \numAttribNamed{}, \numThirdpartyBorrowedsharePct{}, appear verbatim in rule sets published by others. What is this work's own is the mining, the ranking and
+not one: they are an earlier machine extraction from the same annotated pairs. The bank therefore holds two machine extractions and one curated body (Section~\ref{SI-sec:si-bank}). Most of that body is not this work's chemistry: at least \numThirdpartyBorrowed{} of the \numAttribNamed{}, \numThirdpartyBorrowedsharePct{}, appear verbatim in rule sets published by others. What is this work's own is the mining, the ranking and
 the measurement, not the writing of the templates, and Section~\ref{SI-sec:si-bank} gives the
-counts per rightsholder with the terms each requires. That split is disjoint by substrate and not by molecule, so a training substrate may reappear as a test product; both overlap counts are in Section~\ref{SI-sec:si-corpus}. Each mined template is the reaction centre of one annotated pair, the atoms and bonds that changed, expanded by one bond, and it survives only if applying it to its own source substrate regenerates that pair's product (Section~\ref{SI-sec:si-bank}).
+counts per rightsholder with the terms each requires. That split is disjoint by substrate; molecules may straddle it, so a training substrate may reappear as a test product; both overlap counts are in Section~\ref{SI-sec:si-corpus}. Each mined template is the reaction centre of one annotated pair, the atoms and bonds that changed, expanded by one bond, and it survives only if applying it to its own source substrate regenerates that pair's product (Section~\ref{SI-sec:si-bank}).
 
 Support is heavily skewed: \numRareSingletonsharePct{} of the mined templates rest on a single
 training pair. A rarefaction curve over withheld pairs is still climbing (Section~\ref{SI-sec:si-rarefaction}), so template discovery from this corpus is not finished.
@@ -215,7 +193,7 @@ is built:
 \end{equation}
 where $C(s)$ is everything the applied rules enumerate.  The
 fusion ranks over whatever survives, so removing a candidate changes the rank every other receives,
-and truncation can therefore raise recall rather than only bound it. The cap raises recall by $+\numHNineDiff$ $[+\numHNineLo, +\numHNineHi]$ and takes the mean pool from \numHNinePoolBefore{} candidates to \numHNinePoolAfter{} (P2, Table~\ref{tab:hyp}). The value was fixed by a stated principle rather than by a search. The cap must be at
+and truncation can therefore raise recall as well as bound it. The cap raises recall by $+\numHNineDiff$ $[+\numHNineLo, +\numHNineHi]$ and takes the mean pool from \numHNinePoolBefore{} candidates to \numHNinePoolAfter{} (P2, Table~\ref{tab:hyp}). The cap must be at
 least twice the widest output budget reported, so that the widest column is never simply the whole pool,
 and 100 is the smallest round number that satisfies it.
 
@@ -224,23 +202,21 @@ and 100 is the smallest round number that satisfies it.
 
 How many templates the generator selects before any is applied is the \emph{rule budget}. It is
 not the output budget of Section~\ref{sec:evaluation}, which is how many candidates a system may
-return; where this paper writes \emph{budget} unqualified it means that one. The rule budget is one
-continuous setting, and the two modes reported throughout are two points on it. The \emph{interactive} mode applies the \numHOneZeroTopk{} templates the trained
+return; where this paper writes \emph{budget} unqualified it means that one. The \emph{interactive} mode applies the \numHOneZeroTopk{} templates the trained
 checkpoint records and returns in about a second, which is what a user waiting at a web form
 requires; the \emph{exhaustive} mode applies the whole bank, the \numBankParses{} of
 \numBankRules{} templates that parse, and takes tens of seconds. The interactive value is where
-the released checkpoint was trained, which is a fact about how the run was configured and not an
-argument for the number, so the curve either side of it is measured on validation
+the released checkpoint was trained, which is a fact about the run's configuration. The
+number stands on the validation curve measured either side of it
 (Section~\ref{SI-sec:si-budget}). What the difference buys was fixed in advance as prediction P3 and, on validation, came in under its ceiling (Table~\ref{tab:hyp}).
 
 \input{table_modes}
 
-On the comparison set the same quantity is $+\numHOneZeroComparison$, past the ceiling. The
-discrepancy is reported rather than resolved and it has a reading: at $k \le 10$ the whole bank
-buys nothing on either population, and from $k=15$ it buys more the wider the budget, because the
+On the comparison set the same quantity is $+\numHOneZeroComparison$, past the ceiling. The two
+populations disagree because at $k \le 10$ the whole bank
+buys nothing on either, and from $k=15$ it buys more the wider the budget, because the
 interactive arm runs out of candidates. P3's ceiling is therefore a property of the output budget
-requested rather than of the system, and so is the deployed rule budget. Read at an output budget of fifteen the curve is flat past the deployed rule budget; read at an output budget of thirty it is not (Section~\ref{SI-sec:si-budget}).  What that costs to run, and which budget it is worth paying at, is the
-Discussion's question rather than this section's.
+requested rather than of the system, and so is the deployed rule budget. Read at an output budget of fifteen the curve is flat past the deployed rule budget; read at an output budget of thirty it is not (Section~\ref{SI-sec:si-budget}).
 
 \subsection{Emission}
 
@@ -250,7 +226,7 @@ rule budget and the substrate's chemistry, and its mean of \numEmittedTrained{} 
 set sits well below any cap. Table~\ref{tab:modes} prints the same quantity on the validation draw, and Table~\ref{SI-tab:si-counts} lists every candidate count in this work with its stage and population. The exhaustive mode differs: its pool is capped at 100 by the cap prediction P2 registers, and
 its mean output of \numEmittedBank{} is close enough to that cap that the cap sets its length on
 most substrates. That cap is a parameter of this system, it is declared, and it applies to that
-arm and not to the comparators. It was registered as prediction P4 and confirmed (Table~\ref{tab:hyp}); its budget ladder was fixed with the prediction and is not the one read elsewhere here.
+arm alone. It was registered as prediction P4 and confirmed (Table~\ref{tab:hyp}); its budget ladder was fixed with the prediction and is not the one read elsewhere here.
 
 \subsection{Evaluation}
 \label{sec:evaluation}
@@ -270,12 +246,12 @@ comparison, with the levels behind every verdict in Table~\ref{SI-tab:si-criteri
 A third choice sits behind both declared axes, the matching criterion and the output budget:
 how the substrate itself is drawn. Templates are matched against
 the structure the corpus stores, and that corpus draws amides as imidic acids, so the choice is not
-neutral. It is a deployment question and not only an evaluation one, because a user submits the drawing a chemist would make, and on the substrates the standardiser changes the effect is larger than the pooled figure suggests (Section~\ref{SI-sec:si-dialcond}).
+neutral. It is a deployment question as much as an evaluation one, because a user submits the drawing a chemist would make, and on the substrates the standardiser changes the effect is larger than the pooled figure suggests (Section~\ref{SI-sec:si-dialcond}).
 Rebuilding both GRAIL arms with every substrate redrawn moves \numDsweepMoved{} of
 \numDsweepCells{} arm-against-comparator verdicts, none of them a lead claimed here.
 
-The arms did not all meet that choice the same way, and the asymmetry belongs here rather than in a
-sweep. Of the \numChemArmsWord{} arms, \numChemDrawnstoredWord{} were handed the substrate as the
+The arms did not all meet that choice the same way, and no sweep here removes the asymmetry.
+Of the \numChemArmsWord{} arms, \numChemDrawnstoredWord{} were handed the substrate as the
 corpus stores it; MetaTox was not, its submission file re-tautomerising the substrate to the
 natural form for \numDialectMetatoxretaut{} of the \numDialectMetatoxn{}. The direction is not neutral, since this bank's mined half requires the imidic reactant more often than the amide, and its size is measured for every arm that can be re-run (Section~\ref{SI-sec:si-presentation}). The whole comparison with every re-runnable arm on the
 drawing a user would submit is Table~\ref{SI-tab:si-equalised}, and it moves
@@ -291,8 +267,7 @@ application, as \numCompositeUnionsharePct{} of this bank's mined templates do
 setting, and the lead survives it. BioTransformer's step count is also ours to turn and was not
 swept, a decision taken after the matched-length control, which cuts every arm to the comparator's own
 list length substrate by substrate, had been read, and stated as such
-(Section~\ref{SI-sec:si-comparators}). For those two the difference between the arms is stated
-rather than removed, and the wide-budget cells should be read with it in view.
+(Section~\ref{SI-sec:si-comparators}). For those two the difference between the arms stands, and the wide-budget cells should be read with it in view.
 
 The number of candidates a system is permitted to return is the \emph{output budget}, written
 $k$, and it is the second declared axis. Recall at budget $k$ for substrate $s$ with references
@@ -311,9 +286,7 @@ $B = 10\,000$ resamples $S^{(b)}$ drawn with replacement,
 \label{eq:bootstrap}
 \end{equation}
 with $h^A_s$ and $h^B_s$ the hits of the two arms. The reported interval is the empirical $2.5$ and
-$97.5$ percentiles of $\{\delta^{(b)}\}$. Resampling substrates rather than
-predictions is what makes the interval one on the \emph{difference} between two arms read on the
-same items. Precision is reported in Table~\ref{SI-tab:si-precision} but is not used to order the systems, because under incomplete annotation a real but unannotated metabolite counts as a false positive against whichever arm predicts it (Section~\ref{SI-sec:si-precision}).
+$97.5$ percentiles of $\{\delta^{(b)}\}$. Table~\ref{SI-tab:si-precision} carries precision, which does not order the systems, because under incomplete annotation a real but unannotated metabolite counts as a false positive against whichever arm predicts it (Section~\ref{SI-sec:si-precision}).
 
 Every method is prevented from returning the substrate itself as one of its own metabolites:
 a prediction equal to the substrate is discarded before the budget is applied, for all arms
@@ -331,8 +304,7 @@ comparators were obtained after that family was fixed, so their contrasts are re
 own intervals and are not folded into a correction declared without them
 (Section~\ref{SI-sec:si-comparators}).
 
-That leaves the obvious objection, which is that this paper prints more contrasts than the family
-covers, and it is answered by measurement rather than by the declaration. Applying the same
+This paper prints more contrasts than that family covers. Applying the same
 correction to every contrast printed anywhere here, \numHolmWidetests{} of them,
 \numHolmWidesurviving{} still separate, and it removes \numHolmWideremovesdeclaredWord{} cells the
 declared family keeps. Of those \numHolmWideremovesdeclaredWord{},
@@ -343,9 +315,6 @@ result.
 
 No single budget is privileged. A claim that the system leads is made for a cell only where that
 cell's interval excludes zero, and where an ordering is not established the table says so.
-Reporting the whole space of defensible analysis choices rather than one chosen
-cell is the multiverse and specification-curve discipline \citep{Steegen_2016, Simonsohn_2020},
-applied here to the two choices this literature leaves undeclared.
 
 \section{Results}
 \label{sec:results}
@@ -368,31 +337,27 @@ matching on realised length (Table~\ref{tab:si-matched}).}
 
 Figure~\ref{fig:sweep} and Table~\ref{tab:sweep} are the comparison on the \numPopulationN{}
 substrates of the comparison set. Read against the strongest comparator at each budget it divides
-in three rather than resolving into an ordering. Every difference behind that division, with its paired interval, is
+in three. Every difference behind that division, with its paired interval, is
 Table~\ref{SI-tab:si-intervals}.
 
 GRAIL trails with the interval excluding zero at $k=1$, $3$ and $5$, where SyGMa leads:
 \numSweepTrainedOne{} against SyGMa's \numSweepSygmaOne{} at $k=1$. Two of those three, at $3$ and $5$, do
-not survive the family-wise correction either.  The two banks
-are not independent, and the reading depends on it. \numSygmaInside{} of SyGMa's
+not survive the family-wise correction either.  \numSygmaInside{} of SyGMa's
 \numSygmaRules{} published rules are present in this bank verbatim, so what separates at those
 budgets is an ordering over chemistry the two systems largely share. Neither side separates at $k=8$ and
 $10$, where MetaPredictor leads, nor at $k=15$ and $20$. GRAIL's exhaustive mode leads every
 comparator with the interval excluding zero at $k=30$ and $k=50$. BioTransformer trails the exhaustive
 arm with the interval excluding zero at $k=1$ and from $k=8$ upward, and is indistinguishable from
-it at $3$ and $5$; the pattern is not monotone in the budget and is reported as it falls. The
+it at $3$ and $5$; the pattern is not monotone in the budget. The
 cell at $k=1$ is one of the three the other aggregation moves
 (Table~\ref{SI-tab:si-macro}), and does not separate under it. BioTransformer is not
 the lowest arm at the tight budgets, where MetaTox is, and it supplies
 \numThirdpartyBiotransformerShipped{} of this bank's templates, more than any other published set. Held to BioTransformer's own list length the exhaustive arm does not lead it at all: the
 difference is
-$\numBtarmMatchedgap$ $[\numBtarmMatchedlo, +\numBtarmMatchedhi]$, an interval covering zero. What
-separates the two at a wide budget is how much each emits
-(Section~\ref{SI-sec:si-comparators}).
-
+$\numBtarmMatchedgap$ $[\numBtarmMatchedlo, +\numBtarmMatchedhi]$, an interval covering zero.
 \input{si_table_matched}
-The corrections that follow are about the sweep rather than
-about the matched-length table above (Table~\ref{tab:si-matched}): the \numSweepWideleadsWord{} cells in which the exhaustive arm leads a comparator
+The corrections that follow concern the sweep, separately from
+the matched-length table above (Table~\ref{tab:si-matched}): the \numSweepWideleadsWord{} cells in which the exhaustive arm leads a comparator
 at $k=30$ or $k=50$ with the interval excluding zero. Of those, \numSweepWideleadsoutsideWord{} were
 never in the corrected family, which was declared over \numSweepFamilycomparatorsWord{}
 comparators, so the correction is reported over the \numSweepWideleadsinfamilyWord{} it covers; of
@@ -407,9 +372,7 @@ budget. The two controls do not remove the
 same cells and neither leaves the MetaTox column standing: the correction removes the cell at
 $k=30$, and the matched-length cut removes the one at $k=50$, where over
 \numMatchedBankmetatoxSlots{} slots the difference is $+\numMatchedBankmetatox$
-$[\numMatchedBankmetatoxLo, +\numMatchedBankmetatoxHi]$. The lead over SyGMa is the one that
-survives both.
-
+$[\numMatchedBankmetatoxLo, +\numMatchedBankmetatoxHi]$.
 \input{si_table_chemistry}
 
 A recall figure aggregates over transformations of very different kinds, so the comparison is also
@@ -423,14 +386,13 @@ the budget comparison adds to that class is length; what remains is ordering. Th
 changes this vocabulary does not name, and no method here exceeds \numChemOtherBest{} on it. A fifth of the annotated chemistry
 therefore falls in a class none of the six systems is built for. A headline recall figure does not show that.
 
-The rest of that table does not run this system's way, and it belongs beside the part that does.
 The exhaustive arm is not the best arm on \numChemBehind{} of the \numChemClasses{} classes,
 carrying \numChemBehindrefs{} of the \numChemReferences{} references, and the classes it trails on
 are classical ones. On the largest functionalisation, one oxygen added, \numChemOxygenrefs{}
 references, it reaches \numChemOxygenbank{} against \numChemOxygenbest{} for the best arm. It is
 behind on demethylation, sulfation, methylation and acetylation as well. Those four rows carry
 \numChemSmallrowsrefs{} references between them and none is given an interval, so they are read
-as a direction and not as a measurement; the caution
+as a direction only; the caution
 Section~\ref{SI-sec:si-chemistry} states about short rows applies to them. The aggregate advantage
 is carried by unusual cleavages and by the unnamed residue. The exhaustive arm is also below the
 interactive one on \numChemIntahead{} classes, demethylation among them
@@ -447,15 +409,11 @@ $[+\numMatchedBanksygmaLo, +\numMatchedBanksygmaHi]$, the largest margin that su
 control and
 an ordering result rather than an emission one. Against the other three nothing survives, every interval covering zero and two of the three pointing the other way (Table~\ref{tab:si-matched}). What the sweep shows at $k=50$
 against those three is a statement about how much each system emits, and this paper's own
-argument requires it to be called that. The same confound is measured in an independent benchmark
-of this class of tool, where it runs the same way; that reading is in
-Section~\ref{sec:limitations}.
-
-Three corrections apply to the wide-budget leads and it is worth carrying them through in one
-place.
+argument requires it to be called that.
+Three corrections apply to the wide-budget leads.
 Under a family-wise correction over the sweep the $k=30$ margin against MetaTox does not survive
 and the rest do. Under matched list length the margins against MetaTox and MetaPredictor vanish
-and the one against SyGMa does not. And SyGMa met the corpus's drawing rather than the one the
+and the one against SyGMa does not. And SyGMa met the corpus's drawing, which differs from the one the
 declared standardiser produces, so the third correction is to run the same control against SyGMa
 re-run on that drawing. Over \numMatchedBanksygmastdSlots{} slots the exhaustive arm keeps
 $+\numMatchedBanksygmastd$ $[+\numMatchedBanksygmastdLo, +\numMatchedBanksygmastdHi]$, a margin
@@ -466,11 +424,10 @@ where against the stored drawing it did not. What is left after all three is one
 the exhaustive arm over SyGMa, an ordering result on a comparator whose own rules are largely
 inside this bank. That lead also survives the one test the comparator's own settings allow: run at its deeper scenario SyGMa emits more than five times what the exhaustive arm returns and the gap does not close (Section~\ref{SI-sec:si-comparators}).
 
-The exhaustive arm leads at depth rather than at the head of the list. MetaPredictor is flat from $k=15$
+The exhaustive arm's lead is at depth in the list. MetaPredictor is flat from $k=15$
 because \numShortMetapredictorOneFive{} of its \numPopulationN{} lists are shorter than that
 budget, and SyGMa gains little between $k=15$ and $k=50$; GRAIL's exhaustive mode keeps rising
-because it keeps having candidates. Where a method runs out the budget has stopped measuring
-ranking, and the counts are reported for every arm. At $k=50$, of
+because it keeps having candidates. At $k=50$, of
 \numPopulationN{} substrates, the lists shorter than the budget number
 \numShortMetapredictorFiveZero{} for MetaPredictor, \numShortBiotransformerFiveZero{} for
 BioTransformer, \numShortGxarmFiveZero{} for GLORYx, \numShortSygmaFiveZero{} for SyGMa,
@@ -483,8 +440,8 @@ Against MetaTox alone, the incumbent web service this work set out to replace, t
 leads at all nine budgets and separates at seven, and none of those seven survives the
 matched-length control.
 
-How the per-substrate figures are pooled is a third choice, and it is swept rather than exercised
-once.  Every figure in Table~\ref{tab:sweep} is micro,
+How the per-substrate figures are pooled is a third choice, and it is swept.
+Every figure in Table~\ref{tab:sweep} is micro,
 and the macro grid is Table~\ref{SI-tab:si-macro}. Its caption names the
 \numAggregationMovedWord{} verdicts of \numAggregationContrasts{} that the two aggregations
 disagree on, one of them a lead claimed here. The choice does not rescue the budget where micro fails to separate (Section~\ref{SI-sec:si-macro}).
@@ -493,23 +450,22 @@ disagree on, one of them a lead claimed here. The choice does not rescue the bud
 
 One candidate pool, ordered several ways with everything but the order held fixed, separates what each learned stage contributes from what the form of their combination contributes (Section~\ref{SI-sec:si-ablations}). At $k=15$ the deployed fusion separates from
 the generator's ordering alone, from the filter's alone and from their product, by
-$+\numRankCmpVsgenerator$, $+\numRankCmpVsfilter$ and $+\numRankCmpVsproduct$. It also separates from a baseline this literature does not report, and which every learned ranker
-over (substrate, candidate) pairs competes with whether or not it is reported: similarity to the
+$+\numRankCmpVsgenerator$, $+\numRankCmpVsfilter$ and $+\numRankCmpVsproduct$. It also separates from a baseline this literature does not report and which every learned ranker
+over (substrate, candidate) pairs competes with: similarity to the
 substrate, which needs no training and no labels. The fusion beats it by $+\numSimCmpGapOneFive$
-$[+\numSimCmpLoOneFive, +\numSimCmpHiOneFive]$ at every budget on both populations. The substrate-specific part of the rule choice is worth less than either. Against the same number of applicable rules picked by training frequency it gains a small margin that separates at every budget, and is reported as that rather than as the stage's justification (Section~\ref{SI-sec:si-ablations}).
+$[+\numSimCmpLoOneFive, +\numSimCmpHiOneFive]$ at every budget on both populations. The substrate-specific part of the rule choice is worth less than either. Against the same number of applicable rules picked by training frequency it gains a small margin that separates at every budget (Section~\ref{SI-sec:si-ablations}).
 
-Two registered mechanisms failed and are reported as failures. Emitting candidates in whole groups failed (P6), and so did gating on the same signal before the fusion (P7). The second is closed by an oracle rather than by model quality: even
+Two registered mechanisms failed. Emitting candidates in whole groups failed (P6), and so did gating on the same signal before the fusion (P7). The second is closed by an oracle: even
 a perfect group ordering through that gate is worse than the generator cap it replaces. The signal
 helps only where it adjusts an order that already exists, which is what P5 does and why P5 is a
 measurement rather than a confirmation (Section~\ref{SI-sec:si-oracle}).
 
-One trained checkpoint produced every figure here, so the intervals quantify the population and
-not the training. Retraining both stages under \numSpreadSeedsWord{} seeds at the configuration these tables report measures the training noise, and against the interactive arm's spread the rank fusion of P1 is \numSpreadPOneInsd{} times it, the pool cap of P2 \numSpreadPTwoInsd{} times it and the rule budget of P3 \numSpreadPThreeInsd{} times it rather than inside it, the last of these indicative rather than a test (Section~\ref{SI-sec:si-retrain}).
+One trained checkpoint produced every figure here, so the intervals quantify the population
+with the training held fixed. Retraining both stages under \numSpreadSeedsWord{} seeds at the configuration these tables report measures the training noise, and against the interactive arm's spread the rank fusion of P1 is \numSpreadPOneInsd{} times it, the pool cap of P2 \numSpreadPTwoInsd{} times it, and the rule budget of P3 \numSpreadPThreeInsd{} times it, which places P3 outside that spread. The last of these is indicative only (Section~\ref{SI-sec:si-retrain}).
 
 \subsection{How much of the verdict is the criterion}
 
-The argument this paper opens with is that a recall figure depends on evaluation choices this
-literature leaves unstated. It is an argument about published numbers, and it applies to ours. The whole comparison is recomputed under each of the \numCritCriteria{} declared criteria, holding
+The whole comparison is recomputed under each of the \numCritCriteria{} declared criteria, holding
 the population, the arms, the ranking and the parent-drop convention fixed. The verdict moves at up
 to \numCritMovedMax{} of \numCritBudgets{} budgets (Figure~\ref{fig:criterion}). Neither the arm
 nor the comparator is constant across that grid, so a sign in it does not on its own say what was
@@ -545,22 +501,18 @@ Two of the five are not defensible as defaults, for the reasons given in Section
 Restricted to the \numCritDefensibleWord{} that answer the question a chemist would ask, the
 verdict is stable: a lead at \numCritLeadsUnderEveryDefensibleWord{} budgets under every one of
 them, and a trail at the same \numCritTrailsUnderAnyDefensibleWord{} tight budgets under every one
-of them. Both readings belong in the record, and the wider one is the reason the whole grid is
-printed rather than a cell.
-
-A single cell from this grid, reported without its criterion, would have
-supported almost any claim about which system is better.
+of them.
 
 \subsection{Whether the named site is the site that changed}
 \label{sec:site}
 
 Every prediction names the transformation rule that produced it and the site at which it fired. A
-candidate can therefore be rejected on mechanistic grounds instead of on a score. Predicting the
+candidate can therefore be rejected on mechanistic grounds. Predicting the
 site alone is a task with its own literature and its own tools, reactivity-based
 \citep{Rydberg_2010} and learned \citep{Sicho_2019, Jacob_2025_uncertainty}, resting on annotation
 curated for the purpose \citep{Mazzolari_2019}; that literature has recently had to confront how
-its own labels are derived \citep{Jacob_2025_autosom}. The claim here is narrower, and it is about
-consistency rather than about site prediction: the site this system names is the site that changed.
+its own labels are derived \citep{Jacob_2025_autosom}. The claim here is narrower and concerns
+consistency: the site this system names is the site that changed.
 
 That consistency is measured on the interactive arm.
 Of \numSiteScored{} correctly predicted metabolites, the reported site touches the atoms that
@@ -570,10 +522,10 @@ actually differ from the substrate in \numSiteTouchingPct{}, and lies wholly ins
 Two things bound that reading. The reference centre is derived by the routine that located the
 reaction centre when a template was mined, so for a mined template the two are not independent and
 the agreement is partly a self-consistency check. Split by provenance, the hand-written templates, for which the two are independent, agree at \numSiteCuratedPct{} against \numSiteMinedPct{} for the mined ones, so the claim does not rest on the templates whose provenance would guarantee it. The exhaustive arm is not
-audited this way, because it applies the whole bank rather than a rule budget of
-\numSiteRulebudget{}, and the population of scored matches would be a different one.
+audited this way. The audit is run at a rule budget of \numSiteRulebudget{}, and the whole bank
+would give a different population of scored matches.
 
-How much a chemist gets from an attribution also depends on the template: \numRsizeLethreesharePct{} of the parseable templates have three reactant atoms or fewer, and there the site discrimination comes from the learned stages rather than from the rule (Section~\ref{SI-sec:si-bank}).
+How much a chemist gets from an attribution also depends on the template: \numRsizeLethreesharePct{} of the parseable templates have three reactant atoms or fewer, and there the site discrimination comes from the learned stages (Section~\ref{SI-sec:si-bank}).
 
 \subsection{A worked example}
 
@@ -596,7 +548,7 @@ it, with the transformation behind every hit.
 
 The interactive mode's budget never selects the rules that make the three phosphorylations, so no ranking could have recovered them; the exhaustive mode applies the whole bank and produces all \numCaseExhFound{}, reaching every one of them by rank \numCaseExhDeepest{}. That last figure is
 past the budget this paper reports: \numCaseExhPastfifteenWord{} of the
-\numCaseExhFoundWord{} are recovered only beyond $k=15$, so at the reported budget this molecule is one hit and not four. The
+\numCaseExhFoundWord{} are recovered only beyond $k=15$, so at the reported budget this molecule counts as one hit of the four. The
 class it illustrates is the one the bank is weakest on. At the reported budget the exhaustive arm recovers none of the comparison set's \numChemDeamRefs{} annotated deaminations and the best comparator recovers most of them (Table~\ref{tab:si-chemistry}).  The division the sweep shows across
 \numPopulationN{} substrates is visible on this one molecule: the interactive mode is right about what
 it emits and runs out, and the exhaustive mode keeps having candidates.
@@ -604,9 +556,7 @@ it emits and runs out, and the exhaustive mode keeps having candidates.
 The attribution is what a score cannot supply. All three phosphorylations fire at the same
 substrate atoms, the 5$^\prime$ hydroxymethyl, under three different rules, and the deamination
 fires on the pyrimidine ring, so the output states which transformation is claimed and where,
-and a candidate can be rejected on mechanistic grounds. On the stored drawing all four rules are mined, so the part of the bank with no expert provenance is what carries this molecule; on the drawing a chemist would use, a curated template finds the deamination instead, and later in the list (Section~\ref{SI-sec:si-presentation}). Which templates carry a molecule is itself a function of how the molecule is drawn,
-and Figure~\ref{fig:case} shows both.
-
+and a candidate can be rejected on mechanistic grounds. On the stored drawing all four rules are mined, so the part of the bank with no expert provenance is what carries this molecule; on the drawing a chemist would use, a curated template finds the deamination instead, and later in the list (Section~\ref{SI-sec:si-presentation}).
 \subsection{Which design choices were selected on which population}
 
 Every deployed choice is a registered hypothesis with a threshold and a falsification condition,
@@ -615,32 +565,17 @@ here. Six are confirmed and three failed, each on the falsification condition it
 with; the tenth was measured rather than adjudicated, because its threshold was fixed in advance
 and its population was not. The remaining six are registered against work this paper does not report and are stated
 with their thresholds, so that a later result on any of them cannot rest on a threshold chosen
-afterwards. Section~\ref{sec:limitations} states which of the seven confirmations a stricter
+afterwards. Section~\ref{sec:limitations} states which of the six confirmations a stricter
 reading leaves undecided.
 
 \input{table_hypotheses}
 
 \subsection{Runtime}
 
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{fig_cost}
-\caption{Left: generator seconds against substrate size at the whole bank, both axes logarithmic,
-with the substrates that did not finish inside the \numCostDeadline{}-second deadline drawn on the
-dashed line marking it. Right: wall-clock seconds per substrate for each operating mode on the
-validation split, log scale; the first four bars are the interactive mode's median, mean, ninetieth
-percentile and slowest substrate, the fifth the exhaustive mode's median.}
-\label{fig:cost}
-\end{figure*}
-
-The binding constraint is product standardisation, run once per product of every template; three other candidates were tested and rejected by measurement (Section~\ref{SI-sec:si-runtime}).
-
-Two registered predictions followed. Standardising only the survivors (P8) freed recall but missed its registered speed-up threshold (Table~\ref{tab:hyp}). Adding a
+The binding constraint is product standardisation, run once per product of every template, and the cost it sets is in Section~\ref{SI-sec:si-runtime}. Two registered predictions followed. Standardising only the survivors (P8) freed recall but missed its registered speed-up threshold (Table~\ref{tab:hyp}). Adding a
 tautomer enumeration budget of \numHOneFiveBudget{} (P9) passes both halves, taking the median from
 \numHOneThreeTimeBefore~s to \numHOneFiveTime~s against a registered target below ten, at a recall
 loss of $\numHOneFiveRecallDiff$ against a cap of $0.01$.
-
-Cost is reported at the tail as well as at the median, because a service is used at both. The interactive mode's tail is far heavier than its median (Table~\ref{tab:modes}), so a service answering a web form should impose a deadline and fall back rather than size itself on the median.
 
 \subsection{The ceiling, and how much of it is the corpus}
 \label{sec:ceiling}
@@ -655,8 +590,7 @@ states on how much of the shortfall is chemistry the corpus never contains; the 
 \numBoundShortfallsharemin{}, is derived from the marginals and both counts are in
 Section~\ref{SI-sec:si-typeoverlap}.
 
-The coverage figure is what orients the two directions this work could go next, so it is worth
-putting beside the recall. On the comparison set the ceiling is \numHeadroomCeiling{} and the exhaustive
+On the comparison set the ceiling is \numHeadroomCeiling{} and the exhaustive
 arm at a budget of fifty reaches \numHeadroomReached{}, which is \numHeadroomSharePct{} of what
 the bank can reach. The headroom a better ranking could take is \numHeadroomRanking{}; the
 headroom no ranking can take, because the bank does not produce those structures at all, is
@@ -665,14 +599,14 @@ headroom no ranking can take, because the bank does not produce those structures
 What the ceiling counts is one application of one template and not one enzymatic step, which
 matters for how the number reads. The
 annotation itself is not all single steps: applying the composite instruments to the references
-rather than to the templates, \numRefstepEither{} of the \numRefstepTyped{} pairs those
+and not to the templates, \numRefstepEither{} of the \numRefstepTyped{} pairs those
 instruments can type, \numRefstepEithersharePct{}, are flagged as reached in more than one
 turnover and recorded by the corpus as one pair.  A hit on one of those is a single template standing in for
 several turnovers, so \numCeilingCoverage{} is not the share of annotated metabolism one enzymatic
 step reaches.
 
-How hydrogen is presented to a template changes what fires, so the convention is named here
-rather than left to the code. The bound stated above, \numCeilingUncovered{} uncovered, is
+How hydrogen is presented to a template changes what fires, so the convention is named here.
+The bound stated above, \numCeilingUncovered{} uncovered, is
 measured with hydrogens implicit through the loop a caller runs, which is the convention every
 deployed firing path uses. The three other counts are these. A bound that moves with the
 instrument has to be read with that movement beside it.
@@ -680,8 +614,8 @@ Measured instead through the loop that audits both conventions from one code pat
 hydrogens leave \numCeilagreeAuditimplicitUncovered{} uncovered and hydrogens made explicit with
 the templates completed to match leave \numCeilagreeAuditcompletedUncovered. Choosing the
 convention per template, which no caller can request, leaves \numCeilagreeDispatchUncovered. A
-fourth arm, hydrogens made explicit without completing the templates, is an incomplete loop rather
-than a convention and leaves \numHydUncoveredexpanded{} uncovered, more than any of the other
+fourth arm, hydrogens made explicit without completing the templates, is an incomplete loop and
+not a convention and leaves \numHydUncoveredexpanded{} uncovered, more than any of the other
 three; the instrument's own record excludes it.
 
 The first two are the same convention measured through two different loops, and they disagree by
@@ -722,7 +656,7 @@ where it stops doing so (Table~\ref{tab:grain}, Figure~\ref{fig:ceiling}). What 
 not make definition-free is the share itself: \numCensusOnceSharePct{} is read under our own
 definition of a type, and a coarser one collapses it. What it supports is the different claim
 that the bound is invariant to the definition across the whole range in which that definition is
-meaningful. That makes the census of the gap a fact about the annotation corpus rather than about
+meaningful. That makes the census of the gap a fact about the annotation corpus and not about
 our own choice of definition; what the engine contributes is the hydrogen convention measured
 above.
 
@@ -750,19 +684,17 @@ annotated metabolites than any other method here, including two published since.
 reading a short list is working at exactly those budgets. That is visible only because the budget is swept.
 At a budget of fifty the ordering reverses, the exhaustive arm ahead of every comparator (Table~\ref{tab:sweep}).
 
-The division has a consequence for how such tools are compared. A single recall figure at a
-single budget would have named a different winner depending on which budget its author chose,
-and each of those choices would have been defensible. That is the case for reporting the sweep
-rather than a single cell, and it is made here on this system's own numbers.
+A single recall figure at a single budget would have named a different winner depending on which
+budget its author chose, and each of those choices would have been defensible.
 
 \subsection{Choosing an operating point}
 \label{sec:offers}
 
-The two modes are two settings of one rule budget, and which to run is decided by the budget the
-service answers at rather than by a default. Below about ten candidates the interactive mode is the
-right setting and the faster of the two by the margin Figure~\ref{fig:cost} reports;
+The two modes are two settings of one rule budget, and the budget the service answers at decides
+which to run. Below about ten candidates the interactive mode is the right setting, and the
+faster of the two by the margin Figure~\ref{SI-fig:cost} reports.
 
-Beyond a short list that setting is the weaker one, and the cause is the pool rather than the
+Beyond a short list that setting is the weaker one, and the cause is the pool and not the
 ranking. It returns far fewer candidates than MetaTox, and by $k=20$ many of its lists have already ended; a list that has ended cannot gain a hit from a wider window, so it trails MetaTox at every budget above fifteen with the interval excluding zero (Tables~\ref{SI-tab:si-short} and~\ref{SI-tab:si-intervals}). A service deployed in that mode would recover
 less than the system it replaces wherever it answers with thirty candidates or more.
 
@@ -791,18 +723,14 @@ predictor \citep{Larsson_2025, Zhou_2025, Zhou_2026, Chavan_2026}, one of them r
 whose reaction module was withdrawn, and the Supporting Information says what each is missing. No ranking in this literature can presently be verified independently, which
 is the concrete case for leaderboards releasing per-item predictions rather than aggregate scores
 \citep{Rodriguez_2021, Mishra_2021}. Precision figures are bounded by annotation completeness. And the advantage at
-wide budgets is partly a statement about output length on all sides rather than about ranking.
+wide budgets is partly a statement about output length on all sides and not about ranking.
 
 This paper turned its argument about other people's figures on its own release, and it
-found settings that decide a number and were not declared. Six of them: the aggregation of the templates reaching one candidate, the fusion constant, a rule gate the released checkpoint carries, a set of pools scored by a checkpoint this repository no longer ships, the drawing of the substrate, and the pool cap. Each is declared and measured here rather than described, which may be read either way: as the
-discipline doing its work, or as a measure of how easily an undeclared setting survives even in a
-paper whose subject is undeclared settings. The second reading is why the first is worth
-reporting.
+found settings that decide a number and were not declared. Six of them: the aggregation of the templates reaching one candidate, the fusion constant, a rule gate the released checkpoint carries, a set of pools scored by a checkpoint this repository no longer ships, the drawing of the substrate, and the pool cap. Each is declared and measured here.
 
 \subsection{The ceiling bounds this formulation, not the task}
 
-The shortfall is a property of the corpus the templates are mined from, and it is measured directly
-rather than argued from the bank's coverage: of the \numCeilingUncovered{} references one
+The shortfall is a property of the corpus the templates are mined from, and it is measured directly: of the \numCeilingUncovered{} references one
 application of this bank fails to reach, between \numBoundShortfallsharemin{} and
 \numBoundShortfallsharemax{} are of a type the training annotation never holds. That is a bound rather than a point, and Section~\ref{SI-sec:si-typeoverlap} gives the counts it rests on.
 
@@ -844,14 +772,13 @@ Both learned stages are trained short of what the split allows, on a subsample o
 
 The register is weaker than its count of confirmations suggests. Three of the six confirmed
 predictions clear the falsification condition as written, which compares a point estimate to a
-threshold, and not the stricter reading that asks the whole interval to clear it. P1 and P2 have
+threshold. The stricter reading asks the whole interval to clear it. P1 and P2 have
 their threshold inside their own interval, and so does P5. What the data establish for those three
 is that the effect exceeds zero, not that it exceeds the registered bar. P5 is weaker again, and
 the register is what shows it: its threshold was fixed in advance but its population was not, and
 it was adjudicated on the comparison set, which is derived from the test split and was recorded
-afterwards. Table~\ref{tab:hyp} calls that a measurement rather than a confirmation, which is why
-it is not one of the six. P3's threshold
-is in any case a property of the budget requested rather than of the system.
+afterwards. Table~\ref{tab:hyp} records that as a measurement, which is why
+it is not one of the six.
 
 Two reported quantities are bounded by things outside the system. Precision is bounded by how
 completely the corpus annotates, so every precision figure here is a lower bound of unknown depth;
@@ -864,10 +791,10 @@ duplication beats the released noisy-or on the validation draw at every budget f
 \numAggvalHybridwinsmax{}, with the interval excluding zero, which includes the budget the headline
 is read at (Section~\ref{SI-sec:si-aggregation}). The release keeps the noisy-or because every
 number here is measured under it and switching would leave the paper describing a system nobody
-ran; the choice is a parameter rather than a retraining, so the blend can be selected without
+ran; the choice is a parameter and not a retraining, so the blend can be selected without
 retraining anything. GLORYx is the one arm not run on this machine: the models it needs are not distributed with its
 source, so its column comes from the service its authors operate
-(Section~\ref{SI-sec:si-comparators}). Stereochemistry and protonation are bounded rather than priced. \numStereoSharePct{} of annotated
+(Section~\ref{SI-sec:si-comparators}). Stereochemistry and protonation are bounded and not priced. \numStereoSharePct{} of annotated
 pairs produce a metabolite carrying a stereogenic element its substrate does not have, and
 \numChargeSharePct{} of annotated metabolites carry a formal charge. The criterion sweep cannot
 price a configuration-aware criterion, because no reference in this corpus carries a configuration
@@ -884,7 +811,7 @@ establishes an ordering within a corpus and not a ranking of the methods.
 
 The claim about evaluation is a different matter, and it is checked outside this corpus.
 \citet{Gao_2026} deposited the prediction files the \numExtbudgetArmsWord{} predictors they
-benchmarked returned, so what each emitted is counted rather than inferred. Counted, across their
+benchmarked returned, so what each emitted is counted and not inferred. Counted, across their
 \numExtbudgetDrugs{} drugs the axis that benchmark leaves undeclared spans a factor of
 \numExtbudgetRatio{}, from \numExtbudgetNarrowest{} candidates per drug to
 \numExtbudgetWidest{}: an undeclared quantity varying twelvefold between the arms of a
@@ -893,24 +820,14 @@ comparison is part of what the comparison measures. The arms that emit more scor
 It lives mostly between the arms, which is the level at which a benchmark orders them. It is not the whole story and
 this paper's argument does not need it to be: ordering the arms by what they emit does not
 reproduce ordering them by recall, one arm returning fewer candidates than another and recovering
-more. So output size is a confound in that benchmark rather than its content, which is the same
-thing this paper says about its own budget axis, and the remedy is the same, to declare the axis
-and vary it.
-
+more.
 \section{Conclusions}
 \label{sec:conclusions}
 
 GRAIL predicts metabolite structures by selecting templates from a bank of \numBankRules{} reaction
 rules, applying them, and ranking the products by a reciprocal rank fusion of two learned scores.
 How those two scores are combined mattered more than what produced them: replacing their product
-with the rank fusion gained more recall than any architectural change tested here. Every prediction
-carries the template that produced it and the atoms it acted on, so a candidate can be judged on
-mechanistic grounds. Measured against the published predictors that could be run on the same
-substrates, the comparison divides by output budget rather than resolving into an ordering, and
-that division is the result: a single recall figure would have named a different leader depending
-on decisions its author never had to state. Reporting the whole grid is what makes the comparison
-checkable, and releasing every arm's per-substrate predictions is what lets a third party
-recompute it.
+with the rank fusion gained more recall than any architectural change tested here.
 
 What one application of one template bank cannot reach is mostly chemistry the corpus does not
 contain: between \numBoundShortfallsharemin{} and \numBoundShortfallsharemax{} of the
@@ -955,7 +872,7 @@ obligation and \numRelbankReleased{} ship. The removal is free: every reference 
 reach is reached by another in the bank. Dropping them from the bank is not the same as not
 carrying them, and of \numRelbankCarrierscanned{} tracked files \numRelbankCarriersWord{} hold at
 least one, which a check reports rather than the repository asserting otherwise. The repository's
-licence is \RepoLicence{}, which is what the remaining GPL templates permit rather than a
+licence is \RepoLicence{}, which is what the remaining GPL templates permit and not a
 preference, and \texttt{NOTICE.md} carries the decisions file by file.
 
 The corpus, whose four sources and versions Section~\ref{sec:populations} names, is not
