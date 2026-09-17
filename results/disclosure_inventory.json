@@ -3,7 +3,7 @@
   "script": "disclosure_inventory.py",
   "script_path": "scripts/disclosure_inventory.py",
   "source_sha256": "57711e9fbacf046bf1cd50779a253e72006b9e0ce3d5977098b5be5dcf0eb864",
-  "git_commit": "80cfc09fe250a6d35bcd1d6ccd44b7f55295d6be",
+  "git_commit": "36bea3f16cfd5a690a84cb9fde9f40423e053a9c",
   "git_dirty": true
  },
  "reviewed_and_accepted": [
@@ -419,6 +419,300 @@
     "paper2/body.tex"
    ],
    "reason": "Reworded positively, claim unchanged. All 23 'and not' occurrences in paper2/body.tex were rewritten as positive assertions or had the negative half deleted; the construction is measured at ZERO in all 49,637 words of the eight-paper comparison corpus, so it was the starkest remaining LLM marker in the manuscript. Nothing was deleted from the argument: a symmetric-difference diff over _norm(_sentences(_plain(.))) between HEAD and this tree gives 22 keys gone and 22 new, one-to-one, each replacement in the same position as the sentence it replaces. Three of the five flagged concessions broke for a reason that is not a reword of the concession at all: _plain merges each of them with an adjacent sentence into a single key (the stereochemistry default with the sentence that follows it, the two-convention loop with 'Choosing the convention', the corpus-bound sentence with the suppinfo block), so the concession text is byte-identical and only its neighbour moved. The two genuine rewords are 'fixed a threshold in advance and not a population' -> 'while leaving the population open', and 'the cause is the pool and not the ranking' -> 'the cause is the pool, whose size bounds what any ranking can return', which states the mechanism the original only implied. 'an underfitting signature and not a converged run' lost its second half because the first half entails it."
+  },
+  {
+   "text": "Validation and not the comparison set, because a budget chosen on the population the comparison is reported on would be chosen on the test. figure [htbp] Micro recall against the rule budget on the validation draw, one line per output budget k . The vertical rule marks the budget the released checkp",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the positive pass over 'and not', a construction measured at zero in all eight comparison papers; 50 of 66 occurrences in paper2/si.tex were rewritten and none was deleted. Each of the seven keys that changed is a rewording, established by pairing rather than by assumption: a symmetric difference over _norm(_sentences(_plain(.))) gives seven gone and eight new, every gone key pairs with a new one sharing a long head or tail, and the eighth new key is the second half of one sentence that the rewrite split. The claims moved nowhere: 'and not the comparison set' became 'Validation,' with the causal clause that excludes the comparison set left intact; 'holds at three of the four budgets and not at all of them' became 'and fails at the fourth'; 'measured and not adopted' became 'measured, declined'; 'the denominator is N and not M' became 'the denominator is the N scored templates, out of the M mined'; 'a floor and not a bound' became 'a floor under the true one'; 'indicative and not a test' became 'indicative only'; 'carried to this load and not a second measurement' became 'carried to this load by arithmetic alone'; 'enter the spread and not the correlation' became 'enter the spread, and the correlation excludes them'; 'the version the service reported, and not a binary anyone can re-run offline' became 'reported; the record stops short of a binary anyone can re-run offline'. The last of those is the GLORYx provenance concession and it is stated at full strength: what is pinned is the submission, the returned predictions and the reported version, and nothing offline. Where a key welds two sentences, the half that moved is the one carrying the construction; the neighbouring sentence is untouched byte for byte."
+  },
+  {
+   "text": "At an output budget of 30 it is not a null, where K= N falls N [ N , N ] short, so flatness holds at three of the four budgets and not at all of them (Section )",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the positive pass over 'and not', a construction measured at zero in all eight comparison papers; 50 of 66 occurrences in paper2/si.tex were rewritten and none was deleted. Each of the seven keys that changed is a rewording, established by pairing rather than by assumption: a symmetric difference over _norm(_sentences(_plain(.))) gives seven gone and eight new, every gone key pairs with a new one sharing a long head or tail, and the eighth new key is the second half of one sentence that the rewrite split. The claims moved nowhere: 'and not the comparison set' became 'Validation,' with the causal clause that excludes the comparison set left intact; 'holds at three of the four budgets and not at all of them' became 'and fails at the fourth'; 'measured and not adopted' became 'measured, declined'; 'the denominator is N and not M' became 'the denominator is the N scored templates, out of the M mined'; 'a floor and not a bound' became 'a floor under the true one'; 'indicative and not a test' became 'indicative only'; 'carried to this load and not a second measurement' became 'carried to this load by arithmetic alone'; 'enter the spread and not the correlation' became 'enter the spread, and the correlation excludes them'; 'the version the service reported, and not a binary anyone can re-run offline' became 'reported; the record stops short of a binary anyone can re-run offline'. The last of those is the GLORYx provenance concession and it is stated at full strength: what is pinned is the submission, the returned predictions and the reported version, and nothing offline. Where a key welds two sentences, the half that moved is the one carrying the construction; the neighbouring sentence is untouched byte for byte."
+  },
+  {
+   "text": "The deployed combination is reciprocal rank fusion , where r i(c) is the rank of c under scorer i . The aggregation taken from the budget, measured and not adopted The blend of Equation is better than the released rule at the head of the list and no better at depth, so its sign turns along the outpu",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the positive pass over 'and not', a construction measured at zero in all eight comparison papers; 50 of 66 occurrences in paper2/si.tex were rewritten and none was deleted. Each of the seven keys that changed is a rewording, established by pairing rather than by assumption: a symmetric difference over _norm(_sentences(_plain(.))) gives seven gone and eight new, every gone key pairs with a new one sharing a long head or tail, and the eighth new key is the second half of one sentence that the rewrite split. The claims moved nowhere: 'and not the comparison set' became 'Validation,' with the causal clause that excludes the comparison set left intact; 'holds at three of the four budgets and not at all of them' became 'and fails at the fourth'; 'measured and not adopted' became 'measured, declined'; 'the denominator is N and not M' became 'the denominator is the N scored templates, out of the M mined'; 'a floor and not a bound' became 'a floor under the true one'; 'indicative and not a test' became 'indicative only'; 'carried to this load and not a second measurement' became 'carried to this load by arithmetic alone'; 'enter the spread and not the correlation' became 'enter the spread, and the correlation excludes them'; 'the version the service reported, and not a binary anyone can re-run offline' became 'reported; the record stops short of a binary anyone can re-run offline'. The last of those is the GLORYx provenance concession and it is stated at full strength: what is pinned is the submission, the returned predictions and the reported version, and nothing offline. Where a key welds two sentences, the half that moved is the one carrying the construction; the neighbouring sentence is untouched byte for byte."
+  },
+  {
+   "text": "The reaction centre of the source pair, located by the same maximum-common-substructure route the transformation types use, falls in more than one piece for N of the N mined templates, N . One mined template could not be scored, so the denominator throughout this section is N and not N . A centre in",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the positive pass over 'and not', a construction measured at zero in all eight comparison papers; 50 of 66 occurrences in paper2/si.tex were rewritten and none was deleted. Each of the seven keys that changed is a rewording, established by pairing rather than by assumption: a symmetric difference over _norm(_sentences(_plain(.))) gives seven gone and eight new, every gone key pairs with a new one sharing a long head or tail, and the eighth new key is the second half of one sentence that the rewrite split. The claims moved nowhere: 'and not the comparison set' became 'Validation,' with the causal clause that excludes the comparison set left intact; 'holds at three of the four budgets and not at all of them' became 'and fails at the fourth'; 'measured and not adopted' became 'measured, declined'; 'the denominator is N and not M' became 'the denominator is the N scored templates, out of the M mined'; 'a floor and not a bound' became 'a floor under the true one'; 'indicative and not a test' became 'indicative only'; 'carried to this load and not a second measurement' became 'carried to this load by arithmetic alone'; 'enter the spread and not the correlation' became 'enter the spread, and the correlation excludes them'; 'the version the service reported, and not a binary anyone can re-run offline' became 'reported; the record stops short of a binary anyone can re-run offline'. The last of those is the GLORYx provenance concession and it is stated at full strength: what is pinned is the submission, the returned predictions and the reported version, and nothing offline. Where a key welds two sentences, the half that moved is the one carrying the construction; the neighbouring sentence is untouched byte for byte."
+  },
+  {
+   "text": "The arms it is derived between are the bounded and unbounded standardisation arms of this paragraph, not the two operating modes, so it is what the exhaustive mode's median becomes under a comparable load and not a measurement of the two modes running side by side, which was not made",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the positive pass over 'and not', a construction measured at zero in all eight comparison papers; 50 of 66 occurrences in paper2/si.tex were rewritten and none was deleted. Each of the seven keys that changed is a rewording, established by pairing rather than by assumption: a symmetric difference over _norm(_sentences(_plain(.))) gives seven gone and eight new, every gone key pairs with a new one sharing a long head or tail, and the eighth new key is the second half of one sentence that the rewrite split. The claims moved nowhere: 'and not the comparison set' became 'Validation,' with the causal clause that excludes the comparison set left intact; 'holds at three of the four budgets and not at all of them' became 'and fails at the fourth'; 'measured and not adopted' became 'measured, declined'; 'the denominator is N and not M' became 'the denominator is the N scored templates, out of the M mined'; 'a floor and not a bound' became 'a floor under the true one'; 'indicative and not a test' became 'indicative only'; 'carried to this load and not a second measurement' became 'carried to this load by arithmetic alone'; 'enter the spread and not the correlation' became 'enter the spread, and the correlation excludes them'; 'the version the service reported, and not a binary anyone can re-run offline' became 'reported; the record stops short of a binary anyone can re-run offline'. The last of those is the GLORYx provenance concession and it is stated at full strength: what is pinned is the submission, the returned predictions and the reported version, and nothing offline. Where a key welds two sentences, the half that moved is the one carrying the construction; the neighbouring sentence is untouched byte for byte."
+  },
+  {
+   "text": "N belong to the N arms whose prediction files are not in the deposit, so their emission cannot be counted at all; N are counted from a deposited file but have no recall in the published tables, so they enter the spread and not the correlation",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the positive pass over 'and not', a construction measured at zero in all eight comparison papers; 50 of 66 occurrences in paper2/si.tex were rewritten and none was deleted. Each of the seven keys that changed is a rewording, established by pairing rather than by assumption: a symmetric difference over _norm(_sentences(_plain(.))) gives seven gone and eight new, every gone key pairs with a new one sharing a long head or tail, and the eighth new key is the second half of one sentence that the rewrite split. The claims moved nowhere: 'and not the comparison set' became 'Validation,' with the causal clause that excludes the comparison set left intact; 'holds at three of the four budgets and not at all of them' became 'and fails at the fourth'; 'measured and not adopted' became 'measured, declined'; 'the denominator is N and not M' became 'the denominator is the N scored templates, out of the M mined'; 'a floor and not a bound' became 'a floor under the true one'; 'indicative and not a test' became 'indicative only'; 'carried to this load and not a second measurement' became 'carried to this load by arithmetic alone'; 'enter the spread and not the correlation' became 'enter the spread, and the correlation excludes them'; 'the version the service reported, and not a binary anyone can re-run offline' became 'reported; the record stops short of a binary anyone can re-run offline'. The last of those is the GLORYx provenance concession and it is stated at full strength: what is pinned is the submission, the returned predictions and the reported version, and nothing offline. Where a key welds two sentences, the half that moved is the one carrying the construction; the neighbouring sentence is untouched byte for byte."
+  },
+  {
+   "text": "That is a weaker provenance than the other four arms have and it is stated rather than smoothed over: what is pinned is the submission, the returned predictions and the version the service reported, and not a binary anyone can re-run offline",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the positive pass over 'and not', a construction measured at zero in all eight comparison papers; 50 of 66 occurrences in paper2/si.tex were rewritten and none was deleted. Each of the seven keys that changed is a rewording, established by pairing rather than by assumption: a symmetric difference over _norm(_sentences(_plain(.))) gives seven gone and eight new, every gone key pairs with a new one sharing a long head or tail, and the eighth new key is the second half of one sentence that the rewrite split. The claims moved nowhere: 'and not the comparison set' became 'Validation,' with the causal clause that excludes the comparison set left intact; 'holds at three of the four budgets and not at all of them' became 'and fails at the fourth'; 'measured and not adopted' became 'measured, declined'; 'the denominator is N and not M' became 'the denominator is the N scored templates, out of the M mined'; 'a floor and not a bound' became 'a floor under the true one'; 'indicative and not a test' became 'indicative only'; 'carried to this load and not a second measurement' became 'carried to this load by arithmetic alone'; 'enter the spread and not the correlation' became 'enter the spread, and the correlation excludes them'; 'the version the service reported, and not a binary anyone can re-run offline' became 'reported; the record stops short of a binary anyone can re-run offline'. The last of those is the GLORYx provenance concession and it is stated at full strength: what is pinned is the submission, the returned predictions and the reported version, and nothing offline. Where a key welds two sentences, the half that moved is the one carrying the construction; the neighbouring sentence is untouched byte for byte."
+  },
+  {
+   "text": "The released pools carry one aggregated score per candidate and not the per-template scores a different rule needs, so the question cannot be answered from them",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the second round of the positive pass over 'and not'. Two keys changed and both are rewordings, paired by symmetric difference over _norm(_sentences(_plain(.))): two gone, two new, each gone key sharing 17 and 36 words with its partner. 'The released pools carry one aggregated score per candidate and not the per-template scores a different rule needs' became 'one aggregated score per candidate, with the per-template scores a different rule needs collapsed away' -- the absence stays a property of what the POOLS carry, which is what the first attempt got wrong by moving it to the release, and 'so the question cannot be answered from them' is preserved verbatim with its marker. 'gives N uncovered references and not M' became 'gives N uncovered references where this paper prints M', keeping both macros and keeping the two instruments distinct, which the first attempt fused. Nothing was deleted: sixteen occurrences in this file were refused or rejected rather than rewritten, each with a recorded reason, because the negation there carries an exclusion or a scope that no positive phrasing carries."
+  },
+  {
+   "text": "The choice is consequential and the entry point should not make it silently: reproducing the census through it under the other presentation gives N uncovered references and not N . That other presentation is not an alternative reading of the bound",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the second round of the positive pass over 'and not'. Two keys changed and both are rewordings, paired by symmetric difference over _norm(_sentences(_plain(.))): two gone, two new, each gone key sharing 17 and 36 words with its partner. 'The released pools carry one aggregated score per candidate and not the per-template scores a different rule needs' became 'one aggregated score per candidate, with the per-template scores a different rule needs collapsed away' -- the absence stays a property of what the POOLS carry, which is what the first attempt got wrong by moving it to the release, and 'so the question cannot be answered from them' is preserved verbatim with its marker. 'gives N uncovered references and not M' became 'gives N uncovered references where this paper prints M', keeping both macros and keeping the two instruments distinct, which the first attempt fused. Nothing was deleted: sixteen occurrences in this file were refused or rejected rather than rewritten, each with a recorded reason, because the negation there carries an exclusion or a scope that no positive phrasing carries."
+  },
+  {
+   "text": "Most other declared choices here are swept, and this one was declared and not measured, so Table measures it",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the positive pass over 'and not'. This sentence was rewritten twice, and the first rewrite is the mistake worth recording. 'this one was declared and not measured' first became 'declared and left unmeasured', which removed the flagged construction and, with it, the sentence's ONLY PAT span -- 'not measured'. The concession stayed printed and stopped being collectible, which is the DeepCYP failure of this same evening repeated by the editor who had documented it. --check caught it as one gone with no paired new, the only shape that can be a retraction. The sentence now reads 'this one was declared but its cost was not measured', which drops the construction the corpus never uses, keeps the claim word for word, and keeps the sentence inside the registry. Only the clause naming the omission moved; the surrounding sentences are untouched."
+  },
+  {
+   "text": "Measuring the sweep on the population this paper reports is not the objection Section raises against the aggregation blend",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the three constructions the comparison corpus never uses: 'worth V-ing', 'which is why' and 'the objection', zero occurrences each across eight papers and 49,637 words. Nineteen of twenty-four occurrences were rewritten and none deleted. Five keys changed and all five are rewordings, paired by symmetric difference over _norm(_sentences(_plain(.))): five gone, five new, each sharing 15 to 62 words with its partner. 'which is why' became 'so' and 'therefore'; 'worth printing' became 'printed here'; 'is worth separating' became 'this section separates'; and 'is not the objection Section X raises against the blend' became 'is not the selection Section X forbids for the blend', which keeps the claim and sharpens it, since the following sentence already says what is forbidden is adopting a parameter chosen here. Three further replacements were rejected mechanically before application because each carried another flagged construction into the text it was meant to clear -- 'and not', 'rather than' and 'is not a' -- which the adversarial readers had approved; those three occurrences stand unchanged."
+  },
+  {
+   "text": "The gate the release applied and the measurement did not One of the settings in that table describes a selection no number here is measured under, and it is worth separating from the ones that are",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the three constructions the comparison corpus never uses: 'worth V-ing', 'which is why' and 'the objection', zero occurrences each across eight papers and 49,637 words. Nineteen of twenty-four occurrences were rewritten and none deleted. Five keys changed and all five are rewordings, paired by symmetric difference over _norm(_sentences(_plain(.))): five gone, five new, each sharing 15 to 62 words with its partner. 'which is why' became 'so' and 'therefore'; 'worth printing' became 'printed here'; 'is worth separating' became 'this section separates'; and 'is not the objection Section X raises against the blend' became 'is not the selection Section X forbids for the blend', which keeps the claim and sharpens it, since the following sentence already says what is forbidden is adopting a parameter chosen here. Three further replacements were rejected mechanically before application because each carried another flagged construction into the text it was meant to clear -- 'and not', 'rather than' and 'is not a' -- which the adversarial readers had approved; those three occurrences stand unchanged."
+  },
+  {
+   "text": "The same silence makes precision pessimistic by a bounded but unknown amount, which is why the paper reports it without using it to order systems",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the three constructions the comparison corpus never uses: 'worth V-ing', 'which is why' and 'the objection', zero occurrences each across eight papers and 49,637 words. Nineteen of twenty-four occurrences were rewritten and none deleted. Five keys changed and all five are rewordings, paired by symmetric difference over _norm(_sentences(_plain(.))): five gone, five new, each sharing 15 to 62 words with its partner. 'which is why' became 'so' and 'therefore'; 'worth printing' became 'printed here'; 'is worth separating' became 'this section separates'; and 'is not the objection Section X raises against the blend' became 'is not the selection Section X forbids for the blend', which keeps the claim and sharpens it, since the following sentence already says what is forbidden is adopting a parameter chosen here. Three further replacements were rejected mechanically before application because each carried another flagged construction into the text it was meant to clear -- 'and not', 'rather than' and 'is not a' -- which the adversarial readers had approved; those three occurrences stand unchanged."
+  },
+  {
+   "text": "The wider sweep is over N files and its parts are worth printing, since a total is easier to accept than to add up: N carry no stamp, N have a producer that has changed since, N have a producer the sweep cannot identify, N changed only cosmetically, N are stamped and current without being pinned, an",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the three constructions the comparison corpus never uses: 'worth V-ing', 'which is why' and 'the objection', zero occurrences each across eight papers and 49,637 words. Nineteen of twenty-four occurrences were rewritten and none deleted. Five keys changed and all five are rewordings, paired by symmetric difference over _norm(_sentences(_plain(.))): five gone, five new, each sharing 15 to 62 words with its partner. 'which is why' became 'so' and 'therefore'; 'worth printing' became 'printed here'; 'is worth separating' became 'this section separates'; and 'is not the objection Section X raises against the blend' became 'is not the selection Section X forbids for the blend', which keeps the claim and sharpens it, since the following sentence already says what is forbidden is adopting a parameter chosen here. Three further replacements were rejected mechanically before application because each carried another flagged construction into the text it was meant to clear -- 'and not', 'rather than' and 'is not a' -- which the adversarial readers had approved; those three occurrences stand unchanged."
+  },
+  {
+   "text": "A hand-typed pointer cannot: nine of them here were wrong at once when the tables were reordered, one badly enough to direct a search to the wrong table, which is why none is permitted",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the three constructions the comparison corpus never uses: 'worth V-ing', 'which is why' and 'the objection', zero occurrences each across eight papers and 49,637 words. Nineteen of twenty-four occurrences were rewritten and none deleted. Five keys changed and all five are rewordings, paired by symmetric difference over _norm(_sentences(_plain(.))): five gone, five new, each sharing 15 to 62 words with its partner. 'which is why' became 'so' and 'therefore'; 'worth printing' became 'printed here'; 'is worth separating' became 'this section separates'; and 'is not the objection Section X raises against the blend' became 'is not the selection Section X forbids for the blend', which keeps the claim and sharpens it, since the following sentence already says what is forbidden is adopting a parameter chosen here. Three further replacements were rejected mechanically before application because each carried another flagged construction into the text it was meant to clear -- 'and not', 'rather than' and 'is not a' -- which the adversarial readers had approved; those three occurrences stand unchanged."
+  },
+  {
+   "text": "Where a method runs out of candidates At the widest budgets the comparison is partly measuring list length rather than ranking, and the counts that say by how much are here at every budget rather than only at the one the main text prints",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the carrier constructions in paper2/si.tex: 'rather than', epistemic self-grading and 'is/are not a', which this file used at 5.08, 1.84 and 0.77 per thousand words against corpus maxima of 0.68, 0.26 and 0.11. One hundred and fifty-six of 197 carrier sentences were rewritten, twelve rejected by an adversarial reader and twenty-nine refused as load-bearing; none was deleted. Twenty-seven keys changed and all twenty-seven are rewordings, established by pairing and not by assumption: twenty-seven gone, twenty-seven new, every gone key pairing with a new one and no key left unpaired in either direction. No edit removed a sentence's last registry marker: that was checked mechanically for every one of the 156 before application, after an edit an hour earlier did exactly that and had to be undone. The rewrites name the actor where the file described itself in the passive -- 'is reported' became 'this section reports', 'that is stated' became 'the section that defines the population says so' -- and assert directly where the file stated a preference -- 'checked rather than assumed' became 'checked', 'a bounded absence rather than as silence' became 'a bounded absence'. Where a sentence carried two constructions both were taken in one edit, because the gate counts sentences and clearing one would have left the sentence a carrier."
+  },
+  {
+   "text": "The two are then read over the same slots on every substrate rather than on average, which is what a nominal budget cannot do",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the carrier constructions in paper2/si.tex: 'rather than', epistemic self-grading and 'is/are not a', which this file used at 5.08, 1.84 and 0.77 per thousand words against corpus maxima of 0.68, 0.26 and 0.11. One hundred and fifty-six of 197 carrier sentences were rewritten, twelve rejected by an adversarial reader and twenty-nine refused as load-bearing; none was deleted. Twenty-seven keys changed and all twenty-seven are rewordings, established by pairing and not by assumption: twenty-seven gone, twenty-seven new, every gone key pairing with a new one and no key left unpaired in either direction. No edit removed a sentence's last registry marker: that was checked mechanically for every one of the 156 before application, after an edit an hour earlier did exactly that and had to be undone. The rewrites name the actor where the file described itself in the passive -- 'is reported' became 'this section reports', 'that is stated' became 'the section that defines the population says so' -- and assert directly where the file stated a preference -- 'checked rather than assumed' became 'checked', 'a bounded absence rather than as silence' became 'a bounded absence'. Where a sentence carried two constructions both were taken in one edit, because the gate counts sentences and clearing one would have left the sentence a carrier."
+  },
+  {
+   "text": "The drawing correction against SyGMa is measured rather than deducted, since a correction taken at a fixed budget cannot be subtracted from a margin taken over a comparator's own slot count",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the carrier constructions in paper2/si.tex: 'rather than', epistemic self-grading and 'is/are not a', which this file used at 5.08, 1.84 and 0.77 per thousand words against corpus maxima of 0.68, 0.26 and 0.11. One hundred and fifty-six of 197 carrier sentences were rewritten, twelve rejected by an adversarial reader and twenty-nine refused as load-bearing; none was deleted. Twenty-seven keys changed and all twenty-seven are rewordings, established by pairing and not by assumption: twenty-seven gone, twenty-seven new, every gone key pairing with a new one and no key left unpaired in either direction. No edit removed a sentence's last registry marker: that was checked mechanically for every one of the 156 before application, after an edit an hour earlier did exactly that and had to be undone. The rewrites name the actor where the file described itself in the passive -- 'is reported' became 'this section reports', 'that is stated' became 'the section that defines the population says so' -- and assert directly where the file stated a preference -- 'checked rather than assumed' became 'checked', 'a bounded absence rather than as silence' became 'a bounded absence'. Where a sentence carried two constructions both were taken in one edit, because the gate counts sentences and clearing one would have left the sentence a carrier."
+  },
+  {
+   "text": "The exhaustive mode's lead over MetaTox at k=30 excludes zero by little, and its two unresolved budgets, k=15 and k=20 , have intervals straddling zero narrowly rather than lying far from it. against MetaTox it even leads at k=10 , + N [ N , N ] , one of the four leads the family-wise correction rem",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the carrier constructions in paper2/si.tex: 'rather than', epistemic self-grading and 'is/are not a', which this file used at 5.08, 1.84 and 0.77 per thousand words against corpus maxima of 0.68, 0.26 and 0.11. One hundred and fifty-six of 197 carrier sentences were rewritten, twelve rejected by an adversarial reader and twenty-nine refused as load-bearing; none was deleted. Twenty-seven keys changed and all twenty-seven are rewordings, established by pairing and not by assumption: twenty-seven gone, twenty-seven new, every gone key pairing with a new one and no key left unpaired in either direction. No edit removed a sentence's last registry marker: that was checked mechanically for every one of the 156 before application, after an edit an hour earlier did exactly that and had to be undone. The rewrites name the actor where the file described itself in the passive -- 'is reported' became 'this section reports', 'that is stated' became 'the section that defines the population says so' -- and assert directly where the file stated a preference -- 'checked rather than assumed' became 'checked', 'a bounded absence rather than as silence' became 'a bounded absence'. Where a sentence carried two constructions both were taken in one edit, because the gate counts sentences and clearing one would have left the sentence a carrier."
+  },
+  {
+   "text": "Whatever the two ends share, it is not strictness and it is not the dialect, and the entanglement is a property of the strict column rather than the reason it reads as it does",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the carrier constructions in paper2/si.tex: 'rather than', epistemic self-grading and 'is/are not a', which this file used at 5.08, 1.84 and 0.77 per thousand words against corpus maxima of 0.68, 0.26 and 0.11. One hundred and fifty-six of 197 carrier sentences were rewritten, twelve rejected by an adversarial reader and twenty-nine refused as load-bearing; none was deleted. Twenty-seven keys changed and all twenty-seven are rewordings, established by pairing and not by assumption: twenty-seven gone, twenty-seven new, every gone key pairing with a new one and no key left unpaired in either direction. No edit removed a sentence's last registry marker: that was checked mechanically for every one of the 156 before application, after an edit an hour earlier did exactly that and had to be undone. The rewrites name the actor where the file described itself in the passive -- 'is reported' became 'this section reports', 'that is stated' became 'the section that defines the population says so' -- and assert directly where the file stated a preference -- 'checked rather than assumed' became 'checked', 'a bounded absence rather than as silence' became 'a bounded absence'. Where a sentence carried two constructions both were taken in one edit, because the gate counts sentences and clearing one would have left the sentence a carrier."
+  },
+  {
+   "text": "The tautomer-aware key exists because reproducing a corpus's tautomer is not the question a comparison should be asking, and the canonical column is reported because declaring a criterion means printing what it does, not only the one whose behaviour suits the argument",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the carrier constructions in paper2/si.tex: 'rather than', epistemic self-grading and 'is/are not a', which this file used at 5.08, 1.84 and 0.77 per thousand words against corpus maxima of 0.68, 0.26 and 0.11. One hundred and fifty-six of 197 carrier sentences were rewritten, twelve rejected by an adversarial reader and twenty-nine refused as load-bearing; none was deleted. Twenty-seven keys changed and all twenty-seven are rewordings, established by pairing and not by assumption: twenty-seven gone, twenty-seven new, every gone key pairing with a new one and no key left unpaired in either direction. No edit removed a sentence's last registry marker: that was checked mechanically for every one of the 156 before application, after an edit an hour earlier did exactly that and had to be undone. The rewrites name the actor where the file described itself in the passive -- 'is reported' became 'this section reports', 'that is stated' became 'the section that defines the population says so' -- and assert directly where the file stated a preference -- 'checked rather than assumed' became 'checked', 'a bounded absence rather than as silence' became 'a bounded absence'. Where a sentence carried two constructions both were taken in one edit, because the gate counts sentences and clearing one would have left the sentence a carrier."
+  },
+  {
+   "text": "Validation, because a budget chosen on the population the comparison is reported on would be chosen on the test. figure [htbp] Micro recall against the rule budget on the validation draw, one line per output budget k . The vertical rule marks the budget the released checkpoint was trained at. figure",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the carrier constructions in paper2/si.tex: 'rather than', epistemic self-grading and 'is/are not a', which this file used at 5.08, 1.84 and 0.77 per thousand words against corpus maxima of 0.68, 0.26 and 0.11. One hundred and fifty-six of 197 carrier sentences were rewritten, twelve rejected by an adversarial reader and twenty-nine refused as load-bearing; none was deleted. Twenty-seven keys changed and all twenty-seven are rewordings, established by pairing and not by assumption: twenty-seven gone, twenty-seven new, every gone key pairing with a new one and no key left unpaired in either direction. No edit removed a sentence's last registry marker: that was checked mechanically for every one of the 156 before application, after an edit an hour earlier did exactly that and had to be undone. The rewrites name the actor where the file described itself in the passive -- 'is reported' became 'this section reports', 'that is stated' became 'the section that defines the population says so' -- and assert directly where the file stated a preference -- 'checked rather than assumed' became 'checked', 'a bounded absence rather than as silence' became 'a bounded absence'. Where a sentence carried two constructions both were taken in one edit, because the gate counts sentences and clearing one would have left the sentence a carrier."
+  },
+  {
+   "text": "That is what supports the word most , and it is a bound rather than a point because the join itself is not reported here",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the carrier constructions in paper2/si.tex: 'rather than', epistemic self-grading and 'is/are not a', which this file used at 5.08, 1.84 and 0.77 per thousand words against corpus maxima of 0.68, 0.26 and 0.11. One hundred and fifty-six of 197 carrier sentences were rewritten, twelve rejected by an adversarial reader and twenty-nine refused as load-bearing; none was deleted. Twenty-seven keys changed and all twenty-seven are rewordings, established by pairing and not by assumption: twenty-seven gone, twenty-seven new, every gone key pairing with a new one and no key left unpaired in either direction. No edit removed a sentence's last registry marker: that was checked mechanically for every one of the 156 before application, after an edit an hour earlier did exactly that and had to be undone. The rewrites name the actor where the file described itself in the passive -- 'is reported' became 'this section reports', 'that is stated' became 'the section that defines the population says so' -- and assert directly where the file stated a preference -- 'checked rather than assumed' became 'checked', 'a bounded absence rather than as silence' became 'a bounded absence'. Where a sentence carried two constructions both were taken in one edit, because the gate counts sentences and clearing one would have left the sentence a carrier."
+  },
+  {
+   "text": "The same permutation test returns p= N and does not separate, and the reason is the size of the set rather than the size of the effect: N typed pairs on one side and N on the other spread over N types leave almost every type a singleton, so a shuffled label reaches nearly that distance too",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the carrier constructions in paper2/si.tex: 'rather than', epistemic self-grading and 'is/are not a', which this file used at 5.08, 1.84 and 0.77 per thousand words against corpus maxima of 0.68, 0.26 and 0.11. One hundred and fifty-six of 197 carrier sentences were rewritten, twelve rejected by an adversarial reader and twenty-nine refused as load-bearing; none was deleted. Twenty-seven keys changed and all twenty-seven are rewordings, established by pairing and not by assumption: twenty-seven gone, twenty-seven new, every gone key pairing with a new one and no key left unpaired in either direction. No edit removed a sentence's last registry marker: that was checked mechanically for every one of the 156 before application, after an edit an hour earlier did exactly that and had to be undone. The rewrites name the actor where the file described itself in the passive -- 'is reported' became 'this section reports', 'that is stated' became 'the section that defines the population says so' -- and assert directly where the file stated a preference -- 'checked rather than assumed' became 'checked', 'a bounded absence rather than as silence' became 'a bounded absence'. Where a sentence carried two constructions both were taken in one edit, because the gate counts sentences and clearing one would have left the sentence a carrier."
+  },
+  {
+   "text": "Whether the same bound binds a predictor that applies no templates at all is not measured here; what is measured is that the chemistry is absent from the corpus, which is a property of the training data rather than of the method reading it",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the carrier constructions in paper2/si.tex: 'rather than', epistemic self-grading and 'is/are not a', which this file used at 5.08, 1.84 and 0.77 per thousand words against corpus maxima of 0.68, 0.26 and 0.11. One hundred and fifty-six of 197 carrier sentences were rewritten, twelve rejected by an adversarial reader and twenty-nine refused as load-bearing; none was deleted. Twenty-seven keys changed and all twenty-seven are rewordings, established by pairing and not by assumption: twenty-seven gone, twenty-seven new, every gone key pairing with a new one and no key left unpaired in either direction. No edit removed a sentence's last registry marker: that was checked mechanically for every one of the 156 before application, after an edit an hour earlier did exactly that and had to be undone. The rewrites name the actor where the file described itself in the passive -- 'is reported' became 'this section reports', 'that is stated' became 'the section that defines the population says so' -- and assert directly where the file stated a preference -- 'checked rather than assumed' became 'checked', 'a bounded absence rather than as silence' became 'a bounded absence'. Where a sentence carried two constructions both were taken in one edit, because the gate counts sentences and clearing one would have left the sentence a carrier."
+  },
+  {
+   "text": "That is a bound rather than a point, because it is derived from the marginals rather than from a join the paper does not report, and Section gives both counts it rests on and why they differ",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the carrier constructions in paper2/si.tex: 'rather than', epistemic self-grading and 'is/are not a', which this file used at 5.08, 1.84 and 0.77 per thousand words against corpus maxima of 0.68, 0.26 and 0.11. One hundred and fifty-six of 197 carrier sentences were rewritten, twelve rejected by an adversarial reader and twenty-nine refused as load-bearing; none was deleted. Twenty-seven keys changed and all twenty-seven are rewordings, established by pairing and not by assumption: twenty-seven gone, twenty-seven new, every gone key pairing with a new one and no key left unpaired in either direction. No edit removed a sentence's last registry marker: that was checked mechanically for every one of the 156 before application, after an edit an hour earlier did exactly that and had to be undone. The rewrites name the actor where the file described itself in the passive -- 'is reported' became 'this section reports', 'that is stated' became 'the section that defines the population says so' -- and assert directly where the file stated a preference -- 'checked rather than assumed' became 'checked', 'a bounded absence rather than as silence' became 'a bounded absence'. Where a sentence carried two constructions both were taken in one edit, because the gate counts sentences and clearing one would have left the sentence a carrier."
+  },
+  {
+   "text": "It is not a re-ranking of stored scores, which is why it is absent rather than deferred; it needs a training run at the deployed configuration and a re-scoring of every pool from it",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the carrier constructions in paper2/si.tex: 'rather than', epistemic self-grading and 'is/are not a', which this file used at 5.08, 1.84 and 0.77 per thousand words against corpus maxima of 0.68, 0.26 and 0.11. One hundred and fifty-six of 197 carrier sentences were rewritten, twelve rejected by an adversarial reader and twenty-nine refused as load-bearing; none was deleted. Twenty-seven keys changed and all twenty-seven are rewordings, established by pairing and not by assumption: twenty-seven gone, twenty-seven new, every gone key pairing with a new one and no key left unpaired in either direction. No edit removed a sentence's last registry marker: that was checked mechanically for every one of the 156 before application, after an edit an hour earlier did exactly that and had to be undone. The rewrites name the actor where the file described itself in the passive -- 'is reported' became 'this section reports', 'that is stated' became 'the section that defines the population says so' -- and assert directly where the file stated a preference -- 'checked rather than assumed' became 'checked', 'a bounded absence rather than as silence' became 'a bounded absence'. Where a sentence carried two constructions both were taken in one edit, because the gate counts sentences and clearing one would have left the sentence a carrier."
+  },
+  {
+   "text": "The subsample was fixed when the run was configured and is not a consequence of anything measured here, so what the ablations compare (Section ) is the value of each stage at that training budget rather than at the split's full size",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the carrier constructions in paper2/si.tex: 'rather than', epistemic self-grading and 'is/are not a', which this file used at 5.08, 1.84 and 0.77 per thousand words against corpus maxima of 0.68, 0.26 and 0.11. One hundred and fifty-six of 197 carrier sentences were rewritten, twelve rejected by an adversarial reader and twenty-nine refused as load-bearing; none was deleted. Twenty-seven keys changed and all twenty-seven are rewordings, established by pairing and not by assumption: twenty-seven gone, twenty-seven new, every gone key pairing with a new one and no key left unpaired in either direction. No edit removed a sentence's last registry marker: that was checked mechanically for every one of the 156 before application, after an edit an hour earlier did exactly that and had to be undone. The rewrites name the actor where the file described itself in the passive -- 'is reported' became 'this section reports', 'that is stated' became 'the section that defines the population says so' -- and assert directly where the file stated a preference -- 'checked rather than assumed' became 'checked', 'a bounded absence rather than as silence' became 'a bounded absence'. Where a sentence carried two constructions both were taken in one edit, because the gate counts sentences and clearing one would have left the sentence a carrier."
+  },
+  {
+   "text": "A rule that performs two edits can reach a metabolite two steps away in one application, so the ceiling is not the reach of one enzymatic step, and the depth-two experiment in the Limitations measures a second template application rather than a second enzymatic step",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the carrier constructions in paper2/si.tex: 'rather than', epistemic self-grading and 'is/are not a', which this file used at 5.08, 1.84 and 0.77 per thousand words against corpus maxima of 0.68, 0.26 and 0.11. One hundred and fifty-six of 197 carrier sentences were rewritten, twelve rejected by an adversarial reader and twenty-nine refused as load-bearing; none was deleted. Twenty-seven keys changed and all twenty-seven are rewordings, established by pairing and not by assumption: twenty-seven gone, twenty-seven new, every gone key pairing with a new one and no key left unpaired in either direction. No edit removed a sentence's last registry marker: that was checked mechanically for every one of the 156 before application, after an edit an hour earlier did exactly that and had to be undone. The rewrites name the actor where the file described itself in the passive -- 'is reported' became 'this section reports', 'that is stated' became 'the section that defines the population says so' -- and assert directly where the file stated a preference -- 'checked rather than assumed' became 'checked', 'a bounded absence rather than as silence' became 'a bounded absence'. Where a sentence carried two constructions both were taken in one edit, because the gate counts sentences and clearing one would have left the sentence a carrier."
+  },
+  {
+   "text": "If a fifth of the mined bank already performs two edits in one application, as P10 finds, a second application has little left to discover that the first did not already reach, and the observed lift of about 0.012 is what that predicts rather than a surprise",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the carrier constructions in paper2/si.tex: 'rather than', epistemic self-grading and 'is/are not a', which this file used at 5.08, 1.84 and 0.77 per thousand words against corpus maxima of 0.68, 0.26 and 0.11. One hundred and fifty-six of 197 carrier sentences were rewritten, twelve rejected by an adversarial reader and twenty-nine refused as load-bearing; none was deleted. Twenty-seven keys changed and all twenty-seven are rewordings, established by pairing and not by assumption: twenty-seven gone, twenty-seven new, every gone key pairing with a new one and no key left unpaired in either direction. No edit removed a sentence's last registry marker: that was checked mechanically for every one of the 156 before application, after an edit an hour earlier did exactly that and had to be undone. The rewrites name the actor where the file described itself in the passive -- 'is reported' became 'this section reports', 'that is stated' became 'the section that defines the population says so' -- and assert directly where the file stated a preference -- 'checked rather than assumed' became 'checked', 'a bounded absence rather than as silence' became 'a bounded absence'. Where a sentence carried two constructions both were taken in one edit, because the gate counts sentences and clearing one would have left the sentence a carrier."
+  },
+  {
+   "text": "Each is stated with its threshold so that a later result on any of them cannot be a threshold chosen after the fact",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the carrier constructions in paper2/si.tex: 'rather than', epistemic self-grading and 'is/are not a', which this file used at 5.08, 1.84 and 0.77 per thousand words against corpus maxima of 0.68, 0.26 and 0.11. One hundred and fifty-six of 197 carrier sentences were rewritten, twelve rejected by an adversarial reader and twenty-nine refused as load-bearing; none was deleted. Twenty-seven keys changed and all twenty-seven are rewordings, established by pairing and not by assumption: twenty-seven gone, twenty-seven new, every gone key pairing with a new one and no key left unpaired in either direction. No edit removed a sentence's last registry marker: that was checked mechanically for every one of the 156 before application, after an edit an hour earlier did exactly that and had to be undone. The rewrites name the actor where the file described itself in the passive -- 'is reported' became 'this section reports', 'that is stated' became 'the section that defines the population says so' -- and assert directly where the file stated a preference -- 'checked rather than assumed' became 'checked', 'a bounded absence rather than as silence' became 'a bounded absence'. Where a sentence carried two constructions both were taken in one edit, because the gate counts sentences and clearing one would have left the sentence a carrier."
+  },
+  {
+   "text": "Taking it to this population means a second submission of the substrates outside the comparison set, it was not made, and the reason is the cost of a submission rather than an inability: this paper counts one other absence as unforced for the same reason and this one is the second",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the carrier constructions in paper2/si.tex: 'rather than', epistemic self-grading and 'is/are not a', which this file used at 5.08, 1.84 and 0.77 per thousand words against corpus maxima of 0.68, 0.26 and 0.11. One hundred and fifty-six of 197 carrier sentences were rewritten, twelve rejected by an adversarial reader and twenty-nine refused as load-bearing; none was deleted. Twenty-seven keys changed and all twenty-seven are rewordings, established by pairing and not by assumption: twenty-seven gone, twenty-seven new, every gone key pairing with a new one and no key left unpaired in either direction. No edit removed a sentence's last registry marker: that was checked mechanically for every one of the 156 before application, after an edit an hour earlier did exactly that and had to be undone. The rewrites name the actor where the file described itself in the passive -- 'is reported' became 'this section reports', 'that is stated' became 'the section that defines the population says so' -- and assert directly where the file stated a preference -- 'checked rather than assumed' became 'checked', 'a bounded absence rather than as silence' became 'a bounded absence'. Where a sentence carried two constructions both were taken in one edit, because the gate counts sentences and clearing one would have left the sentence a carrier."
+  },
+  {
+   "text": "Two populations is a weak design and we do not offer it as a general claim; it is reported because the alternative is to say nothing about a population anyone can see is not random",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the carrier constructions in paper2/si.tex: 'rather than', epistemic self-grading and 'is/are not a', which this file used at 5.08, 1.84 and 0.77 per thousand words against corpus maxima of 0.68, 0.26 and 0.11. One hundred and fifty-six of 197 carrier sentences were rewritten, twelve rejected by an adversarial reader and twenty-nine refused as load-bearing; none was deleted. Twenty-seven keys changed and all twenty-seven are rewordings, established by pairing and not by assumption: twenty-seven gone, twenty-seven new, every gone key pairing with a new one and no key left unpaired in either direction. No edit removed a sentence's last registry marker: that was checked mechanically for every one of the 156 before application, after an edit an hour earlier did exactly that and had to be undone. The rewrites name the actor where the file described itself in the passive -- 'is reported' became 'this section reports', 'that is stated' became 'the section that defines the population says so' -- and assert directly where the file stated a preference -- 'checked rather than assumed' became 'checked', 'a bounded absence rather than as silence' became 'a bounded absence'. Where a sentence carried two constructions both were taken in one edit, because the gate counts sentences and clearing one would have left the sentence a carrier."
+  },
+  {
+   "text": "The worked example in full The example is reported on both drawings of the substrate, because the drawing decides which templates can fire on it and the corpus's drawing is not the one a chemist would use",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the carrier constructions in paper2/si.tex: 'rather than', epistemic self-grading and 'is/are not a', which this file used at 5.08, 1.84 and 0.77 per thousand words against corpus maxima of 0.68, 0.26 and 0.11. One hundred and fifty-six of 197 carrier sentences were rewritten, twelve rejected by an adversarial reader and twenty-nine refused as load-bearing; none was deleted. Twenty-seven keys changed and all twenty-seven are rewordings, established by pairing and not by assumption: twenty-seven gone, twenty-seven new, every gone key pairing with a new one and no key left unpaired in either direction. No edit removed a sentence's last registry marker: that was checked mechanically for every one of the 156 before application, after an edit an hour earlier did exactly that and had to be undone. The rewrites name the actor where the file described itself in the passive -- 'is reported' became 'this section reports', 'that is stated' became 'the section that defines the population says so' -- and assert directly where the file stated a preference -- 'checked rather than assumed' became 'checked', 'a bounded absence rather than as silence' became 'a bounded absence'. Where a sentence carried two constructions both were taken in one edit, because the gate counts sentences and clearing one would have left the sentence a carrier."
+  },
+  {
+   "text": "To give the registered effects a scale, the generator and the filter were retrained under N seeds and the whole pipeline re-evaluated on the full test split: macro recall at a budget of 15 is N with a standard deviation of N , and micro N with N . That study ran at an earlier operating point than th",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the carrier constructions in paper2/si.tex: 'rather than', epistemic self-grading and 'is/are not a', which this file used at 5.08, 1.84 and 0.77 per thousand words against corpus maxima of 0.68, 0.26 and 0.11. One hundred and fifty-six of 197 carrier sentences were rewritten, twelve rejected by an adversarial reader and twenty-nine refused as load-bearing; none was deleted. Twenty-seven keys changed and all twenty-seven are rewordings, established by pairing and not by assumption: twenty-seven gone, twenty-seven new, every gone key pairing with a new one and no key left unpaired in either direction. No edit removed a sentence's last registry marker: that was checked mechanically for every one of the 156 before application, after an edit an hour earlier did exactly that and had to be undone. The rewrites name the actor where the file described itself in the passive -- 'is reported' became 'this section reports', 'that is stated' became 'the section that defines the population says so' -- and assert directly where the file stated a preference -- 'checked rather than assumed' became 'checked', 'a bounded absence rather than as silence' became 'a bounded absence'. Where a sentence carried two constructions both were taken in one edit, because the gate counts sentences and clearing one would have left the sentence a carrier."
+  },
+  {
+   "text": "N substrates did not finish the deeper scenario inside a ninety-second deadline and keep their deployed lists, which can only favour SyGMa's arm in the comparison rather than harm it",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the carrier constructions in paper2/si.tex: 'rather than', epistemic self-grading and 'is/are not a', which this file used at 5.08, 1.84 and 0.77 per thousand words against corpus maxima of 0.68, 0.26 and 0.11. One hundred and fifty-six of 197 carrier sentences were rewritten, twelve rejected by an adversarial reader and twenty-nine refused as load-bearing; none was deleted. Twenty-seven keys changed and all twenty-seven are rewordings, established by pairing and not by assumption: twenty-seven gone, twenty-seven new, every gone key pairing with a new one and no key left unpaired in either direction. No edit removed a sentence's last registry marker: that was checked mechanically for every one of the 156 before application, after an edit an hour earlier did exactly that and had to be undone. The rewrites name the actor where the file described itself in the passive -- 'is reported' became 'this section reports', 'that is stated' became 'the section that defines the population says so' -- and assert directly where the file stated a preference -- 'checked rather than assumed' became 'checked', 'a bounded absence rather than as silence' became 'a bounded absence'. Where a sentence carried two constructions both were taken in one edit, because the gate counts sentences and clearing one would have left the sentence a carrier."
+  },
+  {
+   "text": "A paper arguing that an undeclared emission budget reorders a published table cannot report its own comparison at one budget and call the ordering a property of the systems, and the matched-length control reaches the same verdict from the other direction by truncating the longer list rather than len",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the carrier constructions in paper2/si.tex: 'rather than', epistemic self-grading and 'is/are not a', which this file used at 5.08, 1.84 and 0.77 per thousand words against corpus maxima of 0.68, 0.26 and 0.11. One hundred and fifty-six of 197 carrier sentences were rewritten, twelve rejected by an adversarial reader and twenty-nine refused as load-bearing; none was deleted. Twenty-seven keys changed and all twenty-seven are rewordings, established by pairing and not by assumption: twenty-seven gone, twenty-seven new, every gone key pairing with a new one and no key left unpaired in either direction. No edit removed a sentence's last registry marker: that was checked mechanically for every one of the 156 before application, after an edit an hour earlier did exactly that and had to be undone. The rewrites name the actor where the file described itself in the passive -- 'is reported' became 'this section reports', 'that is stated' became 'the section that defines the population says so' -- and assert directly where the file stated a preference -- 'checked rather than assumed' became 'checked', 'a bounded absence rather than as silence' became 'a bounded absence'. Where a sentence carried two constructions both were taken in one edit, because the gate counts sentences and clearing one would have left the sentence a carrier."
+  },
+  {
+   "text": "A comparison against a service cannot be made reproducible by the party running the comparison; declaring what it can pin, and naming what it cannot, is the whole of what is available, and the shortfall belongs in the record rather than out of it",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the carrier constructions in paper2/si.tex: 'rather than', epistemic self-grading and 'is/are not a', which this file used at 5.08, 1.84 and 0.77 per thousand words against corpus maxima of 0.68, 0.26 and 0.11. One hundred and fifty-six of 197 carrier sentences were rewritten, twelve rejected by an adversarial reader and twenty-nine refused as load-bearing; none was deleted. Twenty-seven keys changed and all twenty-seven are rewordings, established by pairing and not by assumption: twenty-seven gone, twenty-seven new, every gone key pairing with a new one and no key left unpaired in either direction. No edit removed a sentence's last registry marker: that was checked mechanically for every one of the 156 before application, after an edit an hour earlier did exactly that and had to be undone. The rewrites name the actor where the file described itself in the passive -- 'is reported' became 'this section reports', 'that is stated' became 'the section that defines the population says so' -- and assert directly where the file stated a preference -- 'checked rather than assumed' became 'checked', 'a bounded absence rather than as silence' became 'a bounded absence'. Where a sentence carried two constructions both were taken in one edit, because the gate counts sentences and clearing one would have left the sentence a carrier."
+  },
+  {
+   "text": "That is a weaker provenance than the other four arms have and it is stated rather than smoothed over: what is pinned is the submission, the returned predictions and the version the service reported; the record stops short of a binary anyone can re-run offline",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the carrier constructions in paper2/si.tex: 'rather than', epistemic self-grading and 'is/are not a', which this file used at 5.08, 1.84 and 0.77 per thousand words against corpus maxima of 0.68, 0.26 and 0.11. One hundred and fifty-six of 197 carrier sentences were rewritten, twelve rejected by an adversarial reader and twenty-nine refused as load-bearing; none was deleted. Twenty-seven keys changed and all twenty-seven are rewordings, established by pairing and not by assumption: twenty-seven gone, twenty-seven new, every gone key pairing with a new one and no key left unpaired in either direction. No edit removed a sentence's last registry marker: that was checked mechanically for every one of the 156 before application, after an edit an hour earlier did exactly that and had to be undone. The rewrites name the actor where the file described itself in the passive -- 'is reported' became 'this section reports', 'that is stated' became 'the section that defines the population says so' -- and assert directly where the file stated a preference -- 'checked rather than assumed' became 'checked', 'a bounded absence rather than as silence' became 'a bounded absence'. Where a sentence carried two constructions both were taken in one edit, because the gate counts sentences and clearing one would have left the sentence a carrier."
+  },
+  {
+   "text": "It is run at allHuman for one step, which is one application of its own rules and the closest counterpart to what this work's arms do; it is not a claim that every arm is allowed the same enzymatic depth, since SyGMa's deployed scenario composes a phase-one and a phase-two ruleset and a mined templa",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the carrier constructions in paper2/si.tex: 'rather than', epistemic self-grading and 'is/are not a', which this file used at 5.08, 1.84 and 0.77 per thousand words against corpus maxima of 0.68, 0.26 and 0.11. One hundred and fifty-six of 197 carrier sentences were rewritten, twelve rejected by an adversarial reader and twenty-nine refused as load-bearing; none was deleted. Twenty-seven keys changed and all twenty-seven are rewordings, established by pairing and not by assumption: twenty-seven gone, twenty-seven new, every gone key pairing with a new one and no key left unpaired in either direction. No edit removed a sentence's last registry marker: that was checked mechanically for every one of the 156 before application, after an edit an hour earlier did exactly that and had to be undone. The rewrites name the actor where the file described itself in the passive -- 'is reported' became 'this section reports', 'that is stated' became 'the section that defines the population says so' -- and assert directly where the file stated a preference -- 'checked rather than assumed' became 'checked', 'a bounded absence rather than as silence' became 'a bounded absence'. Where a sentence carried two constructions both were taken in one edit, because the gate counts sentences and clearing one would have left the sentence a carrier."
+  },
+  {
+   "text": "The list is closed by a rule: a comparator that could not be obtained is reported as unavailable with its reason, is not dropped silently, and the list is not extended after the first run",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the carrier constructions in paper2/si.tex: 'rather than', epistemic self-grading and 'is/are not a', which this file used at 5.08, 1.84 and 0.77 per thousand words against corpus maxima of 0.68, 0.26 and 0.11. One hundred and fifty-six of 197 carrier sentences were rewritten, twelve rejected by an adversarial reader and twenty-nine refused as load-bearing; none was deleted. Twenty-seven keys changed and all twenty-seven are rewordings, established by pairing and not by assumption: twenty-seven gone, twenty-seven new, every gone key pairing with a new one and no key left unpaired in either direction. No edit removed a sentence's last registry marker: that was checked mechanically for every one of the 156 before application, after an edit an hour earlier did exactly that and had to be undone. The rewrites name the actor where the file described itself in the passive -- 'is reported' became 'this section reports', 'that is stated' became 'the section that defines the population says so' -- and assert directly where the file stated a preference -- 'checked rather than assumed' became 'checked', 'a bounded absence rather than as silence' became 'a bounded absence'. Where a sentence carried two constructions both were taken in one edit, because the gate counts sentences and clearing one would have left the sentence a carrier."
+  },
+  {
+   "text": "It also records, beside that arm, the one it replaced: an early dump ranked by the product of the two component scores over a narrower pool, which reached N at k=50 . No number in this paper derives from that column, and it is kept rather than deleted so that the column can still be identified in an",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded in the pass over the carrier constructions in paper2/si.tex: 'rather than', epistemic self-grading and 'is/are not a', which this file used at 5.08, 1.84 and 0.77 per thousand words against corpus maxima of 0.68, 0.26 and 0.11. One hundred and fifty-six of 197 carrier sentences were rewritten, twelve rejected by an adversarial reader and twenty-nine refused as load-bearing; none was deleted. Twenty-seven keys changed and all twenty-seven are rewordings, established by pairing and not by assumption: twenty-seven gone, twenty-seven new, every gone key pairing with a new one and no key left unpaired in either direction. No edit removed a sentence's last registry marker: that was checked mechanically for every one of the 156 before application, after an edit an hour earlier did exactly that and had to be undone. The rewrites name the actor where the file described itself in the passive -- 'is reported' became 'this section reports', 'that is stated' became 'the section that defines the population says so' -- and assert directly where the file stated a preference -- 'checked rather than assumed' became 'checked', 'a bounded absence rather than as silence' became 'a bounded absence'. Where a sentence carried two constructions both were taken in one edit, because the gate counts sentences and clearing one would have left the sentence a carrier."
   }
  ],
  "question": "every sentence in which this work concedes something, recorded before a cut so that what a cut costs is visible rather than invisible",
@@ -458,7 +752,7 @@
   "paper2/table_hypotheses.tex",
   "paper2/table_grain.tex"
  ],
- "n": 245,
+ "n": 246,
  "reading": "a disclosure counts as present if it survives in ANY of the sources: moving one to the Supporting Information shortens the manuscript without retracting anything, and deleting one shortens it by retracting something",
  "disclosures": {
   "achemso amsmath amssymb booktabs threeparttable graphicx microtype xr si nikita l polomoshnov faculty of bioengineering and bioinformatics lomonosov moscow state university leninskie gory moscow russia nikitapol fbb msu ru anastasia v rudik department of bioinformatics institute of biomedical chemistry pogodinskaya str moscow russia metabolite predictors have a multiverse problem document abstract published predictors of metabolite structure cannot be compared with one another because recall depends on how a predicted structure is judged to match a reference and on how many candidates a system may return and papers in this area declare neither": {
@@ -551,8 +845,8 @@
     "paper2/si.tex"
    ]
   },
-  "most other declared choices here are swept and this one was declared and not measured so table measures it": {
-   "text": "Most other declared choices here are swept, and this one was declared and not measured, so Table measures it",
+  "most other declared choices here are swept and this one was declared but its cost was not measured so table measures it": {
+   "text": "Most other declared choices here are swept, and this one was declared but its cost was not measured, so Table measures it",
    "in": [
     "paper2/si.tex"
    ]
@@ -575,8 +869,8 @@
     "paper2/si.tex"
    ]
   },
-  "where a method runs out of candidates at the widest budgets the comparison is partly measuring list length rather than ranking and the counts that say by how much are here at every budget rather than only at the one the main text prints": {
-   "text": "Where a method runs out of candidates At the widest budgets the comparison is partly measuring list length rather than ranking, and the counts that say by how much are here at every budget rather than only at the one the main text prints",
+  "where a method runs out of candidates at the widest budgets the comparison is partly a measure of list length not of ranking and the counts that say by how much are here at every budget not only at the one the main text prints": {
+   "text": "Where a method runs out of candidates At the widest budgets the comparison is partly a measure of list length, not of ranking, and the counts that say by how much are here at every budget, not only at the one the main text prints",
    "in": [
     "paper2/si.tex"
    ]
@@ -635,8 +929,8 @@
     "paper2/si.tex"
    ]
   },
-  "the two are then read over the same slots on every substrate rather than on average which is what a nominal budget cannot do": {
-   "text": "The two are then read over the same slots on every substrate rather than on average, which is what a nominal budget cannot do",
+  "the two are then read over the same slots on every substrate never on average which is what a nominal budget cannot do": {
+   "text": "The two are then read over the same slots on every substrate, never on average, which is what a nominal budget cannot do",
    "in": [
     "paper2/si.tex"
    ]
@@ -647,8 +941,8 @@
     "paper2/si.tex"
    ]
   },
-  "the drawing correction against sygma is measured rather than deducted since a correction taken at a fixed budget cannot be subtracted from a margin taken over a comparator s own slot count": {
-   "text": "The drawing correction against SyGMa is measured rather than deducted, since a correction taken at a fixed budget cannot be subtracted from a margin taken over a comparator's own slot count",
+  "the drawing correction against sygma is measured afresh since a correction taken at a fixed budget cannot be subtracted from a margin taken over a comparator s own slot count": {
+   "text": "The drawing correction against SyGMa is measured afresh, since a correction taken at a fixed budget cannot be subtracted from a margin taken over a comparator's own slot count",
    "in": [
     "paper2/si.tex"
    ]
@@ -659,8 +953,8 @@
     "paper2/si.tex"
    ]
   },
-  "the exhaustive mode s lead over metatox at k excludes zero by little and its two unresolved budgets k and k have intervals straddling zero narrowly rather than lying far from it against metatox it even leads at k one of the four leads the family wise correction removes": {
-   "text": "The exhaustive mode's lead over MetaTox at k=30 excludes zero by little, and its two unresolved budgets, k=15 and k=20 , have intervals straddling zero narrowly rather than lying far from it. against MetaTox it even leads at k=10 , + N [ N , N ] , one of the four leads the family-wise correction rem",
+  "the exhaustive mode s lead over metatox at k excludes zero by little and its two unresolved budgets k and k have intervals that straddle zero narrowly against metatox it even leads at k one of the four leads the family wise correction removes": {
+   "text": "The exhaustive mode's lead over MetaTox at k=30 excludes zero by little, and its two unresolved budgets, k=15 and k=20 , have intervals that straddle zero narrowly. against MetaTox it even leads at k=10 , + N [ N , N ] , one of the four leads the family-wise correction removes",
    "in": [
     "paper2/si.tex"
    ]
@@ -677,14 +971,14 @@
     "paper2/si.tex"
    ]
   },
-  "whatever the two ends share it is not strictness and it is not the dialect and the entanglement is a property of the strict column rather than the reason it reads as it does": {
-   "text": "Whatever the two ends share, it is not strictness and it is not the dialect, and the entanglement is a property of the strict column rather than the reason it reads as it does",
+  "whatever the two ends share it is not strictness and it is not the dialect and the entanglement is a property of the strict column not the reason it reads as it does": {
+   "text": "Whatever the two ends share, it is not strictness and it is not the dialect, and the entanglement is a property of the strict column, not the reason it reads as it does",
    "in": [
     "paper2/si.tex"
    ]
   },
-  "the tautomer aware key exists because reproducing a corpus s tautomer is not the question a comparison should be asking and the canonical column is reported because declaring a criterion means printing what it does not only the one whose behaviour suits the argument": {
-   "text": "The tautomer-aware key exists because reproducing a corpus's tautomer is not the question a comparison should be asking, and the canonical column is reported because declaring a criterion means printing what it does, not only the one whose behaviour suits the argument",
+  "the tautomer aware key exists because reproducing a corpus s tautomer is not the question a comparison should be asking and the paper reports the canonical column because declaring a criterion means printing what it does not only the one whose behaviour suits the argument": {
+   "text": "The tautomer-aware key exists because reproducing a corpus's tautomer is not the question a comparison should be asking, and the paper reports the canonical column because declaring a criterion means printing what it does, not only the one whose behaviour suits the argument",
    "in": [
     "paper2/si.tex"
    ]
@@ -809,8 +1103,8 @@
     "paper2/si.tex"
    ]
   },
-  "validation and not the comparison set because a budget chosen on the population the comparison is reported on would be chosen on the test figure htbp micro recall against the rule budget on the validation draw one line per output budget k the vertical rule marks the budget the released checkpoint was trained at figure that the model is identical across the points is checked and not assumed because it is the one thing a pool did not record": {
-   "text": "Validation and not the comparison set, because a budget chosen on the population the comparison is reported on would be chosen on the test. figure [htbp] Micro recall against the rule budget on the validation draw, one line per output budget k . The vertical rule marks the budget the released checkp",
+  "validation because a budget chosen on the population the comparison reports on would be chosen on the test figure htbp micro recall against the rule budget on the validation draw one line per output budget k the vertical rule marks the budget the released checkpoint was trained at figure that the model is identical across the points is checked by measurement because it is the one thing a pool did not record": {
+   "text": "Validation, because a budget chosen on the population the comparison reports on would be chosen on the test. figure [htbp] Micro recall against the rule budget on the validation draw, one line per output budget k . The vertical rule marks the budget the released checkpoint was trained at. figure Tha",
    "in": [
     "paper2/si.tex"
    ]
@@ -839,8 +1133,8 @@
     "paper2/si.tex"
    ]
   },
-  "that is what supports the word most and it is a bound rather than a point because the join itself is not reported here": {
-   "text": "That is what supports the word most , and it is a bound rather than a point because the join itself is not reported here",
+  "that is what supports the word most and it is a bound not a point because the join itself is not reported here": {
+   "text": "That is what supports the word most , and it is a bound, not a point, because the join itself is not reported here",
    "in": [
     "paper2/si.tex"
    ]
@@ -857,20 +1151,20 @@
     "paper2/si.tex"
    ]
   },
-  "the same permutation test returns p and does not separate and the reason is the size of the set rather than the size of the effect typed pairs on one side and on the other spread over types leave almost every type a singleton so a shuffled label reaches nearly that distance too": {
-   "text": "The same permutation test returns p= N and does not separate, and the reason is the size of the set rather than the size of the effect: N typed pairs on one side and N on the other spread over N types leave almost every type a singleton, so a shuffled label reaches nearly that distance too",
+  "the same permutation test returns p and does not separate and the reason is the size of the set not the size of the effect typed pairs on one side and on the other spread over types leave almost every type a singleton so a shuffled label reaches nearly that distance too": {
+   "text": "The same permutation test returns p= N and does not separate, and the reason is the size of the set, not the size of the effect: N typed pairs on one side and N on the other spread over N types leave almost every type a singleton, so a shuffled label reaches nearly that distance too",
    "in": [
     "paper2/si.tex"
    ]
   },
-  "whether the same bound binds a predictor that applies no templates at all is not measured here what is measured is that the chemistry is absent from the corpus which is a property of the training data rather than of the method reading it": {
-   "text": "Whether the same bound binds a predictor that applies no templates at all is not measured here; what is measured is that the chemistry is absent from the corpus, which is a property of the training data rather than of the method reading it",
+  "whether the same bound binds a predictor that applies no templates at all is not measured here what is measured is that the chemistry is absent from the corpus which is a property of the training data not of the method reading it": {
+   "text": "Whether the same bound binds a predictor that applies no templates at all is not measured here; what is measured is that the chemistry is absent from the corpus, which is a property of the training data, not of the method reading it",
    "in": [
     "paper2/si.tex"
    ]
   },
-  "that is a bound rather than a point because it is derived from the marginals rather than from a join the paper does not report and section gives both counts it rests on and why they differ": {
-   "text": "That is a bound rather than a point, because it is derived from the marginals rather than from a join the paper does not report, and Section gives both counts it rests on and why they differ",
+  "that is a bound not a point because it is derived from the marginals the paper does not report the join and section gives both counts it rests on and why they differ": {
+   "text": "That is a bound, not a point, because it is derived from the marginals; the paper does not report the join, and Section gives both counts it rests on and why they differ",
    "in": [
     "paper2/si.tex"
    ]
@@ -905,14 +1199,14 @@
     "paper2/si.tex"
    ]
   },
-  "measuring the sweep on the population this paper reports is not the objection section raises against the aggregation blend": {
-   "text": "Measuring the sweep on the population this paper reports is not the objection Section raises against the aggregation blend",
+  "measuring the sweep on the population this paper reports is not the selection section forbids for the aggregation blend": {
+   "text": "Measuring the sweep on the population this paper reports is not the selection Section forbids for the aggregation blend",
    "in": [
     "paper2/si.tex"
    ]
   },
-  "the released pools carry one aggregated score per candidate and not the per template scores a different rule needs so the question cannot be answered from them": {
-   "text": "The released pools carry one aggregated score per candidate and not the per-template scores a different rule needs, so the question cannot be answered from them",
+  "the released pools carry one aggregated score per candidate with the per template scores a different rule needs collapsed away so the question cannot be answered from them": {
+   "text": "The released pools carry one aggregated score per candidate, with the per-template scores a different rule needs collapsed away, so the question cannot be answered from them",
    "in": [
     "paper2/si.tex"
    ]
@@ -959,14 +1253,14 @@
     "paper2/si.tex"
    ]
   },
-  "at an output budget of it is not a null where k falls short so flatness holds at three of the four budgets and not at all of them section": {
-   "text": "At an output budget of 30 it is not a null, where K= N falls N [ N , N ] short, so flatness holds at three of the four budgets and not at all of them (Section )",
+  "at an output budget of it is not a null where k falls short so flatness holds at three of the four budgets and fails at the fourth section": {
+   "text": "At an output budget of 30 it is not a null, where K= N falls N [ N , N ] short, so flatness holds at three of the four budgets and fails at the fourth (Section )",
    "in": [
     "paper2/si.tex"
    ]
   },
-  "the deployed combination is reciprocal rank fusion where r i c is the rank of c under scorer i the aggregation taken from the budget measured and not adopted the blend of equation is better than the released rule at the head of the list and no better at depth so its sign turns along the output budget and one fixed rule runs the weaker of the two over half the range": {
-   "text": "The deployed combination is reciprocal rank fusion , where r i(c) is the rank of c under scorer i . The aggregation taken from the budget, measured and not adopted The blend of Equation is better than the released rule at the head of the list and no better at depth, so its sign turns along the outpu",
+  "the deployed combination is reciprocal rank fusion where r i c is the rank of c under scorer i the aggregation taken from the budget measured and declined the blend of equation is better than the released rule at the head of the list and no better at depth so its sign turns along the output budget and one fixed rule runs the weaker of the two over half the range": {
+   "text": "The deployed combination is reciprocal rank fusion , where r i(c) is the rank of c under scorer i . The aggregation taken from the budget, measured and declined The blend of Equation is better than the released rule at the head of the list and no better at depth, so its sign turns along the output b",
    "in": [
     "paper2/si.tex"
    ]
@@ -1007,8 +1301,8 @@
     "paper2/si.tex"
    ]
   },
-  "the gate the release applied and the measurement did not one of the settings in that table describes a selection no number here is measured under and it is worth separating from the ones that are": {
-   "text": "The gate the release applied and the measurement did not One of the settings in that table describes a selection no number here is measured under, and it is worth separating from the ones that are",
+  "the gate the release applied and the measurement did not one of the settings in that table describes a selection no number here is measured under and this section separates it from the ones that are": {
+   "text": "The gate the release applied and the measurement did not One of the settings in that table describes a selection no number here is measured under, and this section separates it from the ones that are",
    "in": [
     "paper2/si.tex"
    ]
@@ -1025,14 +1319,14 @@
     "paper2/si.tex"
    ]
   },
-  "the same silence makes precision pessimistic by a bounded but unknown amount which is why the paper reports it without using it to order systems": {
-   "text": "The same silence makes precision pessimistic by a bounded but unknown amount, which is why the paper reports it without using it to order systems",
+  "the same silence makes precision pessimistic by a bounded but unknown amount the paper therefore reports it without using it to order systems": {
+   "text": "The same silence makes precision pessimistic by a bounded but unknown amount; the paper therefore reports it without using it to order systems",
    "in": [
     "paper2/si.tex"
    ]
   },
-  "it is not a re ranking of stored scores which is why it is absent rather than deferred it needs a training run at the deployed configuration and a re scoring of every pool from it": {
-   "text": "It is not a re-ranking of stored scores, which is why it is absent rather than deferred; it needs a training run at the deployed configuration and a re-scoring of every pool from it",
+  "it is not a re ranking of stored scores so it is absent not deferred it needs a training run at the deployed configuration and a re scoring of every pool from it": {
+   "text": "It is not a re-ranking of stored scores, so it is absent, not deferred; it needs a training run at the deployed configuration and a re-scoring of every pool from it",
    "in": [
     "paper2/si.tex"
    ]
@@ -1043,8 +1337,8 @@
     "paper2/si.tex"
    ]
   },
-  "the subsample was fixed when the run was configured and is not a consequence of anything measured here so what the ablations compare section is the value of each stage at that training budget rather than at the split s full size": {
-   "text": "The subsample was fixed when the run was configured and is not a consequence of anything measured here, so what the ablations compare (Section ) is the value of each stage at that training budget rather than at the split's full size",
+  "the subsample was fixed when the run was configured and is not a consequence of anything measured here so what the ablations compare section is the value of each stage at that training budget not at the split s full size": {
+   "text": "The subsample was fixed when the run was configured and is not a consequence of anything measured here, so what the ablations compare (Section ) is the value of each stage at that training budget, not at the split's full size",
    "in": [
     "paper2/si.tex"
    ]
@@ -1067,20 +1361,26 @@
     "paper2/si.tex"
    ]
   },
-  "the reaction centre of the source pair located by the same maximum common substructure route the transformation types use falls in more than one piece for of the mined templates one mined template could not be scored so the denominator throughout this section is and not a centre in two pieces is one event when a bond appears or disappears between them which is what a cleavage or a cyclisation looks like and two independent edits otherwise this instrument counts the pieces and does not separate the two cases": {
-   "text": "The reaction centre of the source pair, located by the same maximum-common-substructure route the transformation types use, falls in more than one piece for N of the N mined templates, N . One mined template could not be scored, so the denominator throughout this section is N and not N . A centre in",
+  "the reaction centre of the source pair located by the same maximum common substructure route the transformation types use falls in more than one piece for of the mined templates one mined template could not be scored so the denominator throughout this section is the scored templates out of the mined": {
+   "text": "The reaction centre of the source pair, located by the same maximum-common-substructure route the transformation types use, falls in more than one piece for N of the N mined templates, N . One mined template could not be scored, so the denominator throughout this section is the N scored templates, o",
    "in": [
     "paper2/si.tex"
    ]
   },
-  "a rule that performs two edits can reach a metabolite two steps away in one application so the ceiling is not the reach of one enzymatic step and the depth two experiment in the limitations measures a second template application rather than a second enzymatic step": {
-   "text": "A rule that performs two edits can reach a metabolite two steps away in one application, so the ceiling is not the reach of one enzymatic step, and the depth-two experiment in the Limitations measures a second template application rather than a second enzymatic step",
+  "a centre in two pieces is one event when a bond appears or disappears between them which is what a cleavage or a cyclisation looks like and two independent edits otherwise this instrument counts the pieces and does not separate the two cases": {
+   "text": "A centre in two pieces is one event when a bond appears or disappears between them, which is what a cleavage or a cyclisation looks like, and two independent edits otherwise; this instrument counts the pieces and does not separate the two cases",
    "in": [
     "paper2/si.tex"
    ]
   },
-  "if a fifth of the mined bank already performs two edits in one application as p finds a second application has little left to discover that the first did not already reach and the observed lift of about is what that predicts rather than a surprise": {
-   "text": "If a fifth of the mined bank already performs two edits in one application, as P10 finds, a second application has little left to discover that the first did not already reach, and the observed lift of about 0.012 is what that predicts rather than a surprise",
+  "a rule that performs two edits can reach a metabolite two steps away in one application so the ceiling is not the reach of one enzymatic step and the depth two experiment in the limitations measures a second template application not a second enzymatic step": {
+   "text": "A rule that performs two edits can reach a metabolite two steps away in one application, so the ceiling is not the reach of one enzymatic step, and the depth-two experiment in the Limitations measures a second template application, not a second enzymatic step",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "if a fifth of the mined bank already performs two edits in one application as p finds a second application has little left to discover that the first did not already reach and the observed lift of about is what that predicts": {
+   "text": "If a fifth of the mined bank already performs two edits in one application, as P10 finds, a second application has little left to discover that the first did not already reach, and the observed lift of about 0.012 is what that predicts",
    "in": [
     "paper2/si.tex"
    ]
@@ -1103,8 +1403,8 @@
     "paper2/si.tex"
    ]
   },
-  "each is stated with its threshold so that a later result on any of them cannot be a threshold chosen after the fact": {
-   "text": "Each is stated with its threshold so that a later result on any of them cannot be a threshold chosen after the fact",
+  "the register states each with its threshold so that a later result on any of them cannot be a threshold chosen after the fact": {
+   "text": "The register states each with its threshold so that a later result on any of them cannot be a threshold chosen after the fact",
    "in": [
     "paper2/si.tex"
    ]
@@ -1139,8 +1439,8 @@
     "paper2/si.tex"
    ]
   },
-  "taking it to this population means a second submission of the substrates outside the comparison set it was not made and the reason is the cost of a submission rather than an inability this paper counts one other absence as unforced for the same reason and this one is the second": {
-   "text": "Taking it to this population means a second submission of the substrates outside the comparison set, it was not made, and the reason is the cost of a submission rather than an inability: this paper counts one other absence as unforced for the same reason and this one is the second",
+  "taking it to this population means a second submission of the substrates outside the comparison set it was not made and the reason is the cost of a submission not an inability this paper counts one other absence as unforced for the same reason and this one is the second": {
+   "text": "Taking it to this population means a second submission of the substrates outside the comparison set, it was not made, and the reason is the cost of a submission, not an inability: this paper counts one other absence as unforced for the same reason and this one is the second",
    "in": [
     "paper2/si.tex"
    ]
@@ -1163,19 +1463,19 @@
     "paper2/si.tex"
    ]
   },
-  "two populations is a weak design and we do not offer it as a general claim it is reported because the alternative is to say nothing about a population anyone can see is not random": {
-   "text": "Two populations is a weak design and we do not offer it as a general claim; it is reported because the alternative is to say nothing about a population anyone can see is not random",
+  "two populations is a weak design and we do not offer it as a general claim we report it because the alternative is to say nothing about a population anyone can see is not random": {
+   "text": "Two populations is a weak design and we do not offer it as a general claim; we report it because the alternative is to say nothing about a population anyone can see is not random",
    "in": [
     "paper2/si.tex"
    ]
   },
-  "the worked example in full the example is reported on both drawings of the substrate because the drawing decides which templates can fire on it and the corpus s drawing is not the one a chemist would use": {
-   "text": "The worked example in full The example is reported on both drawings of the substrate, because the drawing decides which templates can fire on it and the corpus's drawing is not the one a chemist would use",
+  "the worked example in full we work the example on both drawings of the substrate because the drawing decides which templates can fire on it and the corpus s drawing is not the one a chemist would use": {
+   "text": "The worked example in full We work the example on both drawings of the substrate, because the drawing decides which templates can fire on it and the corpus's drawing is not the one a chemist would use",
    "in": [
     "paper2/si.tex"
    ]
   },
-  "to give the registered effects a scale the generator and the filter were retrained under seeds and the whole pipeline re evaluated on the full test split macro recall at a budget of is with a standard deviation of and micro with that study ran at an earlier operating point than the configuration the manuscript reports so its level is not comparable with those tables and whether its spread carries across operating points was assumed rather than shown": {
+  "to give the registered effects a scale the generator and the filter were retrained under seeds and the whole pipeline re evaluated on the full test split macro recall at a budget of is with a standard deviation of and micro with that study ran at an earlier operating point than the configuration the manuscript reports so its level is not comparable with those tables and whether its spread carries across operating points was assumed not shown": {
    "text": "To give the registered effects a scale, the generator and the filter were retrained under N seeds and the whole pipeline re-evaluated on the full test split: macro recall at a budget of 15 is N with a standard deviation of N , and micro N with N . That study ran at an earlier operating point than th",
    "in": [
     "paper2/si.tex"
@@ -1187,8 +1487,8 @@
     "paper2/si.tex"
    ]
   },
-  "the arms it is derived between are the bounded and unbounded standardisation arms of this paragraph not the two operating modes so it is what the exhaustive mode s median becomes under a comparable load and not a measurement of the two modes running side by side which was not made": {
-   "text": "The arms it is derived between are the bounded and unbounded standardisation arms of this paragraph, not the two operating modes, so it is what the exhaustive mode's median becomes under a comparable load and not a measurement of the two modes running side by side, which was not made",
+  "the arms it is derived between are the bounded and unbounded standardisation arms of this paragraph not the two operating modes so it is what the exhaustive mode s median becomes under a comparable load a measurement of the two modes running side by side was not made": {
+   "text": "The arms it is derived between are the bounded and unbounded standardisation arms of this paragraph, not the two operating modes, so it is what the exhaustive mode's median becomes under a comparable load; a measurement of the two modes running side by side was not made",
    "in": [
     "paper2/si.tex"
    ]
@@ -1217,8 +1517,8 @@
     "paper2/si.tex"
    ]
   },
-  "belong to the arms whose prediction files are not in the deposit so their emission cannot be counted at all are counted from a deposited file but have no recall in the published tables so they enter the spread and not the correlation": {
-   "text": "N belong to the N arms whose prediction files are not in the deposit, so their emission cannot be counted at all; N are counted from a deposited file but have no recall in the published tables, so they enter the spread and not the correlation",
+  "belong to the arms whose prediction files are not in the deposit so their emission cannot be counted at all are counted from a deposited file but have no recall in the published tables so they enter the spread and the correlation excludes them": {
+   "text": "N belong to the N arms whose prediction files are not in the deposit, so their emission cannot be counted at all; N are counted from a deposited file but have no recall in the published tables, so they enter the spread, and the correlation excludes them",
    "in": [
     "paper2/si.tex"
    ]
@@ -1247,20 +1547,20 @@
     "paper2/si.tex"
    ]
   },
-  "substrates did not finish the deeper scenario inside a ninety second deadline and keep their deployed lists which can only favour sygma s arm in the comparison rather than harm it": {
-   "text": "N substrates did not finish the deeper scenario inside a ninety-second deadline and keep their deployed lists, which can only favour SyGMa's arm in the comparison rather than harm it",
+  "substrates did not finish the deeper scenario inside a ninety second deadline and keep their deployed lists which can only favour sygma s arm in the comparison not harm it": {
+   "text": "N substrates did not finish the deeper scenario inside a ninety-second deadline and keep their deployed lists, which can only favour SyGMa's arm in the comparison, not harm it",
    "in": [
     "paper2/si.tex"
    ]
   },
-  "a paper arguing that an undeclared emission budget reorders a published table cannot report its own comparison at one budget and call the ordering a property of the systems and the matched length control reaches the same verdict from the other direction by truncating the longer list rather than lengthening the shorter one": {
-   "text": "A paper arguing that an undeclared emission budget reorders a published table cannot report its own comparison at one budget and call the ordering a property of the systems, and the matched-length control reaches the same verdict from the other direction by truncating the longer list rather than len",
+  "a paper arguing that an undeclared emission budget reorders a published table cannot report its own comparison at one budget and call the ordering a property of the systems and the matched length control reaches the same verdict from the other direction by truncating the longer list not by lengthening the shorter one": {
+   "text": "A paper arguing that an undeclared emission budget reorders a published table cannot report its own comparison at one budget and call the ordering a property of the systems, and the matched-length control reaches the same verdict from the other direction by truncating the longer list, not by lengthe",
    "in": [
     "paper2/si.tex"
    ]
   },
-  "a comparison against a service cannot be made reproducible by the party running the comparison declaring what it can pin and naming what it cannot is the whole of what is available and the shortfall belongs in the record rather than out of it": {
-   "text": "A comparison against a service cannot be made reproducible by the party running the comparison; declaring what it can pin, and naming what it cannot, is the whole of what is available, and the shortfall belongs in the record rather than out of it",
+  "a comparison against a service cannot be made reproducible by the party running the comparison declaring what it can pin and naming what it cannot is the whole of what is available and the shortfall belongs in the record": {
+   "text": "A comparison against a service cannot be made reproducible by the party running the comparison; declaring what it can pin, and naming what it cannot, is the whole of what is available, and the shortfall belongs in the record",
    "in": [
     "paper2/si.tex"
    ]
@@ -1271,8 +1571,8 @@
     "paper2/si.tex"
    ]
   },
-  "that is a weaker provenance than the other four arms have and it is stated rather than smoothed over what is pinned is the submission the returned predictions and the version the service reported and not a binary anyone can re run offline": {
-   "text": "That is a weaker provenance than the other four arms have and it is stated rather than smoothed over: what is pinned is the submission, the returned predictions and the version the service reported, and not a binary anyone can re-run offline",
+  "that is a weaker provenance than the other four arms have and this section says so without smoothing it over what is pinned is the submission the returned predictions and the version the service reported the record stops short of a binary anyone can re run offline": {
+   "text": "That is a weaker provenance than the other four arms have and this section says so without smoothing it over: what is pinned is the submission, the returned predictions and the version the service reported; the record stops short of a binary anyone can re-run offline",
    "in": [
     "paper2/si.tex"
    ]
@@ -1289,8 +1589,8 @@
     "paper2/si.tex"
    ]
   },
-  "it is run at allhuman for one step which is one application of its own rules and the closest counterpart to what this work s arms do it is not a claim that every arm is allowed the same enzymatic depth since sygma s deployed scenario composes a phase one and a phase two ruleset and a mined template may itself perform more than one edit": {
-   "text": "It is run at allHuman for one step, which is one application of its own rules and the closest counterpart to what this work's arms do; it is not a claim that every arm is allowed the same enzymatic depth, since SyGMa's deployed scenario composes a phase-one and a phase-two ruleset and a mined templa",
+  "it is run at allhuman for one step which is one application of its own rules and the closest counterpart to what this work s arms do this is no claim that every arm is allowed the same enzymatic depth since sygma s deployed scenario composes a phase one and a phase two ruleset and a mined template may itself perform more than one edit": {
+   "text": "It is run at allHuman for one step, which is one application of its own rules and the closest counterpart to what this work's arms do; this is no claim that every arm is allowed the same enzymatic depth, since SyGMa's deployed scenario composes a phase-one and a phase-two ruleset and a mined templat",
    "in": [
     "paper2/si.tex"
    ]
@@ -1313,14 +1613,14 @@
     "paper2/si.tex"
    ]
   },
-  "the list is closed by a rule a comparator that could not be obtained is reported as unavailable with its reason is not dropped silently and the list is not extended after the first run": {
-   "text": "The list is closed by a rule: a comparator that could not be obtained is reported as unavailable with its reason, is not dropped silently, and the list is not extended after the first run",
+  "the list is closed by a rule this section prints a comparator that could not be obtained as unavailable with its reason does not drop it silently and does not extend the list after the first run": {
+   "text": "The list is closed by a rule: this section prints a comparator that could not be obtained as unavailable with its reason, does not drop it silently, and does not extend the list after the first run",
    "in": [
     "paper2/si.tex"
    ]
   },
-  "the choice is consequential and the entry point should not make it silently reproducing the census through it under the other presentation gives uncovered references and not that other presentation is not an alternative reading of the bound": {
-   "text": "The choice is consequential and the entry point should not make it silently: reproducing the census through it under the other presentation gives N uncovered references and not N . That other presentation is not an alternative reading of the bound",
+  "the choice is consequential and the entry point should not make it silently reproducing the census through it under the other presentation gives uncovered references where this paper prints that other presentation is not an alternative reading of the bound": {
+   "text": "The choice is consequential and the entry point should not make it silently: reproducing the census through it under the other presentation gives N uncovered references where this paper prints N . That other presentation is not an alternative reading of the bound",
    "in": [
     "paper2/si.tex"
    ]
@@ -1331,8 +1631,8 @@
     "paper2/si.tex"
    ]
   },
-  "the wider sweep is over files and its parts are worth printing since a total is easier to accept than to add up carry no stamp have a producer that has changed since have a producer the sweep cannot identify changed only cosmetically are stamped and current without being pinned and are the pinned files that live under the results directory the total names": {
-   "text": "The wider sweep is over N files and its parts are worth printing, since a total is easier to accept than to add up: N carry no stamp, N have a producer that has changed since, N have a producer the sweep cannot identify, N changed only cosmetically, N are stamped and current without being pinned, an",
+  "the wider sweep is over files and its parts are printed here since a total is easier to accept than to add up carry no stamp have a producer that has changed since have a producer the sweep cannot identify changed only cosmetically are stamped and current without being pinned and are the pinned files that live under the results directory the total names": {
+   "text": "The wider sweep is over N files and its parts are printed here, since a total is easier to accept than to add up: N carry no stamp, N have a producer that has changed since, N have a producer the sweep cannot identify, N changed only cosmetically, N are stamped and current without being pinned, and ",
    "in": [
     "paper2/si.tex"
    ]
@@ -1349,8 +1649,8 @@
     "paper2/si.tex"
    ]
   },
-  "it also records beside that arm the one it replaced an early dump ranked by the product of the two component scores over a narrower pool which reached at k no number in this paper derives from that column and it is kept rather than deleted so that the column can still be identified in an older copy": {
-   "text": "It also records, beside that arm, the one it replaced: an early dump ranked by the product of the two component scores over a narrower pool, which reached N at k=50 . No number in this paper derives from that column, and it is kept rather than deleted so that the column can still be identified in an",
+  "it also records beside that arm the one it replaced an early dump ranked by the product of the two component scores over a narrower pool which reached at k no number in this paper derives from that column and it is kept so that the column can still be identified in an older copy": {
+   "text": "It also records, beside that arm, the one it replaced: an early dump ranked by the product of the two component scores over a narrower pool, which reached N at k=50 . No number in this paper derives from that column, and it is kept so that the column can still be identified in an older copy",
    "in": [
     "paper2/si.tex"
    ]
@@ -1439,8 +1739,8 @@
     "paper2/si.tex"
    ]
   },
-  "a hand typed pointer cannot nine of them here were wrong at once when the tables were reordered one badly enough to direct a search to the wrong table which is why none is permitted": {
-   "text": "A hand-typed pointer cannot: nine of them here were wrong at once when the tables were reordered, one badly enough to direct a search to the wrong table, which is why none is permitted",
+  "a hand typed pointer cannot nine of them here were wrong at once when the tables were reordered one badly enough to direct a search to the wrong table so none is permitted": {
+   "text": "A hand-typed pointer cannot: nine of them here were wrong at once when the tables were reordered, one badly enough to direct a search to the wrong table, so none is permitted",
    "in": [
     "paper2/si.tex"
    ]
