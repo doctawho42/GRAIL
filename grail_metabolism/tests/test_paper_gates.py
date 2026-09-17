@@ -85,21 +85,23 @@ NEEDS = {
 }
 
 # A gate may be red on purpose, and that has to be said here rather than left to whoever reads
-# the suite. Two of these were written to fail: the density gate gained the Supporting
-# Information, which does not meet the tail ceilings the manuscript meets, and the rate gate
-# exists precisely because the rate is out. A red gate nobody has declared is indistinguishable
-# from a broken one, and a suite that is permanently red stops being read at all -- which is the
-# same defect as a gate nobody runs, one step further along.
+# the suite. This one was written to fail: the rate gate exists precisely because the rate is out.
+# A red gate nobody has declared is indistinguishable from a broken one, and a suite that is
+# permanently red stops being read at all -- which is the same defect as a gate nobody runs, one
+# step further along.
 #
 # The list is not a licence. If a declared gate PASSES, this test fails and demands its removal,
 # so a debt cannot be paid and left on the books, and cannot be added to silence a real
 # regression: the moment the prose reaches the ceiling, the entry has to go.
+#
+# check_prose_density.py was here and has been removed, which is what paying a debt looks like.
+# Its entry read: paper2/si.tex, 12 per cent of sentences over 45 words against a ceiling of 10,
+# longest 96 against 75, and four sections over the section mean ceiling of 32, closing in W4.
+# W4 closed it by splitting twenty-two sentences at joints they already carried, deleting nothing:
+# the share is now 9 per cent of 1,126 sentences, the longest is 75, no section exceeds the mean
+# ceiling, and the file mean fell 27.4 -> 26.3. The registry stayed whole across the pass -- every
+# key that changed paired with a new one and kept the marker that registers it.
 DECLARED_DEBT = {
-    "check_prose_density.py":
-        "paper2/si.tex: 12 per cent of sentences over 45 words against a ceiling of 10, longest "
-        "96 against 75, and four sections over the section mean ceiling of 32. The file was "
-        "absent from LIMITS while the reviewer named it explicitly; its mean (27.4) is inside "
-        "the range eight comparable papers occupy and is not the defect. Closes in W4.",
     "check_prose_rate.py":
         "TWO criteria are red and both are accepted, with the second accepted by the author after "
         "being shown these numbers.\n"

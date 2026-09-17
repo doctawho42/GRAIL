@@ -208,10 +208,10 @@ published ones should know that the rule-based figures are, in this respect, opt
 The \emph{validation draw} is a declared sample of \numValdrawCap{} substrate records, drawn with
 the configuration's sampling seed set to \numValdrawSeed{} and each split's own seed derived from
 it, of which \numValdrawPaired{} are held by both operating modes in a paired
-comparison; registered ranking and timing thresholds are checked here, because a threshold checked
-on the population that chose the setting it tests is not a check, and three of the ten reported
-predictions
-were in the event adjudicated on the comparison set instead, which Table~\ref{MS-tab:hyp} marks.
+comparison. Registered ranking and timing thresholds are checked here, because a threshold checked
+on the population that chose the setting it tests is not a check. Three of the ten reported
+predictions were in the event adjudicated on the comparison set instead, which
+Table~\ref{MS-tab:hyp} marks.
 \section{What the annotation contains}
 \label{sec:si-annotation}
 
@@ -348,13 +348,13 @@ different quantities at different points of the pipeline.
 At the widest budgets the comparison is partly a measure of list length, not of ranking, and the
 counts that say by how much are here at every budget, not only at the one the main text
 prints. They bear directly on the two leads claimed at $k=30$ and $k=50$: an arm that has run out
-of candidates cannot gain from a wider window, so the leads should be weighed against the
+of candidates cannot gain from a wider window. The leads should therefore be weighed against the
 number of substrates for which that is the case.
 
 
 The interactive arm returns \numEmittedTrained{} candidates on average against MetaTox's
 \numEmittedMetatox{}, and at $k=20$ already \numShortTrainedTwoZero{} of its \numPopulationN{}
-lists are shorter than the budget; a list that has ended cannot gain a hit from a wider window, so
+lists are shorter than the budget. A list that has ended cannot gain a hit from a wider window, so
 the deficit grows with $k$ whatever the order within it. It trails MetaTox at every budget above
 fifteen, $\numGapTrainedmetatoxThreeZero$ $[\numGapTrainedmetatoxThreeZeroLo,
 \numGapTrainedmetatoxThreeZeroHi]$ at $30$ and $\numGapTrainedmetatoxFiveZero$
@@ -825,11 +825,11 @@ than the curated half's own total suggests. All
 \numThirdpartyNamedsharePct{} of the collections described as curated chemistry, not
 \numThirdpartyTraceablesharePct{} of the half they sit in. They are present character for
 character in a rule set somebody else published: \numThirdpartyBiotransformerShipped{} of
-BioTransformer's
-\numThirdpartyBiotransformerRead{} reaction templates; \numThirdpartySygmaShipped{} templates
-attributed to SyGMa, which is more than the \numSygmaInside{} of its own distribution counted below
-because GLORYx's rule file carries a further set of SyGMa rules in a notation that distribution does
-not use; and \numThirdpartyGloryxShipped{} that GLORYx's file attributes to itself. String equality
+BioTransformer's \numThirdpartyBiotransformerRead{} reaction templates;
+\numThirdpartySygmaShipped{} templates attributed to SyGMa; and
+\numThirdpartyGloryxShipped{} that GLORYx's file attributes to itself. The SyGMa count is more
+than the \numSygmaInside{} of its own distribution counted below, because GLORYx's rule file
+carries a further set of SyGMa rules in a notation that distribution does not use. String equality
 cannot trace a rule that was rewritten, so this is a lower bound on borrowing and never an upper
 one, and the \numThirdpartyUntraceable{} templates matching nothing are not thereby shown to be
 original.
@@ -947,7 +947,7 @@ $k$. The vertical rule marks the budget the released checkpoint was trained at.}
 
 That the model is identical across the points is checked by measurement, because it is the one
 thing a pool did not record. Both scores in a pool are deterministic functions of the substrate
-and the candidate, so the models that wrote them can be recovered: scoring a pool's own candidates
+and the candidate, so the models that wrote them can be recovered. Scoring a pool's own candidates
 with every trained checkpoint held here reproduces its generator scores under exactly one file and
 its filter scores under exactly one file, with every other checkpoint disagreeing on nearly all of
 them. Every point of this curve resolves to the deployed pair on both stages, two runs that ship a
@@ -1287,7 +1287,7 @@ scores a different rule needs collapsed away, so the question cannot be answered
 
 They are re-derived here. The generator side is run again over the comparison set with the
 per-template scores kept, so any aggregation rule can be evaluated without
-another pass; the filter is not re-run, because a filter score is a function of the substrate and
+another pass. The filter is not re-run, because a filter score is a function of the substrate and
 the product and does not depend on how the generator combined its templates, so the frozen scores
 are joined by structure. \numAggregationJoined{} candidates join and
 \numAggregationUnjoined{} do not, and those are dropped from every arm alike. The deployed
@@ -1302,8 +1302,8 @@ near-duplicate templates restate it. It moves the ordering, and where it moves i
 violation predicts. It gains at the head of the list, $+\numAggregationMaxOne$
 $[+\numAggregationMaxOneLo, +\numAggregationMaxOneHi]$ at a budget of one and
 $+\numAggregationMaxFive$ $[+\numAggregationMaxFiveLo, +\numAggregationMaxFiveHi]$ at five,
-both intervals excluding zero, and it is worse where this work reads its leads: at thirty it is
-$\numAggregationMaxThreeZero$ $[\numAggregationMaxThreeZeroLo,
+both intervals excluding zero. The maximum is worse where this work reads its leads: at thirty
+it is $\numAggregationMaxThreeZero$ $[\numAggregationMaxThreeZeroLo,
 \numAggregationMaxThreeZeroHi]$, an interval excluding zero on the other side. The implementation
 also offers a blend of the two,
 \begin{equation}
@@ -1563,12 +1563,12 @@ On validation, which is the split selection is made on, the matched baseline rea
 \numSurvivorsBaseOne{} at $k=1$, \numSurvivorsBaseThree{} at $k=3$ and
 \numSurvivorsBaseOneFive{} at $k=15$. Against it, gating the rule identity moves recall by
 $\numSurvivorsIdgateOne{}$, $+\numSurvivorsIdgateThree{}$ and $\numSurvivorsIdgateOneFive{}$ at
-those three budgets; training the filter on candidates moves it by $+\numSurvivorsCandfilterOne{}$,
-$+\numSurvivorsCandfilterThree{}$ and $\numSurvivorsCandfilterOneFive{}$; appending the
-difference readout moves it by $+\numSurvivorsDiffreadoutOne{}$,
-$+\numSurvivorsDiffreadoutThree{}$ and $\numSurvivorsDiffreadoutOneFive{}$; and sharing the
-identity across a reaction type moves it by $\numSurvivorsTypeidOne{}$,
-$\numSurvivorsTypeidThree{}$ and $\numSurvivorsTypeidOneFive{}$.
+those three budgets, and training the filter on candidates moves it by
+$+\numSurvivorsCandfilterOne{}$, $+\numSurvivorsCandfilterThree{}$ and
+$\numSurvivorsCandfilterOneFive{}$. Appending the difference readout moves recall by
+$+\numSurvivorsDiffreadoutOne{}$, $+\numSurvivorsDiffreadoutThree{}$ and
+$\numSurvivorsDiffreadoutOneFive{}$, and sharing the identity across a reaction type moves it by
+$\numSurvivorsTypeidOne{}$, $\numSurvivorsTypeidThree{}$ and $\numSurvivorsTypeidOneFive{}$.
 
 One shape appears three times. Averaged over the two head budgets, the filter-objective arm gains
 $+\numSurvivorsCandfilterhead{}$ and the difference-readout arm $+\numSurvivorsDiffreadouthead{}$,
@@ -1586,9 +1586,9 @@ at every budget measured: $\numSurvivorsTypeidvsgateOne{}$ at $k=1$,
 $\numSurvivorsTypeidvsgateThree{}$ at $k=3$, $\numSurvivorsTypeidvsgateFive{}$ at $k=5$ and
 $\numSurvivorsTypeidvsgateOneFive{}$ at $k=15$, two of them larger than that seed spread. The
 mechanism explains the direction. A pooled identity can only be borrowed by a rule that shares its
-reaction type with another, and on this bank sharing runs the wrong way: it is common among the
-rules that already carry enough of their own training evidence to be recognised by name, and absent
-for most of the rarely rewarded rules the term was written for. So the shared parameter adds
+reaction type with another, and on this bank sharing runs the wrong way. Sharing is common among
+the rules that already carry enough of their own training evidence to be recognised by name, and
+absent for most of the rarely rewarded rules the term was written for. So the shared parameter adds
 capacity where the gate is removing it and supplies nothing where the gate bites.
 
 The trade, and the one failure that is not a trade, are the result together. Three unrelated
@@ -1809,9 +1809,9 @@ already performs two edits in one application, as P10 finds, a second applicatio
 to discover that the first did not already reach, and the observed lift of about $0.012$ is what
 that predicts.
 
-The instrument reads the source pairs and leaves the templates unread, and that is deliberate: a
+The instrument reads the source pairs and leaves the templates unread, and that is deliberate. A
 cleavage whose bridging atom carries no map number is invisible to a comparison of mapped bonds, and
-a cyclisation joins two distant loci in a single event, so parsing partially mapped SMIRKS answers a
+a cyclisation joins two distant loci in a single event. So parsing partially mapped SMIRKS answers a
 different question from the one asked and answers it differently from what the molecules show.
 
 \section{How much of the annotation is one enzymatic step}
@@ -1872,10 +1872,9 @@ it before, and for those three it was not fixed before. The register's later ent
 
 The remaining six concern work this paper does not report, and they are named here by their
 register identifiers, so that none can quietly leave unnoticed: H1, a label space indexed by
-reaction type where this work indexes by rule; H2, reactivity and accessibility node features;
-H3, learned abstention; H4, a ranked prediction of intervention sizes; H5, the same null out of
-sample; and
-H6, a negative control on graph automorphism. The register states each with its threshold so that a
+reaction type where this work indexes by rule. The rest are H2, reactivity and accessibility node
+features; H3, learned abstention; H4, a ranked prediction of intervention sizes; H5, the same null
+out of sample; and H6, a negative control on graph automorphism. The register states each with its threshold so that a
 later
 result on any of them cannot be a threshold chosen after the fact. None is reported in this paper
 because none was run for it, which is a different thing from a prediction that was run and did
@@ -1920,7 +1919,7 @@ that margin survived the move to the comparison set.
 The transformation type of a substrate--candidate pair is the multiset of bonds that change
 between mapped atoms, which is the vocabulary the rule bank's coverage is defined on. Typing runs
 a maximum common substructure search under a wall-clock timeout and treats a cancelled search as
-untypeable, so the artifact is not byte-reproducible: two runs on the same machine differed in
+untypeable, so the artifact is not byte-reproducible. Two runs on the same machine differed in
 2 of approximately 29,100 typings, every figure in Table~\ref{tab:si-oracle} was identical to four
 decimals, and the only cell that moved was the control at $k=1$, by $0.0015$.
 
@@ -1950,7 +1949,7 @@ configuration reported here. This table and the selection ablation below replace
 
 The deployed configuration caps the pool by rule score before the fusion sees it. On a pool
 smaller than the cap that truncates nothing, but it fixes the order the fusion reads, and that
-matters because the fusion has exact ties: for 14 of the \numPopulationN{} substrates the two
+matters because the fusion has exact ties. For 14 of the \numPopulationN{} substrates the two
 best candidates receive identical fused scores, so the order the pool arrives in, not the ranking
 rule, decides which of them is returned first. Fusing the pool as stored, not after
 the cap, moves micro recall at $k=1$ from \numSelLearnedOne{} to $0.1068$, a
@@ -2018,11 +2017,11 @@ the rule would have taken that much of the set out of every comparison it appear
 What the population does carry is an unrecorded draw, and that draw is tested below.
 Against the \numPopdefOutside{} evaluated substrates outside it, the comparison set does not
 differ in the number of annotated references it carries
-(\numPopdefRefsin{} against \numPopdefRefsout{}, $p=\numPopdefRefsp$), in substrate size
-(\numPopdefHeavyin{} against \numPopdefHeavyout{} heavy atoms, $p=\numPopdefHeavyp$), or in how
-many candidates the deployed system emits on it (\numPopdefOutputin{} against
-\numPopdefOutputout{}, $p=\numPopdefOutputp$), each by a permutation test over
-\numPopdefPermutations{} shuffles. That does not make the draw random; it says the three
+(\numPopdefRefsin{} against \numPopdefRefsout{}, $p=\numPopdefRefsp$). The comparison set does
+not differ either in substrate size (\numPopdefHeavyin{} against \numPopdefHeavyout{} heavy
+atoms, $p=\numPopdefHeavyp$) or in how many candidates the deployed system emits on it
+(\numPopdefOutputin{} against \numPopdefOutputout{}, $p=\numPopdefOutputp$). Each comparison is
+measured by a permutation test over \numPopdefPermutations{} shuffles. That does not make the draw random; it says the three
 properties most likely to have driven such a draw did not drive this one.
 
 The comparison is also read on the population nobody selected: the whole evaluated test set,
@@ -2053,16 +2052,16 @@ The exhaustive arm's leads mostly survive the move, and the exception is named. 
 \numPopdefLeadskeptWord{} still separate over the whole set and
 \numPopdefLeadslostWord{} does not. The \numPopdefLeadstotalWord{} are the exhaustive arm against
 SyGMa and MetaPredictor at fifteen, thirty and fifty and against BioTransformer at every budget
-this section sweeps, and \numPopdefLeadskeptWord{} of them survive:
-against SyGMa $+\numPopdefExhwholesygmaThreeZero$ $[+\numPopdefExhwholesygmaThreeZeroLo,
+this section sweeps. Of those leads, \numPopdefLeadskeptWord{} survive: against SyGMa
+$+\numPopdefExhwholesygmaThreeZero$ $[+\numPopdefExhwholesygmaThreeZeroLo,
 +\numPopdefExhwholesygmaThreeZeroHi]$ at thirty and $+\numPopdefExhwholesygmaFiveZero$
-$[+\numPopdefExhwholesygmaFiveZeroLo, +\numPopdefExhwholesygmaFiveZeroHi]$ at fifty, against
-MetaPredictor $+\numPopdefExhwholemetapredictorOneFive$
+$[+\numPopdefExhwholesygmaFiveZeroLo, +\numPopdefExhwholesygmaFiveZeroHi]$ at fifty. Against
+MetaPredictor the surviving leads are $+\numPopdefExhwholemetapredictorOneFive$
 $[+\numPopdefExhwholemetapredictorOneFiveLo, +\numPopdefExhwholemetapredictorOneFiveHi]$ at
-fifteen, $+\numPopdefExhwholemetapredictorThreeZero$ and
-$+\numPopdefExhwholemetapredictorFiveZero$ at thirty and fifty, and against BioTransformer at
-every budget this section sweeps, where the wider population separates the two more strongly than
-the comparison set does.
+fifteen, and $+\numPopdefExhwholemetapredictorThreeZero$ and
+$+\numPopdefExhwholemetapredictorFiveZero$ at thirty and fifty. Against BioTransformer the leads
+survive at every budget this section sweeps, where the wider population separates the two more
+strongly than the comparison set does.
 
 What that count is, and what it is not, has to be said beside it. It is built from the cells in
 which this work's exhaustive arm leads a comparator on the comparison set with the interval
@@ -2177,21 +2176,21 @@ whole pipeline re-evaluated on the full test split: macro recall at a budget of 
 
 That study ran at an earlier operating point than the configuration the manuscript reports, so
 its level is not comparable with those tables, and whether its spread carries across operating
-points was assumed, not shown. It does not: retraining the generator and the filter under
-the same \numSpreadSeeds{} seeds at the configuration the manuscript does report gives a standard
-deviation of \numSpreadInteractiveSd{} for the interactive arm at a budget of fifteen, on a mean of
-\numSpreadInteractiveMean{}, and \numSpreadExhaustiveSd{} for the exhaustive arm on
+points was assumed, not shown. It does not: the generator and the filter were retrained under the
+same \numSpreadSeeds{} seeds at the configuration the manuscript does report. That retraining gives
+a standard deviation of \numSpreadInteractiveSd{} for the interactive arm at a budget of fifteen,
+on a mean of \numSpreadInteractiveMean{}, and \numSpreadExhaustiveSd{} for the exhaustive arm on
 \numSpreadExhaustiveMean{}, ranging from \numSpreadInteractiveSdmin{} to
 \numSpreadExhaustiveSdmax{} across budgets. Two arms at one operating point are further apart than
 the two operating points were, so the spread is a property of the arm and the budget as much as of
 the training.
 
-Read against the arm whose knob each effect is, the rank fusion of P1 is \numSpreadPOneInsd{} times
-the interactive arm's spread, the pool cap of P2 \numSpreadPTwoInsd{} times it, and the rule budget
-of P3, at $+\numHOneZeroBought$ on validation, \numSpreadPThreeInsd{} times it, not inside
-it, which is what the earlier operating point's figure had suggested. That last reading is the one
-running this work's way and is bounded accordingly: the effect is measured on the validation draw
-and the spread on the comparison set, so the ratio is indicative only. Against the
+Read against the arm whose knob each effect is, the rank fusion of P1 is \numSpreadPOneInsd{}
+times the interactive arm's spread, the pool cap of P2 \numSpreadPTwoInsd{} times it. The rule
+budget of P3, at $+\numHOneZeroBought$ on validation, is \numSpreadPThreeInsd{} times that spread,
+not inside it, which is what the earlier operating point's figure had suggested. That last reading
+is the one running this work's way and is bounded accordingly: the effect is measured on the
+validation draw and the spread on the comparison set, so the ratio is indicative only. Against the
 exhaustive arm's spread the same effect would sit inside the noise, which is the other reason to
 read it as indicative.
 
@@ -2245,10 +2244,10 @@ times faster, so any timing not taken cold measures a mixture of two regimes.
 Standardisation is the binding constraint on the generator, at 94 to 99\% of cold generator time.
 Three other candidates were tested against it and rejected by measurement: the pairwise filter's
 maximum-common-substructure step, which does not bind because the generator outruns the filter a
-hundred to one; rule application, which applies all \numBankParses{} parseable templates to a
-109-atom molecule in $5.2$~s, yielding 20{,}655 products at no more than $0.58$~s per rule; and
-substrate size as an axis, which fails as a predictor because two 43-atom substrates take
-$64.7$~s and no completion respectively.
+hundred to one. The second is rule application, which applies all \numBankParses{} parseable
+templates to a 109-atom molecule in $5.2$~s, yielding 20{,}655 products at no more than $0.58$~s
+per rule. The third is substrate size as an axis, which fails as a predictor because two 43-atom
+substrates take $64.7$~s and no completion respectively.
 
 Two of the registered predictions address the constraint. Moving standardisation to surviving
 candidates alone (P8) reduces enumeration by a factor of $13.9$, but standardising the hundred
@@ -2568,14 +2567,14 @@ computed over names its three comparators and was fixed before this arm existed,
 unchanged: BioTransformer's contrasts are reported with their own intervals and are not folded
 into a correction declared without them. A family fixed in advance is not widened after the fact,
 which is the whole of what declaring one buys. A reader may reply that the paper then prints more
-tests than its correction covers, and that reply is answered by measurement, not by the argument:
-running the same Holm procedure over all \numHolmWidetests{} contrasts the paper prints removes
+tests than its correction covers, and that reply is answered by measurement, not by the argument.
+Running the same Holm procedure over all \numHolmWidetests{} contrasts the paper prints removes
 \numHolmWideremovesWord{} of the cells the declared family licenses, the exhaustive arm's trail
 against SyGMa at a budget of five, which is a trail, not a lead, and is printed either way. And the
 deeper scenario is not swept for this comparator
 as it is for SyGMa. That asymmetry was decided after the matched-length control had been read,
 and this paper says so because it is exactly the kind of choice this work asks other papers to
-declare: the control removes list length as a variable and finds no separation, so a scenario that
+declare. The control removes list length as a variable and finds no separation, so a scenario that
 emits more would narrow a gap this paper does not claim as an ordering result and would change no
 verdict here. On that basis the absence is unforced.
 
@@ -2701,9 +2700,9 @@ producer of a pinned artifact that names another, and the gate over the artifact
 manuscript's numbers come from fails on any that names a checkpoint outside it, because a default
 that is not the deployed setting reproduces something nobody ran. That test reads the shell
 scripts too, and the two ways a path is written in them, which is how it now sees the one that
-built the standardised pools: it named the filter of a run this repository no longer ships, so
-the sweep over how the substrate is drawn compared two models rather than two drawings, and its
-figures here are from the rebuild.
+built the standardised pools. That script named the filter of a run this repository no longer
+ships, so the sweep over how the substrate is drawn compared two models rather than two drawings,
+and its figures here are from the rebuild.
 
 The guarantee that matters is narrower than the pinned set, and a gate checks it. The numbers in
 this paper come from \numProvSources{} of those artifacts, established
@@ -2740,9 +2739,9 @@ published number is read from were never examined, among them the pool the inter
 whole column comes from, and both standardised pools. A check that reports on what it finds and
 is silent about what is missing cannot fail on the thing that is missing. It now refuses when a
 declared directory yields no shard it can read, the readers of those pools refuse a shard that
-does not record the released pair, and the invariant that exposed it is checked on every run: a
-substrate the standardiser does not move is the same molecule in both arms, so the two must
-return the same list on it.
+does not record the released pair, and the invariant that exposed it is checked on every run.
+That invariant holds that a substrate the standardiser does not move is the same molecule in both
+arms, so the two must return the same list on it.
 
 Bringing those artifacts inside the guarantee meant re-running their producers, and this paragraph
 reports every field that moved. One number moved. The train split's clean triple

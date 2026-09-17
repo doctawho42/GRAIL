@@ -3,7 +3,7 @@
   "script": "disclosure_inventory.py",
   "script_path": "scripts/disclosure_inventory.py",
   "source_sha256": "57711e9fbacf046bf1cd50779a253e72006b9e0ce3d5977098b5be5dcf0eb864",
-  "git_commit": "36bea3f16cfd5a690a84cb9fde9f40423e053a9c",
+  "git_commit": "3ad20d0f0631fc0b9f5519ac176aeddb355e9601",
   "git_dirty": true
  },
  "reviewed_and_accepted": [
@@ -713,6 +713,27 @@
     "paper2/si.tex"
    ],
    "reason": "Reworded in the pass over the carrier constructions in paper2/si.tex: 'rather than', epistemic self-grading and 'is/are not a', which this file used at 5.08, 1.84 and 0.77 per thousand words against corpus maxima of 0.68, 0.26 and 0.11. One hundred and fifty-six of 197 carrier sentences were rewritten, twelve rejected by an adversarial reader and twenty-nine refused as load-bearing; none was deleted. Twenty-seven keys changed and all twenty-seven are rewordings, established by pairing and not by assumption: twenty-seven gone, twenty-seven new, every gone key pairing with a new one and no key left unpaired in either direction. No edit removed a sentence's last registry marker: that was checked mechanically for every one of the 156 before application, after an edit an hour earlier did exactly that and had to be undone. The rewrites name the actor where the file described itself in the passive -- 'is reported' became 'this section reports', 'that is stated' became 'the section that defines the population says so' -- and assert directly where the file stated a preference -- 'checked rather than assumed' became 'checked', 'a bounded absence rather than as silence' became 'a bounded absence'. Where a sentence carried two constructions both were taken in one edit, because the gate counts sentences and clearing one would have left the sentence a carrier."
+  },
+  {
+   "text": "The validation draw is a declared sample of N substrate records, drawn with the configuration's sampling seed set to N and each split's own seed derived from it, of which N are held by both operating modes in a paired comparison; registered ranking and timing thresholds are checked here, because a t",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded by a sentence split in the pass that brought paper2/si.tex under its length ceilings. The validation-draw sentence ran to 87 words, over the 75-word limit, and was split into three at joints it already had. The concession is unchanged word for word -- 'a threshold checked on the population that chose the setting it tests is not a check' survives whole in the second sentence, keeping the 'is not a' marker that registers it, and the admission that three of the ten reported predictions were adjudicated on the comparison set, with the Table reference that marks them, survives whole in the third. One key gone, one new, paired; nothing was shortened and no number moved."
+  },
+  {
+   "text": "They bear directly on the two leads claimed at k=30 and k=50 : an arm that has run out of candidates cannot gain from a wider window, so the leads should be weighed against the number of substrates for which that is the case",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded by sentence splits that brought three short sections under the per-section mean ceiling of 32 words. Both keys are splits, not deletions: two gone, two new, each pairing with 24 and 26 shared words, and each keeping the 'cannot' marker that registers it. 'an arm that has run out of candidates cannot gain from a wider window, so the leads should be weighed against the number of substrates for which that is the case' became two sentences at the joint the 'so' already marked, with the subject repeated as 'The leads' so no pronoun crosses the new boundary. 'its lists are shorter than the budget; a list that has ended cannot gain a hit from a wider window' became two sentences at its own semicolon. Every count, budget and interval survives; nothing was shortened."
+  },
+  {
+   "text": "The interactive arm returns N candidates on average against MetaTox's N , and at k=20 already N of its N lists are shorter than the budget; a list that has ended cannot gain a hit from a wider window, so the deficit grows with k whatever the order within it",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Reworded by sentence splits that brought three short sections under the per-section mean ceiling of 32 words. Both keys are splits, not deletions: two gone, two new, each pairing with 24 and 26 shared words, and each keeping the 'cannot' marker that registers it. 'an arm that has run out of candidates cannot gain from a wider window, so the leads should be weighed against the number of substrates for which that is the case' became two sentences at the joint the 'so' already marked, with the subject repeated as 'The leads' so no pronoun crosses the new boundary. 'its lists are shorter than the budget; a list that has ended cannot gain a hit from a wider window' became two sentences at its own semicolon. Every count, budget and interval survives; nothing was shortened."
   }
  ],
  "question": "every sentence in which this work concedes something, recorded before a cut so that what a cut costs is visible rather than invisible",
@@ -827,8 +848,8 @@
     "paper2/si.tex"
    ]
   },
-  "the validation draw is a declared sample of substrate records drawn with the configuration s sampling seed set to and each split s own seed derived from it of which are held by both operating modes in a paired comparison registered ranking and timing thresholds are checked here because a threshold checked on the population that chose the setting it tests is not a check and three of the ten reported predictions were in the event adjudicated on the comparison set instead which table marks": {
-   "text": "The validation draw is a declared sample of N substrate records, drawn with the configuration's sampling seed set to N and each split's own seed derived from it, of which N are held by both operating modes in a paired comparison; registered ranking and timing thresholds are checked here, because a t",
+  "registered ranking and timing thresholds are checked here because a threshold checked on the population that chose the setting it tests is not a check": {
+   "text": "Registered ranking and timing thresholds are checked here, because a threshold checked on the population that chose the setting it tests is not a check",
    "in": [
     "paper2/si.tex"
    ]
@@ -875,14 +896,14 @@
     "paper2/si.tex"
    ]
   },
-  "they bear directly on the two leads claimed at k and k an arm that has run out of candidates cannot gain from a wider window so the leads should be weighed against the number of substrates for which that is the case": {
-   "text": "They bear directly on the two leads claimed at k=30 and k=50 : an arm that has run out of candidates cannot gain from a wider window, so the leads should be weighed against the number of substrates for which that is the case",
+  "they bear directly on the two leads claimed at k and k an arm that has run out of candidates cannot gain from a wider window": {
+   "text": "They bear directly on the two leads claimed at k=30 and k=50 : an arm that has run out of candidates cannot gain from a wider window",
    "in": [
     "paper2/si.tex"
    ]
   },
-  "the interactive arm returns candidates on average against metatox s and at k already of its lists are shorter than the budget a list that has ended cannot gain a hit from a wider window so the deficit grows with k whatever the order within it": {
-   "text": "The interactive arm returns N candidates on average against MetaTox's N , and at k=20 already N of its N lists are shorter than the budget; a list that has ended cannot gain a hit from a wider window, so the deficit grows with k whatever the order within it",
+  "a list that has ended cannot gain a hit from a wider window so the deficit grows with k whatever the order within it": {
+   "text": "A list that has ended cannot gain a hit from a wider window, so the deficit grows with k whatever the order within it",
    "in": [
     "paper2/si.tex"
    ]
