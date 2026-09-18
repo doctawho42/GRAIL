@@ -94,6 +94,16 @@ PAT = re.compile("|".join(MARKERS), re.I)
 
 def _plain(tex: str) -> str:
     """LaTeX with its markup taken off, so a sentence is comparable across an edit that reflows."""
+    # Nothing above \begin{document} is prose a reader meets: \usepackage lines, the author list,
+    # affiliations and the title come through with only their macro names removed, and since none
+    # of them ends in a full stop followed by a capital they do not split -- they arrive as ONE key.
+    # paper2/grail_jcim.tex gave a 92-word, 688-character key of package names and affiliations run
+    # into the opening of the abstract, and it was recorded as a disclosure. That made the author
+    # block load-bearing: adding an author or fixing an affiliation would move the key and --check
+    # would report a retraction for an edit that touched no claim. The cut is conditional because
+    # the generated table files carry no \begin{document} and taking everything would take them.
+    _body = re.split(r"\\begin\{document\}", tex, maxsplit=1)
+    tex = _body[1] if len(_body) > 1 else tex
     t = re.sub(r"(?<!\\)%.*", "", tex)
     # Only the numeric bodies go: a tabular is rows of figures and an equation is not prose.
     # The float wrappers stay, because a caption lives inside one and a caption is prose the

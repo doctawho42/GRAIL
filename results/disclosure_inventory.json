@@ -2,8 +2,8 @@
  "provenance": {
   "script": "disclosure_inventory.py",
   "script_path": "scripts/disclosure_inventory.py",
-  "source_sha256": "57711e9fbacf046bf1cd50779a253e72006b9e0ce3d5977098b5be5dcf0eb864",
-  "git_commit": "c38e7b6aef809ffb3d1fa4fcf443bdaadc96c4e6",
+  "source_sha256": "4e78b4c078f7f4d2f3e68d359d3a3e965a2ad460afc4db7dc9d047faf460cacf",
+  "git_commit": "589da6a271a42f1499276dfc31b586f92be50657",
   "git_dirty": true
  },
  "reviewed_and_accepted": [
@@ -937,6 +937,13 @@
     "paper2/si.tex"
    ],
    "reason": "One key moves and nothing is retracted. paper2/si.tex named the preregistration register as 'preregistration.md' while the released file is paper2/preregistration.md, so a reader following that sentence to the repository root found nothing; the path is corrected. The key that moved is the one spanning from 'What the composite instruments flag is not a count of such transformations' through the register sentence nine lines later, because a macro-terminated sentence does not split and the two sit in one key -- which is why the refusal named a sentence this edit never touched. Paired before accepting by symmetric difference over _norm(_sentences(_plain(.))) against the pre-edit file: 1 gone, 1 new, ratio 0.995, differing only by the path. The register itself is unchanged and still carries all sixteen H identifiers."
+  },
+  {
+   "text": "achemso amsmath,amssymb booktabs threeparttable graphicx microtype xr si Nikita L. Polomoshnov Faculty of Bioengineering and Bioinformatics, Lomonosov Moscow State University, Leninskie Gory 1-73, Moscow 119234, Russia nikitapol@fbb.msu.ru Anastasia V. Rudik Department of Bioinformatics, Institute o",
+   "was_in": [
+    "paper2/grail_jcim.tex"
+   ],
+   "reason": "One key moves and nothing is retracted; the key that moves was never prose. _plain() did not know where the document starts, so everything above \\begin{document} in paper2/grail_jcim.tex -- \\usepackage lines, the author list, affiliations, the title -- came through with only its macro names removed, and since none of it ends in a full stop followed by a capital it did not split. It arrived as ONE 92-word, 688-character key with the opening of the abstract glued to its end, and that key was recorded as a disclosure. The harm was not noise: a recorded key is what --check compares against, so the author block was load-bearing, and adding an author or correcting an affiliation would have moved it and reported a retraction for an edit that touched no claim. _plain now cuts at \\begin{document}, conditionally, because the generated table files carry none and taking everything would take them. Paired: 1 gone, 1 new, and the new key is exactly a SUFFIX of the old one -- the abstract's first sentence, keyed on its own text at 42 words instead of behind 50 words of preamble. The claim it carries is unchanged and still recorded. revision/tests/test_the_preamble_is_not_a_disclosure.py holds the cut from both sides: no preamble reaches the inventory, and the abstract still splits into its own sentences."
   }
  ],
  "question": "every sentence in which this work concedes something, recorded before a cut so that what a cut costs is visible rather than invisible",
@@ -980,8 +987,8 @@
  "n": 247,
  "reading": "a disclosure counts as present if it survives in ANY of the sources: moving one to the Supporting Information shortens the manuscript without retracting anything, and deleting one shortens it by retracting something",
  "disclosures": {
-  "achemso amsmath amssymb booktabs threeparttable graphicx microtype xr si nikita l polomoshnov faculty of bioengineering and bioinformatics lomonosov moscow state university leninskie gory moscow russia nikitapol fbb msu ru anastasia v rudik department of bioinformatics institute of biomedical chemistry pogodinskaya str moscow russia metabolite predictors have a multiverse problem document abstract published predictors of metabolite structure cannot be compared with one another because recall depends on how a predicted structure is judged to match a reference and on how many candidates a system may return and papers in this area declare neither": {
-   "text": "achemso amsmath,amssymb booktabs threeparttable graphicx microtype xr si Nikita L. Polomoshnov Faculty of Bioengineering and Bioinformatics, Lomonosov Moscow State University, Leninskie Gory 1-73, Moscow 119234, Russia nikitapol@fbb.msu.ru Anastasia V. Rudik Department of Bioinformatics, Institute o",
+  "abstract published predictors of metabolite structure cannot be compared with one another because recall depends on how a predicted structure is judged to match a reference and on how many candidates a system may return and papers in this area declare neither": {
+   "text": "abstract Published predictors of metabolite structure cannot be compared with one another, because recall depends on how a predicted structure is judged to match a reference and on how many candidates a system may return, and papers in this area declare neither",
    "in": [
     "paper2/grail_jcim.tex"
    ]
