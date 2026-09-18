@@ -1067,6 +1067,26 @@ def build():
     _dep_sizes = [len(v) for _s, v in _dep.items() if _s in _truth_keys]
     n["popdef.deployedpoolwhole"] = round(sum(_dep_sizes) / len(_dep_sizes), 1)
 
+    # The depth-two probe. The manuscript said no figure from it was quoted while the Supporting
+    # Information quoted its lift as a hand-typed 0.012, and that literal sat in ALLOWED, the list
+    # for numerals that are part of the language rather than a result. It is a result. Reading it
+    # from the file is what makes the claim checkable; the artifact's own weakness -- no producer
+    # stamp and no recorded seed -- is now stated in the prose instead of being the reason given
+    # for not quoting a figure that was quoted anyway.
+    _d2 = art("benchmark_report_depth2.json")
+    n["depthtwo.lift"] = round(_d2["lift_over_depth1"], 3)
+    n["depthtwo.substrates"] = _d2["n_test_substrates"]
+    n["depthtwo.cost"] = round(_d2["depth2_ceiling_lower_bound"]["mean_candidates_per_substrate"]
+                               / _d2["depth1_ceiling"]["mean_candidates_per_substrate"], 1)
+
+    # What identifies the GLORYxR arm. Its software and its weights are both unpublished, so the
+    # revision and the dump digests ARE the identity; these come from the artifact rather than the
+    # prose so a re-run cannot leave the manuscript quoting a version nobody ran.
+    _gx = art("gloryxr_identity.json")
+    n["gloryxr.dumps"] = _gx["n_dumps"]
+    n["gloryxr.distinctweights"] = _gx["n_distinct_weights"]
+    n["gloryxr.duplicatedmb"] = round((_gx["bytes_duplicated"] or 0) / 1e6, 1)
+
     # How much of MetaTox's recall at each budget is the supplier's record order rather than the
     # method. About half the column carries no score, and inside a tie the method expressed no
     # preference, so the order that survived is an accident of the export. These keys exist so the

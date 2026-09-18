@@ -32,7 +32,11 @@ ALLOWED = {
     "2009",                                # a citation year
     "60",                                  # the RRF constant
     "0.88", "0.016", "16.22", "16.3",      # the emission-transfer figures, cited with the artifact
-    "0.5", "0.109", "0.0012", "0.012", "8.5", "0.01", "70", "2022.09", "2025", "26",
+    "0.5", "0.109", "0.0012", "0.01", "70", "2022.09", "2025", "26",
+    # 0.012 and 8.5 were here and should not have been: they are the depth-two probe's lift
+    # and its candidate-cost ratio, which are results. The lift now comes from
+    # results/benchmark_report_depth2.json through a macro, which is what lets a reader check
+    # it; 8.5 was cited nowhere and is simply gone.
     "291",                                 # the peptide's heavy-atom count, named in prose
     "10",
     "256",                                 # SHA-256, the name of a hash function, and a layer width

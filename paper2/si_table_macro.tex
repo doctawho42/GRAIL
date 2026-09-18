@@ -1,7 +1,7 @@
 \begin{table}[h]
 \centering\footnotesize
 \begin{threeparttable}
-\caption{The aggregation moves 11 verdicts of the 90 contrasts computed under both: the exhaustive arm against BioTransformer at $k=1$, which separates under micro and not macro; the exhaustive arm against BioTransformer at $k=3$, which separates under macro and not micro; the interactive arm against gloryx at $k=5$, which separates under macro and not micro; the exhaustive arm against BioTransformer at $k=5$, which separates under macro and not micro; the interactive arm against gloryx at $k=15$, which separates under micro and not macro; the exhaustive arm against MetaPredictor at $k=15$, which separates under micro and not macro; the interactive arm against BioTransformer at $k=20$, which separates under macro and not micro; the interactive arm against gloryx at $k=20$, which separates under micro and not macro; the interactive arm against MetaTox at $k=20$, which separates under micro and not macro; the interactive arm against BioTransformer at $k=30$, which separates under macro and not micro; the interactive arm against BioTransformer at $k=50$, which separates under macro and not micro.}
+\caption{The aggregation moves 11 verdicts of the 90 contrasts computed under both, marked $^{\mu}$ where micro separates and macro does not and $^{M}$ where the reverse holds: exh.--BioTransformer at $1$$^{\mu}$, exh.--BioTransformer at $3$$^{M}$, int.--GLORYx at $5$$^{M}$, exh.--BioTransformer at $5$$^{M}$, int.--GLORYx at $15$$^{\mu}$, exh.--MetaPredictor at $15$$^{\mu}$, int.--BioTransformer at $20$$^{M}$, int.--GLORYx at $20$$^{\mu}$, int.--MetaTox at $20$$^{\mu}$, int.--BioTransformer at $30$$^{M}$, int.--BioTransformer at $50$$^{M}$. The comparison under macro aggregation, the mean of per-substrate recall, on the same population and with the same conventions as Table~\ref{MS-tab:sweep}; leading zeros are dropped.}
 \label{tab:si-macro}
 \setlength{\tabcolsep}{3pt}
 \begin{tabular}{rrrrrrrr}
@@ -50,7 +50,7 @@ $50$ & $-$.105$^{*}$ [$-$.155, $-$.056] & +.023\phantom{$^{*}$} [$-$.026, +.072]
 \bottomrule
 \end{tabular}
 \begin{tablenotes}[flushleft]\footnotesize
-\item The comparison under macro aggregation, the mean of per-substrate recall, on the same population and with the same conventions as Table~\ref{MS-tab:sweep}; leading zeros are dropped. The last column is the paired difference against MetaTox, with $^{*}$ marking an interval excluding zero. Macro weights a substrate carrying one reference like one carrying twelve, so it answers a different question from micro and is not an estimate of it.
+\item The last column is the paired difference against MetaTox, with $^{*}$ marking an interval excluding zero. Macro weights a substrate carrying one reference like one carrying twelve, so it answers a different question from micro and is not an estimate of it.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}

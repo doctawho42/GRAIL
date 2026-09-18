@@ -31,6 +31,16 @@
    "status": "current"
   },
   {
+   "artifact": "results/benchmark_report_depth2.json",
+   "script": "run_benchmark.py",
+   "inferred": true,
+   "how": "producer at c59756122c8d, the commit that added the artifact",
+   "status": "producer_changed",
+   "detail": "producer was 377354d581e5, is now 045dc873451c",
+   "diff_recovered_by": "source at c59756122c8d",
+   "diff": "--- run_benchmark.py (as recorded)\n+++ run_benchmark.py (now)\n@@ -22,6 +22,9 @@\n \n ROOT = Path(__file__).resolve().parents[1]\n-if str(ROOT) not in sys.path:\n-    sys.path.insert(0, str(ROOT))\n+for _p in (str(ROOT), str(ROOT / \"scripts\")):\n+    if _p not in sys.path:\n+        sys.path.insert(0, _p)\n+\n+from _provenance import record_inputs, stamp  # noqa: E402\n \n from rdkit import Chem, RDLogger\n@@ -185,5 +188,6 @@\n             total_t += tt\n             continue\n-        products = apply_rules_to_molecule(mol, rules, normalization_mode=\"canonical\")\n+        products = apply_rules_to_molecule(mol, rules, normalization_mode=\"canonical\",\n+                                           presentation=\"expanded\")\n         prod_keys = list(products.keys())\n         gen_ik = ik_set(prod_keys)\n@@ -267,5 +271,6 @@\n                     continue\n                 expansions += 1\n-                for p_smi in apply_rules_to_molecule(m, rules, normalization_mode=\"canonical\").keys():\n+                for p_smi in apply_rules_to_molecule(m, rules, normalization_mode=\"canonical\",\n+                                            presentation=\"expanded\").keys():\n                     p_ik = _inchikey(p_smi)\n                     if p_ik not in visited_ik:\n@@ -308,6 +313,8 @@\n         if mol is None:\n             continue\n-        base_ik = ik_set(apply_rules_to_molecule(mol, base_rules, normalization_mode=\"canonical\").keys())\n-        p2_ik = ik_set(apply_rules_to_molecule(mol, phase2_rules, normalization_mode=\"canonical\").keys())\n+        base_ik = ik_set(apply_rules_to_molecule(mol, base_rules, normalization_mode=\"canonical\",\n+                                          presentation=\"expanded\").keys())\n+        p2_ik = ik_set(apply_rules_to_molecule(mol, phase2_rules, normalization_mode=\"canonical\",\n+                                        presentation=\"expanded\").keys())\n         comb_ik = base_ik | p2_ik\n  ... diff truncated"
+  },
+  {
    "artifact": "results/biotransformer_arm.json",
    "script": "biotransformer_arm.py",
    "how": "recorded source digest",
@@ -253,7 +263,14 @@
    "how": "recorded source digest",
    "status": "producer_changed",
    "detail": "producer was 20283cd90ddf, is now 13eadf57502c",
-   "diff_note": "scripts/typed_edit/gloryx_via_service.py is not in commit 6c947921438e"
+   "diff_recovered_by": "the recorded digest, found in history at 7dd9ef31d20d",
+   "diff": "--- gloryx_via_service.py (as recorded)\n+++ gloryx_via_service.py (now)\n@@ -134,9 +134,45 @@\n \n \n-def population() -> list:\n-    \"\"\"The same substrates the other comparators are read on.\"\"\"\n-    from vs_metatox import population as pop\n-    subs, _, _ = pop()\n-    return subs\n+POPULATIONS = (\"comparison291\", \"evaluated1170\")\n+\n+\n+def population(name: str = \"comparison291\") -> list:\n+    \"\"\"The substrates of one named population, in a deterministic order.\n+\n+    The comparison set is taken from the accessor every other comparator is read through, so this\n+    column and theirs cannot drift apart. The evaluated set is the substrates the corpus holds\n+    references for, which is the denominator the re-tabulation uses.\n+\n+    An unknown name raises rather than falling back to a default: a population chosen by accident\n+    is the defect that makes two tables incomparable, and silently defaulting hides it.\n+    \"\"\"\n+    if name == \"comparison291\":\n+        from vs_metatox import population as pop\n+        subs, _, _ = pop()\n+        return subs\n+    if name == \"evaluated1170\":\n+        truth = json.loads((ROOT / \"results\" / \"test_references.json\").read_text())\n+        return sorted(truth)\n+    raise ValueError(f\"unknown population {name!r}; known populations are \"\n+                     f\"{', '.join(POPULATIONS)}\")\n+\n+\n+def pending(subs: list, held_path) -> list:\n+    \"\"\"Those substrates an existing output does not already carry, in the order given.\n+\n+    Phase 2 widens this column from the comparison set to the evaluated set, and the already\n+    published run covers the narrower one. Asking the operator's service again for molecules whose\n+    answers are already on disk is a cost to somebody else's machine for no information, so the\n  ... diff truncated"
+  },
+  {
+   "artifact": "results/gloryxr_identity.json",
+   "script": "gloryxr_identity.py",
+   "how": "recorded source digest",
+   "status": "current"
   },
   {
    "artifact": "results/group_decode.json",
@@ -416,13 +433,19 @@
    "artifact": "results/metatox_outside_submission.json",
    "script": "metatox_outside_ingest.py",
    "how": "recorded source digest",
-   "status": "current"
+   "status": "cosmetic_only",
+   "detail": "the producer changed only in comments, docstrings or layout: the parse tree with docstrings removed is identical, so the numbers cannot have moved",
+   "diff_recovered_by": "the recorded digest, found in history at c38e7b6aef80",
+   "diff": "--- metatox_outside_ingest.py (as recorded)\n+++ metatox_outside_ingest.py (now)\n@@ -16,12 +16,16 @@\n old reason for the arm's absence is not merely stale, it is the wrong reason.\n \n-OUTPUT BUDGET, which is why the arm still does not join the axis. The submission README asked for\n-the same configuration as the first batch, in those words, and said why: two halves at different\n-budgets are two arms reported as one. They are not the same. The first batch returned 10,601 records\n-for 291 substrates; this one returns 229,106 for 879. Both counts are raw records -- the first\n-batch's ingest keeps every parseable record and filters none by score -- so the rates divide, and\n-the second batch emits about seven times more per substrate. Recall at every k moves with output\n-size, so a column half-scored at one budget and half at the other would be an artefact of the\n-budgets. That is measured here and recorded as a blocker rather than argued about.\n+OUTPUT BUDGET was the last ground for keeping the arm out, and it did not survive measurement. The\n+submission README asked for the same configuration as the first batch, in those words, and said why:\n+two halves at different budgets are two arms reported as one. An earlier version of this script put\n+the delivery at 260.64 predictions per substrate against 36.43 in the comparison set, a factor of\n+7.15, and recorded that as a blocker. The factor was an artefact of the comparison. 36.43 counts\n+structures de-duplicated by canonical SMILES inside scripts/metatox_smirks_ingest.py and 260.64\n+counted raw records, so the two numbers were never the same quantity. Measured the same way on both\n+halves the delivery gives 39.1877 against 36.4296, a ratio of 1.076. The same statistic, which no\n+code in this repository computed for any arm until this one was challenged, puts SyGMa at 1.1426 and\n+GLORYx at 1.0919 -- both further from 1.0 than MetaTox, and both already in the axis. All five are in\n+`peer_two_half_ratios`, and the blocker is in `withdrawn_blockers` with the four grounds that retired\n+it. The arm is in the axis, and admitting it costs this work two cells.\n \n THE TWO FILES DISAGREE, so both are recorded. all_meta_smirks returns 229,106 records over all 879"
   },
   {
    "artifact": "results/metatox_smirks_preds_1170.json",
    "script": "metatox_smirks_ingest.py",
    "how": "recorded source digest",
-   "status": "current"
+   "status": "cosmetic_only",
+   "detail": "the producer changed only in comments, docstrings or layout: the parse tree with docstrings removed is identical, so the numbers cannot have moved",
+   "diff_recovered_by": "the recorded digest, found in history at c38e7b6aef80",
+   "diff": "--- metatox_smirks_ingest.py (as recorded)\n+++ metatox_smirks_ingest.py (now)\n@@ -3,6 +3,9 @@\n \n The supplier's earlier delivery was layer 1 without the SMIRKS rules and returned 270 of the 291\n-submitted parents (results/grail_vs_metatox.json), which is why MetaTox appears in no table in this\n-paper. This is the SMIRKS variant, and it covers all 291.\n+submitted parents (results/grail_vs_metatox.json), and on that delivery the paper carried no MetaTox\n+column at all. This is the SMIRKS variant, it covers all 291, and it is what put MetaTox into the\n+manuscript: the arm is now a column in fourteen generated tables. This sentence said the opposite\n+for as long as it went unread, so the count is taken from the files rather than from memory --\n+grep -l MetaTox paper2/*table*.tex.\n \n The first delivery carries no substrates. Records are identified only as `<substrate index>_<metabolite"
   },
   {
    "artifact": "results/metatox_smirks_preds_evaluated1170.json",
@@ -740,7 +763,8 @@
    "how": "recorded source digest",
    "status": "producer_changed",
    "detail": "producer was 81e44a0d3d8a, is now 23314d652a09",
-   "diff_note": "scripts/typed_edit/uspto_type_overlap.py is not in commit 2310be527f42"
+   "diff_recovered_by": "the recorded digest, found in history at 43f1e1dc3f46",
+   "diff": "--- uspto_type_overlap.py (as recorded)\n+++ uspto_type_overlap.py (now)\n@@ -111,4 +111,5 @@\n                               \"the two type vocabularies do not meet and the intersection above \"\n                               \"measures incomparability rather than absence\"},\n+           \"recovered_types\": sorted(hit_b),\n            \"examples_recoverable\": [json.loads(t) for t in hit_b[:8]]}\n     Path(args.out).write_text(json.dumps(rep, indent=1))"
   },
   {
    "artifact": "results/val_pool_population.json",
@@ -779,10 +803,10 @@
    "status": "current"
   }
  ],
- "n_pinned": 127,
- "n_pinned_stale": 2,
+ "n_pinned": 129,
+ "n_pinned_stale": 3,
  "sweep": {
-  "unstamped": 303,
+  "unstamped": 302,
   "producer_changed": 41,
   "current": 72,
   "producer_unknown": 26,
@@ -951,11 +975,6 @@
   },
   {
    "artifact": "results/benchmark_report.json",
-   "status": "unstamped",
-   "detail": "no provenance block: nothing records which code wrote this"
-  },
-  {
-   "artifact": "results/benchmark_report_depth2.json",
    "status": "unstamped",
    "detail": "no provenance block: nothing records which code wrote this"
   },
@@ -1687,9 +1706,9 @@
    "how": "source at e5da75350e64",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was cd5cd5e7e0b2, is now f9a8a7980e10",
+   "detail": "producer was cd5cd5e7e0b2, is now 4800e3d3cd26",
    "diff_recovered_by": "source at e5da75350e64",
-   "diff": "--- metatox_smirks_ingest.py (as recorded)\n+++ metatox_smirks_ingest.py (now)\n@@ -6,12 +6,30 @@\n paper. This is the SMIRKS variant, and it covers all 291.\n \n-The file carries no substrates. Records are identified only as `<substrate index>_<metabolite\n+The first delivery carries no substrates. Records are identified only as `<substrate index>_<metabolite\n index>`, so the substrates have to be recovered from the submission order in\n results/metatox_input/substrate_map.csv. A positional join is exactly the kind of assumption that\n-silently produces a whole table of wrong numbers, so it is gated rather than assumed: a predicted\n-metabolite of a substrate should look like that substrate, and under an off-by-one or a shuffled\n-order it would not. The gate is the median Tanimoto between each substrate and its own predictions,\n-against the same statistic under a deliberately rotated assignment. If the true join is not far\n-above the rotated one, the join is wrong and nothing downstream means anything.\n+silently produces a whole table of wrong numbers, so it is gated: a predicted metabolite of a\n+substrate should look like that substrate, and under an off-by-one or a shuffled order it would not.\n+The gate is the median Tanimoto between each substrate and its own predictions, against the same\n+statistic under a deliberately rotated assignment.\n+\n+WHAT THAT GATE CAN AND CANNOT SEE, because an earlier version of this docstring claimed more than it\n+delivers. It is a median over substrates, so it is blind to a minority: the fraction that has to be\n+cross-assigned before it fires is (0.5 - q) / (1 - q), where q is the share of per-substrate medians\n+already below 0.5. Measured, that is 0.25 on the 291 and 0.31 on the 879 -- so roughly a quarter to\n+a third of either delivery could be mis-assigned with this statistic unmoved. It rules out a GLOBAL\n+shift or shuffle, which is what a positional join can plausibly get wrong, and nothing smaller.\n+\n+A minority mis-assignment is caught instead by an instrument that resolves per substrate, in\n+revision/tests/test_the_metatox_column_over_the_whole_population.py: each substrate's similarity to\n+its own predictions against several strangers' sets, with the pass rate of the half this paper\n+already reports as the bar. It catches a tenth of a delivery cross-assigned, where this gate needs a\n+third.\n+\n+The gate also mis-calibrates in the other direction on re-tautomerised substrates: it compares\n+against the substrate as the corpus stores it, while the service saw the submitted tautomer. For the\n+257 of 879 that differ, the measured median is 0.47 against the corpus form and 0.68 against what\n+was actually submitted, so a delivery made up of those alone would have been refused while being\n+perfectly correct.\n \"\"\"\n from __future__ import annotations\n@@ -37,28 +55,63 @@\n  ... diff truncated"
+   "diff": "--- metatox_smirks_ingest.py (as recorded)\n+++ metatox_smirks_ingest.py (now)\n@@ -3,15 +3,36 @@\n \n The supplier's earlier delivery was layer 1 without the SMIRKS rules and returned 270 of the 291\n-submitted parents (results/grail_vs_metatox.json), which is why MetaTox appears in no table in this\n-paper. This is the SMIRKS variant, and it covers all 291.\n-\n-The file carries no substrates. Records are identified only as `<substrate index>_<metabolite\n+submitted parents (results/grail_vs_metatox.json), and on that delivery the paper carried no MetaTox\n+column at all. This is the SMIRKS variant, it covers all 291, and it is what put MetaTox into the\n+manuscript: the arm is now a column in fourteen generated tables. This sentence said the opposite\n+for as long as it went unread, so the count is taken from the files rather than from memory --\n+grep -l MetaTox paper2/*table*.tex.\n+\n+The first delivery carries no substrates. Records are identified only as `<substrate index>_<metabolite\n index>`, so the substrates have to be recovered from the submission order in\n results/metatox_input/substrate_map.csv. A positional join is exactly the kind of assumption that\n-silently produces a whole table of wrong numbers, so it is gated rather than assumed: a predicted\n-metabolite of a substrate should look like that substrate, and under an off-by-one or a shuffled\n-order it would not. The gate is the median Tanimoto between each substrate and its own predictions,\n-against the same statistic under a deliberately rotated assignment. If the true join is not far\n-above the rotated one, the join is wrong and nothing downstream means anything.\n+silently produces a whole table of wrong numbers, so it is gated: a predicted metabolite of a\n+substrate should look like that substrate, and under an off-by-one or a shuffled order it would not.\n+The gate is the median Tanimoto between each substrate and its own predictions, against the same\n+statistic under a deliberately rotated assignment.\n+\n+WHAT THAT GATE CAN AND CANNOT SEE, because an earlier version of this docstring claimed more than it\n+delivers. It is a median over substrates, so it is blind to a minority: the fraction that has to be\n+cross-assigned before it fires is (0.5 - q) / (1 - q), where q is the share of per-substrate medians\n+already below 0.5. Measured, that is 0.25 on the 291 and 0.31 on the 879 -- so roughly a quarter to\n+a third of either delivery could be mis-assigned with this statistic unmoved. It rules out a GLOBAL\n+shift or shuffle, which is what a positional join can plausibly get wrong, and nothing smaller.\n+\n+A minority mis-assignment is caught instead by an instrument that resolves per substrate, in\n+revision/tests/test_the_metatox_column_over_the_whole_population.py: each substrate's similarity to\n+its own predictions against several strangers' sets, with the pass rate of the half this paper\n+already reports as the bar. It catches a tenth of a delivery cross-assigned, where this gate needs a\n+third.\n  ... diff truncated"
   },
   {
    "artifact": "results/mined_rule_catalog_v2.json",
@@ -2629,7 +2648,7 @@
    "how": "recorded source digest",
    "status": "producer_changed",
    "detail": "producer was ed476b264a7e, is now 76bcbdc069a0",
-   "diff_recovered_by": "the tree was dirty when written, so the source at e56560b587b1 is the nearest committed version and not exactly what ran",
+   "diff_recovered_by": "the tree was dirty when written, the recorded digest is in no commit that touches scripts/typed_edit/wide_pool_analysis.py, so the source at e56560b587b1 is the nearest committed version and not exactly what ran",
    "diff": "--- wide_pool_analysis.py (as recorded)\n+++ wide_pool_analysis.py (now)\n@@ -33,5 +33,7 @@\n         sys.path.insert(0, _p)\n \n-from _provenance import stamp  # noqa: E402\n+from _provenance import record_inputs, stamp  # noqa: E402\n+\n+from _rrf import rrf_order  # noqa: E402\n \n from rdkit import Chem, RDLogger  # noqa: E402\n@@ -51,6 +53,11 @@\n \n \n+def hits(keys, real, k=None):\n+    \"\"\"Number of references recovered in the first k, which micro and macro both need.\"\"\"\n+    return len(set(keys[:k] if k else keys) & real)\n+\n+\n def rec(keys, real, k=None):\n-    return len(set(keys[:k] if k else keys) & real) / len(real) if real else 0.0\n+    return hits(keys, real, k) / len(real) if real else 0.0\n \n \n@@ -58,8 +65,19 @@\n     ap = argparse.ArgumentParser()\n     ap.add_argument(\"--out\", default=str(ROOT / \"results\" / \"wide_pool_analysis.json\"))\n+    ap.add_argument(\"--pools\", default=\"\",\n+                    help=\"glob of pool shards; empty reads the single merged POOLS file\")\n     args = ap.parse_args()\n \n-    blob = json.loads(POOLS.read_text())\n-    pools, refs = blob[\"pools\"], blob[\"references\"]\n+    if args.pools:\n+        import glob as _glob\n+        pools, refs, src = {}, {}, args.pools\n+        read = [Path(f) for f in sorted(_glob.glob(args.pools))]\n+        for f in read:\n+            d = json.loads(f.read_text())\n+            pools.update(d[\"pools\"]); refs.update(d[\"references\"])\n  ... diff truncated"
   },
   {
@@ -2638,7 +2657,8 @@
    "how": "recorded source digest",
    "status": "producer_changed",
    "detail": "producer was 9f3f5adca657, is now 5ec39f72c745",
-   "diff_note": "scripts/typed_edit/build_wide_pools.py is not in commit 40df3a8496e9"
+   "diff_recovered_by": "the recorded digest, found in history at e56560b587b1",
+   "diff": "--- build_wide_pools.py (as recorded)\n+++ build_wide_pools.py (now)\n@@ -41,10 +41,10 @@\n \n \n-def merge(pattern, out):\n+def merge(pattern, out, which=\"comparison\"):\n     paths = sorted(glob.glob(pattern))\n     if not paths:\n         print(\"no shard matched\", file=sys.stderr)\n         return 1\n-    pools, refs, slices = {}, {}, []\n+    pools, refs, slices, stamps, shown = {}, {}, [], [], set()\n     for p in paths:\n         d = json.loads(Path(p).read_text())\n@@ -52,6 +52,27 @@\n         refs.update(d[\"references\"])\n         slices.append(tuple(d[\"slice\"]))\n+        stamps.append(d.get(\"checkpoints\"))\n+        shown.add(d.get(\"present\", \"stored\"))\n         print(f\"  + {Path(p).name}: {d['slice']} {len(d['pools'])} substrates\", file=sys.stderr)\n-    subs, _, _ = population()\n+    # Shards built by different models, or from different presentations of the substrate, must\n+    # not merge into one pool. Nothing downstream can see the seam: a merged file records one\n+    # set of checkpoints and the reader takes it for the whole.\n+    def key(c):\n+        return None if not c else tuple(sorted((k, (v or {}).get(\"sha256_16\"))\n+                                               for k, v in c.items()))\n+    distinct = {key(c) for c in stamps}\n+    if len(distinct) > 1:\n+        print(f\"FAIL: the shards were not all scored by one pair of checkpoints: {distinct}\",\n+              file=sys.stderr)\n+        return 1\n+    if len(shown) > 1:\n+        print(f\"FAIL: the shards do not agree on how the substrate was presented: {shown}\",\n+              file=sys.stderr)\n+        return 1\n+    if which == \"evaluated-test\":\n+        truth = json.loads((ROOT / \"results/test_references.json\").read_text())\n+        subs = sorted(s for s in truth if truth[s])\n  ... diff truncated"
   },
   {
    "artifact": "results/widepools/w0.json",

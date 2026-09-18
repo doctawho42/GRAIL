@@ -28,6 +28,11 @@ ERROR = re.compile(r"^! .*", re.M)
 # reference in it passed. A referee found one printing ?? on page S10.
 UNDEF = re.compile(r"(?:Reference|Citation) `([^']+)' on page \S+ undefined")
 OVERFULL = re.compile(r"Overfull \\[hv]box")
+# A float that does not fit is not an overfull box and was not counted. LaTeX reports it
+# separately, and the document still compiles: the table is pushed to a page of its own or
+# runs past the text block, and nothing in this checker said so. si_table_macro.tex was over
+# by 75.7pt through every build this gate has ever passed.
+FLOAT = re.compile(r"Float too large for page by ([0-9.]+)pt")
 PAGES = re.compile(r"\((\d+) pages")
 
 
@@ -113,14 +118,16 @@ def main() -> int:
         errors = ERROR.findall(text)
         undefined = UNDEF.findall(text)
         overfull = OVERFULL.findall(text)
+        floats = FLOAT.findall(text)
         pages = PAGES.findall(text)
         print(f"{name}: errors={len(errors)} undefined={len(undefined)} "
-              f"overfull={len(overfull)} pages={pages[-1] if pages else '?'}")
+              f"overfull={len(overfull)} floatstoolarge={len(floats)} "
+              f"pages={pages[-1] if pages else '?'}")
         for item in errors[:5]:
             print(f"    {item}")
         for item in undefined[:8]:
             print(f"    undefined: {item}")
-        if errors or undefined or overfull:
+        if errors or undefined or overfull or floats:
             ok = False
     print("check_paper2_build: " + ("OK" if ok else "FAIL"))
     return 0 if ok else 1

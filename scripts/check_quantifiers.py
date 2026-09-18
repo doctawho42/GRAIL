@@ -198,7 +198,7 @@ def check_superlatives(numbers: dict, keys: dict) -> list:
             # violation: a gate that is wrong two times in five stops being read.
             if re.search(r"\b(?:every|each|any|all|either) (?:comparator|method|system|arm|source|"
                          r"population|criterion|tool)\b", head + " " + tail, re.I):
-                UNRESOLVED.append(f"{doc}: \"{word}\" at \\num{macro} ranges over a named set of "
+                UNRESOLVED.append(f"{doc}:{text.count(chr(10), 0, m.start()) + 1}: \"{word}\" at \\num{macro} ranges over a named set of "
                                   f"methods, not over the budget series; axis not resolvable here")
                 continue
 
@@ -290,8 +290,13 @@ def check_separations(numbers: dict, keys: dict) -> list:
             span = text[min(vm.end(), iv[0]):max(vm.start(), iv[1])]
             if re.search(r"\b(?:on|over|against) the (?:comparison|whole|validation|full|other|"
                          r"unselected) (?:set|split|population)\b", span, re.I):
-                UNRESOLVED.append(f"{doc}: a verdict and an interval separated by a population "
-                                  f"marker; which measurement the verdict governs is not resolvable")
+                # With the line, because a notice a reader cannot locate is a notice nobody can
+                # act on: this said only "paper2/si.tex" and six sentences in that file match the
+                # shape, so finding the one it meant took a second search.
+                UNRESOLVED.append(
+                    f"{doc}:{text.count(chr(10), 0, vm.start()) + 1}: a verdict and an interval "
+                    f"separated by a population marker; which measurement the verdict governs is "
+                    f"not resolvable")
                 continue
 
             lo, hi = numbers.get(stem + ".lo"), numbers.get(stem + ".hi")
@@ -352,8 +357,20 @@ def main() -> int:
             print("   " + line)
         print("\nThese are claims about a SET, not about a figure. The number in each is correct.")
         return 1
+    # What this check did NOT decide, said on the ordinary run and not only under a flag. The
+    # message used to read "every separation verdict matches the artifact" unconditionally, while
+    # verdicts this check cannot resolve were collected and printed nowhere: a gate claiming a
+    # coverage it does not have is the defect it exists to catch, one level up.
+    skipped = list(dict.fromkeys(UNRESOLVED))
+    if skipped:
+        print(f"every superlative names its series' extremum, and every separation verdict this "
+              f"check can resolve matches the artifact. {len(skipped)} claim(s) it cannot resolve, "
+              f"and does not vouch for:")
+        for u in skipped:
+            print("   " + u)
+        return 0
     print("every superlative names its series' extremum, and every separation verdict matches "
-          "the artifact")
+          "the artifact; none was left undecided")
     return 0
 
 

@@ -21,8 +21,11 @@ from pathlib import Path
 from typing import Dict, List, Optional, Set
 
 ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
+for _p in (str(ROOT), str(ROOT / "scripts")):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+from _provenance import record_inputs, stamp  # noqa: E402
 
 from rdkit import Chem, RDLogger
 
@@ -615,10 +618,22 @@ def main() -> int:
         print(json.dumps({"depth1_ceiling": d1, f"depth{args.depth}_ceiling_lower_bound": dD, "lift_over_depth1": lift}, indent=2), flush=True)
         out_path = Path(args.out.replace(".json", f"_depth{args.depth}.json"))
         out_path.parent.mkdir(parents=True, exist_ok=True)
+        # The invocation, recorded by the run rather than reconstructed afterwards. Without
+        # this block the artifact carried five numbers and nothing else, and three places in this
+        # repository concluded from its silence that the run could not be reproduced -- the
+        # manuscript among them. The draw is deterministic in (sample, seed) over a pool that
+        # `sorted(substrate_map)` fixes, so what was missing was the record, never the property.
         out_path.write_text(json.dumps({
             "n_test_substrates": len(test_map), "matching": "inchikey",
             "depth1_ceiling": d1, f"depth{args.depth}_ceiling_lower_bound": dD,
             "lift_over_depth1": lift,
+            "provenance": stamp(__file__),
+            "config": {"split": "test", "sample": args.sample, "sampling_seed": args.seed,
+                       "depth": args.depth, "beam": args.beam,
+                       "node_budget": args.node_budget, "n_rules": len(rules)},
+            "inputs": record_inputs([p for p in (DATA / "test_triples_clean.txt",
+                                                 DATA / "test_triples.txt",
+                                                 DATA / "test.sdf") if p.exists()]),
         }, indent=2))
         print(f"\nWrote {out_path}", flush=True)
         return 0

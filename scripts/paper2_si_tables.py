@@ -873,12 +873,19 @@ def si_macro():
                 moved.append((int(k), name, other["excludes_zero"]))
     moved.sort()
     LONG = {"whole bank": "the exhaustive arm", "trained budget": "the interactive arm"}
+    # Compact, because the long form put this float 75.7pt over the page and the build checker
+    # counted overfull boxes only, so it never said so. Eleven clauses of the shape "the exhaustive
+    # arm against BioTransformer at k=1, which separates under micro and not macro" spent 1,101
+    # characters saying what an abbreviation and a mark say in a tenth of the space, and a caption
+    # is a poor place for an eleven-item list in either form.
+    SHORT = {"whole bank": "exh.", "trained budget": "int."}
+
     def phrase(k, name, micro_sep):
         a, b = [x.strip() for x in name.split(" - ")]
         who = {"metatox": "MetaTox", "sygma": "SyGMa", "metapredictor": "MetaPredictor",
-               "biotransformer": "BioTransformer"}.get(b, b)
-        return (f"{LONG.get(a, a)} against {who} at $k={k}$, which separates under "
-                + ("micro and not macro" if micro_sep else "macro and not micro"))
+               "biotransformer": "BioTransformer", "gloryx": "GLORYx"}.get(b, b)
+        return (f"{SHORT.get(a, a)}--{who} at ${k}$"
+                + ("$^{\\mu}$" if micro_sep else "$^{M}$"))
     ks = sorted((int(k) for k in macro), key=int)
     # A table captioned as the whole comparison must print the whole comparison. Filtering a
     # hardcoded list against the artifact, which is what this did, only removes arms the artifact
@@ -941,8 +948,9 @@ def si_macro():
             + "\n\\bottomrule\n\\end{tabular}\n"
             "\\caption{"
             + (f"The aggregation moves {len(moved)} verdicts of the "
-               f"{sum(len(v) for v in con.values())} contrasts computed under both: "
-               + "; ".join(phrase(*m) for m in moved) + ". " if moved else
+               f"{sum(len(v) for v in con.values())} contrasts computed under both, marked "
+               "$^{\\mu}$ where micro separates and macro does not and $^{M}$ where the reverse "
+               "holds: " + ", ".join(phrase(*m) for m in moved) + ". " if moved else
                "No verdict differs between the two aggregations. ")
             + "The comparison under macro aggregation, the mean of per-substrate recall, "
             "on the same population and with the same conventions as Table~\\ref{MS-tab:sweep}; "
@@ -1102,6 +1110,81 @@ def si_dialect():
             "service and MetaPredictor a frozen delivery; SyGMa, which can be re-run, is swept "
             "above.}\n"
             "\\label{tab:si-dialect}\n\\end{table}\n")
+
+
+def si_intervals_whole():
+    """The same grid as si_intervals, on the population nobody selected.
+
+    It exists because the Supporting Information twice said it did not: that the wider cells "are
+    in no table in this paper", and that one comparator's wider cells are "among those no table
+    carries, so they are set out here". Sixty-seven cell macros were being read out in sentences in
+    consequence, and a prose enumeration is where an omission is invisible and where a claim can
+    bind to the wrong cell -- which the quantifier gate caught happening in that very section.
+
+    Two differences from its sibling, both forced by what the two axes are:
+
+      the budgets are the five this axis sweeps, not the nine the deployment table does, because a
+      lead at a budget with no whole-test counterpart cannot be followed across the move;
+
+      there is no Holm dagger. The declared family is a sweep over the comparison set, and marking
+      these cells against it would import a correction computed on a different grid. The caption
+      says so rather than leaving a reader to assume the mark was forgotten.
+    """
+    pop = art("population_definition.json")
+    con = pop["contrasts"]["the whole evaluated test set"]
+    # The axis names the two arms exhaustive_minus_comparator and deployed_minus_comparator; the
+    # printed labels are the sibling table's, so the two read alike.
+    ARMS = (("exhaustive_minus_comparator", "exhaustive"),
+            ("deployed_minus_comparator", "interactive"))
+
+    LABELS = {"metatox": "MetaTox", "sygma": "SyGMa", "metapredictor": "MetaPredictor",
+              "biotransformer": "BioTransformer", "gloryx": "GLORYx"}
+    present = sorted(a for a, v in con.items()
+                     if isinstance(v, dict) and any(k in v for k, _ in ARMS))
+    unlabelled = [c for c in present if c not in LABELS]
+    if unlabelled:
+        raise SystemExit(
+            f"REFUSING: population_definition.json carries contrasts against "
+            f"{', '.join(unlabelled)} and this table has no column for them, while its caption "
+            f"says it holds every difference between a GRAIL arm and a comparator.")
+    comps = [(key, LABELS[key]) for key in LABELS if key in present]
+    ks = sorted({int(k) for c, _ in comps for arm, _ in ARMS for k in (con[c].get(arm) or {})})
+
+    def trim(x):
+        return ("$-$" if x < 0 else "+") + f"{abs(x):.3f}".lstrip("0")
+
+    blocks = []
+    for arm, label in ARMS:
+        rows = []
+        for k in ks:
+            cells = []
+            for key, _ in comps:
+                c = (con[key].get(arm) or {}).get(str(k))
+                if c is None:
+                    cells.append("---")
+                    continue
+                star = "$^{*}$" if c["excludes_zero"] else "\\phantom{$^{*}$}"
+                cells.append(f"{trim(c['difference'])}{star} "
+                             f"[{trim(c['ci95'][0])}, {trim(c['ci95'][1])}]")
+            rows.append(f"${k}$ & " + " & ".join(cells) + " \\\\")
+        blocks.append(f"\\multicolumn{{{len(comps) + 1}}}{{l}}{{\\emph{{GRAIL {label}}} minus}}"
+                      " \\\\\n" + "\n".join(rows))
+    head = " & ".join(lab for _, lab in comps)
+    return ("\\begin{table}[h]\n\\centering\\scriptsize\n"
+            "\\setlength{\\tabcolsep}{2.5pt}\n"
+            "\\begin{tabular}{r" + "l" * len(comps) + "}\n\\toprule\n"
+            f"$k$ & {head} \\\\\n\\midrule\n"
+            + "\n\\midrule\n".join(blocks)
+            + "\n\\bottomrule\n\\end{tabular}\n"
+            "\\caption{Every difference between a GRAIL arm and a comparator on the whole "
+            "evaluated test set, the companion to Table~\\ref{tab:si-intervals}, in micro recall "
+            "with its paired bootstrap 95\\% interval; leading zeros are dropped. $^{*}$ marks an "
+            "interval excluding zero. The budgets are the five this axis sweeps rather than the "
+            "nine of the comparison set, because a lead at a budget with no counterpart here "
+            "cannot be followed across the move. No Holm mark appears: the declared family is a "
+            "sweep over the comparison set, and carrying its correction onto this grid would "
+            "report a family nobody tested.}\n"
+            "\\label{tab:si-intervals-whole}\n\\end{table}\n")
 
 
 def si_intervals():
@@ -1359,6 +1442,7 @@ def generators():
                      ("si_table_case", si_case),
                      ("si_table_ranking", si_ranking),
                      ("si_table_intervals", si_intervals),
+                     ("si_table_intervals_whole", si_intervals_whole),
                      ("si_table_precision", si_precision),
                      ("si_table_parentdrop", si_parentdrop),
                      ("si_table_dialect", si_dialect),

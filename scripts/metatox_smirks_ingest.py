@@ -2,8 +2,11 @@
 """The SMIRKS-variant MetaTox predictions, keyed back to the substrates they were run on.
 
 The supplier's earlier delivery was layer 1 without the SMIRKS rules and returned 270 of the 291
-submitted parents (results/grail_vs_metatox.json), which is why MetaTox appears in no table in this
-paper. This is the SMIRKS variant, and it covers all 291.
+submitted parents (results/grail_vs_metatox.json), and on that delivery the paper carried no MetaTox
+column at all. This is the SMIRKS variant, it covers all 291, and it is what put MetaTox into the
+manuscript: the arm is now a column in fourteen generated tables. This sentence said the opposite
+for as long as it went unread, so the count is taken from the files rather than from memory --
+grep -l MetaTox paper2/*table*.tex.
 
 The first delivery carries no substrates. Records are identified only as `<substrate index>_<metabolite
 index>`, so the substrates have to be recovered from the submission order in

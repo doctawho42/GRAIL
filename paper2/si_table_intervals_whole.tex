@@ -1,0 +1,30 @@
+\begin{table}[h]
+\centering\scriptsize
+\begin{threeparttable}
+\caption{Every difference between a GRAIL arm and a comparator on the whole evaluated test set, the companion to Table~\ref{tab:si-intervals}, in micro recall with its paired bootstrap 95\% interval; leading zeros are dropped.}
+\label{tab:si-intervals-whole}
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular}{rlllll}
+\toprule
+$k$ & MetaTox & SyGMa & MetaPredictor & BioTransformer & GLORYx \\
+\midrule
+\multicolumn{6}{l}{\emph{GRAIL exhaustive} minus} \\
+$5$ & +.056$^{*}$ [+.036, +.077] & $-$.096$^{*}$ [$-$.115, $-$.077] & $-$.088$^{*}$ [$-$.111, $-$.066] & +.071$^{*}$ [+.050, +.092] & $-$.006\phantom{$^{*}$} [$-$.029, +.015] \\
+$10$ & +.030$^{*}$ [+.009, +.051] & $-$.042$^{*}$ [$-$.063, $-$.022] & $-$.045$^{*}$ [$-$.068, $-$.023] & +.090$^{*}$ [+.068, +.113] & $-$.029$^{*}$ [$-$.052, $-$.007] \\
+$15$ & +.022$^{*}$ [+.001, +.043] & +.016\phantom{$^{*}$} [$-$.005, +.036] & +.032$^{*}$ [+.010, +.054] & +.113$^{*}$ [+.091, +.136] & $-$.015\phantom{$^{*}$} [$-$.037, +.006] \\
+$30$ & +.038$^{*}$ [+.020, +.056] & +.114$^{*}$ [+.095, +.134] & +.151$^{*}$ [+.128, +.173] & +.192$^{*}$ [+.167, +.217] & +.033$^{*}$ [+.014, +.051] \\
+$50$ & +.073$^{*}$ [+.056, +.091] & +.181$^{*}$ [+.162, +.201] & +.220$^{*}$ [+.196, +.243] & +.260$^{*}$ [+.234, +.285] & +.087$^{*}$ [+.069, +.105] \\
+\midrule
+\multicolumn{6}{l}{\emph{GRAIL interactive} minus} \\
+$5$ & +.079$^{*}$ [+.058, +.100] & $-$.073$^{*}$ [$-$.091, $-$.056] & $-$.066$^{*}$ [$-$.087, $-$.045] & +.094$^{*}$ [+.073, +.115] & +.016\phantom{$^{*}$} [$-$.005, +.038] \\
+$10$ & +.031$^{*}$ [+.010, +.052] & $-$.042$^{*}$ [$-$.060, $-$.024] & $-$.045$^{*}$ [$-$.066, $-$.022] & +.090$^{*}$ [+.068, +.114] & $-$.029$^{*}$ [$-$.050, $-$.008] \\
+$15$ & $-$.020\phantom{$^{*}$} [$-$.040, +.000] & $-$.026$^{*}$ [$-$.046, $-$.006] & $-$.010\phantom{$^{*}$} [$-$.032, +.013] & +.071$^{*}$ [+.048, +.096] & $-$.057$^{*}$ [$-$.077, $-$.037] \\
+$30$ & $-$.096$^{*}$ [$-$.117, $-$.075] & $-$.020\phantom{$^{*}$} [$-$.040, +.002] & +.017\phantom{$^{*}$} [$-$.007, +.040] & +.058$^{*}$ [+.032, +.084] & $-$.101$^{*}$ [$-$.122, $-$.080] \\
+$50$ & $-$.128$^{*}$ [$-$.150, $-$.106] & $-$.020\phantom{$^{*}$} [$-$.041, +.001] & +.018\phantom{$^{*}$} [$-$.006, +.041] & +.058$^{*}$ [+.032, +.085] & $-$.115$^{*}$ [$-$.137, $-$.092] \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item $^{*}$ marks an interval excluding zero. The budgets are the five this axis sweeps rather than the nine of the comparison set, because a lead at a budget with no counterpart here cannot be followed across the move. No Holm mark appears: the declared family is a sweep over the comparison set, and carrying its correction onto this grid would report a family nobody tested.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

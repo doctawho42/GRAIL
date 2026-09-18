@@ -104,11 +104,11 @@ Inspectable Localisation), a metabolite structure predictor built from a bank of
 templates, a learned model that selects which
 templates to apply, and a learned model that
 ranks the resulting candidates. We evaluate it
-with the two decisions above promoted to declared axes: each is stated and varied across its
-full range instead of being fixed silently. The
+with the two decisions above promoted to declared axes: we name each and sweep it across
+its full range, where both are otherwise fixed
 
-comparison is against five published predictors
-we obtained and ran on the same substrates.
+in silence. The comparison is against five published predictors we obtained and ran on the
+same substrates.
 
 2
 
@@ -143,27 +143,28 @@ sample of 300 validation records, holding 294
 distinct substrates of which 293 carry a wholebank pool. The registered ranking and timing
 thresholds are checked on it, because a threshold
 checked on the population that chose the setting
-it tests is not a check; Table 6 records the population each prediction was in the event checked
+it tests checks nothing; Table 6 records the population each prediction was in the event checked
 on, and Section S26 states that all but one of the
 ten fixed a threshold in advance while leaving
 the population open. The comparison set is the
 291 substrates every method has an entry for,
 carrying 665 references, and every comparison
 against a published predictor is measured on it.
-That third population has a defect worth stating before any number is read on it. It is not
-a random quarter of the test split: it is the
+That third population has a defect that has
+to be stated before any number is read on it. It
+is no random quarter of the test split: it is the
 submission list sent to the comparator that is
-a web service, and how those 291 were drawn
 2
 
-is recorded nowhere in this repository, which is
+a web service, and how those 291 were drawn
+is recorded nowhere in this repository, which is
 the same defect the corpus assembly carries. So
 the comparison is read again on the whole evaluated test set, 1,170 substrates, against the five
 comparators that ran over all of it (Section S30).
 The wide-budget leads survive that move and
 the narrower lead over SyGMa at a budget of
 fifteen does not, so that one is restricted to the
-comparison set wherever it is stated. An arm
+comparison set everywhere it appears. An arm
 here is one column of the comparison, and this
 system contributes two of them: the exhaustive
 arm, which applies the whole bank, and the interactive arm, which applies a fixed number of
@@ -196,8 +197,8 @@ set of the same name. Their knowledge therefore
 overlaps the test substrates by construction, in
 a direction that favours them. Both are columns
 of the comparison, both overlaps are measured
-in Section S1, and neither is corrected for: a
 
+in Section S1, and neither is corrected for: a
 correction would need a model of how much of a
 rule set a reference set produced, which nothing
 here supplies. The comparison therefore contains two arms whose development sources this
@@ -282,9 +283,10 @@ represent
 Nothing in this pipeline is stereochemistryaware. The standardiser strips configuration,
 the matching criterion is chosen to ignore it,
 and the annotation carries none, so sulfoxidation, epoxide hydrolysis and most conjugation
-are predicted and scored as constitutions. For a
-predictor of metabolite structures that is a restriction on what may be asked of it rather than
-a technicality: sulfoxide and epoxide configuration carry the pharmacology of several drug
+are predicted and scored as constitutions. For
+a predictor of metabolite structures that is a
+restriction on what may be asked of it, not a
+technicality: sulfoxide and epoxide configuration carry the pharmacology of several drug
 classes, and a system that cannot represent configuration cannot be asked which enantiomer
 an enzyme makes. Every recall figure in this
 paper is therefore recall over constitutions, and
@@ -305,8 +307,8 @@ by the sum over the two scorers of 1/(K + r),
 where r is its rank under that scorer. Only
 positions enter, so the two opinions contribute
 equally whatever their scales. K = 60 is the
-value the method was published with, and it
-is swept rather than merely disclosed. No constant of 30 or more separates from it at output
+value the method was published with, and this
+paper sweeps it as well as disclosing it. No constant of 30 or more separates from it at output
 budgets of 5, 15 and 50; at 30 one does, and in
 the deployed value’s favour (Section S20).
 The change was registered as prediction P1,
@@ -396,10 +398,10 @@ a
 Taken over a sampled timing sweep of 106 substrates and censored at a 600-second deadline,
 which the exhaustive mode exceeds for 11 of them.
 
-so is the deployed rule budget. Read at an
-output budget of fifteen the curve is flat past
-the deployed rule budget; read at an output
-budget of thirty it is not (Section S16).
+budget. Read at an output budget of fifteen
+the curve is flat past the deployed rule budget;
+read at an output budget of thirty it is not
+(Section S16).
 
 Rule budget and two operating modes
 
@@ -420,12 +422,11 @@ in advance as prediction P3 and, on validation,
 came in under its ceiling (Table 6).
 On the comparison set the same quantity is
 +0.0556, past the ceiling. The two populations
-disagree because at k ≤ 10 the whole bank
-buys nothing on either, and from k = 15 it
-buys more the wider the budget, because the
-interactive arm runs out of candidates. P3’s
-ceiling is therefore a property of the output
-budget requested rather than of the system, and
+disagree because at k ≤ 10 the whole bank buys
+nothing on either, and from k = 15 it buys more
+the wider the budget, because the interactive
+arm runs out of candidates. P3’s ceiling is therefore a property of the output budget requested,
+not of the system, and so is the deployed rule
 
 2.8
 
@@ -844,8 +845,8 @@ separately from the matched-length table above
 (Table 3): the ten cells in which the exhaustive
 arm leads a comparator at k = 30 or k = 50
 with the interval excluding zero. Of those, four
-were never in the corrected family, which was declared over three comparators, so the correction
-is reported over the six it covers; of those it removes one, the margin over MetaTox at k = 30,
+were never in the corrected family, which was
+declared over three comparators, so the correction runs over the six it covers; of those it removes one, the margin over MetaTox at k = 30,
 +0.0511 [+0.0175, +0.0858]. It is not the only
 lead in this paper the correction removes, and
 the others are named where they are claimed.
@@ -1004,14 +1005,14 @@ the caution Section S8 states about short rows
 applies to them. The aggregate advantage is carried by unusual cleavages and by the unnamed
 residue. The exhaustive arm is also below the interactive one on 5 classes, demethylation among
 them (0.8333 against 0.9167 on 36 references).
-That is not a coverage limit but a ranking one:
-the wider pool contains candidates the smaller
-budget never produced, and on those classes
-they displace correct answers out of the window.
-A nominal budget is not a length, and the
-leads at wide budgets are read where most comparator lists have already ended. Removing
-
+That is a limit on ranking, not on coverage: the
+wider pool contains candidates the smaller budget never produced, and on those classes they
+displace correct answers out of the window.
+A nominal budget does not fix a length, and
+the leads at wide budgets are read where most
+comparator lists have already ended. Removing
 length as a variable is possible and it is done: on
+
 each substrate both arms are cut to the number
 of candidates that comparator returned there,
 so the two are read over the same slots on every substrate (Table 3). The result splits the
@@ -1028,6 +1029,7 @@ it to be called that. Three corrections apply
 to the wide-budget leads. Under a family-wise
 correction over the sweep the k = 30 margin
 against MetaTox does not survive and the rest
+do. Under matched list length the margins
 9
 
 Table 4: Micro recall at a budget of 15 within each transformation class, on the comparison set’s
@@ -1219,7 +1221,6 @@ a comparison of list lengths: the exhaustive arm on 0, the interactive arm on 18
 MetaPredictor on 273, BioTransformer on 220, GLORYx on 48, of 291 (Table S8). Three of the 7 run out on more
 than half of the 291. Table S9 repeats the split with each comparator’s own length held instead of the budget.
 
-do. Under matched list length the margins
 against MetaTox and MetaPredictor vanish and
 the one against SyGMa does not. And SyGMa
 met the corpus’s drawing, which differs from
@@ -1244,8 +1245,8 @@ The exhaustive arm’s lead is at depth in the
 list. MetaPredictor is flat from k = 15 because
 273 of its 291 lists are shorter than that budget, and SyGMa gains little between k = 15
 and k = 50; GRAIL’s exhaustive mode keeps
-
 rising because it keeps having candidates. At
+
 k = 50, of 291 substrates, the lists shorter than
 the budget number 291 for MetaPredictor, 291
 for BioTransformer, 270 for GLORYx, 134 for
@@ -1318,13 +1319,13 @@ same number of applicable rules picked by training frequency it gains a small ma
 Two registered mechanisms failed. Emitting
 candidates in whole groups failed (P6), and so
 did gating on the same signal before the fusion
-(P7). The second is closed by an oracle: even
-a perfect group ordering through that gate is
-worse than the generator cap it replaces. The
-signal helps only where it adjusts an order that
-already exists, which is what P5 does and why
-P5 is a measurement rather than a confirmation
-(Section S27).
+(P7). The second is closed by an oracle: even a
+perfect group ordering through that gate is worse
+than the generator cap it replaces. The signal
+helps only where it adjusts an order that already
+exists, which is what P5 does and why P5 is a
+measurement: a confirmation would only restate
+the ordering it started from (Section S27).
 One trained checkpoint produced every figure
 here, so the intervals quantify the population
 with the training held fixed. Retraining both
@@ -1725,12 +1726,11 @@ both halves, taking the median from 49.85 s to
 5.28 s against a registered target below ten, at
 a recall loss of −0.0015 against a cap of 0.01.
 
-Every deployed choice is a registered hypothesis
-with a threshold and a falsification condition,
-tested where it was not selected (Table 6). Ten
-of the sixteen registered are checked here. Six
-are confirmed and three failed, each on the falsification condition it was written with; the tenth
-was measured rather than adjudicated, because
+Every deployed choice is a registered hypothesis with a threshold and a falsification condition, tested where it was not selected (Table 6).
+Ten of the sixteen registered are checked here.
+Six are confirmed and three failed, each on the
+falsification condition it was written with; the
+tenth was measured, not adjudicated, because
 its threshold was fixed in advance and its population was not. The remaining six are registered
 against work this paper does not report and
 13
@@ -1979,16 +1979,15 @@ template, is 0.0035, 95% CI [0.0015, 0.0058], an
 interval excluding zero: the bound is conventiondependent, by 9 references in 2,597.
 The 337 misses of absent type collapse into
 312 distinct types, of which 294 occur once and
-carry 87.2% of the mass. The objection that
-this is a consequence of how finely a type is
-defined is answered by varying the definition.
-What that answer covers should be said exactly:
-it covers the 337 misses of absent type, and none
-of the other 98 plus 40 of the 475. A miss whose
-type the bank holds and whose rule did not
-fire is an implementation failure by construction. Three of the 98 were recovered by relaxing
-convention-dependent primitives, so that arm is
-not invariant to anything.
+carry 87.2% of the mass. A reader may put this
+down to how finely a type is defined; varying
+the definition answers that. What that answer
+covers should be said exactly: it covers the 337
+misses of absent type, and none of the other
+98 plus 40 of the 475. A miss whose type the
+bank holds and whose rule did not fire is an
+implementation failure by construction. Three
+of the 98 were recovered by relaxing conventiondependent primitives, so that arm is not invariant to anything.
 The tail holds at every granularity at which
 a type still determines a product and collapses
 only where it stops doing so (Table 7, Figure 4).
@@ -2160,10 +2159,11 @@ choices would have been defensible.
 
 4.2
 
-whole output, which three of the five comparators also do. What is left, and it is the property
-this paper rests on, is that every evaluation
-choice is declared with every cell of the resulting
-grid reported.
+ordering the whole output, which three of the
+five comparators also do. What is left, and it is
+the property this paper rests on, is that every
+evaluation choice is declared with every cell of
+the resulting grid reported.
 
 Choosing an operating point
 
@@ -2230,10 +2230,11 @@ What distinguishes this system is not that it
 reports a site but that the site is audited. BioTransformer’s output names the reaction and
 the enzyme behind each structure it returns, and
 MetaTox’s method reports a biotransformation
-type and a site of metabolism 5 , so reporting one
-is the norm rather than a contribution. Checking it against the atoms that actually changed,
-against a null of the same size, is not done anywhere in this literature that we can find, and
-Section 3.4 is that check. Nor is ordering the
+type and a site of metabolism 5 , so reporting
+one is the norm here, not a contribution of this
+work. Checking it against the atoms that actually changed, against a null of the same size,
+is not done anywhere in this literature that we
+can find, and Section 3.4 is that check. Nor is
 
 The ceiling bounds this formulation, not the task
 
@@ -2242,14 +2243,12 @@ templates are mined from, and it is measured
 directly: of the 475 references one application
 of this bank fails to reach, between 0.6253 and
 0.7095 are of a type the training annotation
-never holds. That is a bound rather than a
-point, and Section S18 gives the counts it rests
-on.
-
+never holds. That is a bound, not a point, and
+Section S18 gives the counts it rests on.
+Extending coverage therefore requires new reaction corpora, and the census narrows the
 17
 
-Extending coverage therefore requires new reaction corpora, and the census narrows the
-search. Synthetic corpora are excluded by measurement, which leaves enzymatic and regulatory sources. The regulatory ones are the interesting half: metabolite identifications from
+search. Synthetic corpora are excluded by measurement, which leaves enzymatic and regulatory sources. The regulatory ones are the interesting half: metabolite identifications from
 radiolabelled human ADME studies are human
 in vivo data on exactly the population predicted
 here, they have been used to benchmark this
@@ -2257,9 +2256,9 @@ class of tool 14 , and they are, to our knowledge,
 not systematically mined as a source of rules.
 Whether the same bound binds a predictor that
 applies no templates at all is not measured here.
-What the bound licenses is worth saying
-plainly, because the corpus it is a property of has
-two defects this paper also reports. Its assembly
+What the bound licenses has to be said plainly,
+because the corpus it is a property of has two
+defects this paper also reports. Its assembly
 cannot be reconstructed, and the one source
 held on disk shows the selection was not blind
 to chemistry. So the bound says: extending
@@ -2268,27 +2267,24 @@ close the shortfall, because the chemistry is not
 in it. It does not say what fraction of human
 metabolism is of a type no corpus contains, and
 it cannot, because that would need a corpus
-whose assembly is recoverable and whose selection is documented. What makes the narrower
-statement worth having anyway is that this corpus is assembled from the four sources this field
-trains on, so a bank mined from any of them
-inherits the same absence unless the assembly is
-changed. The claim is about a training corpus
-and about the practice of mining it, not about
-metabolism.
+whose assembly is recoverable and whose selection is documented. The narrower statement
+still earns its place, because this corpus is assembled from the four sources this field trains on,
+so a bank mined from any of them inherits the
+same absence unless the assembly is changed.
+The claim is about a training corpus and about
+the practice of mining it, not about metabolism.
 
 5
 
-therefore a one-template ceiling, where a single
-enzymatic step may take several templates, and
-the composite share is why a second application
-of the bank buys little: a fifth of the mined bank
-already carries the compositions a second pass
-would have to discover. A depth-two probe put
-the lift in the low percent at several times the
-candidate cost, and no figure from it is quoted,
-because its result file names no producer and
-predates the provenance apparatus the rest of
-this work is held to.
+tion of the bank buys little: a fifth of the mined
+bank already carries the compositions a second
+pass would have to discover. A depth-two probe
+put the lift at 0.012 on 150 substrates, at 8.5
+times the candidate cost. Its result file names
+no producer and records no seed, so it stands
+outside the provenance apparatus the rest of
+this work is held to, and the figure is quoted
+here with that weakness named.
 Both learned stages are trained short of what
 the split allows, on a subsample of it and with
 early stopping that never engaged, which is an
@@ -2305,7 +2301,7 @@ registered bar. P5 is weaker again, and the register is what shows it: its thres
 in advance but its population was not, and it
 was adjudicated on the comparison set, which
 is derived from the test split and was recorded
-afterwards. Table 6 records that as a measurement, which is why it is not one of the six.
+afterwards. Table 6 records that as a measurement, and so it is not one of the six.
 Two reported quantities are bounded by things
 outside the system. Precision is bounded by how
 completely the corpus annotates, so every precision figure here is a lower bound of unknown
@@ -2320,6 +2316,8 @@ which favours both and is not corrected for.
 The deployed configuration is not the best
 one this work knows of. A blend that discounts
 duplication beats the released noisy-or on the
+validation draw at every budget from one to 20,
+with the interval excluding zero, which includes
 
 Limitations
 
@@ -2331,12 +2329,11 @@ templates it can score, clearing the bar registered prediction P10 set at 13.4%.
 instrument counting reaction-centre loci flags
 8.9%, but errs in both directions with neither
 error measured, so its share is neither a floor
-nor a bound; the two agree on only 130 templates (Section S24). The coverage ceiling here is
-18
+nor a bound; the two agree on only 130 templates (Section S24). The coverage ceiling here
+is therefore a one-template ceiling, where a single enzymatic step may take several templates,
+and the composite share is why a second applica18
 
-validation draw at every budget from one to 20,
-with the interval excluding zero, which includes
-the budget the headline is read at (Section S20).
+the budget the headline is read at (Section S20).
 The release keeps the noisy-or because every
 number here is measured under it and switching would leave the paper describing a system
 nobody ran; the choice is a parameter, so the
@@ -2371,9 +2368,9 @@ leaves undeclared spans a factor of 11.9, from
 quantity varying twelvefold between the arms
 of a comparison is part of what the comparison measures. The arms that emit more score
 higher. Shuffling emission among the arms of
-
 a drug, which breaks only which arm is paired
 with which emission, does not reproduce that
+
 association (Section S34).
 It lives mostly between the arms, which is
 the level at which a benchmark orders them.
@@ -2418,11 +2415,11 @@ precision at every budget; every comparison difference with its paired interval,
 length and under the other aggregation; how
 the substrate is drawn and where that changes a
 verdict; the rule bank, its mining and the provenance of each collection; what the rule budget
+buys and two parameters of the ranking, swept;
+four trained variants of the ranking, three on one
 19
 
-buys and two parameters of the ranking, swept;
-four trained variants of the ranking, three on one
-frontier and one below it; architecture, training
+frontier and one below it; architecture, training
 and settings of both learned stages; whether the
 site a prediction names is the site that changed;
 what each method recovers by transformation
@@ -2435,9 +2432,7 @@ independent benchmark; provenance and reproduction procedure (PDF)
 
 7
 
-the bank redistributes admit, which is the only
-licence the remaining GPL templates permit,
-and NOTICE.md carries the decisions file by file.
+carries the decisions file by file.
 The corpus, whose four sources and versions
 Section 2.1 names, is not redistributed as a corpus: ShareAlike and NonCommercial terms cannot both be satisfied by one derivative, so its
 licence is settled by not redistributing them: the
@@ -2447,8 +2442,9 @@ the descriptors the matching criteria are decided
 by, which lets anyone without those licences recompute every recall figure and every cell of the
 criterion sweep; a check reports zero disagreements between the two readings. Releasing the
 checkpoints is the bar this paper applies to others: a system whose weights cannot be obtained
-cannot be compared against, which is why one of
-the 4 systems of 2025–26 is excluded here. Section S1 states what can and cannot be rebuilt,
+cannot be compared against, and for that reason
+one of the 4 systems of 2025–26 is excluded here.
+Section S1 states what can and cannot be rebuilt,
 and the one step that cannot be reproduced.
 
 Data and Software Availability
@@ -2462,14 +2458,13 @@ The released bank is not the measured bank.
 This paper’s figures are measured on 7,581 templates, of which 611 are also in BioTransformer’s
 published set; that distribution’s licence grants
 redistribution with attribution and reserves permission for commercial use, so the shipped bank
-drops them as a courtesy rather than an obligation and 6,970 ship. The removal is free: every reference those templates reach is reached
-by another in the bank. Dropping them from
-the bank is not the same as not carrying them,
-and of 1,210 tracked files four hold at least one,
-which a check reports rather than the repository
-asserting otherwise. The repository’s licence
-is the GNU General Public License, version 3,
-which is what the GPL and LGPL templates
+drops them as a courtesy rather than an obligation and 6,970 ship. The removal is free: every
+reference those templates reach is reached by another in the bank. Dropping them from the bank
+is not the same as not carrying them, and of
+1,223 tracked files four hold at least one, which a
+check reports and the repository does not merely
+assert. The repository’s licence is the GNU General Public License, version 3, which is what
+the GPL and LGPL templates the bank redistributes admit, which is the only licence the remaining GPL templates permit, and NOTICE.md
 
 8
 
@@ -2504,10 +2499,9 @@ and sets out to replace, and will deploy the
 released model as a service on way2drug.ru,
 which also hosts MetaTox. The authors declare
 no other competing interest, financial or otherwise. Any interest that relationship could create
-runs against this work rather than for it, and
-what the MetaTox arm consists of, together with
-what the service does not expose to a submitter,
-is stated in the Supporting Information.
+runs against this work, not for it, and the Supporting Information sets out what the MetaTox
+arm consists of, together with what the service
+does not expose to a submitter.
 
 (6) Litsa, E. E.; Das, P.; Kavraki, L. E. Prediction of drug metabolites using neural machine translation. Chemical Science 2020,
 11, 12777–12788.

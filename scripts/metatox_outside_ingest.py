@@ -15,14 +15,18 @@ With the 291 already held, disjoint from them and summing to the evaluated 1,170
 the whole population -- above the 0.99 floor scripts/typed_edit/population_definition.py applies. The
 old reason for the arm's absence is not merely stale, it is the wrong reason.
 
-OUTPUT BUDGET, which is why the arm still does not join the axis. The submission README asked for
-the same configuration as the first batch, in those words, and said why: two halves at different
-budgets are two arms reported as one. They are not the same. The first batch returned 10,601 records
-for 291 substrates; this one returns 229,106 for 879. Both counts are raw records -- the first
-batch's ingest keeps every parseable record and filters none by score -- so the rates divide, and
-the second batch emits about seven times more per substrate. Recall at every k moves with output
-size, so a column half-scored at one budget and half at the other would be an artefact of the
-budgets. That is measured here and recorded as a blocker rather than argued about.
+OUTPUT BUDGET was the last ground for keeping the arm out, and it did not survive measurement. The
+submission README asked for the same configuration as the first batch, in those words, and said why:
+two halves at different budgets are two arms reported as one. An earlier version of this script put
+the delivery at 260.64 predictions per substrate against 36.43 in the comparison set, a factor of
+7.15, and recorded that as a blocker. The factor was an artefact of the comparison. 36.43 counts
+structures de-duplicated by canonical SMILES inside scripts/metatox_smirks_ingest.py and 260.64
+counted raw records, so the two numbers were never the same quantity. Measured the same way on both
+halves the delivery gives 39.1877 against 36.4296, a ratio of 1.076. The same statistic, which no
+code in this repository computed for any arm until this one was challenged, puts SyGMa at 1.1426 and
+GLORYx at 1.0919 -- both further from 1.0 than MetaTox, and both already in the axis. All five are in
+`peer_two_half_ratios`, and the blocker is in `withdrawn_blockers` with the four grounds that retired
+it. The arm is in the axis, and admitting it costs this work two cells.
 
 THE TWO FILES DISAGREE, so both are recorded. all_meta_smirks returns 229,106 records over all 879
 substrates and no _UNKNOWN. all_metabolSep26 returns 9,975 records over 806, of which 704 are marked

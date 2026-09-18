@@ -3,7 +3,7 @@
   "script": "disclosure_inventory.py",
   "script_path": "scripts/disclosure_inventory.py",
   "source_sha256": "57711e9fbacf046bf1cd50779a253e72006b9e0ce3d5977098b5be5dcf0eb864",
-  "git_commit": "b0fb71e43f016725f7efc4d28acdec92d6861f9b",
+  "git_commit": "c38e7b6aef809ffb3d1fa4fcf443bdaadc96c4e6",
   "git_dirty": true
  },
  "reviewed_and_accepted": [
@@ -811,6 +811,132 @@
     "paper2/si.tex"
    ],
    "reason": "MetaTox was admitted to the whole-population axis, and the three keys that changed are rewrites forced by that, not deletions. PAIRINGS: (1) 'Two files came back, and which of them is the rule-based run rests on the supplier's word ...' is the SAME disclosure, re-keyed only because the sentences around it moved when the passage was rebuilt; it survives verbatim in the arms-list paragraph and still carries 'cannot'. (2) 'what is missing is a column: no ranked MetaTox list over the 879 has been assembled, and until one is, the wider population's totals cannot include it' is retired BECAUSE THE THING IT CONCEDED WAS FIXED -- the column is built (revision/phase2_metatox_merge.py, results/metatox_smirks_preds_evaluated1170.json) and MetaTox now enters both totals. A live concession replaces it in the same passage and is a different limitation, not the same one reworded: MetaTox returns 38.5 structures per substrate against a pool of 17.6 for the interactive arm, so which of the two leads cannot be said without naming the budget, and the crossing at fifteen is printed. (3) 'The submission that would have produced it was made and came back complete, and nothing this axis applies excludes the arm' becomes 'An earlier draft of this section said it could not be here, because a second submission to that web service was not the authors' to make' -- the same fact, stated where the arm is now introduced, keeping 'could not be' and 'was not'. NOTHING WAS LOST: the section now also discloses, newly, that the method's own score orders only 49% of the column and that the scored share falls from 94% of the first five slots to 52% of the first fifty. Numbers from results/population_definition.json and results/metatox_smirks_preds_evaluated1170.json."
+  },
+  {
+   "text": "What the composite instruments flag is not a count of such transformations: the union includes the locus instrument, whose error is unmeasured in both directions (Section ), and the registered instrument alone flags N . The registered predictions The register is released in full at github.com/doctaw",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "One key re-keys and nothing is lost. Changing 'the threshold was registered as H16' to 'as P10' in the second-instrument paragraph moves a normalised key, because _norm keeps the letters of an identifier and H16 and P10 differ in theirs. The sentence itself is unchanged in substance -- it is the same concession about the composite instruments, paired at 0.97 by symmetric difference and still carrying 'is not a'. WHY THE IDENTIFIER CHANGED: the paper reports ten predictions as P1 to P10 and gives the register's own H-numbers beside them in Table 'hyp'. That paragraph cited a REPORTED prediction by its register number while the rest of the paper cites it as P10, so one prediction appeared under two names in one document. The six identifiers that remain, H1 to H6, are the register's keys for predictions this paper does NOT report; they have no P-number by design, and they are named so that none can quietly leave unnoticed. The same edit names the register file, paper2/preregistration.md, which is tracked in this repository and uses those identifiers, so a reader can look any of them up rather than read them as internal shorthand."
+  },
+  {
+   "text": "The one step of the assembly that cannot be reproduced is the extraction that selected from the four sources: it is not in the repository, and it is recorded as absent rather than described",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Five rewrites, five re-keys, all paired one-to-one at ratio 0.86-0.94, every marker kept, nothing retracted. THE POINT OF THE PASS: the prose-rate gate's Supporting-Information half was declared red and the reason given was that removing a flagged construction would de-register a concession, since for those sentences the flagged phrase is the only registry marker. That reason is TRUE -- I verified it holds for 22 of the then 31 carriers -- and it covered NONE of the 9 that would have had to move. So the justification was standing in for the work. The nine were rewritten and si.tex is now 22 of 1152 against a ceiling of 24, under it; the gate stays red on the manuscript half alone. PAIRINGS: 'recorded as absent rather than described' -> 'the record says so without describing it' (keeps 'cannot'); 'by a substitution rather than by an answer to a question that does not resolve' -> 'by a substitution, since the question does not resolve' (keeps 'does not resolve'); 'None is reported in this paper' -> 'This paper reports none of them' (keeps 'did not'); 'unresolved rather than established' -> 'unresolved, not established' (keeps 'unresolved' and gains 'not established'); 'from the history rather than from a recorded digest' -> 'from the history where no digest was recorded' (keeps 'weaker'). Four further rewrites touched sentences carrying no registry key at all: 'No external evaluation set is reported', 'the shape they make is worth setting out', 'compared two models rather than two drawings', and the compiled-log sentence which carried 'rather than' twice. Every replacement was checked before application for the eight flagged constructions and for marker survival."
+  },
+  {
+   "text": "No source record is redistributed in the deposit , and the licence of the derived corpus is . The repository is a separate channel and it is settled the same way, by a substitution rather than by an answer to a question that does not resolve",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Five rewrites, five re-keys, all paired one-to-one at ratio 0.86-0.94, every marker kept, nothing retracted. THE POINT OF THE PASS: the prose-rate gate's Supporting-Information half was declared red and the reason given was that removing a flagged construction would de-register a concession, since for those sentences the flagged phrase is the only registry marker. That reason is TRUE -- I verified it holds for 22 of the then 31 carriers -- and it covered NONE of the 9 that would have had to move. So the justification was standing in for the work. The nine were rewritten and si.tex is now 22 of 1152 against a ceiling of 24, under it; the gate stays red on the manuscript half alone. PAIRINGS: 'recorded as absent rather than described' -> 'the record says so without describing it' (keeps 'cannot'); 'by a substitution rather than by an answer to a question that does not resolve' -> 'by a substitution, since the question does not resolve' (keeps 'does not resolve'); 'None is reported in this paper' -> 'This paper reports none of them' (keeps 'did not'); 'unresolved rather than established' -> 'unresolved, not established' (keeps 'unresolved' and gains 'not established'); 'from the history rather than from a recorded digest' -> 'from the history where no digest was recorded' (keeps 'weaker'). Four further rewrites touched sentences carrying no registry key at all: 'No external evaluation set is reported', 'the shape they make is worth setting out', 'compared two models rather than two drawings', and the compiled-log sentence which carried 'rather than' twice. Every replacement was checked before application for the eight flagged constructions and for marker survival."
+  },
+  {
+   "text": "Under the schedule neither arm trails SyGMa with an interval excluding zero at any budget of ten or below: N of the exhaustive arm's five such cells separate and N of the interactive arm's, the widest trail being the interactive arm's N [ N , + N ] at a budget of N . The trail Section reports at one",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Five rewrites, five re-keys, all paired one-to-one at ratio 0.86-0.94, every marker kept, nothing retracted. THE POINT OF THE PASS: the prose-rate gate's Supporting-Information half was declared red and the reason given was that removing a flagged construction would de-register a concession, since for those sentences the flagged phrase is the only registry marker. That reason is TRUE -- I verified it holds for 22 of the then 31 carriers -- and it covered NONE of the 9 that would have had to move. So the justification was standing in for the work. The nine were rewritten and si.tex is now 22 of 1152 against a ceiling of 24, under it; the gate stays red on the manuscript half alone. PAIRINGS: 'recorded as absent rather than described' -> 'the record says so without describing it' (keeps 'cannot'); 'by a substitution rather than by an answer to a question that does not resolve' -> 'by a substitution, since the question does not resolve' (keeps 'does not resolve'); 'None is reported in this paper' -> 'This paper reports none of them' (keeps 'did not'); 'unresolved rather than established' -> 'unresolved, not established' (keeps 'unresolved' and gains 'not established'); 'from the history rather than from a recorded digest' -> 'from the history where no digest was recorded' (keeps 'weaker'). Four further rewrites touched sentences carrying no registry key at all: 'No external evaluation set is reported', 'the shape they make is worth setting out', 'compared two models rather than two drawings', and the compiled-log sentence which carried 'rather than' twice. Every replacement was checked before application for the eight flagged constructions and for marker survival."
+  },
+  {
+   "text": "None is reported in this paper because none was run for it, which is a different thing from a prediction that was run and did not hold; the three of those are P6, P7 and P8 and they are in Table with their measured values",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Five rewrites, five re-keys, all paired one-to-one at ratio 0.86-0.94, every marker kept, nothing retracted. THE POINT OF THE PASS: the prose-rate gate's Supporting-Information half was declared red and the reason given was that removing a flagged construction would de-register a concession, since for those sentences the flagged phrase is the only registry marker. That reason is TRUE -- I verified it holds for 22 of the then 31 carriers -- and it covered NONE of the 9 that would have had to move. So the justification was standing in for the work. The nine were rewritten and si.tex is now 22 of 1152 against a ceiling of 24, under it; the gate stays red on the manuscript half alone. PAIRINGS: 'recorded as absent rather than described' -> 'the record says so without describing it' (keeps 'cannot'); 'by a substitution rather than by an answer to a question that does not resolve' -> 'by a substitution, since the question does not resolve' (keeps 'does not resolve'); 'None is reported in this paper' -> 'This paper reports none of them' (keeps 'did not'); 'unresolved rather than established' -> 'unresolved, not established' (keeps 'unresolved' and gains 'not established'); 'from the history rather than from a recorded digest' -> 'from the history where no digest was recorded' (keeps 'weaker'). Four further rewrites touched sentences carrying no registry key at all: 'No external evaluation set is reported', 'the shape they make is worth setting out', 'compared two models rather than two drawings', and the compiled-log sentence which carried 'rather than' twice. Every replacement was checked before application for the eight flagged constructions and for marker survival."
+  },
+  {
+   "text": "Of the rest, N predate stamping and are verified by recovering their producer's source from the history rather than from a recorded digest, which the sweep labels as inferred; that is a weaker check and is counted separately for that reason",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Five rewrites, five re-keys, all paired one-to-one at ratio 0.86-0.94, every marker kept, nothing retracted. THE POINT OF THE PASS: the prose-rate gate's Supporting-Information half was declared red and the reason given was that removing a flagged construction would de-register a concession, since for those sentences the flagged phrase is the only registry marker. That reason is TRUE -- I verified it holds for 22 of the then 31 carriers -- and it covered NONE of the 9 that would have had to move. So the justification was standing in for the work. The nine were rewritten and si.tex is now 22 of 1152 against a ceiling of 24, under it; the gate stays red on the manuscript half alone. PAIRINGS: 'recorded as absent rather than described' -> 'the record says so without describing it' (keeps 'cannot'); 'by a substitution rather than by an answer to a question that does not resolve' -> 'by a substitution, since the question does not resolve' (keeps 'does not resolve'); 'None is reported in this paper' -> 'This paper reports none of them' (keeps 'did not'); 'unresolved rather than established' -> 'unresolved, not established' (keeps 'unresolved' and gains 'not established'); 'from the history rather than from a recorded digest' -> 'from the history where no digest was recorded' (keeps 'weaker'). Four further rewrites touched sentences carrying no registry key at all: 'No external evaluation set is reported', 'the shape they make is worth setting out', 'compared two models rather than two drawings', and the compiled-log sentence which carried 'rather than' twice. Every replacement was checked before application for the eight flagged constructions and for marker survival."
+  },
+  {
+   "text": "A depth-two probe put the lift in the low percent at several times the candidate cost, and no figure from it is quoted, because its result file names no producer and predates the provenance apparatus the rest of this work is held to",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "One key moves, nothing is retracted, and the rewrite repairs a contradiction the paper was carrying. The sentence said 'A depth-two probe put the lift in the low percent at several times the candidate cost, and no figure from it is quoted, because its result file names no producer and predates the provenance apparatus' -- while paper2/si.tex quoted that probe's lift as a hand-typed 0.012, and the literal '0.012' sat in check_paper2_numbers.ALLOWED, the list documented as 'Numbers that are part of the language rather than a result'. It is a result: results/benchmark_report_depth2.json records lift_over_depth1 = 0.0123. So the manuscript declined to quote a figure it quoted, through a whitelist that exists for numerals which are not figures. The replacement quotes it from the file through a macro, states the count and the cost ratio the same way, and keeps the concession with its marker: 'Its result file names no producer and records no seed, so it stands outside the provenance apparatus the rest of this work is held to, and the figure is quoted here with that weakness named.' The artifact is now pinned, which made it visible to the provenance sweep as producer_changed -- the truth, previously hidden by the whitelist -- and that is declared in DECLARED_DEBT with the reason a re-run cannot fix it: no seed was recorded, so a re-run draws a different 150-substrate sample."
+  },
+  {
+   "text": "The registered ranking and timing thresholds are checked on it, because a threshold checked on the population that chose the setting it tests is not a check; Table records the population each prediction was in the event checked on, and Section states that all but one of the ten fixed a threshold in ",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "22 sentences in paper2/body.tex were rewritten to drop the machine-writing constructions the prose-rate gate counts: the body's carrier share falls from 28 of 404 sentences to 6 against a ceiling of 8, and 'is/are not a', 'epistemic self-grading', 'worth V-ing', 'which is why', 'the objection' and 'instead of' all reach zero. Every one of the 22 keys that moved was paired with the replacement sentence carrying the same claim before this was accepted, by symmetric difference over _norm(_sentences(_plain(.))) against the pre-edit file: 22 gone, 22 new, one-to-one, none unpaired. Nothing was deleted and nothing moved to the Supporting Information. Six 'rather than' sentences were left standing, because the comparison corpus uses that construction at up to 0.68 per 1000 words and six over 10061 words is 0.60, so driving it to zero would have made this text less like the papers the ceiling is derived from rather than more."
+  },
+  {
+   "text": "It is not a random quarter of the test split: it is the submission list sent to the comparator that is a web service, and how those N were drawn is recorded nowhere in this repository, which is the same defect the corpus assembly carries",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "22 sentences in paper2/body.tex were rewritten to drop the machine-writing constructions the prose-rate gate counts: the body's carrier share falls from 28 of 404 sentences to 6 against a ceiling of 8, and 'is/are not a', 'epistemic self-grading', 'worth V-ing', 'which is why', 'the objection' and 'instead of' all reach zero. Every one of the 22 keys that moved was paired with the replacement sentence carrying the same claim before this was accepted, by symmetric difference over _norm(_sentences(_plain(.))) against the pre-edit file: 22 gone, 22 new, one-to-one, none unpaired. Nothing was deleted and nothing moved to the Supporting Information. Six 'rather than' sentences were left standing, because the comparison corpus uses that construction at up to 0.68 per 1000 words and six over 10061 words is 0.60, so driving it to zero would have made this text less like the papers the ceiling is derived from rather than more."
+  },
+  {
+   "text": "For a predictor of metabolite structures that is a restriction on what may be asked of it rather than a technicality: sulfoxide and epoxide configuration carry the pharmacology of several drug classes, and a system that cannot represent configuration cannot be asked which enantiomer an enzyme makes",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "22 sentences in paper2/body.tex were rewritten to drop the machine-writing constructions the prose-rate gate counts: the body's carrier share falls from 28 of 404 sentences to 6 against a ceiling of 8, and 'is/are not a', 'epistemic self-grading', 'worth V-ing', 'which is why', 'the objection' and 'instead of' all reach zero. Every one of the 22 keys that moved was paired with the replacement sentence carrying the same claim before this was accepted, by symmetric difference over _norm(_sentences(_plain(.))) against the pre-edit file: 22 gone, 22 new, one-to-one, none unpaired. Nothing was deleted and nothing moved to the Supporting Information. Six 'rather than' sentences were left standing, because the comparison corpus uses that construction at up to 0.68 per 1000 words and six over 10061 words is 0.60, so driving it to zero would have made this text less like the papers the ceiling is derived from rather than more."
+  },
+  {
+   "text": "Of those, N were never in the corrected family, which was declared over N comparators, so the correction is reported over the N it covers; of those it removes one, the margin over MetaTox at k=30 , + N [+ N , + N ] . It is not the only lead in this paper the correction removes, and the others are na",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "22 sentences in paper2/body.tex were rewritten to drop the machine-writing constructions the prose-rate gate counts: the body's carrier share falls from 28 of 404 sentences to 6 against a ceiling of 8, and 'is/are not a', 'epistemic self-grading', 'worth V-ing', 'which is why', 'the objection' and 'instead of' all reach zero. Every one of the 22 keys that moved was paired with the replacement sentence carrying the same claim before this was accepted, by symmetric difference over _norm(_sentences(_plain(.))) against the pre-edit file: 22 gone, 22 new, one-to-one, none unpaired. Nothing was deleted and nothing moved to the Supporting Information. Six 'rather than' sentences were left standing, because the comparison corpus uses that construction at up to 0.68 per 1000 words and six over 10061 words is 0.60, so driving it to zero would have made this text less like the papers the ceiling is derived from rather than more."
+  },
+  {
+   "text": "That is not a coverage limit but a ranking one: the wider pool contains candidates the smaller budget never produced, and on those classes they displace correct answers out of the window",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "22 sentences in paper2/body.tex were rewritten to drop the machine-writing constructions the prose-rate gate counts: the body's carrier share falls from 28 of 404 sentences to 6 against a ceiling of 8, and 'is/are not a', 'epistemic self-grading', 'worth V-ing', 'which is why', 'the objection' and 'instead of' all reach zero. Every one of the 22 keys that moved was paired with the replacement sentence carrying the same claim before this was accepted, by symmetric difference over _norm(_sentences(_plain(.))) against the pre-edit file: 22 gone, 22 new, one-to-one, none unpaired. Nothing was deleted and nothing moved to the Supporting Information. Six 'rather than' sentences were left standing, because the comparison corpus uses that construction at up to 0.68 per 1000 words and six over 10061 words is 0.60, so driving it to zero would have made this text less like the papers the ceiling is derived from rather than more."
+  },
+  {
+   "text": "A nominal budget is not a length, and the leads at wide budgets are read where most comparator lists have already ended",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "22 sentences in paper2/body.tex were rewritten to drop the machine-writing constructions the prose-rate gate counts: the body's carrier share falls from 28 of 404 sentences to 6 against a ceiling of 8, and 'is/are not a', 'epistemic self-grading', 'worth V-ing', 'which is why', 'the objection' and 'instead of' all reach zero. Every one of the 22 keys that moved was paired with the replacement sentence carrying the same claim before this was accepted, by symmetric difference over _norm(_sentences(_plain(.))) against the pre-edit file: 22 gone, 22 new, one-to-one, none unpaired. Nothing was deleted and nothing moved to the Supporting Information. Six 'rather than' sentences were left standing, because the comparison corpus uses that construction at up to 0.68 per 1000 words and six over 10061 words is 0.60, so driving it to zero would have made this text less like the papers the ceiling is derived from rather than more."
+  },
+  {
+   "text": "Six are confirmed and three failed, each on the falsification condition it was written with; the tenth was measured rather than adjudicated, because its threshold was fixed in advance and its population was not",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "22 sentences in paper2/body.tex were rewritten to drop the machine-writing constructions the prose-rate gate counts: the body's carrier share falls from 28 of 404 sentences to 6 against a ceiling of 8, and 'is/are not a', 'epistemic self-grading', 'worth V-ing', 'which is why', 'the objection' and 'instead of' all reach zero. Every one of the 22 keys that moved was paired with the replacement sentence carrying the same claim before this was accepted, by symmetric difference over _norm(_sentences(_plain(.))) against the pre-edit file: 22 gone, 22 new, one-to-one, none unpaired. Nothing was deleted and nothing moved to the Supporting Information. Six 'rather than' sentences were left standing, because the comparison corpus uses that construction at up to 0.68 per 1000 words and six over 10061 words is 0.60, so driving it to zero would have made this text less like the papers the ceiling is derived from rather than more."
+  },
+  {
+   "text": "That is a bound rather than a point, and Section gives the counts it rests on",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "22 sentences in paper2/body.tex were rewritten to drop the machine-writing constructions the prose-rate gate counts: the body's carrier share falls from 28 of 404 sentences to 6 against a ceiling of 8, and 'is/are not a', 'epistemic self-grading', 'worth V-ing', 'which is why', 'the objection' and 'instead of' all reach zero. Every one of the 22 keys that moved was paired with the replacement sentence carrying the same claim before this was accepted, by symmetric difference over _norm(_sentences(_plain(.))) against the pre-edit file: 22 gone, 22 new, one-to-one, none unpaired. Nothing was deleted and nothing moved to the Supporting Information. Six 'rather than' sentences were left standing, because the comparison corpus uses that construction at up to 0.68 per 1000 words and six over 10061 words is 0.60, so driving it to zero would have made this text less like the papers the ceiling is derived from rather than more."
+  },
+  {
+   "text": "Dropping them from the bank is not the same as not carrying them, and of N tracked files N hold at least one, which a check reports rather than the repository asserting otherwise",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "22 sentences in paper2/body.tex were rewritten to drop the machine-writing constructions the prose-rate gate counts: the body's carrier share falls from 28 of 404 sentences to 6 against a ceiling of 8, and 'is/are not a', 'epistemic self-grading', 'worth V-ing', 'which is why', 'the objection' and 'instead of' all reach zero. Every one of the 22 keys that moved was paired with the replacement sentence carrying the same claim before this was accepted, by symmetric difference over _norm(_sentences(_plain(.))) against the pre-edit file: 22 gone, 22 new, one-to-one, none unpaired. Nothing was deleted and nothing moved to the Supporting Information. Six 'rather than' sentences were left standing, because the comparison corpus uses that construction at up to 0.68 per 1000 words and six over 10061 words is 0.60, so driving it to zero would have made this text less like the papers the ceiling is derived from rather than more."
+  },
+  {
+   "text": "Releasing the checkpoints is the bar this paper applies to others: a system whose weights cannot be obtained cannot be compared against, which is why one of the N systems of 2025--26 is excluded here",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "22 sentences in paper2/body.tex were rewritten to drop the machine-writing constructions the prose-rate gate counts: the body's carrier share falls from 28 of 404 sentences to 6 against a ceiling of 8, and 'is/are not a', 'epistemic self-grading', 'worth V-ing', 'which is why', 'the objection' and 'instead of' all reach zero. Every one of the 22 keys that moved was paired with the replacement sentence carrying the same claim before this was accepted, by symmetric difference over _norm(_sentences(_plain(.))) against the pre-edit file: 22 gone, 22 new, one-to-one, none unpaired. Nothing was deleted and nothing moved to the Supporting Information. Six 'rather than' sentences were left standing, because the comparison corpus uses that construction at up to 0.68 per 1000 words and six over 10061 words is 0.60, so driving it to zero would have made this text less like the papers the ceiling is derived from rather than more."
+  },
+  {
+   "text": "What the composite instruments flag is not a count of such transformations: the union includes the locus instrument, whose error is unmeasured in both directions (Section ), and the registered instrument alone flags N . The registered predictions The register is released in full at github.com/doctaw",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "One key moves and nothing is retracted. paper2/si.tex named the preregistration register as 'preregistration.md' while the released file is paper2/preregistration.md, so a reader following that sentence to the repository root found nothing; the path is corrected. The key that moved is the one spanning from 'What the composite instruments flag is not a count of such transformations' through the register sentence nine lines later, because a macro-terminated sentence does not split and the two sit in one key -- which is why the refusal named a sentence this edit never touched. Paired before accepting by symmetric difference over _norm(_sentences(_plain(.))) against the pre-edit file: 1 gone, 1 new, ratio 0.995, differing only by the path. The register itself is unchanged and still carries all sixteen H identifiers."
   }
  ],
  "question": "every sentence in which this work concedes something, recorded before a cut so that what a cut costs is visible rather than invisible",
@@ -841,6 +967,7 @@
   "paper2/si_table_hyperparameters.tex",
   "paper2/si_table_oracle.tex",
   "paper2/si_table_ranking.tex",
+  "paper2/si_table_intervals_whole.tex",
   "paper2/si_table_case.tex",
   "paper2/table_modes.tex",
   "paper2/table_sweep.tex",
@@ -850,7 +977,7 @@
   "paper2/table_hypotheses.tex",
   "paper2/table_grain.tex"
  ],
- "n": 249,
+ "n": 247,
  "reading": "a disclosure counts as present if it survives in ANY of the sources: moving one to the Supporting Information shortens the manuscript without retracting anything, and deleting one shortens it by retracting something",
  "disclosures": {
   "achemso amsmath amssymb booktabs threeparttable graphicx microtype xr si nikita l polomoshnov faculty of bioengineering and bioinformatics lomonosov moscow state university leninskie gory moscow russia nikitapol fbb msu ru anastasia v rudik department of bioinformatics institute of biomedical chemistry pogodinskaya str moscow russia metabolite predictors have a multiverse problem document abstract published predictors of metabolite structure cannot be compared with one another because recall depends on how a predicted structure is judged to match a reference and on how many candidates a system may return and papers in this area declare neither": {
@@ -871,14 +998,14 @@
     "paper2/si.tex"
    ]
   },
-  "the one step of the assembly that cannot be reproduced is the extraction that selected from the four sources it is not in the repository and it is recorded as absent rather than described": {
-   "text": "The one step of the assembly that cannot be reproduced is the extraction that selected from the four sources: it is not in the repository, and it is recorded as absent rather than described",
+  "the one step of the assembly that cannot be reproduced is the extraction that selected from the four sources it is not in the repository and the record says so without describing it": {
+   "text": "The one step of the assembly that cannot be reproduced is the extraction that selected from the four sources: it is not in the repository, and the record says so without describing it",
    "in": [
     "paper2/si.tex"
    ]
   },
-  "no source record is redistributed in the deposit and the licence of the derived corpus is the repository is a separate channel and it is settled the same way by a substitution rather than by an answer to a question that does not resolve": {
-   "text": "No source record is redistributed in the deposit , and the licence of the derived corpus is . The repository is a separate channel and it is settled the same way, by a substitution rather than by an answer to a question that does not resolve",
+  "no source record is redistributed in the deposit and the licence of the derived corpus is the repository is a separate channel and it is settled the same way by a substitution since the question does not resolve": {
+   "text": "No source record is redistributed in the deposit , and the licence of the derived corpus is . The repository is a separate channel and it is settled the same way, by a substitution, since the question does not resolve",
    "in": [
     "paper2/si.tex"
    ]
@@ -1369,7 +1496,7 @@
     "paper2/si.tex"
    ]
   },
-  "under the schedule neither arm trails sygma with an interval excluding zero at any budget of ten or below of the exhaustive arm s five such cells separate and of the interactive arm s the widest trail being the interactive arm s at a budget of the trail section reports at one three and five would become unresolved rather than established": {
+  "under the schedule neither arm trails sygma with an interval excluding zero at any budget of ten or below of the exhaustive arm s five such cells separate and of the interactive arm s the widest trail being the interactive arm s at a budget of the trail section reports at one three and five would become unresolved not established": {
    "text": "Under the schedule neither arm trails SyGMa with an interval excluding zero at any budget of ten or below: N of the exhaustive arm's five such cells separate and N of the interactive arm's, the widest trail being the interactive arm's N [ N , + N ] at a budget of N . The trail Section reports at one",
    "in": [
     "paper2/si.tex"
@@ -1478,7 +1605,7 @@
    ]
   },
   "if a fifth of the mined bank already performs two edits in one application as p finds a second application has little left to discover that the first did not already reach and the observed lift of about is what that predicts": {
-   "text": "If a fifth of the mined bank already performs two edits in one application, as P10 finds, a second application has little left to discover that the first did not already reach, and the observed lift of about 0.012 is what that predicts",
+   "text": "If a fifth of the mined bank already performs two edits in one application, as P10 finds, a second application has little left to discover that the first did not already reach, and the observed lift of about N is what that predicts",
    "in": [
     "paper2/si.tex"
    ]
@@ -1489,7 +1616,7 @@
     "paper2/si.tex"
    ]
   },
-  "what the composite instruments flag is not a count of such transformations the union includes the locus instrument whose error is unmeasured in both directions section and the registered instrument alone flags the registered predictions the register is released in full at github com doctawho grail with every prediction as it was written the threshold and falsification condition fixed before the check and the outcome as it was measured": {
+  "what the composite instruments flag is not a count of such transformations the union includes the locus instrument whose error is unmeasured in both directions section and the registered instrument alone flags the registered predictions the register is released in full at github com doctawho grail with every prediction as it was written the threshold and falsification condition fixed before the check and the outcome as it was measured paper preregistration md is the file and its identifiers begin with h those are the keys any prediction named here can be looked up by": {
    "text": "What the composite instruments flag is not a count of such transformations: the union includes the locus instrument, whose error is unmeasured in both directions (Section ), and the registered instrument alone flags N . The registered predictions The register is released in full at github.com/doctaw",
    "in": [
     "paper2/si.tex"
@@ -1507,8 +1634,8 @@
     "paper2/si.tex"
    ]
   },
-  "none is reported in this paper because none was run for it which is a different thing from a prediction that was run and did not hold the three of those are p p and p and they are in table with their measured values": {
-   "text": "None is reported in this paper because none was run for it, which is a different thing from a prediction that was run and did not hold; the three of those are P6, P7 and P8 and they are in Table with their measured values",
+  "this paper reports none of them because none was run for it which is a different thing from a prediction that was run and did not hold the three of those are p p and p and they are in table with their measured values": {
+   "text": "This paper reports none of them, because none was run for it, which is a different thing from a prediction that was run and did not hold; the three of those are P6, P7 and P8 and they are in Table with their measured values",
    "in": [
     "paper2/si.tex"
    ]
@@ -1687,6 +1814,12 @@
     "paper2/si.tex"
    ]
   },
+  "they remain unpublished so that column cannot be reproduced from public sources alone only from the artefacts deposited with this work their digests are recorded so that a deposit its author intends to make can be checked against what ran": {
+   "text": "They remain unpublished, so that column cannot be reproduced from public sources alone, only from the artefacts deposited with this work; their digests are recorded so that a deposit its author intends to make can be checked against what ran",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
   "that is a weaker provenance than the other four arms have and this section says so without smoothing it over what is pinned is the submission the returned predictions and the version the service reported the record stops short of a binary anyone can re run offline": {
    "text": "That is a weaker provenance than the other four arms have and this section says so without smoothing it over: what is pinned is the submission, the returned predictions and the version the service reported; the record stops short of a binary anyone can re-run offline",
    "in": [
@@ -1789,8 +1922,8 @@
     "paper2/si.tex"
    ]
   },
-  "of the rest predate stamping and are verified by recovering their producer s source from the history rather than from a recorded digest which the sweep labels as inferred that is a weaker check and is counted separately for that reason": {
-   "text": "Of the rest, N predate stamping and are verified by recovering their producer's source from the history rather than from a recorded digest, which the sweep labels as inferred; that is a weaker check and is counted separately for that reason",
+  "of the rest predate stamping and are verified by recovering their producer s source from the history where no digest was recorded which the sweep labels as inferred that is a weaker check and is counted separately for that reason": {
+   "text": "Of the rest, N predate stamping and are verified by recovering their producer's source from the history where no digest was recorded, which the sweep labels as inferred; that is a weaker check and is counted separately for that reason",
    "in": [
     "paper2/si.tex"
    ]
@@ -1903,18 +2036,6 @@
     "paper2/body.tex"
    ]
   },
-  "the registered ranking and timing thresholds are checked on it because a threshold checked on the population that chose the setting it tests is not a check table records the population each prediction was in the event checked on and section states that all but one of the ten fixed a threshold in advance while leaving the population open": {
-   "text": "The registered ranking and timing thresholds are checked on it, because a threshold checked on the population that chose the setting it tests is not a check; Table records the population each prediction was in the event checked on, and Section states that all but one of the ten fixed a threshold in ",
-   "in": [
-    "paper2/body.tex"
-   ]
-  },
-  "it is not a random quarter of the test split it is the submission list sent to the comparator that is a web service and how those were drawn is recorded nowhere in this repository which is the same defect the corpus assembly carries": {
-   "text": "It is not a random quarter of the test split: it is the submission list sent to the comparator that is a web service, and how those N were drawn is recorded nowhere in this repository, which is the same defect the corpus assembly carries",
-   "in": [
-    "paper2/body.tex"
-   ]
-  },
   "the apparatus built on top therefore makes every step from the corpus onwards reproducible and cannot make that one so": {
    "text": "The apparatus built on top therefore makes every step from the corpus onwards reproducible and cannot make that one so",
    "in": [
@@ -1945,8 +2066,8 @@
     "paper2/body.tex"
    ]
   },
-  "for a predictor of metabolite structures that is a restriction on what may be asked of it rather than a technicality sulfoxide and epoxide configuration carry the pharmacology of several drug classes and a system that cannot represent configuration cannot be asked which enantiomer an enzyme makes": {
-   "text": "For a predictor of metabolite structures that is a restriction on what may be asked of it rather than a technicality: sulfoxide and epoxide configuration carry the pharmacology of several drug classes, and a system that cannot represent configuration cannot be asked which enantiomer an enzyme makes",
+  "for a predictor of metabolite structures that is a restriction on what may be asked of it not a technicality sulfoxide and epoxide configuration carry the pharmacology of several drug classes and a system that cannot represent configuration cannot be asked which enantiomer an enzyme makes": {
+   "text": "For a predictor of metabolite structures that is a restriction on what may be asked of it, not a technicality: sulfoxide and epoxide configuration carry the pharmacology of several drug classes, and a system that cannot represent configuration cannot be asked which enantiomer an enzyme makes",
    "in": [
     "paper2/body.tex"
    ]
@@ -2017,8 +2138,8 @@
     "paper2/body.tex"
    ]
   },
-  "of those were never in the corrected family which was declared over comparators so the correction is reported over the it covers of those it removes one the margin over metatox at k it is not the only lead in this paper the correction removes and the others are named where they are claimed": {
-   "text": "Of those, N were never in the corrected family, which was declared over N comparators, so the correction is reported over the N it covers; of those it removes one, the margin over MetaTox at k=30 , + N [+ N , + N ] . It is not the only lead in this paper the correction removes, and the others are na",
+  "of those were never in the corrected family which was declared over comparators so the correction runs over the it covers of those it removes one the margin over metatox at k it is not the only lead in this paper the correction removes and the others are named where they are claimed": {
+   "text": "Of those, N were never in the corrected family, which was declared over N comparators, so the correction runs over the N it covers; of those it removes one, the margin over MetaTox at k=30 , + N [+ N , + N ] . It is not the only lead in this paper the correction removes, and the others are named whe",
    "in": [
     "paper2/body.tex"
    ]
@@ -2031,18 +2152,6 @@
   },
   "the exhaustive arm is not the best arm on of the classes carrying of the references and the classes it trails on are classical ones": {
    "text": "The exhaustive arm is not the best arm on N of the N classes, carrying N of the N references, and the classes it trails on are classical ones",
-   "in": [
-    "paper2/body.tex"
-   ]
-  },
-  "that is not a coverage limit but a ranking one the wider pool contains candidates the smaller budget never produced and on those classes they displace correct answers out of the window": {
-   "text": "That is not a coverage limit but a ranking one: the wider pool contains candidates the smaller budget never produced, and on those classes they displace correct answers out of the window",
-   "in": [
-    "paper2/body.tex"
-   ]
-  },
-  "a nominal budget is not a length and the leads at wide budgets are read where most comparator lists have already ended": {
-   "text": "A nominal budget is not a length, and the leads at wide budgets are read where most comparator lists have already ended",
    "in": [
     "paper2/body.tex"
    ]
@@ -2089,8 +2198,8 @@
     "paper2/body.tex"
    ]
   },
-  "six are confirmed and three failed each on the falsification condition it was written with the tenth was measured rather than adjudicated because its threshold was fixed in advance and its population was not": {
-   "text": "Six are confirmed and three failed, each on the falsification condition it was written with; the tenth was measured rather than adjudicated, because its threshold was fixed in advance and its population was not",
+  "six are confirmed and three failed each on the falsification condition it was written with the tenth was measured not adjudicated because its threshold was fixed in advance and its population was not": {
+   "text": "Six are confirmed and three failed, each on the falsification condition it was written with; the tenth was measured, not adjudicated, because its threshold was fixed in advance and its population was not",
    "in": [
     "paper2/body.tex"
    ]
@@ -2149,8 +2258,8 @@
     "paper2/body.tex"
    ]
   },
-  "that is a bound rather than a point and section gives the counts it rests on": {
-   "text": "That is a bound rather than a point, and Section gives the counts it rests on",
+  "that is a bound not a point and section gives the counts it rests on": {
+   "text": "That is a bound, not a point, and Section gives the counts it rests on",
    "in": [
     "paper2/body.tex"
    ]
@@ -2185,8 +2294,8 @@
     "paper2/body.tex"
    ]
   },
-  "a depth two probe put the lift in the low percent at several times the candidate cost and no figure from it is quoted because its result file names no producer and predates the provenance apparatus the rest of this work is held to": {
-   "text": "A depth-two probe put the lift in the low percent at several times the candidate cost, and no figure from it is quoted, because its result file names no producer and predates the provenance apparatus the rest of this work is held to",
+  "its result file names no producer and records no seed so it stands outside the provenance apparatus the rest of this work is held to and the figure is quoted here with that weakness named": {
+   "text": "Its result file names no producer and records no seed, so it stands outside the provenance apparatus the rest of this work is held to, and the figure is quoted here with that weakness named",
    "in": [
     "paper2/body.tex"
    ]
@@ -2257,8 +2366,8 @@
     "paper2/body.tex"
    ]
   },
-  "dropping them from the bank is not the same as not carrying them and of tracked files hold at least one which a check reports rather than the repository asserting otherwise": {
-   "text": "Dropping them from the bank is not the same as not carrying them, and of N tracked files N hold at least one, which a check reports rather than the repository asserting otherwise",
+  "dropping them from the bank is not the same as not carrying them and of tracked files hold at least one which a check reports and the repository does not merely assert": {
+   "text": "Dropping them from the bank is not the same as not carrying them, and of N tracked files N hold at least one, which a check reports and the repository does not merely assert",
    "in": [
     "paper2/body.tex"
    ]
@@ -2269,8 +2378,8 @@
     "paper2/body.tex"
    ]
   },
-  "releasing the checkpoints is the bar this paper applies to others a system whose weights cannot be obtained cannot be compared against which is why one of the systems of is excluded here": {
-   "text": "Releasing the checkpoints is the bar this paper applies to others: a system whose weights cannot be obtained cannot be compared against, which is why one of the N systems of 2025--26 is excluded here",
+  "releasing the checkpoints is the bar this paper applies to others a system whose weights cannot be obtained cannot be compared against and for that reason one of the systems of is excluded here": {
+   "text": "Releasing the checkpoints is the bar this paper applies to others: a system whose weights cannot be obtained cannot be compared against, and for that reason one of the N systems of 2025--26 is excluded here",
    "in": [
     "paper2/body.tex"
    ]
@@ -2321,6 +2430,12 @@
    "text": "No model runs: the pools carry both component scores per candidate",
    "in": [
     "paper2/si_table_ranking.tex"
+   ]
+  },
+  "the budgets are the five this axis sweeps rather than the nine of the comparison set because a lead at a budget with no counterpart here cannot be followed across the move": {
+   "text": "The budgets are the five this axis sweeps rather than the nine of the comparison set, because a lead at a budget with no counterpart here cannot be followed across the move",
+   "in": [
+    "paper2/si_table_intervals_whole.tex"
    ]
   },
   "it is not the released configuration tablenotes threeparttable table": {

@@ -94,19 +94,57 @@ def producer_diff(before: str, after: str, name: str = "producer", limit: int = 
     return "\n".join(lines[:limit]) + ("\n  ... diff truncated" if len(lines) > limit else "")
 
 
+# How far back to look for a recorded blob. A script here has a handful of revisions; the cap only
+# stops a pathological file from making the sweep unbounded, and exhausting it is reported as a
+# failure to recover rather than as an absence.
+_MAX_HISTORY = 300
+
+
+def _source_by_digest(rel: str, want: str) -> tuple:
+    """The committed version of `rel` whose sha256 is `want`, anywhere in its history.
+
+    The digest is a stronger key than the commit beside it. A stamp records the HEAD the producer
+    was run against, which is the wrong commit whenever the producer was written and run before it
+    was committed -- measured here at 62 of 271 stamped artifacts. The blob it actually ran is
+    findable by content wherever it eventually landed.
+    """
+    revs = (_git("rev-list", "--all", "--", rel) or "").split()
+    seen = set()
+    for r in revs[:_MAX_HISTORY]:
+        blob = _git("show", f"{r}:{rel}")
+        if blob is None:
+            continue
+        d = _digest(blob.encode())
+        if d in seen:
+            continue
+        seen.add(d)
+        if d == want:
+            return blob, r
+    return None, None
+
+
 def recorded_source(rec: dict, producer: Path) -> tuple:
     """(source at write time, how it was recovered) or (None, why not)."""
     commit = rec.get("git_commit")
+    rel = str(producer.relative_to(ROOT))
+    want = rec.get("source_sha256")
+    blob = _git("show", f"{commit}:{rel}") if commit else None
+    if blob is not None and (not want or _digest(blob.encode()) == want):
+        return blob, f"source at {commit[:12]}"
+    # Either the stamped commit does not carry the producer, or it carries a different version
+    # because the tree was dirty. In both cases the recorded digest still names the exact source.
+    if want:
+        found, at = _source_by_digest(rel, want)
+        if found is not None:
+            return found, f"the recorded digest, found in history at {at[:12]}"
+    if blob is not None:
+        return blob, (f"the tree was dirty when written, the recorded digest is in no commit that "
+                      f"touches {rel}, so the source at {commit[:12]} is the nearest committed "
+                      f"version and not exactly what ran")
     if not commit:
         return None, "the artifact records no commit, so the old source cannot be recovered"
-    rel = str(producer.relative_to(ROOT))
-    blob = _git("show", f"{commit}:{rel}")
-    if blob is None:
-        return None, f"{rel} is not in commit {commit[:12]}"
-    if rec.get("source_sha256") and _digest(blob.encode()) != rec["source_sha256"]:
-        return blob, (f"the tree was dirty when written, so the source at {commit[:12]} is the "
-                      f"nearest committed version and not exactly what ran")
-    return blob, f"source at {commit[:12]}"
+    return None, (f"{rel} is not in commit {commit[:12]}, and the digest it records matches no "
+                  f"committed version of it")
 
 
 def stamp(file: str | Path) -> dict:
@@ -136,10 +174,21 @@ def record_inputs(paths) -> list:
     out = []
     for path in paths:
         path = Path(path)
+        # The UNRESOLVED path first. resolve() follows symlinks, and in a git worktree the large
+        # dataset under grail_metabolism/data/ is symlinked to the main checkout, so resolving a
+        # dataset input lands outside ROOT and the row falls back to an absolute path naming one
+        # machine. check_inputs reads rows as ROOT / row["path"], and pathlib discards the left
+        # side of that join when the right is absolute -- so the round trip closes on the machine
+        # that wrote it and reports "input gone" everywhere else. For a real file under ROOT the
+        # two agree, so this changes nothing for the 64 artifacts that already record relative
+        # paths; it only stops a symlinked input from recording a path no reader can resolve.
         try:
-            rel = str(path.resolve().relative_to(ROOT))
+            rel = str(path.absolute().relative_to(ROOT))
         except ValueError:
-            rel = str(path)
+            try:
+                rel = str(path.resolve().relative_to(ROOT))
+            except ValueError:
+                rel = str(path)
         row = {"path": rel, "exists": path.exists()}
         if path.exists():
             row["sha256_16"] = _digest(path.read_bytes())[:16]

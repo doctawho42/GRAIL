@@ -61,8 +61,8 @@ work drawing on both cannot satisfy each: adding the non-commercial clause is a 
 ShareAlike does not permit, and dropping it breaches DrugBank's terms. MetXBioDB~1.0 is
 distributed with BioTransformer, whose terms require explicit permission for commercial use or
 redistribution. The one step of the assembly that cannot be reproduced is the extraction
-that selected from the four sources: it is not in the repository, and it is recorded as absent
-rather than described.
+that selected from the four sources: it is not in the repository, and the record says so without
+describing it.
 
 What the deposit contains follows from that, and this section takes the decision.
 The candidate structures are produced by applying this work's rule bank and are not corpus
@@ -70,7 +70,7 @@ records, so they are released. Every corpus structure, the substrates as well as
 metabolites, appears only as a tautomer-canonical InChIKey, which is a hash and does not carry
 the structure. No source record is redistributed \emph{in the deposit}, and the licence of the
 derived corpus is \CorpusLicence{}. The repository is a separate channel and it is settled the same
-way, by a substitution rather than by an answer to a question that does not resolve. It ships the
+way, by a substitution, since the question does not resolve. It ships the
 evaluated test substrates as structures, because reproducing the comparison means running a
 predictor on one, and their annotated metabolites as the descriptors the matching criteria are
 decided by: a hash of the canonical SMILES, the InChIKey, the tautomer key and the on-bits of a
@@ -190,7 +190,7 @@ exhaustive-mode figures are measured on \numValdrawPaired{}. The comparison set 
 \numPopulationN{} substrates on which
 every method predicts.
 
-No external evaluation set is reported. GLORYx is one of the four sources this corpus is
+This work reports no external evaluation set. GLORYx is one of the four sources this corpus is
 assembled from, so its \numGloryxN{} parent substrates are not external to it, and the
 \numGloryxOverlap{} that fall inside train or validation are there by construction.
 Holding out one source would not produce an external set either, because the sources
@@ -1468,7 +1468,7 @@ neither arm trails SyGMa with an interval excluding zero at any budget of ten or
 \numBlendIntSygmaseparatingWord{} of the interactive arm's, the widest trail being the interactive
 arm's $\numBlendIntSygmaworst$ $[\numBlendIntSygmaworstLo, +\numBlendIntSygmaworstHi]$ at a budget
 of \numBlendIntSygmaworstK{}. The trail Section~\ref{MS-sec:results} reports at one, three and
-five would become unresolved rather than established. That reading rests on a margin the printed
+five would become unresolved, not established. That reading rests on a margin the printed
 precision hides: the interactive arm's cell at a budget of
 \numBlendIntSygmaclosestKWord{} is $\numBlendIntSygmaclosest$ with its interval running to
 $\numBlendIntSygmaclosestHi$, so the cell fails to separate by less than the fourth decimal shows
@@ -1775,7 +1775,7 @@ share or neighbour centre atoms arrive as one piece and are counted once. This s
 a floor under the true one.
 
 \paragraph{The second instrument, and its bar, fixed first.} The remedy is a second lens with no
-threshold chosen after the fact, so the threshold was registered as H16 before the instrument was
+threshold chosen after the fact, so the threshold was registered as P10 before the instrument was
 written. On the same pair, let \emph{core} be the matched atoms and count $E$: every bond between
 two core atoms whose presence or order differs, plus every attachment point at which a substituent
 is gained or lost, each once. Bonds internal to an added or removed fragment are not edits to the
@@ -1806,7 +1806,7 @@ application, so the ceiling is not the reach of one enzymatic step, and the dept
 in the Limitations measures a second template application, not a second enzymatic step. The
 corrected share also explains that experiment's small effect. If a fifth of the mined bank
 already performs two edits in one application, as P10 finds, a second application has little left
-to discover that the first did not already reach, and the observed lift of about $0.012$ is what
+to discover that the first did not already reach, and the observed lift of about $\numDepthtwoLift$ is what
 that predicts.
 
 The instrument reads the source pairs and leaves the templates unread, and that is deliberate. A
@@ -1852,7 +1852,8 @@ in both directions (Section~\ref{MS-sec:limitations}), and the registered instru
 
 The register is released in full at \texttt{github.com/doctawho42/GRAIL}, with every prediction as
 it was written, the threshold and falsification condition fixed before the check, and the outcome
-as it was measured. Sixteen predictions are registered. Ten are reported in the paper as P1 to
+as it was measured. \texttt{paper2/preregistration.md} is the file, and its identifiers begin with H:
+those are the keys any prediction named here can be looked up by. Sixteen predictions are registered. Ten are reported in the paper as P1 to
 P10; the register's own identifiers are given beside them in the main text, since its numbering
 follows the order they were written, not the order they appear.
 
@@ -1876,7 +1877,7 @@ reaction type where this work indexes by rule. The rest are H2, reactivity and a
 features; H3, learned abstention; H4, a ranked prediction of intervention sizes; H5, the same null
 out of sample; and H6, a negative control on graph automorphism. The register states each with its threshold so that a
 later
-result on any of them cannot be a threshold chosen after the fact. None is reported in this paper
+result on any of them cannot be a threshold chosen after the fact. This paper reports none of them,
 because none was run for it, which is a different thing from a prediction that was run and did
 not hold; the three of those are P6, P7 and P8 and they are in Table~\ref{MS-tab:hyp} with their
 measured
@@ -2093,7 +2094,10 @@ population, of which \numPopdefSeparatingwhole{} separate: \numPopdefForthiswork
 this work and \numPopdefAgainstthisworkwholeWord{} against it. On the comparison set
 \numPopdefSeparatingcomp{} of \numPopdefCellscomp{} separate, \numPopdefForthisworkcompWord{} for
 and \numPopdefAgainstthisworkcompWord{} against. The comparison set's cells can be read one at a
-time from Table~\ref{tab:si-intervals}; the wider population's cells are in no table in this paper.
+time from Table~\ref{tab:si-intervals} and the wider population's from
+Table~\ref{tab:si-intervals-whole}, which carries the same grid for the five comparators that
+reach it.
+\input{si_table_intervals_whole}
 
 Both favourable totals rest on one comparator. Without BioTransformer the wider population reads
 \numPopdefWithoutbtforwholeWord{} for this work and \numPopdefWithoutbtagainstwholeWord{} against
@@ -2143,7 +2147,7 @@ declared for multiplicity is a different sweep of \numHolmTests{} contrasts, and
 corrected over it. The \numPopdefLeadstotalWord{} leads counted above are one-sided by
 construction, and these totals are the same grid read in both directions.
 
-GLORYx's cells on the wider population are among those no table carries, so they are set out here.
+GLORYx's cells on the wider population are in Table~\ref{tab:si-intervals-whole}, and their shape is set out here.
 The interactive arm trails it at every budget this axis audits above five. The differences are
 $\numPopdefWholeGloryxOneZero$ $[\numPopdefWholeGloryxOneZeroLo,
 \numPopdefWholeGloryxOneZeroHi]$ at ten, $\numPopdefWholeGloryxOneFive$
@@ -2182,8 +2186,8 @@ the same reason and are reported here: at a budget of ten the exhaustive
 arm trails SyGMa by $\numPopdefExhwholesygmaOneZero$ $[\numPopdefExhwholesygmaOneZeroLo,
 \numPopdefExhwholesygmaOneZeroHi]$ and MetaPredictor by
 $\numPopdefExhwholemetapredictorOneZero$ $[\numPopdefExhwholemetapredictorOneZeroLo,
-\numPopdefExhwholemetapredictorOneZeroHi]$ over the whole set, both intervals excluding zero,
-where on the comparison set neither separates.
+\numPopdefExhwholemetapredictorOneZeroHi]$ over the whole set, both intervals excluding zero.
+On the comparison set neither of those two cells separates.
 
 A separate analysis re-ran three
 methods, four metrics and five criteria on two populations of one split, and asked whether the
@@ -2559,11 +2563,19 @@ local build: the FAME 3 models it needs for site prediction are not distributed 
 is directed to the authors of FAME 3 for them, free of charge for non-profit use. Its successor,
 GLORYxR, installs and runs, but ships no production model either; the model dumps its documentation
 points to are, at the time of writing, unpublished, and the model it does ship is one its own
-tutorial says is not trained on the full dataset. That request was made for this work and granted:
-the dumps were supplied privately by GLORYxR's first author, and the successor is therefore run
-here, locally, over the whole evaluated set in both of its site-of-metabolism modes. The dumps
-remain unpublished, so that column is reproducible from the artifacts deposited with this work but
-not from public sources alone.
+tutorial says is not trained on the full dataset. GLORYxR is itself unpublished
+\citep{Gaskin_GLORYxR}, with no release, no DOI and no paper, so what identifies the version run
+here is a revision of its repository at \texttt{github.com/molinfo-vienna/GLORYxR}, recorded with
+the digest of every weight file beside it. That request was made for this work and granted, on
+terms its first author set and this section keeps: that the tool be named a pre-publication
+version, that its repository be linked, and that it be identified as the successor to GLORYx. The
+dumps were supplied privately, and the successor is therefore run here, locally, over the whole
+evaluated set in both of its site-of-metabolism modes. They remain unpublished, so that column
+cannot be reproduced from public sources alone, only from the artefacts deposited with this work;
+their digests are recorded so that a deposit its author intends to make can be checked against what
+ran. Two of the \numGloryxrDumpsWord{} weight files the provider loads are the same file,
+\numGloryxrDuplicatedmb{}~MB duplicated, which its author confirms is intended: both are Phase 1
+classes the tool scores alike.
 
 What remains is the service the authors themselves operate, which runs the real system. It is used
 here, at module version \numComparatorsGloryxarmVersion{}, over the same
@@ -2752,7 +2764,7 @@ manuscript's numbers come from fails on any that names a checkpoint outside it, 
 that is not the deployed setting reproduces something nobody ran. That test reads the shell
 scripts too, and the two ways a path is written in them, which is how it now sees the one that
 built the standardised pools. That script named the filter of a run this repository no longer
-ships, so the sweep over how the substrate is drawn compared two models rather than two drawings,
+ships, so the sweep over how the substrate is drawn compared two models, not two drawings,
 and its figures here are from the rebuild.
 
 The guarantee that matters is narrower than the pinned set, and a gate checks it. The numbers in
@@ -2761,7 +2773,7 @@ by running the number generator with its artifact reader instrumented, so the co
 actually opened during that run. Of the \numProvSources{}, the sweep finds
 \numProvSourcesunpinnedWord{} unpinned and \numProvSourcesunverifiableWord{} whose producer it
 cannot identify. Of the rest, \numProvSourcesinferredWord{} predate stamping and are verified by
-recovering their producer's source from the history rather than from a recorded digest, which the
+recovering their producer's source from the history where no digest was recorded, which the
 sweep labels as inferred; that is a weaker check and is counted separately for that reason.
 A further \numProvSourcesexemptWord{} are exempt with a stated reason, each an output of the
 checking
@@ -2889,8 +2901,8 @@ Three things it still does not see. It counts overfull horizontal boxes, so a ta
 its text block \emph{vertically} passes: one did, and its page folio printed on top of a data cell.
 It compares the digest of every source against what the build recorded, which catches an edit but
 says nothing about whether the numbers in that source are right, since that is a different
-checker's job. And it reads the compiled log rather than the rendered page, so anything that goes
-wrong in the geometry rather than in the references is outside it. The guarantee this paragraph
+checker's job. And it reads the compiled log, not the rendered page: a fault
+in the geometry falls outside it, where a fault in the references does not. The guarantee this paragraph
 offers is therefore narrow: no pointer between these documents is hand-typed, and none that fails
 to resolve reaches a released build.
 

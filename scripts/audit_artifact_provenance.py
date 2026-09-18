@@ -49,8 +49,14 @@ TE = "scripts/typed_edit"
 # the older pair reads the live pools instead. results/bank_without_selection_full.json was scored
 # with a filter checkpoint the system does not deploy and no figure in either manuscript is drawn
 # from it. Keeping a stale pin would have been a gate that reports currency it cannot check.
-# One pin fails permanently, and the reason is recorded here rather than repaired, because
-# repairing it would mean reporting a currency nothing can check.
+# THREE pins fail, and the count matters because this comment said one for as long as it was
+# wrong. The other two are results/gloryx_service_preds.json, a run of someone else's web service
+# that a re-run would replace rather than reproduce, and results/benchmark_report_depth2.json,
+# which records no seed and would draw a different sample. All three are declared in
+# DECLARED_DEBT in grail_metabolism/tests/test_paper_gates.py with the reason each cannot be made
+# current. The one set out at length below is the one that cannot be regenerated at all, and the
+# reason is recorded rather than repaired, because repairing it would mean reporting a currency
+# nothing can check.
 #
 #   results/uspto_type_overlap.json  producer_changed (was 81e44a0d3d8a, is now 23314d652a09)
 #
@@ -107,6 +113,14 @@ PINNED = {
     # how much of that column's recall at each budget is the method and how much is the order its
     # supplier's file happened to have, and which contrast cells the difference could have decided
     "results/metatox_tie_break_sensitivity.json": "scripts/metatox_tie_break_sensitivity.py",
+    # the only arm whose software and weights are both unpublished: the revision that ran, the
+    # digest of every weight file, and the terms the permission to use them carries
+    "results/gloryxr_identity.json": "scripts/gloryxr_identity.py",
+    # The depth-two ceiling probe. It was reachable by the number sweep only after its lift stopped
+    # being a hand-typed literal on the allowed list and became a macro read from the file; pinning
+    # it is what lets the sweep say whether its producer has moved, which is the question the
+    # manuscript answers in prose beside the figure.
+    "results/benchmark_report_depth2.json": "scripts/run_benchmark.py",
     # the negative result that closes the cheap route to the between-group headroom
     "results/group_decode.json": f"{TE}/group_decode.py",
     # the three matched training variants the supplement reports, and the frontier they share
