@@ -95,6 +95,18 @@ PINNED = {
     "results/test_reference_descriptors.json": f"{TE}/reference_descriptors.py",
     "results/reproduce_from_descriptors.json": f"{TE}/reproduce_from_descriptors.py",
     "results/population_definition.json": f"{TE}/population_definition.py",
+    # the second MetaTox submission: what came back, what it covers, and the measured reason the
+    # arm still does not join the population above. Its inputs are two SDF files far too large to
+    # track, so the artifact carries their sha256 and the producer refuses rather than guesses when
+    # they are not on disk; what is pinned here is the code, which is the part that can move.
+    "results/metatox_outside_submission.json": "scripts/metatox_outside_ingest.py",
+    # MetaTox as one arm over the evaluated population: the second submission ingested on the ids
+    # of its own submission set, and the merge of the two runs that the axis reads.
+    "results/metatox_smirks_preds_1170.json": "scripts/metatox_smirks_ingest.py",
+    "results/metatox_smirks_preds_evaluated1170.json": "revision/phase2_metatox_merge.py",
+    # how much of that column's recall at each budget is the method and how much is the order its
+    # supplier's file happened to have, and which contrast cells the difference could have decided
+    "results/metatox_tie_break_sensitivity.json": "scripts/metatox_tie_break_sensitivity.py",
     # the negative result that closes the cheap route to the between-group headroom
     "results/group_decode.json": f"{TE}/group_decode.py",
     # the three matched training variants the supplement reports, and the frontier they share

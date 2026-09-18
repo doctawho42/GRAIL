@@ -8,6 +8,7 @@ not in this file may not appear in the paper.
 """
 from __future__ import annotations
 
+import glob
 import json
 import re
 import sys
@@ -973,7 +974,9 @@ def build():
     # the cells and against it in two. Leaving it out therefore understates the favourable side,
     # and the sentence that reports the axis has to say so rather than let the absence read as
     # caution. Read from the deployment table, which is where its contrasts live; on the wider
-    # population the quantity does not exist, because the second submission was never made.
+    # population the quantity does not exist, for the reason the metatoxoutside.* keys below record
+    # -- the second submission was made and came back complete, and the two halves were run at
+    # different output budgets.
     _mtx = art("deployment_table.json")["contrasts"]
     # The budgets this axis audits, emitted as a count rather than spelled in the prose: a
     # sentence saying "over the five budgets" would be a number typed by hand, and would go on
@@ -989,6 +992,100 @@ def build():
                 _ma += _c["gap"] < 0
     n["popdef.metatoxfor"] = _mf
     n["popdef.metatoxagainst"] = _ma
+
+    # The second submission. It was made, it came back for every substrate submitted, and MetaTox
+    # now covers the whole evaluated population. What kept the arm off this axis is no longer a
+    # submission nobody could make: it is a column nobody has built.
+    #
+    # An output-budget objection stood here for part of this revision and is withdrawn. It compared
+    # a raw record count against a de-duplicated one; the rawratio keys below are kept so the
+    # sentence that cites the real figure can also show what the wrong one looked like, since a
+    # factor of seven is exactly the kind of number a reader will have heard.
+    _mo = art("metatox_outside_submission.json")
+    _mocov, _mobud = _mo["coverage"], _mo["budget"]
+    _moalt = _mo["readings"]["if_the_other_file_is_the_arm"]
+    n["popdef.metatoxoutsubmitted"] = _mo["submission_set"]["submitted"]
+    # The comparison set's own count, from the coverage block rather than from popdef.metatox,
+    # which counts something else entirely: the substrates MetaTox answers nothing for.
+    n["popdef.metatoxoutheld"] = _mocov["metatox_on_comparison_set"]
+    n["popdef.metatoxoutreturned"] = _mocov["recovered_from_this_submission"]
+    n["popdef.metatoxoutsilent"] = _mocov["submitted_but_no_prediction_returned"]
+    n["popdef.metatoxoutunion"] = _mocov["union"]
+    n["popdef.metatoxoutshare"] = round(100 * _mocov["share"], 1)
+    n["popdef.metatoxoutfloor"] = round(100 * _mo["coverage_floor"], 0)
+    n["popdef.metatoxoutcomprate"] = round(_mobud["comparison_set_mean_output"], 1)
+    n["popdef.metatoxoutdeliveryrate"] = round(_mobud["this_delivery_mean_output"], 1)
+    n["popdef.metatoxoutratio"] = round(_mobud["ratio"], 3)
+    n["popdef.metatoxoutrawrate"] = round(_mobud["raw_record_rate"], 1)
+    n["popdef.metatoxoutrawratio"] = round(
+        _mobud["raw_record_rate"] / _mobud["comparison_set_mean_output"], 1)
+    # The same statistic for every arm the axis already reads. These exist so the prose can say
+    # where MetaTox sits among its peers instead of against a threshold, which is the correction
+    # that withdrew the objection.
+    _peers = {k: v["ratio"] for k, v in _mo["peer_two_half_ratios"].items() if "ratio" in v}
+    n["popdef.metatoxoutpeerarms"] = len(_peers)
+    # Three places, because the tightest arm rounds to 1.00 at two and a range printed as
+    # "1 to 1.14" reads as though one arm were exactly identical across the halves; none is.
+    n["popdef.metatoxoutpeerlo"] = round(min(_peers.values()), 3)
+    n["popdef.metatoxoutpeerhi"] = round(max(_peers.values()), 3)
+    n["popdef.metatoxoutpeercloser"] = sum(
+        1 for r in _peers.values() if abs(r - 1) < abs(_mobud["ratio"] - 1))
+    # The other reading of which file is the arm.
+    n["popdef.metatoxoutaltreturned"] = _moalt["coverage"]["recovered_from_this_submission"]
+    n["popdef.metatoxoutaltunion"] = _moalt["coverage"]["union"]
+    n["popdef.metatoxoutaltshare"] = round(100 * _moalt["coverage"]["share"], 1)
+    # Emitted so the prose can say how many reasons stand without counting them by hand; if a
+    # blocker is ever added or cleared, the sentence citing this moves with it.
+    n["popdef.metatoxoutblockers"] = len(_mo["blockers"])
+
+    # What share of the MetaTox column the method's own score actually orders. PASS writes a
+    # spectrum only above its own threshold, so about half the entries carry none and keep the
+    # order the delivery gave them. Emitted per budget because the exposure grows with k, which is
+    # the only part of it that could bias a comparison, and per half because equal shares are what
+    # say the two halves were scored under one threshold.
+    _mcol = art("metatox_smirks_preds_evaluated1170.json")
+    _share = _mcol["ranking_decides_this_share"]
+    n["popdef.metatoxscoredshare"] = round(100 * _share["overall"], 0)
+    n["popdef.metatoxscoredfive"] = round(100 * _share["within_the_first_5"], 0)
+    n["popdef.metatoxscoredfivezero"] = round(100 * _share["within_the_first_50"], 0)
+    n["popdef.metatoxscoredcomp"] = round(100 * _share["overall_comparison_set"], 0)
+    n["popdef.metatoxscoredwider"] = round(100 * _share["overall_wider"], 0)
+    n["popdef.metatoxcolumnoutput"] = round(_mcol["mean_output"], 1)
+    # The interactive arm's pool over the same population, for the sentence that says MetaTox emits
+    # more. Counted BEFORE the cap and before the tautomer de-duplication the axis applies, so it is
+    # an upper bound on the slots that arm is actually read at; the comparison it supports is
+    # therefore conservative in the direction that matters.
+    _dep = dict(json.loads(Path(ROOT / "results/widepools_k30/all.json").read_text())["pools"])
+    for _f in sorted(glob.glob(str(ROOT / "results/widepools_k30_fulltest" / "w*.json"))):
+        _dep.update(json.loads(Path(_f).read_text())["pools"])
+    # The evaluated population, taken from the MetaTox column rather than from the corpus file.
+    # The column covers it exactly -- revision/tests/test_the_metatox_column_over_the_whole_population
+    # asserts not one substrate more or fewer -- and it is a pinned, stamped artifact, where
+    # results/test_references.json has no producer in this repository and reading it here would put
+    # an unpinnable file into the set the number-provenance sweep walks.
+    _truth_keys = set(_mcol["predictions"])
+    _dep_sizes = [len(v) for _s, v in _dep.items() if _s in _truth_keys]
+    n["popdef.deployedpoolwhole"] = round(sum(_dep_sizes) / len(_dep_sizes), 1)
+
+    # How much of MetaTox's recall at each budget is the supplier's record order rather than the
+    # method. About half the column carries no score, and inside a tie the method expressed no
+    # preference, so the order that survived is an accident of the export. These keys exist so the
+    # sentence that discloses it cites the measurement instead of describing it, and so the count
+    # of cells the movement could have decided is read from the artifact and never typed.
+    _tb = art("metatox_tie_break_sensitivity.json")
+    n["popdef.tiebreakperms"] = _tb["permutations"]
+    _w = _tb["halves"]["wider"]
+    n["popdef.tiebreakwiderbudgets"] = sum(1 for r in _w.values() if r["shift"] < 0)
+    n["popdef.tiebreakwidershiftonefive"] = abs(round(_w["15"]["shift"], 4))
+    n["popdef.tiebreakwiderworstpct"] = max(r["percentile"] for r in _w.values())
+    n["popdef.tiebreakcellsinreach"] = len(_tb["cells_within_reach"])
+    # The cell the movement reaches furthest into, so the prose can name it rather than gesture.
+    if _tb["cells_within_reach"]:
+        _c = _tb["cells_within_reach"][0]
+        n["popdef.tiebreakworstbudget"] = _c["budget"]
+        n["popdef.tiebreakworstmargin"] = round(_c["difference"], 4)
+        n["popdef.tiebreakworstcilo"] = round(_c["ci95"][0], 4)
+        n["popdef.tiebreakworstshift"] = abs(round(_c["shift"], 4))
 
     n["popdef.metatox"] = pop["emission"]["comparison_set"]["metatox"]
     n["popdef.sygmainside"] = pop["emission"]["comparison_set"]["sygma"]

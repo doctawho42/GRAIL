@@ -413,6 +413,30 @@
    "status": "current"
   },
   {
+   "artifact": "results/metatox_outside_submission.json",
+   "script": "metatox_outside_ingest.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/metatox_smirks_preds_1170.json",
+   "script": "metatox_smirks_ingest.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/metatox_smirks_preds_evaluated1170.json",
+   "script": "phase2_metatox_merge.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/metatox_tie_break_sensitivity.json",
+   "script": "metatox_tie_break_sensitivity.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
    "artifact": "results/metxbiodb_drop_set.json",
    "script": "metxbiodb_drop_set.py",
    "how": "recorded source digest",
@@ -755,7 +779,7 @@
    "status": "current"
   }
  ],
- "n_pinned": 123,
+ "n_pinned": 127,
  "n_pinned_stale": 2,
  "sweep": {
   "unstamped": 303,
@@ -1663,9 +1687,9 @@
    "how": "source at e5da75350e64",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was cd5cd5e7e0b2, is now 82d305fdad5d",
+   "detail": "producer was cd5cd5e7e0b2, is now f9a8a7980e10",
    "diff_recovered_by": "source at e5da75350e64",
-   "diff": "--- metatox_smirks_ingest.py (as recorded)\n+++ metatox_smirks_ingest.py (now)\n@@ -48,12 +48,35 @@\n \n \n+def _spectrum(props) -> tuple[float, float] | None:\n+    \"\"\"(Pa, Pi) for the Metabolite class, which is the score the delivery is named after.\n+\n+    PASS writes the pair with a comma as the decimal separator: \"0,370  0,167  Metabolite\". Pa is\n+    the method's own confidence and therefore its ranking signal; ignoring it and taking the file's\n+    record order would score the method in an ordering it never produced, which is the one thing a\n+    frozen-prediction comparison must not do.\n+    \"\"\"\n+    raw = props.get(\"PASS_ACTIVITY_SPECTRUM\")\n+    if raw is None:\n+        return None\n+    for line in str(raw).splitlines():\n+        parts = line.replace(\",\", \".\").split()\n+        if len(parts) >= 3 and parts[2].lower().startswith(\"metabolite\"):\n+            try:\n+                return float(parts[0]), float(parts[1])\n+            except ValueError:\n+                return None\n+    return None\n+\n+\n def parse_sdf(path: Path) -> dict:\n-    \"\"\"{substrate index -> [metabolite SMILES]} from an SDF whose only key is `sub_met`.\"\"\"\n-    out: dict[int, list[str]] = {}\n+    \"\"\"{substrate index -> [(smiles, Pa, Pi)]}, ranked by the method's own confidence.\"\"\"\n+    out: dict[int, list[tuple]] = {}\n     supplier = Chem.SDMolSupplier(str(path), sanitize=True)\n+    n_scored = n_total = n_declared = n_disagree = 0\n     for mol in supplier:\n         if mol is None:\n             continue\n-        raw = mol.GetPropsAsDict().get(\"ID\")\n+        props = mol.GetPropsAsDict()\n+        raw = props.get(\"ID\")\n         if raw is None or \"_\" not in str(raw):\n  ... diff truncated"
+   "diff": "--- metatox_smirks_ingest.py (as recorded)\n+++ metatox_smirks_ingest.py (now)\n@@ -6,12 +6,30 @@\n paper. This is the SMIRKS variant, and it covers all 291.\n \n-The file carries no substrates. Records are identified only as `<substrate index>_<metabolite\n+The first delivery carries no substrates. Records are identified only as `<substrate index>_<metabolite\n index>`, so the substrates have to be recovered from the submission order in\n results/metatox_input/substrate_map.csv. A positional join is exactly the kind of assumption that\n-silently produces a whole table of wrong numbers, so it is gated rather than assumed: a predicted\n-metabolite of a substrate should look like that substrate, and under an off-by-one or a shuffled\n-order it would not. The gate is the median Tanimoto between each substrate and its own predictions,\n-against the same statistic under a deliberately rotated assignment. If the true join is not far\n-above the rotated one, the join is wrong and nothing downstream means anything.\n+silently produces a whole table of wrong numbers, so it is gated: a predicted metabolite of a\n+substrate should look like that substrate, and under an off-by-one or a shuffled order it would not.\n+The gate is the median Tanimoto between each substrate and its own predictions, against the same\n+statistic under a deliberately rotated assignment.\n+\n+WHAT THAT GATE CAN AND CANNOT SEE, because an earlier version of this docstring claimed more than it\n+delivers. It is a median over substrates, so it is blind to a minority: the fraction that has to be\n+cross-assigned before it fires is (0.5 - q) / (1 - q), where q is the share of per-substrate medians\n+already below 0.5. Measured, that is 0.25 on the 291 and 0.31 on the 879 -- so roughly a quarter to\n+a third of either delivery could be mis-assigned with this statistic unmoved. It rules out a GLOBAL\n+shift or shuffle, which is what a positional join can plausibly get wrong, and nothing smaller.\n+\n+A minority mis-assignment is caught instead by an instrument that resolves per substrate, in\n+revision/tests/test_the_metatox_column_over_the_whole_population.py: each substrate's similarity to\n+its own predictions against several strangers' sets, with the pass rate of the half this paper\n+already reports as the bar. It catches a tenth of a delivery cross-assigned, where this gate needs a\n+third.\n+\n+The gate also mis-calibrates in the other direction on re-tautomerised substrates: it compares\n+against the substrate as the corpus stores it, while the service saw the submitted tautomer. For the\n+257 of 879 that differ, the measured median is 0.47 against the corpus form and 0.68 against what\n+was actually submitted, so a delivery made up of those alone would have been refused while being\n+perfectly correct.\n \"\"\"\n from __future__ import annotations\n@@ -37,28 +55,63 @@\n  ... diff truncated"
   },
   {
    "artifact": "results/mined_rule_catalog_v2.json",

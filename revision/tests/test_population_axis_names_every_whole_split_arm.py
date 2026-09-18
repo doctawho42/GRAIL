@@ -14,8 +14,13 @@ That is what happened. The artifact was last written on 2026-09-03; the GLORYx c
 1,166 carrying at least one prediction. The literal dict could not know about a file that did not
 exist when it was written, so \\numPopdefWholearms printed three while the repository held four.
 The producer's own comment explains who is in the dict and why -- BioTransformer joined when it was
-run there, MetaTox cannot follow because a second submission to a web service is not ours to make
--- and says nothing about GLORYx, because there was nothing to say yet.
+run there, MetaTox does not follow -- and says nothing about GLORYx, because there was nothing to
+say yet. MetaTox's reason has since changed and the comment was rewritten with it: the second
+submission was made, for the 879 substrates outside the comparison set, and what keeps that arm out
+is no longer an unavailable submission. Two files came back and which is the rule-based run is
+settled by nothing in the repository, so both are read; the arm falls short under either, on
+coverage under one and on output budget under both. Measured in
+results/metatox_outside_submission.json.
 
 So the defect is not the number. It is that nothing compared the dict against the repository. This
 test is that comparison: every prediction file that covers the evaluated population must be either
@@ -112,9 +117,14 @@ def test_every_arm_covering_the_population_is_offered_to_the_axis():
 def test_an_arm_left_out_is_left_out_with_a_reason():
     """Exclusion stays allowed, silence does not.
 
-    MetaTox is the case this protects: its file does not exist, a second submission to a web
-    service is not the authors' to make, and the producer says so in prose. A future exclusion must
-    do the same, so this asserts the producer names every candidate it does not read.
+    MetaTox is the case this protects, and it is now the case that shows why the test is worth
+    having. Its whole-population file does not exist and the producer says in prose why not -- and
+    the reason it gives is no longer the one it gave when this test was written, because the
+    submission that was said to be impossible was made. If that file is ever built from the
+    delivery, this test will see an arm covering the population that WHOLE_TEST does not name, and
+    the budget difference will have to be written down as the exclusion rather than assumed. A
+    future exclusion must do the same, so this asserts the producer names every candidate it does
+    not read.
     """
     source = (ROOT / "scripts" / "typed_edit" / "population_definition.py").read_text()
     unexplained = []

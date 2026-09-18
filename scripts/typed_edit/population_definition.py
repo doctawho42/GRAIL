@@ -66,8 +66,16 @@ EXHAUSTIVE_COMPARISON = ROOT / "results/widepools_implicit"
 EXHAUSTIVE_FULLTEST = ROOT / "results/widepools_fulltest"
 # The comparators that ran over the whole evaluated test set. BioTransformer joined them when it
 # was run there: it is a jar this repository holds, and what had kept it on the comparison set
-# was the cost of the run rather than an impossibility. MetaTox is the one that cannot follow,
-# because a second submission to a web service is not ours to make.
+# was the cost of the run rather than an impossibility. MetaTox joined last, and the reason it had
+# been absent changed twice before it did. It was said to have no whole-population quantity because
+# a second submission was not the authors' to make; the submission was made, and came back with a
+# prediction for all 879 substrates outside the comparison set. An output-budget objection then
+# stood in its place and was withdrawn: it divided a raw record count by a de-duplicated one, it
+# measured a quantity this script never reads since every arm is truncated to k, and it was computed
+# for MetaTox and asked of no other arm -- computed for all of them, SyGMa's halves differ by 1.143
+# and GLORYx's by 1.092 against MetaTox's 1.076. The column is the merge of the two submissions,
+# built like GLORYx's by revision/phase2_metatox_merge.py. The withdrawal, and the same ratio for
+# every arm here, are in results/metatox_outside_submission.json.
 #
 # GLORYx joined later still, and its absence from this dict was an oversight rather than a
 # decision: the column over all 1,170 was assembled on 2026-09-15 by merging two runs of the
@@ -79,7 +87,8 @@ EXHAUSTIVE_FULLTEST = ROOT / "results/widepools_fulltest"
 WHOLE_TEST = {"sygma": ROOT / "results/sygma_fulltest_predictions.json",
               "metapredictor": ROOT / "artifacts/tier2_1170/metapredictor_preds.json",
               "biotransformer": ROOT / "results/biotransformer_fulltest_preds.json",
-              "gloryx": ROOT / "results/gloryx_service_preds_evaluated1170.json"}
+              "gloryx": ROOT / "results/gloryx_service_preds_evaluated1170.json",
+              "metatox": ROOT / "results/metatox_smirks_preds_evaluated1170.json"}
 
 
 def main() -> int:

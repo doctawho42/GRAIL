@@ -1,0 +1,199 @@
+{
+ "what_this_is": "how much of the MetaTox column's recall at each budget is the method's own ordering and how much is the order its supplier's file happened to have",
+ "provenance": {
+  "script": "metatox_tie_break_sensitivity.py",
+  "script_path": "scripts/metatox_tie_break_sensitivity.py",
+  "source_sha256": "f745314857ae0f4732c02ccb4dc7c52cff92e5ccfe1651278d26f5b54302da79",
+  "git_commit": "b0fb71e43f016725f7efc4d28acdec92d6861f9b",
+  "git_dirty": true
+ },
+ "inputs": [
+  {
+   "path": "results/metatox_smirks_preds_evaluated1170.json",
+   "exists": true,
+   "sha256_16": "0199d268892edc40",
+   "bytes": 7275987
+  },
+  {
+   "path": "results/test_references.json",
+   "exists": true,
+   "sha256_16": "95a7411e9b5a5ae9",
+   "bytes": 182834
+  },
+  {
+   "path": "results/population_definition.json",
+   "exists": true,
+   "sha256_16": "72554eb1bc61e0ee",
+   "bytes": 22789
+  }
+ ],
+ "permutations": 60,
+ "seed": 0,
+ "what_was_permuted": "only within classes the method itself ties: one class per distinct Pa and one for the whole unscored block, which PASS leaves unranked because it writes a spectrum only above its own threshold. Every permutation is therefore an equally faithful reading of what MetaTox returned; none crosses a difference the method expressed",
+ "matching": "distinct structures under grail_metabolism.metrics._tautomer_inchikey, the convention the scoring matches with",
+ "classes": {
+  "entries": 45047,
+  "tie_classes": 19373,
+  "substrates": 1170,
+  "mean_entries_per_class": 2.325
+ },
+ "halves": {
+  "comparison_set": {
+   "5": {
+    "delivered": 0.251967,
+    "permuted_mean": 0.260771,
+    "permuted_lo": 0.253398,
+    "permuted_hi": 0.273444,
+    "shift": -0.008805,
+    "percentile": 0.0,
+    "n_substrates": 291
+   },
+   "10": {
+    "delivered": 0.425061,
+    "permuted_mean": 0.438067,
+    "permuted_lo": 0.420823,
+    "permuted_hi": 0.455474,
+    "shift": -0.013006,
+    "percentile": 3.3,
+    "n_substrates": 291
+   },
+   "15": {
+    "delivered": 0.549243,
+    "permuted_mean": 0.563708,
+    "permuted_lo": 0.55056,
+    "permuted_hi": 0.580801,
+    "shift": -0.014465,
+    "percentile": 0.0,
+    "n_substrates": 291
+   },
+   "30": {
+    "delivered": 0.644114,
+    "permuted_mean": 0.637621,
+    "permuted_lo": 0.621434,
+    "permuted_hi": 0.656886,
+    "shift": 0.006493,
+    "percentile": 85.0,
+    "n_substrates": 291
+   },
+   "50": {
+    "delivered": 0.670804,
+    "permuted_mean": 0.674571,
+    "permuted_lo": 0.666222,
+    "permuted_hi": 0.68306,
+    "shift": -0.003767,
+    "percentile": 15.0,
+    "n_substrates": 291
+   }
+  },
+  "wider": {
+   "5": {
+    "delivered": 0.30215,
+    "permuted_mean": 0.305145,
+    "permuted_lo": 0.301146,
+    "permuted_hi": 0.310861,
+    "shift": -0.002995,
+    "percentile": 10.0,
+    "n_substrates": 879
+   },
+   "10": {
+    "delivered": 0.454874,
+    "permuted_mean": 0.46507,
+    "permuted_lo": 0.454229,
+    "permuted_hi": 0.474915,
+    "shift": -0.010196,
+    "percentile": 1.7,
+    "n_substrates": 879
+   },
+   "15": {
+    "delivered": 0.54628,
+    "permuted_mean": 0.557332,
+    "permuted_lo": 0.548428,
+    "permuted_hi": 0.567881,
+    "shift": -0.011052,
+    "percentile": 0.0,
+    "n_substrates": 879
+   },
+   "30": {
+    "delivered": 0.66461,
+    "permuted_mean": 0.671254,
+    "permuted_lo": 0.661049,
+    "permuted_hi": 0.682071,
+    "shift": -0.006644,
+    "percentile": 8.3,
+    "n_substrates": 879
+   },
+   "50": {
+    "delivered": 0.705456,
+    "permuted_mean": 0.70976,
+    "permuted_lo": 0.705036,
+    "permuted_hi": 0.715891,
+    "shift": -0.004304,
+    "percentile": 1.7,
+    "n_substrates": 879
+   }
+  }
+ },
+ "cells_within_reach": [
+  {
+   "population": "the whole evaluated test set",
+   "arm": "exhaustive_minus_comparator",
+   "budget": 15,
+   "difference": 0.0219,
+   "ci95": [
+    0.0008,
+    0.0432
+   ],
+   "separates": true,
+   "shift": -0.011052,
+   "margin_to_zero": 0.0008,
+   "direction": "the shift flatters this work, so a neutral reading would narrow this lead and the interval would cross zero",
+   "note": "the interval's near edge is closer to zero than the movement the delivery's own record order produces at this budget, so this cell could have been decided by an order nobody chose"
+  },
+  {
+   "population": "the comparison set",
+   "arm": "deployed_minus_comparator",
+   "budget": 10,
+   "difference": 0.0451,
+   "ci95": [
+    0.0031,
+    0.086
+   ],
+   "separates": true,
+   "shift": -0.013006,
+   "margin_to_zero": 0.0031,
+   "direction": "the shift flatters this work, so a neutral reading would narrow this lead and the interval would cross zero",
+   "note": "the interval's near edge is closer to zero than the movement the delivery's own record order produces at this budget, so this cell could have been decided by an order nobody chose"
+  },
+  {
+   "population": "the whole evaluated test set",
+   "arm": "exhaustive_minus_comparator",
+   "budget": 10,
+   "difference": 0.0304,
+   "ci95": [
+    0.0095,
+    0.0511
+   ],
+   "separates": true,
+   "shift": -0.010196,
+   "margin_to_zero": 0.0095,
+   "direction": "the shift flatters this work, so a neutral reading would narrow this lead and the interval would cross zero",
+   "note": "the interval's near edge is closer to zero than the movement the delivery's own record order produces at this budget, so this cell could have been decided by an order nobody chose"
+  },
+  {
+   "population": "the whole evaluated test set",
+   "arm": "deployed_minus_comparator",
+   "budget": 10,
+   "difference": 0.0308,
+   "ci95": [
+    0.01,
+    0.0519
+   ],
+   "separates": true,
+   "shift": -0.010196,
+   "margin_to_zero": 0.01,
+   "direction": "the shift flatters this work, so a neutral reading would narrow this lead and the interval would cross zero",
+   "note": "the interval's near edge is closer to zero than the movement the delivery's own record order produces at this budget, so this cell could have been decided by an order nobody chose"
+  }
+ ],
+ "how_to_read_it": "a negative shift means the delivered order gives LESS recall than a neutral reading of the same predictions, so MetaTox is understated at that budget and any cell in which this work leads it is flattered by that much; a positive shift means the reverse"
+}

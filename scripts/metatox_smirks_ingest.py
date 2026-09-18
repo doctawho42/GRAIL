@@ -5,14 +5,32 @@ The supplier's earlier delivery was layer 1 without the SMIRKS rules and returne
 submitted parents (results/grail_vs_metatox.json), which is why MetaTox appears in no table in this
 paper. This is the SMIRKS variant, and it covers all 291.
 
-The file carries no substrates. Records are identified only as `<substrate index>_<metabolite
+The first delivery carries no substrates. Records are identified only as `<substrate index>_<metabolite
 index>`, so the substrates have to be recovered from the submission order in
 results/metatox_input/substrate_map.csv. A positional join is exactly the kind of assumption that
-silently produces a whole table of wrong numbers, so it is gated rather than assumed: a predicted
-metabolite of a substrate should look like that substrate, and under an off-by-one or a shuffled
-order it would not. The gate is the median Tanimoto between each substrate and its own predictions,
-against the same statistic under a deliberately rotated assignment. If the true join is not far
-above the rotated one, the join is wrong and nothing downstream means anything.
+silently produces a whole table of wrong numbers, so it is gated: a predicted metabolite of a
+substrate should look like that substrate, and under an off-by-one or a shuffled order it would not.
+The gate is the median Tanimoto between each substrate and its own predictions, against the same
+statistic under a deliberately rotated assignment.
+
+WHAT THAT GATE CAN AND CANNOT SEE, because an earlier version of this docstring claimed more than it
+delivers. It is a median over substrates, so it is blind to a minority: the fraction that has to be
+cross-assigned before it fires is (0.5 - q) / (1 - q), where q is the share of per-substrate medians
+already below 0.5. Measured, that is 0.25 on the 291 and 0.31 on the 879 -- so roughly a quarter to
+a third of either delivery could be mis-assigned with this statistic unmoved. It rules out a GLOBAL
+shift or shuffle, which is what a positional join can plausibly get wrong, and nothing smaller.
+
+A minority mis-assignment is caught instead by an instrument that resolves per substrate, in
+revision/tests/test_the_metatox_column_over_the_whole_population.py: each substrate's similarity to
+its own predictions against several strangers' sets, with the pass rate of the half this paper
+already reports as the bar. It catches a tenth of a delivery cross-assigned, where this gate needs a
+third.
+
+The gate also mis-calibrates in the other direction on re-tautomerised substrates: it compares
+against the substrate as the corpus stores it, while the service saw the submitted tautomer. For the
+257 of 879 that differ, the measured median is 0.47 against the corpus form and 0.68 against what
+was actually submitted, so a delivery made up of those alone would have been refused while being
+perfectly correct.
 """
 from __future__ import annotations
 
@@ -36,15 +54,16 @@ MAP = ROOT / "results" / "metatox_input" / "substrate_map.csv"
 
 
 def _code_version() -> dict:
-    import subprocess
-    def _git(*a):
-        try:
-            return subprocess.run(["git", *a], cwd=ROOT, capture_output=True, text=True,
-                                  timeout=10).stdout.strip() or None
-        except Exception:
-            return None
-    return {"script": pathlib.Path(__file__).name, "git_commit": _git("rev-parse", "HEAD"),
-            "git_dirty": bool(_git("status", "--porcelain"))}
+    """The producer's own digest, not just its name.
+
+    This used to record the script name and the commit, which lets the provenance sweep recover the
+    source from the history and verify by INFERENCE -- an assumption about how the work was done.
+    stamp() records the digest of the source that actually ran, so the sweep can say whether the
+    code has moved instead of guessing.
+    """
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from _provenance import stamp
+    return stamp(__file__)
 
 
 def _spectrum(props) -> tuple[float, float] | None:
@@ -69,7 +88,15 @@ def _spectrum(props) -> tuple[float, float] | None:
 
 
 def parse_sdf(path: Path) -> dict:
-    """{substrate index -> [(smiles, Pa, Pi)]}, ranked by the method's own confidence."""
+    """{substrate key -> [(smiles, Pa, Pi)]}, ranked by the method's own confidence.
+
+    The key is whatever precedes the underscore in the record's ID, kept as written. The first
+    delivery numbered its records 1_1, 1_2, ... and carried no substrates, so its key is an index
+    into the submission order and the join is positional and gated. The second numbered them
+    SUB0001_1, using the ids from the submission set, so its key IS the join and no gate is needed
+    to establish it -- though the same gate is run anyway, because an id that has been shifted by
+    one is exactly as wrong as a position that has, and costs nothing to rule out.
+    """
     out: dict[int, list[tuple]] = {}
     supplier = Chem.SDMolSupplier(str(path), sanitize=True)
     n_scored = n_total = n_declared = n_disagree = 0
@@ -80,9 +107,12 @@ def parse_sdf(path: Path) -> dict:
         raw = props.get("ID")
         if raw is None or "_" not in str(raw):
             continue
-        try:
-            idx = int(str(raw).split("_")[0])
-        except ValueError:
+        idx = str(raw).split("_")[0]
+        # A bare number is the first delivery's index; anything else is an id from the submission
+        # set. Normalising both to str here keeps one ranking path for the two, which is the point:
+        # a second implementation of "order by Pa, de-duplicate by first appearance" is how two
+        # readings of one column drift apart.
+        if not idx:
             continue
         try:
             smiles = Chem.MolToSmiles(mol)
@@ -137,21 +167,51 @@ def median_similarity(pairs, gen) -> float:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--sdf", required=True)
+    ap.add_argument("--map", default=str(MAP),
+                    help="the submission map this delivery answers; the first batch's is the "
+                         "default and the second's is revision/metatox_submission_1170")
+    ap.add_argument("--join", choices=("positional", "id"), default="positional",
+                    help="positional: the delivery numbers its records 1..N in submission order, "
+                         "which is an assumption and is gated. id: the delivery keys on the ids in "
+                         "the map, which is a fact about the file and is gated anyway")
+    ap.add_argument("--variant", default="SMIRKS rules, all 291 parents returned",
+                    help="free text for a reader")
+    ap.add_argument("--variant-key", default="smirks",
+                    help="a controlled value for a machine. Two runs merged into one arm must "
+                         "carry the SAME key: the free text differs legitimately between them "
+                         "(one says 291 parents, the other 879) and cannot be compared, and a "
+                         "check that merely looks for the word SMIRKS passes 'no SMIRKS' too")
     ap.add_argument("--out", default=str(ROOT / "results" / "metatox_smirks_preds.json"))
     args = ap.parse_args()
 
     by_index = parse_sdf(Path(args.sdf))
-    rows = list(csv.DictReader(open(MAP)))
-    print(f"predictions for {len(by_index)} substrate indices; "
+    rows = list(csv.DictReader(open(args.map)))
+    print(f"predictions for {len(by_index)} substrate keys; "
           f"{sum(len(v) for v in by_index.values())} metabolites", flush=True)
     print(f"submission map: {len(rows)} substrates, {rows[0]['id']} .. {rows[-1]['id']}", flush=True)
-    if sorted(by_index) != list(range(1, len(rows) + 1)):
-        raise SystemExit("the substrate indices are not 1..N over the submission map; the "
-                         "positional join is not available")
 
-    ordered = [(r["substrate_smiles"], by_index[i + 1]) for i, r in enumerate(rows)]
-    rotated = [(r["substrate_smiles"], by_index[((i + 137) % len(rows)) + 1])
-               for i, r in enumerate(rows)]
+    if args.join == "positional":
+        if sorted(by_index, key=lambda k: int(k)) != [str(i) for i in range(1, len(rows) + 1)]:
+            raise SystemExit("the substrate indices are not 1..N over the submission map; the "
+                             "positional join is not available")
+        pick = [by_index[str(i + 1)] for i in range(len(rows))]
+        rot = [by_index[str(((i + 137) % len(rows)) + 1)] for i in range(len(rows))]
+    else:
+        # The ids the delivery uses must be exactly the ids the map defines. A delivery that answers
+        # a substrate the map does not contain is not answering this submission, and one that is
+        # missing ids has not covered it; either way the join is not this map's to make.
+        unknown = sorted(set(by_index) - {r["id"] for r in rows})
+        absent = sorted({r["id"] for r in rows} - set(by_index))
+        if unknown or absent:
+            raise SystemExit(
+                f"the delivery's ids do not match the submission map: {len(unknown)} it contains "
+                f"that the map does not (e.g. {unknown[:3]}), {len(absent)} the map defines that it "
+                f"does not answer (e.g. {absent[:3]})")
+        pick = [by_index[r["id"]] for r in rows]
+        rot = [by_index[rows[(i + 137) % len(rows)]["id"]] for i in range(len(rows))]
+
+    ordered = [(r["substrate_smiles"], pick[i]) for i, r in enumerate(rows)]
+    rotated = [(r["substrate_smiles"], rot[i]) for i, r in enumerate(rows)]
 
     gen = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
     true_sim = median_similarity(ordered, gen)
@@ -179,8 +239,9 @@ def main() -> int:
     sizes = [len(v) for v in preds.values()]
     n_above = [len(v) for v in above.values()]
     rep = {"config": {**_code_version(), "sdf": Path(args.sdf).name,
-                      "variant": "SMIRKS rules, all 291 parents returned",
-                      "join": "positional against results/metatox_input/substrate_map.csv",
+                      "variant": args.variant,
+                      "variant_key": args.variant_key,
+                      "join": f"{args.join} against {Path(args.map).relative_to(ROOT)}",
                       "gate": {"median_self_similarity": true_sim,
                                "median_under_rotated_assignment": rot_sim}},
            "n_substrates": len(preds),

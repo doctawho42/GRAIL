@@ -2027,13 +2027,30 @@ properties most likely to have driven such a draw did not drive this one.
 The comparison is also read on the population nobody selected: the whole evaluated test set,
 \numPopdefWholesubstrates{} substrates carrying \numPopdefWholereferences{} references, against
 the \numPopdefWholearmsWord{} comparators that ran over all of it, with a substrate a comparator
-answered nothing for scored as zero and kept in the set. BioTransformer is one of the three: it
+answered nothing for scored as zero and kept in the set. BioTransformer is one of the \numPopdefWholearmsWord{}: it
 is a jar this repository holds and it runs here under the x86\_64 Java 8 runtime its bundled
 InChI artefact is built for, so what had kept it off this population was the cost of the run and
-that cost was paid. MetaTox is the one arm that is not here. Taking it to this population means a
-second submission of the substrates outside the comparison set, it was not made, and the reason
-is the cost of a submission, not an inability: this paper counts one other absence as
-unforced for the same reason and this one is the second. Both arms are read there, which matters
+that cost was paid. MetaTox is another, and it arrived last. An earlier draft of this section said
+it could not be here, because a second submission to that web service was not the authors' to make.
+The submission was made: the \numPopdefMetatoxoutsubmitted{} substrates outside the comparison set
+went to the service and came back, every one of them carrying at least one prediction, and the arm
+read here is the two submissions merged as GLORYx's two runs are merged. Its output size is
+\numPopdefMetatoxoutdeliveryrate{} distinct structures per substrate against
+\numPopdefMetatoxoutcomprate{} in the comparison set, a ratio of \numPopdefMetatoxoutratio{}, inside
+the \numPopdefMetatoxoutpeerlo{} to \numPopdefMetatoxoutpeerhi{} the other
+\numPopdefMetatoxoutpeerarmsWord{} arms span across the same two halves.
+
+Two things belong beside that column. Two files came back, and which of them is the rule-based run
+rests on the supplier's word: the file named for the rules is the one whose record format matches
+the first submission, and the other is the only one carrying named rule applications, so the two
+signals disagree and the assignment cannot be settled from the files here. And the method's own
+score orders only part of the column. PASS writes a spectrum only above its own threshold, so
+\numPopdefMetatoxscoredshare{}\% of the entries carry none and keep the order the delivery gave
+them. Those sort last, so the scored share falls from \numPopdefMetatoxscoredfive{}\% of the first
+five slots to \numPopdefMetatoxscoredfivezero{}\% of the first fifty, and it is the same in each
+half, which is what says the two were scored under one threshold.
+
+Both arms are read there, which matters
 because the wide-budget
 leads this work claims are the exhaustive arm's and that arm existed only on the comparison set
 until its pools were built for the whole split.
@@ -2051,17 +2068,20 @@ The exhaustive arm's leads mostly survive the move, and the exception is named. 
 \numPopdefWholearmsWord{} comparators that reach the wider population,
 \numPopdefLeadskeptWord{} still separate over the whole set and
 \numPopdefLeadslostWord{} does not. The \numPopdefLeadstotalWord{} are the exhaustive arm against
-SyGMa and MetaPredictor at fifteen, thirty and fifty and against BioTransformer at every budget
-this section sweeps. Of those leads, \numPopdefLeadskeptWord{} survive: against SyGMa
-$+\numPopdefExhwholesygmaThreeZero$ $[+\numPopdefExhwholesygmaThreeZeroLo,
-+\numPopdefExhwholesygmaThreeZeroHi]$ at thirty and $+\numPopdefExhwholesygmaFiveZero$
-$[+\numPopdefExhwholesygmaFiveZeroLo, +\numPopdefExhwholesygmaFiveZeroHi]$ at fifty. Against
-MetaPredictor the surviving leads are $+\numPopdefExhwholemetapredictorOneFive$
-$[+\numPopdefExhwholemetapredictorOneFiveLo, +\numPopdefExhwholemetapredictorOneFiveHi]$ at
-fifteen, and $+\numPopdefExhwholemetapredictorThreeZero$ and
-$+\numPopdefExhwholemetapredictorFiveZero$ at thirty and fifty. Against BioTransformer the leads
-survive at every budget this section sweeps, where the wider population separates the two more
-strongly than the comparison set does.
+BioTransformer at every budget this section sweeps, against SyGMa and MetaPredictor at fifteen,
+thirty and fifty, against MetaTox at five, ten, thirty and fifty, and against GLORYx at thirty and
+fifty. The one that does not survive is against SyGMa at fifteen. Every other lead separates again
+on the wider population. Against BioTransformer they hold at all \numPopdefMetatoxbudgetsWord{}
+budgets, where the wider population separates the two more strongly than the comparison set does.
+Against MetaPredictor they are $+\numPopdefExhwholemetapredictorOneFive$
+$[+\numPopdefExhwholemetapredictorOneFiveLo, +\numPopdefExhwholemetapredictorOneFiveHi]$,
+$+\numPopdefExhwholemetapredictorThreeZero$ and $+\numPopdefExhwholemetapredictorFiveZero$.
+Against SyGMa they are $+\numPopdefExhwholesygmaThreeZero$ $[+\numPopdefExhwholesygmaThreeZeroLo,
++\numPopdefExhwholesygmaThreeZeroHi]$ and $+\numPopdefExhwholesygmaFiveZero$
+$[+\numPopdefExhwholesygmaFiveZeroLo, +\numPopdefExhwholesygmaFiveZeroHi]$. Against MetaTox they
+are $+\numPopdefExhwholemetatoxFive$, $+\numPopdefExhwholemetatoxOneZero$,
+$+\numPopdefExhwholemetatoxThreeZero$ and $+\numPopdefExhwholemetatoxFiveZero$, and against GLORYx
+$+\numPopdefExhwholegloryxThreeZero$ and $+\numPopdefExhwholegloryxFiveZero$.
 
 What that count is, and what it is not, has to be said beside it. It is built from the cells in
 which this work's exhaustive arm leads a comparator on the comparison set with the interval
@@ -2081,12 +2101,43 @@ it, and the comparison set \numPopdefWithoutbtforcompWord{} and
 \numPopdefWithoutbtagainstcompWord{}. The unfavourable totals do not move, so every cell
 BioTransformer contributes to either count is a favourable one, and it is also the comparator that
 answers nothing for \numPopdefBtsilent{} of the \numPopdefWholesubs{} substrates. MetaTox enters
-neither total. On the comparison set, over the \numPopdefMetatoxbudgetsWord{} budgets the
-deployment table audits, it separates for this work in \numPopdefMetatoxforWord{} cells and
-against it in \numPopdefMetatoxagainstWord{}. On the wider population the quantity does not exist,
-because a second submission to that web service is not the authors' to make. Its absence therefore
-removes more from the favourable side of the comparison set than from the other, and the wider
-population's totals omit it entirely. These are counts of cells, and the cells depend on one
+both totals now, and it enters them on both sides. On the comparison set, over the
+\numPopdefMetatoxbudgetsWord{} budgets the deployment table audits, it separates for this work in
+\numPopdefMetatoxforWord{} cells and against it in \numPopdefMetatoxagainstWord{}. On the wider
+population the exhaustive arm leads it at every budget this axis sweeps, from
+$+\numPopdefExhwholemetatoxFive$ $[+\numPopdefExhwholemetatoxFiveLo,
++\numPopdefExhwholemetatoxFiveHi]$ at five to $+\numPopdefExhwholemetatoxFiveZero$
+$[+\numPopdefExhwholemetatoxFiveZeroLo, +\numPopdefExhwholemetatoxFiveZeroHi]$ at fifty. The
+interactive arm leads it at five and at ten, $+\numPopdefWholeMetatoxFive$ and
+$+\numPopdefWholeMetatoxOneZero$, and trails it at thirty and at fifty,
+$\numPopdefWholeMetatoxThreeZero$ $[\numPopdefWholeMetatoxThreeZeroLo,
+\numPopdefWholeMetatoxThreeZeroHi]$ and $\numPopdefWholeMetatoxFiveZero$
+$[\numPopdefWholeMetatoxFiveZeroLo, \numPopdefWholeMetatoxFiveZeroHi]$. At fifteen it stands at
+$\numPopdefWholeMetatoxOneFive$ $[\numPopdefWholeMetatoxOneFiveLo,
+\numPopdefWholeMetatoxOneFiveHi]$, which does not separate, and that is where its crossing
+falls. That crossing is this paper's own subject arriving in its own
+table. MetaTox returns \numPopdefMetatoxcolumnoutput{} structures per substrate against
+\numPopdefDeployedpoolwhole{} for the interactive arm, both counted before the cap, the
+re-de-duplication and the dropping of a prediction identical to its own substrate that this axis
+applies to every arm alike. That gap is what Section~\ref{sec:si-matched} removes as a variable,
+and here it is left in, so which of the two leads cannot be said without naming the budget it is
+read at. One thing bounds every MetaTox cell above, and it
+runs against this work. About \numPopdefMetatoxscoredshare{}\% of the column carries no score, and
+inside a tie the method has expressed no preference, so the order that survives is the one the
+delivery was written in. Permuting only within the classes the method itself ties,
+\numPopdefTiebreakperms{} times, moves recall at every budget. On the wider population the
+delivered order sits below the permuted mean at all \numPopdefTiebreakwiderbudgetsWord{} budgets
+and below the tenth percentile at four of them, so MetaTox is understated there and each cell in
+which this work leads it is flattered by that much. Of the cells above,
+\numPopdefTiebreakcellsinreachWord{} have an interval closer to zero than the movement at their own
+budget. The tightest is the
+exhaustive arm at \numPopdefTiebreakworstbudget{}: it leads by
+\numPopdefTiebreakworstmargin{} with a lower bound of \numPopdefTiebreakworstcilo{} against a
+movement of \numPopdefTiebreakworstshift{}, so that cell cannot be read as a separation independent
+of the order the delivery was written in. Its arrival also ends a claim this section used to make. Without
+BioTransformer the wider population's favourable side now reads \numPopdefWithoutbtforwholeWord{}
+of \numPopdefForthisworkwholeWord{}, so no single comparator carries that total any longer, and the
+unfavourable side still does not move. These are counts of cells, and the cells depend on one
 another, because the budgets are nested and the intervals come from one bootstrap; the family
 declared for multiplicity is a different sweep of \numHolmTests{} contrasts, and no total here is
 corrected over it. The \numPopdefLeadstotalWord{} leads counted above are one-sided by

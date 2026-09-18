@@ -2,8 +2,8 @@
  "provenance": {
   "script": "population_definition.py",
   "script_path": "scripts/typed_edit/population_definition.py",
-  "source_sha256": "66b8c5b1cde75680da3fa58e21b0b0ab683925177b4df5539885a61656778739",
-  "git_commit": "88f02a42439205cbed6e0a18488f4cbf148f8801",
+  "source_sha256": "67a154d80bdde7ecaf9e53cb6d96e6e7fa5593310e92429a1f84ebc351091e96",
+  "git_commit": "b0fb71e43f016725f7efc4d28acdec92d6861f9b",
   "git_dirty": true
  },
  "inputs": [
@@ -156,6 +156,12 @@
    "exists": true,
    "sha256_16": "00c5d71f8aa9abd4",
    "bytes": 7229141
+  },
+  {
+   "path": "results/metatox_smirks_preds_evaluated1170.json",
+   "exists": true,
+   "sha256_16": "0199d268892edc40",
+   "bytes": 7275987
   }
  ],
  "what_defines_the_comparison_set": "the intersection of the substrates each method has an entry for; the binding constraint is the 291-substrate submission list sent to the web-service comparator, which returned all 291. No substrate was removed for emitting nothing.",
@@ -185,6 +191,10 @@
    "gloryx": {
     "substrates_with_no_prediction": 4,
     "references_they_carry": 6
+   },
+   "metatox": {
+    "substrates_with_no_prediction": 0,
+    "references_they_carry": 0
    }
   }
  },
@@ -611,6 +621,100 @@
       "excludes_zero": true
      }
     }
+   },
+   "metatox": {
+    "recall": {
+     "5": 0.218,
+     "10": 0.388,
+     "15": 0.5143,
+     "30": 0.6015,
+     "50": 0.6271
+    },
+    "substrates_with_no_prediction": 0,
+    "deployed_minus_comparator": {
+     "5": {
+      "difference": 0.1023,
+      "ci95": [
+       0.062,
+       0.1443
+      ],
+      "excludes_zero": true
+     },
+     "10": {
+      "difference": 0.0451,
+      "ci95": [
+       0.0031,
+       0.086
+      ],
+      "excludes_zero": true
+     },
+     "15": {
+      "difference": -0.0346,
+      "ci95": [
+       -0.0762,
+       0.0065
+      ],
+      "excludes_zero": false
+     },
+     "30": {
+      "difference": -0.1113,
+      "ci95": [
+       -0.1523,
+       -0.0706
+      ],
+      "excludes_zero": true
+     },
+     "50": {
+      "difference": -0.1368,
+      "ci95": [
+       -0.1846,
+       -0.0917
+      ],
+      "excludes_zero": true
+     }
+    },
+    "exhaustive_minus_comparator": {
+     "5": {
+      "difference": 0.0932,
+      "ci95": [
+       0.0526,
+       0.1343
+      ],
+      "excludes_zero": true
+     },
+     "10": {
+      "difference": 0.0677,
+      "ci95": [
+       0.0275,
+       0.1083
+      ],
+      "excludes_zero": true
+     },
+     "15": {
+      "difference": 0.0211,
+      "ci95": [
+       -0.0214,
+       0.063
+      ],
+      "excludes_zero": false
+     },
+     "30": {
+      "difference": 0.0511,
+      "ci95": [
+       0.0175,
+       0.0858
+      ],
+      "excludes_zero": true
+     },
+     "50": {
+      "difference": 0.0752,
+      "ci95": [
+       0.045,
+       0.1053
+      ],
+      "excludes_zero": true
+     }
+    }
    }
   },
   "the whole evaluated test set": {
@@ -1005,6 +1109,100 @@
       "ci95": [
        0.0686,
        0.1049
+      ],
+      "excludes_zero": true
+     }
+    }
+   },
+   "metatox": {
+    "recall": {
+     "5": 0.2499,
+     "10": 0.4085,
+     "15": 0.5075,
+     "30": 0.6103,
+     "50": 0.6438
+    },
+    "substrates_with_no_prediction": 1,
+    "deployed_minus_comparator": {
+     "5": {
+      "difference": 0.0786,
+      "ci95": [
+       0.058,
+       0.0995
+      ],
+      "excludes_zero": true
+     },
+     "10": {
+      "difference": 0.0308,
+      "ci95": [
+       0.01,
+       0.0519
+      ],
+      "excludes_zero": true
+     },
+     "15": {
+      "difference": -0.02,
+      "ci95": [
+       -0.0402,
+       0.0004
+      ],
+      "excludes_zero": false
+     },
+     "30": {
+      "difference": -0.0959,
+      "ci95": [
+       -0.1167,
+       -0.0746
+      ],
+      "excludes_zero": true
+     },
+     "50": {
+      "difference": -0.1282,
+      "ci95": [
+       -0.1503,
+       -0.1061
+      ],
+      "excludes_zero": true
+     }
+    },
+    "exhaustive_minus_comparator": {
+     "5": {
+      "difference": 0.0558,
+      "ci95": [
+       0.0356,
+       0.0766
+      ],
+      "excludes_zero": true
+     },
+     "10": {
+      "difference": 0.0304,
+      "ci95": [
+       0.0095,
+       0.0511
+      ],
+      "excludes_zero": true
+     },
+     "15": {
+      "difference": 0.0219,
+      "ci95": [
+       0.0008,
+       0.0432
+      ],
+      "excludes_zero": true
+     },
+     "30": {
+      "difference": 0.0381,
+      "ci95": [
+       0.0201,
+       0.056
+      ],
+      "excludes_zero": true
+     },
+     "50": {
+      "difference": 0.0735,
+      "ci95": [
+       0.0564,
+       0.0912
       ],
       "excludes_zero": true
      }

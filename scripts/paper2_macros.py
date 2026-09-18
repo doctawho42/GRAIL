@@ -92,10 +92,19 @@ def fmt(v, key: str = ""):
 # Extending to twenty rather than to thirteen so the next count to cross the line does not
 # reopen this: the cost is that 21 integers elsewhere in the artefact gain a word form none of
 # them is cited in, against the 2,797 generated macros the manuscript already does not cite.
+# Extended to sixty when admitting a fifth comparator took two counts past twenty and their word
+# forms vanished. The gate caught it -- check_paper2_numbers reported two macros used and not
+# defined -- which is the trap the paragraph above describes happening for the second time. Built
+# rather than typed from twenty-one up, so the next arm cannot repeat it.
+_TENS = {2: "twenty", 3: "thirty", 4: "forty", 5: "fifty", 6: "sixty"}
 WORDS = {0: "none", 1: "one", 2: "two", 3: "three", 4: "four", 5: "five",
          6: "six", 7: "seven", 8: "eight", 9: "nine", 10: "ten", 11: "eleven", 12: "twelve",
          13: "thirteen", 14: "fourteen", 15: "fifteen", 16: "sixteen", 17: "seventeen",
          18: "eighteen", 19: "nineteen", 20: "twenty"}
+for _t, _tw in _TENS.items():
+    WORDS[_t * 10] = _tw
+    for _u in range(1, 10):
+        WORDS[_t * 10 + _u] = f"{_tw}-{WORDS[_u]}"
 
 
 def main() -> int:

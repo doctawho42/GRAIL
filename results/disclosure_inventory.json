@@ -3,7 +3,7 @@
   "script": "disclosure_inventory.py",
   "script_path": "scripts/disclosure_inventory.py",
   "source_sha256": "57711e9fbacf046bf1cd50779a253e72006b9e0ce3d5977098b5be5dcf0eb864",
-  "git_commit": "3ad20d0f0631fc0b9f5519ac176aeddb355e9601",
+  "git_commit": "b0fb71e43f016725f7efc4d28acdec92d6861f9b",
   "git_dirty": true
  },
  "reviewed_and_accepted": [
@@ -734,6 +734,83 @@
     "paper2/si.tex"
    ],
    "reason": "Reworded by sentence splits that brought three short sections under the per-section mean ceiling of 32 words. Both keys are splits, not deletions: two gone, two new, each pairing with 24 and 26 shared words, and each keeping the 'cannot' marker that registers it. 'an arm that has run out of candidates cannot gain from a wider window, so the leads should be weighed against the number of substrates for which that is the case' became two sentences at the joint the 'so' already marked, with the subject repeated as 'The leads' so no pronoun crosses the new boundary. 'its lists are shorter than the budget; a list that has ended cannot gain a hit from a wider window' became two sentences at its own semicolon. Every count, budget and interval survives; nothing was shortened."
+  },
+  {
+   "text": "Taking it to this population means a second submission of the substrates outside the comparison set, it was not made, and the reason is the cost of a submission, not an inability: this paper counts one other absence as unforced for the same reason and this one is the second",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Both are rewrites, not deletions, because the claim they carried became false: the second MetaTox submission WAS made, on 879 substrates, and came back for all of them. The sentence saying it was not made is replaced in place by one saying it was and giving the measured reason the arm is still absent, a 7.2x output-budget difference between the two halves. The sentence saying the wider-population quantity does not exist because the submission is not the authors' to make is replaced in place by one keeping the absence and changing only the reason. Paired 2 gone to 2 new by symmetric difference, each pairing in the same paragraph position, and each new sentence keeps the marker that registers it: 'was not' in the first, 'is not the' in the second. Measured in results/metatox_outside_submission.json."
+  },
+  {
+   "text": "On the comparison set, over the N budgets the deployment table audits, it separates for this work in N cells and against it in N . On the wider population the quantity does not exist, because a second submission to that web service is not the authors' to make",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Both are rewrites, not deletions, because the claim they carried became false: the second MetaTox submission WAS made, on 879 substrates, and came back for all of them. The sentence saying it was not made is replaced in place by one saying it was and giving the measured reason the arm is still absent, a 7.2x output-budget difference between the two halves. The sentence saying the wider-population quantity does not exist because the submission is not the authors' to make is replaced in place by one keeping the absence and changing only the reason. Paired 2 gone to 2 new by symmetric difference, each pairing in the same paragraph position, and each new sentence keeps the marker that registers it: 'was not' in the first, 'is not the' in the second. Measured in results/metatox_outside_submission.json."
+  },
+  {
+   "text": "The N substrates outside the comparison set went to the service and came back for all N , which with the N already held is N of N : coverage was not what kept the arm off this population, and it clears the N % an arm needs to be read here",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Both are rewrites, not deletions: the claim they carried became false. The second MetaTox submission WAS made, on 879 substrates, and two files came back. (1) 'The submission that would have produced it was made and came back for every substrate, and the delivery's output budget is not the comparison set's' is replaced in place by the same sentence saying 'came back' and 'not the comparison set's under either reading of it', keeping 'is not the'. (2) 'The N substrates ... came back for all N ... coverage was not what kept the arm off this population, and it clears the N%' is replaced in place by 'Under the file the supplier names as that run, N of the N come back carrying a prediction and N do not ... MetaTox reaches N of N, which is not the N% this axis requires of an arm', keeping 'is not the'. NOTE ON THE PAIRING: a greedy best-ratio match pairs (2) with a different new sentence; that is wrong and the pairing above is by paragraph position, which is what the sentences actually are. Two further sentences ENTER the registry and are real concessions, not artefacts of rewording: that which of the two files is the rule-based run is settled by nothing in this repository, and that the arm is absent under both readings on two measured grounds. Measured in results/metatox_outside_submission.json, which records both readings in full."
+  },
+  {
+   "text": "The submission that would have produced it was made and came back for every substrate, and the delivery's output budget is not the comparison set's, so cells built from it would report the difference in budget",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Both are rewrites, not deletions: the claim they carried became false. The second MetaTox submission WAS made, on 879 substrates, and two files came back. (1) 'The submission that would have produced it was made and came back for every substrate, and the delivery's output budget is not the comparison set's' is replaced in place by the same sentence saying 'came back' and 'not the comparison set's under either reading of it', keeping 'is not the'. (2) 'The N substrates ... came back for all N ... coverage was not what kept the arm off this population, and it clears the N%' is replaced in place by 'Under the file the supplier names as that run, N of the N come back carrying a prediction and N do not ... MetaTox reaches N of N, which is not the N% this axis requires of an arm', keeping 'is not the'. NOTE ON THE PAIRING: a greedy best-ratio match pairs (2) with a different new sentence; that is wrong and the pairing above is by paragraph position, which is what the sentences actually are. Two further sentences ENTER the registry and are real concessions, not artefacts of rewording: that which of the two files is the rule-based run is settled by nothing in this repository, and that the arm is absent under both readings on two measured grounds. Measured in results/metatox_outside_submission.json, which records both readings in full."
+  },
+  {
+   "text": "Which of the two is the rule-based run the comparison set was scored in is settled by nothing in this repository, so both are read here",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "All four are rewrites forced by a claim this session made and then withdrew. An output-budget objection was put into this passage and is wrong: it divided a raw record count by a de-duplicated one, it measured a quantity the axis never reads since every arm is truncated to k, and it was computed for MetaTox and asked of no other arm -- computed for all of them, an ADMITTED arm (SyGMa, 1.143) sits further from parity than MetaTox (1.076), and GLORYx, whose whole-population column is built in exactly the same shape, was admitted with no such check. PAIRINGS, by paragraph position: (1) 'which of the two is the rule-based run ... settled by nothing in this repository' -> 'Two files came back, and which of them is the rule-based run rests on the supplier's word ... cannot be settled from the files here', which RESTORES a dependency the first rewrite had dropped and adds what it costs if the assignment is wrong; (2) 'the submission ... and the delivery's output budget is not the comparison set's under either reading' -> '... came back complete, and nothing this axis applies excludes the arm'; (3) 'so the arm is absent under both readings, on N measured grounds' -> 'what is missing is a column: no ranked MetaTox list over the 879 has been assembled'. (4) 'Under the file the supplier names as that run, 730 of the 879 come back carrying a prediction and 149 do not' has NO one-to-one partner and is a deliberate consolidation, not a retraction: it described the file that is not the arm, its substance survives in the new dependency sentence as 'under the other assignment the arm reaches 1,021 of 1,170 and would fall short of the floor' (1,021 = 291 + 730), and the full per-file counts are in results/metatox_outside_submission.json under readings.if_the_other_file_is_the_arm. Every new key keeps a marker ('cannot' in all three)."
+  },
+  {
+   "text": "Under the file the supplier names as that run, N of the N come back carrying a prediction and N do not, some absent from the file and some present only as the submitted structure returned to us, so with the N already held MetaTox reaches N of N , which is not the N % this axis requires of an arm",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "All four are rewrites forced by a claim this session made and then withdrew. An output-budget objection was put into this passage and is wrong: it divided a raw record count by a de-duplicated one, it measured a quantity the axis never reads since every arm is truncated to k, and it was computed for MetaTox and asked of no other arm -- computed for all of them, an ADMITTED arm (SyGMa, 1.143) sits further from parity than MetaTox (1.076), and GLORYx, whose whole-population column is built in exactly the same shape, was admitted with no such check. PAIRINGS, by paragraph position: (1) 'which of the two is the rule-based run ... settled by nothing in this repository' -> 'Two files came back, and which of them is the rule-based run rests on the supplier's word ... cannot be settled from the files here', which RESTORES a dependency the first rewrite had dropped and adds what it costs if the assignment is wrong; (2) 'the submission ... and the delivery's output budget is not the comparison set's under either reading' -> '... came back complete, and nothing this axis applies excludes the arm'; (3) 'so the arm is absent under both readings, on N measured grounds' -> 'what is missing is a column: no ranked MetaTox list over the 879 has been assembled'. (4) 'Under the file the supplier names as that run, 730 of the 879 come back carrying a prediction and 149 do not' has NO one-to-one partner and is a deliberate consolidation, not a retraction: it described the file that is not the arm, its substance survives in the new dependency sentence as 'under the other assignment the arm reaches 1,021 of 1,170 and would fall short of the floor' (1,021 = 291 + 730), and the full per-file counts are in results/metatox_outside_submission.json under readings.if_the_other_file_is_the_arm. Every new key keeps a marker ('cannot' in all three)."
+  },
+  {
+   "text": "So the arm is absent under both readings, on N measured grounds, and the reason is no longer that a submission could not be made",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "All four are rewrites forced by a claim this session made and then withdrew. An output-budget objection was put into this passage and is wrong: it divided a raw record count by a de-duplicated one, it measured a quantity the axis never reads since every arm is truncated to k, and it was computed for MetaTox and asked of no other arm -- computed for all of them, an ADMITTED arm (SyGMa, 1.143) sits further from parity than MetaTox (1.076), and GLORYx, whose whole-population column is built in exactly the same shape, was admitted with no such check. PAIRINGS, by paragraph position: (1) 'which of the two is the rule-based run ... settled by nothing in this repository' -> 'Two files came back, and which of them is the rule-based run rests on the supplier's word ... cannot be settled from the files here', which RESTORES a dependency the first rewrite had dropped and adds what it costs if the assignment is wrong; (2) 'the submission ... and the delivery's output budget is not the comparison set's under either reading' -> '... came back complete, and nothing this axis applies excludes the arm'; (3) 'so the arm is absent under both readings, on N measured grounds' -> 'what is missing is a column: no ranked MetaTox list over the 879 has been assembled'. (4) 'Under the file the supplier names as that run, 730 of the 879 come back carrying a prediction and 149 do not' has NO one-to-one partner and is a deliberate consolidation, not a retraction: it described the file that is not the arm, its substance survives in the new dependency sentence as 'under the other assignment the arm reaches 1,021 of 1,170 and would fall short of the floor' (1,021 = 291 + 730), and the full per-file counts are in results/metatox_outside_submission.json under readings.if_the_other_file_is_the_arm. Every new key keeps a marker ('cannot' in all three)."
+  },
+  {
+   "text": "The submission that would have produced it was made and came back, and the delivery's output budget is not the comparison set's under either reading of it, so cells built from it would report the difference in budget",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "All four are rewrites forced by a claim this session made and then withdrew. An output-budget objection was put into this passage and is wrong: it divided a raw record count by a de-duplicated one, it measured a quantity the axis never reads since every arm is truncated to k, and it was computed for MetaTox and asked of no other arm -- computed for all of them, an ADMITTED arm (SyGMa, 1.143) sits further from parity than MetaTox (1.076), and GLORYx, whose whole-population column is built in exactly the same shape, was admitted with no such check. PAIRINGS, by paragraph position: (1) 'which of the two is the rule-based run ... settled by nothing in this repository' -> 'Two files came back, and which of them is the rule-based run rests on the supplier's word ... cannot be settled from the files here', which RESTORES a dependency the first rewrite had dropped and adds what it costs if the assignment is wrong; (2) 'the submission ... and the delivery's output budget is not the comparison set's under either reading' -> '... came back complete, and nothing this axis applies excludes the arm'; (3) 'so the arm is absent under both readings, on N measured grounds' -> 'what is missing is a column: no ranked MetaTox list over the 879 has been assembled'. (4) 'Under the file the supplier names as that run, 730 of the 879 come back carrying a prediction and 149 do not' has NO one-to-one partner and is a deliberate consolidation, not a retraction: it described the file that is not the arm, its substance survives in the new dependency sentence as 'under the other assignment the arm reaches 1,021 of 1,170 and would fall short of the floor' (1,021 = 291 + 730), and the full per-file counts are in results/metatox_outside_submission.json under readings.if_the_other_file_is_the_arm. Every new key keeps a marker ('cannot' in all three)."
+  },
+  {
+   "text": "What is missing is a column: no ranked MetaTox list over the N has been assembled, and until one is, the wider population's totals cannot include it",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "MetaTox was admitted to the whole-population axis, and the three keys that changed are rewrites forced by that, not deletions. PAIRINGS: (1) 'Two files came back, and which of them is the rule-based run rests on the supplier's word ...' is the SAME disclosure, re-keyed only because the sentences around it moved when the passage was rebuilt; it survives verbatim in the arms-list paragraph and still carries 'cannot'. (2) 'what is missing is a column: no ranked MetaTox list over the 879 has been assembled, and until one is, the wider population's totals cannot include it' is retired BECAUSE THE THING IT CONCEDED WAS FIXED -- the column is built (revision/phase2_metatox_merge.py, results/metatox_smirks_preds_evaluated1170.json) and MetaTox now enters both totals. A live concession replaces it in the same passage and is a different limitation, not the same one reworded: MetaTox returns 38.5 structures per substrate against a pool of 17.6 for the interactive arm, so which of the two leads cannot be said without naming the budget, and the crossing at fifteen is printed. (3) 'The submission that would have produced it was made and came back complete, and nothing this axis applies excludes the arm' becomes 'An earlier draft of this section said it could not be here, because a second submission to that web service was not the authors' to make' -- the same fact, stated where the arm is now introduced, keeping 'could not be' and 'was not'. NOTHING WAS LOST: the section now also discloses, newly, that the method's own score orders only 49% of the column and that the scored share falls from 94% of the first five slots to 52% of the first fifty. Numbers from results/population_definition.json and results/metatox_smirks_preds_evaluated1170.json."
+  },
+  {
+   "text": "Two files came back, and which of them is the rule-based run rests on the supplier's word: the file named for the rules is the one whose record format matches the first batch, and the other is the only one carrying named rule applications, so the two signals disagree and the assignment cannot be set",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "MetaTox was admitted to the whole-population axis, and the three keys that changed are rewrites forced by that, not deletions. PAIRINGS: (1) 'Two files came back, and which of them is the rule-based run rests on the supplier's word ...' is the SAME disclosure, re-keyed only because the sentences around it moved when the passage was rebuilt; it survives verbatim in the arms-list paragraph and still carries 'cannot'. (2) 'what is missing is a column: no ranked MetaTox list over the 879 has been assembled, and until one is, the wider population's totals cannot include it' is retired BECAUSE THE THING IT CONCEDED WAS FIXED -- the column is built (revision/phase2_metatox_merge.py, results/metatox_smirks_preds_evaluated1170.json) and MetaTox now enters both totals. A live concession replaces it in the same passage and is a different limitation, not the same one reworded: MetaTox returns 38.5 structures per substrate against a pool of 17.6 for the interactive arm, so which of the two leads cannot be said without naming the budget, and the crossing at fifteen is printed. (3) 'The submission that would have produced it was made and came back complete, and nothing this axis applies excludes the arm' becomes 'An earlier draft of this section said it could not be here, because a second submission to that web service was not the authors' to make' -- the same fact, stated where the arm is now introduced, keeping 'could not be' and 'was not'. NOTHING WAS LOST: the section now also discloses, newly, that the method's own score orders only 49% of the column and that the scored share falls from 94% of the first five slots to 52% of the first fifty. Numbers from results/population_definition.json and results/metatox_smirks_preds_evaluated1170.json."
+  },
+  {
+   "text": "The submission that would have produced it was made and came back complete, and nothing this axis applies excludes the arm; what is missing is the ranked column, and until that is built these totals cannot include it",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "MetaTox was admitted to the whole-population axis, and the three keys that changed are rewrites forced by that, not deletions. PAIRINGS: (1) 'Two files came back, and which of them is the rule-based run rests on the supplier's word ...' is the SAME disclosure, re-keyed only because the sentences around it moved when the passage was rebuilt; it survives verbatim in the arms-list paragraph and still carries 'cannot'. (2) 'what is missing is a column: no ranked MetaTox list over the 879 has been assembled, and until one is, the wider population's totals cannot include it' is retired BECAUSE THE THING IT CONCEDED WAS FIXED -- the column is built (revision/phase2_metatox_merge.py, results/metatox_smirks_preds_evaluated1170.json) and MetaTox now enters both totals. A live concession replaces it in the same passage and is a different limitation, not the same one reworded: MetaTox returns 38.5 structures per substrate against a pool of 17.6 for the interactive arm, so which of the two leads cannot be said without naming the budget, and the crossing at fifteen is printed. (3) 'The submission that would have produced it was made and came back complete, and nothing this axis applies excludes the arm' becomes 'An earlier draft of this section said it could not be here, because a second submission to that web service was not the authors' to make' -- the same fact, stated where the arm is now introduced, keeping 'could not be' and 'was not'. NOTHING WAS LOST: the section now also discloses, newly, that the method's own score orders only 49% of the column and that the scored share falls from 94% of the first five slots to 52% of the first fifty. Numbers from results/population_definition.json and results/metatox_smirks_preds_evaluated1170.json."
   }
  ],
  "question": "every sentence in which this work concedes something, recorded before a cut so that what a cut costs is visible rather than invisible",
@@ -773,7 +850,7 @@
   "paper2/table_hypotheses.tex",
   "paper2/table_grain.tex"
  ],
- "n": 246,
+ "n": 249,
  "reading": "a disclosure counts as present if it survives in ANY of the sources: moving one to the Supporting Information shortens the manuscript without retracting anything, and deleting one shortens it by retracting something",
  "disclosures": {
   "achemso amsmath amssymb booktabs threeparttable graphicx microtype xr si nikita l polomoshnov faculty of bioengineering and bioinformatics lomonosov moscow state university leninskie gory moscow russia nikitapol fbb msu ru anastasia v rudik department of bioinformatics institute of biomedical chemistry pogodinskaya str moscow russia metabolite predictors have a multiverse problem document abstract published predictors of metabolite structure cannot be compared with one another because recall depends on how a predicted structure is judged to match a reference and on how many candidates a system may return and papers in this area declare neither": {
@@ -1460,14 +1537,32 @@
     "paper2/si.tex"
    ]
   },
-  "taking it to this population means a second submission of the substrates outside the comparison set it was not made and the reason is the cost of a submission not an inability this paper counts one other absence as unforced for the same reason and this one is the second": {
-   "text": "Taking it to this population means a second submission of the substrates outside the comparison set, it was not made, and the reason is the cost of a submission, not an inability: this paper counts one other absence as unforced for the same reason and this one is the second",
+  "an earlier draft of this section said it could not be here because a second submission to that web service was not the authors to make": {
+   "text": "An earlier draft of this section said it could not be here, because a second submission to that web service was not the authors' to make",
    "in": [
     "paper2/si.tex"
    ]
   },
-  "on the comparison set over the budgets the deployment table audits it separates for this work in cells and against it in on the wider population the quantity does not exist because a second submission to that web service is not the authors to make": {
-   "text": "On the comparison set, over the N budgets the deployment table audits, it separates for this work in N cells and against it in N . On the wider population the quantity does not exist, because a second submission to that web service is not the authors' to make",
+  "two files came back and which of them is the rule based run rests on the supplier s word the file named for the rules is the one whose record format matches the first submission and the other is the only one carrying named rule applications so the two signals disagree and the assignment cannot be settled from the files here": {
+   "text": "Two files came back, and which of them is the rule-based run rests on the supplier's word: the file named for the rules is the one whose record format matches the first submission, and the other is the only one carrying named rule applications, so the two signals disagree and the assignment cannot b",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the interactive arm leads it at five and at ten and and trails it at thirty and at fifty and at fifteen it stands at which does not separate and that is where its crossing falls": {
+   "text": "The interactive arm leads it at five and at ten, + N and + N , and trails it at thirty and at fifty, N [ N , N ] and N [ N , N ] . At fifteen it stands at N [ N , N ] , which does not separate, and that is where its crossing falls",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "that gap is what section removes as a variable and here it is left in so which of the two leads cannot be said without naming the budget it is read at": {
+   "text": "That gap is what Section removes as a variable, and here it is left in, so which of the two leads cannot be said without naming the budget it is read at",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the tightest is the exhaustive arm at it leads by with a lower bound of against a movement of so that cell cannot be read as a separation independent of the order the delivery was written in": {
+   "text": "The tightest is the exhaustive arm at N : it leads by N with a lower bound of N against a movement of N , so that cell cannot be read as a separation independent of the order the delivery was written in",
    "in": [
     "paper2/si.tex"
    ]

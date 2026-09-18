@@ -1,0 +1,253 @@
+{
+ "what_this_is": "the second MetaTox submission -- the 879 evaluated substrates outside the comparison set -- as delivered, with what it covers and the measured reasons it does not join the whole-population axis",
+ "provenance": {
+  "script": "metatox_outside_ingest.py",
+  "script_path": "scripts/metatox_outside_ingest.py",
+  "source_sha256": "da88780354a29feb2f51a620d7f56dc038b98d7cbe523982b95621a933aa6289",
+  "git_commit": "b0fb71e43f016725f7efc4d28acdec92d6861f9b",
+  "git_dirty": true
+ },
+ "inputs": [
+  {
+   "path": "revision/metatox_submission_1170/substrate_map.csv",
+   "exists": true,
+   "sha256_16": "ed9bcfde0c74c0b1",
+   "bytes": 91580
+  },
+  {
+   "path": "results/test_references.json",
+   "exists": true,
+   "sha256_16": "95a7411e9b5a5ae9",
+   "bytes": 182834
+  },
+  {
+   "path": "results/metatox_smirks_preds.json",
+   "exists": true,
+   "sha256_16": "136d4bdc323a7372",
+   "bytes": 1989212
+  },
+  {
+   "path": "scripts/typed_edit/population_definition.py",
+   "exists": true,
+   "sha256_16": "67a154d80bdde7ec",
+   "bytes": 19966
+  }
+ ],
+ "delivered": "2026-09-16",
+ "submission_set": {
+  "path": "revision/metatox_submission_1170",
+  "submitted": 879,
+  "ids": "SUB0001..SUB0879",
+  "join": "by the submission id the delivery keys on, which is the id in this map; the first batch had no ids in its file and needed a positional join gated on Tanimoto, and this one does not"
+ },
+ "sources": [
+  {
+   "name": "all_meta_smirks (MetaboliteLikeness).SDF",
+   "sha256": "ebdc6060e98c8f2277876b2b2018fd5a91d31a6e7554d4c0c87af21c92b40c25",
+   "bytes": 702504747,
+   "records": 229106,
+   "metabolite_records": 229106,
+   "substrates": 879,
+   "substrates_answering": 879,
+   "ids_seen": 229106,
+   "records_pass_scored": 106632,
+   "pass_error_records": 9837,
+   "unknown_marker_records": 0,
+   "unknown_marker_substrates": 0,
+   "carries_parent_record": false,
+   "carries_tree_fields": false,
+   "layer_counts": null,
+   "distinct_structures": 34446,
+   "unparsed_records": 0
+  },
+  {
+   "name": "all_metabolSep26 (MetaboliteLikeness).SDF",
+   "sha256": "4d42e2019556966f58f12317c1f10d5247ec83922db11fcba1987668707f3411",
+   "bytes": 32469088,
+   "records": 9975,
+   "metabolite_records": 8474,
+   "substrates": 806,
+   "substrates_answering": 730,
+   "ids_seen": 9975,
+   "records_pass_scored": 4854,
+   "pass_error_records": 1,
+   "unknown_marker_records": 704,
+   "unknown_marker_substrates": 9,
+   "carries_parent_record": true,
+   "carries_tree_fields": true,
+   "layer_counts": {
+    "0": 797,
+    "1": 8474
+   },
+   "distinct_structures": 8474,
+   "unparsed_records": 0
+  }
+ ],
+ "which_file_is_the_arm": {
+  "chosen": "all_meta_smirks (MetaboliteLikeness).SDF",
+  "how": "declared by the author, who corresponded with the supplier; not inferred here",
+  "on_what_evidence": "the author states that all_meta_smirks (MetaboliteLikeness).SDF is the SMIRKS run and all_metabolSep26 (MetaboliteLikeness).SDF is the original. That agrees with the file names, and with the record format: all_meta_smirks (MetaboliteLikeness).SDF carries no parent record and only PASS fields, exactly the shape scripts/metatox_smirks_ingest.py describes for the batch the comparison set was scored from",
+  "against_it": "all_metabolSep26 (MetaboliteLikeness).SDF is the only file carrying named rule applications (\"Epoxidation_1\") in its Parent Reactions and Children Reactions fields, which is what one would expect a rule-based run to leave behind. An earlier version of this script inferred the assignment from exactly that signal and got it backwards. The signal is recorded here rather than dropped, because the next reader will notice it too; the declaration governs, and the other reading is computed in full below so the choice can be checked instead of trusted",
+  "internal_evidence_contradicts_the_declaration": true
+ },
+ "readings": {
+  "as_the_arm": {
+   "file": "all_meta_smirks (MetaboliteLikeness).SDF",
+   "coverage": {
+    "evaluated_substrates": 1170,
+    "metatox_on_comparison_set": 291,
+    "recovered_from_this_submission": 879,
+    "submitted_but_no_prediction_returned": 0,
+    "absent_from_the_file": 0,
+    "present_without_a_prediction": 0,
+    "overlap_between_them": 0,
+    "union": 1170,
+    "share": 1.0
+   },
+   "clears_the_floor": true,
+   "budget": {
+    "basis": "distinct predicted structures per answering substrate, de-duplicated by canonical SMILES on both sides. The first batch's artifact is built that way (scripts/metatox_smirks_ingest.py de-duplicates before counting), the scorer de-duplicates again on the tautomer InChIKey, and metrics.py is set-based, so a repeated record changes no number anywhere downstream",
+    "comparison_set_substrates": 291,
+    "comparison_set_structures": 10601,
+    "comparison_set_mean_output": 36.4296,
+    "this_delivery_substrates": 879,
+    "this_delivery_structures": 34446,
+    "this_delivery_mean_output": 39.1877,
+    "this_delivery_median_output": 34,
+    "this_delivery_min_output": 1,
+    "this_delivery_max_output": 239,
+    "ratio": 1.075712,
+    "raw_records_for_comparison": 229106,
+    "raw_record_rate": 260.6439,
+    "why_the_raw_rate_is_not_used": "the delivery writes one record per route, so the same product is written once per way the tree reaches it; the raw rate is the supplier's export format, not the arm's output size"
+   }
+  },
+  "if_the_other_file_is_the_arm": {
+   "file": "all_metabolSep26 (MetaboliteLikeness).SDF",
+   "coverage": {
+    "evaluated_substrates": 1170,
+    "metatox_on_comparison_set": 291,
+    "recovered_from_this_submission": 730,
+    "submitted_but_no_prediction_returned": 149,
+    "absent_from_the_file": 73,
+    "present_without_a_prediction": 76,
+    "overlap_between_them": 0,
+    "union": 1021,
+    "share": 0.8726495726495727
+   },
+   "clears_the_floor": false,
+   "budget": {
+    "basis": "distinct predicted structures per answering substrate, de-duplicated by canonical SMILES on both sides. The first batch's artifact is built that way (scripts/metatox_smirks_ingest.py de-duplicates before counting), the scorer de-duplicates again on the tautomer InChIKey, and metrics.py is set-based, so a repeated record changes no number anywhere downstream",
+    "comparison_set_substrates": 291,
+    "comparison_set_structures": 10601,
+    "comparison_set_mean_output": 36.4296,
+    "this_delivery_substrates": 730,
+    "this_delivery_structures": 8474,
+    "this_delivery_mean_output": 11.6082,
+    "this_delivery_median_output": 15.0,
+    "this_delivery_min_output": 1,
+    "this_delivery_max_output": 15,
+    "ratio": 0.318648,
+    "raw_records_for_comparison": 8474,
+    "raw_record_rate": 11.6082,
+    "why_the_raw_rate_is_not_used": "the delivery writes one record per route, so the same product is written once per way the tree reaches it; the raw rate is the supplier's export format, not the arm's output size"
+   }
+  }
+ },
+ "eligible_by_reading": {
+  "as_the_arm": true,
+  "if_the_other_file_is_the_arm": false
+ },
+ "the_choice_of_file_decides_eligibility": true,
+ "disagreement": {
+  "counts_taken_from": "all_meta_smirks (MetaboliteLikeness).SDF",
+  "what_differs": "all_metabolSep26 (MetaboliteLikeness).SDF returns 9975 records over 806 substrates, 8474 of them predictions, with 704 _UNKNOWN; all_meta_smirks (MetaboliteLikeness).SDF returns 229106 over 879, 229106 of them predictions, with 0 _UNKNOWN across 0 substrates",
+  "why": "all_meta_smirks (MetaboliteLikeness).SDF is taken as the arm on the evidence above; all_metabolSep26 (MetaboliteLikeness).SDF answers more substrates and is kept here in full rather than dropped, because a reader handed one number cannot see that a second file answers differently",
+  "the_supervisors_note": "the note places the _UNKNOWN records in all_metabolSep26 (MetaboliteLikeness).SDF. They are not there: that file carries none. All 0 are in all_meta_smirks (MetaboliteLikeness).SDF, across 0 substrates, not throughout."
+ },
+ "coverage": {
+  "evaluated_substrates": 1170,
+  "metatox_on_comparison_set": 291,
+  "recovered_from_this_submission": 879,
+  "submitted_but_no_prediction_returned": 0,
+  "absent_from_the_file": 0,
+  "present_without_a_prediction": 0,
+  "overlap_between_them": 0,
+  "union": 1170,
+  "share": 1.0
+ },
+ "coverage_floor": 0.99,
+ "coverage_floor_source": "scripts/typed_edit/population_definition.py",
+ "coverage_clears_the_floor": true,
+ "budget": {
+  "basis": "distinct predicted structures per answering substrate, de-duplicated by canonical SMILES on both sides. The first batch's artifact is built that way (scripts/metatox_smirks_ingest.py de-duplicates before counting), the scorer de-duplicates again on the tautomer InChIKey, and metrics.py is set-based, so a repeated record changes no number anywhere downstream",
+  "comparison_set_substrates": 291,
+  "comparison_set_structures": 10601,
+  "comparison_set_mean_output": 36.4296,
+  "this_delivery_substrates": 879,
+  "this_delivery_structures": 34446,
+  "this_delivery_mean_output": 39.1877,
+  "this_delivery_median_output": 34,
+  "this_delivery_min_output": 1,
+  "this_delivery_max_output": 239,
+  "ratio": 1.075712,
+  "raw_records_for_comparison": 229106,
+  "raw_record_rate": 260.6439,
+  "why_the_raw_rate_is_not_used": "the delivery writes one record per route, so the same product is written once per way the tree reaches it; the raw rate is the supplier's export format, not the arm's output size"
+ },
+ "blockers": [],
+ "withdrawn_blockers": [
+  {
+   "name": "the two halves were run at different output budgets",
+   "was_claimed": "that the delivery emits 260.64 predictions per substrate against 36.43 in the comparison set, a factor of 7.15, so the halves are not one configuration and the arm cannot be read on this population",
+   "why_it_was_withdrawn": [
+    "it divided a de-duplicated count by a raw one. 36.43 comes from lists that scripts/metatox_smirks_ingest.py de-duplicates by canonical SMILES before counting; 229,106 was a raw record count. On structures the delivery gives 39.1877 against 36.4296, a factor of 1.076",
+    "it measured a quantity the axis does not read. population_definition.py scores len(set(order[s][:k]) & real[s]) at k in (5,10,15,30,50), so each arm is truncated to k and a longer list beyond k changes nothing",
+    "it was computed for one arm and no other. The same statistic for the admitted arms is in `peer_two_half_ratios` above; an admitted arm lies further from 1.0 than MetaTox does, and no code anywhere computed this for any of them",
+    "the arm built the same way was admitted without it. results/gloryx_service_preds_evaluated1170.json is a web service merged from a 291-substrate run and a separate 879-substrate run, the same shape as the MetaTox column would be, and no budget check was ever asked of it"
+   ],
+   "found_by": "an adversarial review of the blocker, run because it had become the sole ground for the exclusion"
+  }
+ ],
+ "peer_two_half_ratios": {
+  "biotransformer": {
+   "comparison_set_mean": 15.5945,
+   "wider_mean": 16.0512,
+   "ratio": 1.0293,
+   "n_comparison_set": 291,
+   "n_wider": 879
+  },
+  "gloryx": {
+   "comparison_set_mean": 30.0069,
+   "wider_mean": 32.7656,
+   "ratio": 1.0919,
+   "n_comparison_set": 291,
+   "n_wider": 879
+  },
+  "metapredictor": {
+   "comparison_set_mean": 13.6804,
+   "wider_mean": 13.7315,
+   "ratio": 1.0037,
+   "n_comparison_set": 291,
+   "n_wider": 879
+  },
+  "metatox": {
+   "comparison_set_mean": 36.4296,
+   "wider_mean": 39.1877,
+   "ratio": 1.0757,
+   "n_comparison_set": 291,
+   "n_wider": 879
+  },
+  "sygma": {
+   "comparison_set_mean": 73.0069,
+   "wider_mean": 83.4198,
+   "ratio": 1.1426,
+   "n_comparison_set": 291,
+   "n_wider": 879
+  }
+ },
+ "eligible_for_the_whole_population": true,
+ "in_the_whole_population_axis": true,
+ "why_not_in_the_axis_yet": null,
+ "what_changed": "paper2/si.tex and scripts/typed_edit/population_definition.py both said MetaTox has no whole-population quantity because a second submission to that web service is not the authors' to make. It was made and it came back for every substrate submitted. An output-budget objection was then raised against admitting the arm and is withdrawn here, with the measurements that withdrew it. What remains is not a reason to exclude MetaTox but a column nobody has built."
+}
