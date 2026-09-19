@@ -20,6 +20,9 @@
 \usepackage{xr}
 \externaldocument[SI-]{si}
 \SectionNumbersOn
+% achemso heads the last page "TOC Graphic"; ACS asks for the graphic to be labelled
+% "For Table of Contents Only". The class does not change it per journal, so it is set here.
+\renewcommand*\tocentryname{For Table of Contents Only}
 \input{numbers}
 \input{markers}
 

@@ -1099,10 +1099,14 @@ crossing them with a third set. A template can be typed
 without being applied to anything, so the bank's own \numTypeoverlapBanktypes{} types are cheap to
 obtain, and every test reference falls into one of four cells:
 
-\begin{center}
+\begin{table}[h]
+\centering
+\caption{Every test reference by whether its transformation type is held by the rule bank, by the
+training annotation, by both or by neither.}
+\label{tab:si-typeoverlap-cells}
 \begin{tabular}{lr}
 \toprule
- & references \\
+transformation type & references \\
 \midrule
 type in the bank and in training & \numTypeoverlapInboth{} \\
 type in the bank, not in training & \numTypeoverlapInbankonly{} \\
@@ -1110,7 +1114,8 @@ type not in the bank, in training & \numTypeoverlapMinerslost{} \\
 type in neither & \numTypeoverlapCorpuslackstoo{} \\
 \bottomrule
 \end{tabular}
-\end{center}
+\end{table}
+
 
 Of the \numTypeoverlapBanklacks{} references whose type the bank does not hold,
 \numTypeoverlapCorpuslackstoo{} have a type the training annotation does not hold either:

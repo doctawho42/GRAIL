@@ -54,7 +54,15 @@ plt.rcParams.update({
     # Type 3 is matplotlib's default for PDF text and ACS production returns it: the glyphs are
     # embedded as drawing programs with no ToUnicode map, so a figure label is neither searchable
     # nor extractable. 42 is TrueType, which embeds a real font with a character map.
-    "pdf.fonttype": 42, "ps.fonttype": 42,
+    # PDF keeps Type 42, which embeds Helvetica correctly: pdffonts reports
+    # "EDQXKT+Helvetica CID TrueType ... emb yes sub yes". EPS cannot. Helvetica resolves on this
+    # machine to /System/Library/Fonts/Helvetica.ttc, a font COLLECTION, and matplotlib's Type 42
+    # writer cannot name a face inside one: every EPS declared "/FontName /unknown def" while
+    # every text run asked for "/Helvetica". A RIP given that substitutes. Type 3 embeds the
+    # glyph procedures and names them /Helvetica, which is what ACS means by fonts embedded or
+    # converted to outlines. Measured on a two-line probe: type 3 gives "/FontName /Helvetica",
+    # type 42 gives "/FontName /unknown", with the same selectfont calls in both.
+    "pdf.fonttype": 42, "ps.fonttype": 3,
     "font.family": "sans-serif",
     "font.sans-serif": ["Helvetica", "Arial", "DejaVu Sans"],
     # Matplotlib renders anything between dollar signs with its own math font, whose default is
@@ -358,7 +366,7 @@ def _rgb(h, tint=0.0):
     return tuple(v + (1.0 - v) * tint for v in c)
 
 
-def _substrate_png(smiles, site_groups, width=2600, height=1500):
+def _substrate_png(smiles, site_groups, width=2600, height=1500, placed_inches=1.757):
     """The substrate with each firing site shaded in its colour.
 
     Drawn from the atom indices the pipeline reported, not from a hand-marked depiction: the
@@ -384,11 +392,18 @@ def _substrate_png(smiles, site_groups, width=2600, height=1500):
                 colours[a] = rgb
     d = rdMolDraw2D.MolDraw2DCairo(width, height)
     o = d.drawOptions()
-    # scaled with the canvas: these were tuned against a 900 px render and are proportions, not
-    # absolutes, so they have to grow with it or the structure prints hairline
-    o.bondLineWidth = max(2, round(2 * width / 900))
+    # Sized from the PRINTED size, not from the canvas. The old rule scaled with the render
+    # (2 and 24 px per 900 px of canvas) and was a proportion of something the reader never sees:
+    # at 2600 px placed 1.757 in wide, which is what pdfimages reports for this panel, it put the
+    # bonds at 0.29 pt and the atom labels at 3.36 pt. ACS asks for no line thinner than 0.5 pt
+    # and no lettering smaller than 4.5 pt IN THE FINAL PUBLISHED FORMAT, so the minima are
+    # converted into pixels here and carry a little margin. A pixel is placed_inches/width inches,
+    # so re-placing the panel at a different width changes these with it instead of silently
+    # dropping the structure back under the floor.
+    px_per_pt = width / (placed_inches * 72.0)
+    o.bondLineWidth = max(2, math.ceil(0.6 * px_per_pt))
     o.highlightRadius = 0.36
-    o.fixedFontSize = max(24, round(24 * width / 900))
+    o.fixedFontSize = max(24, math.ceil(5.0 * px_per_pt))
     o.clearBackground = False
     rdMolDraw2D.PrepareAndDrawMolecule(d, mol, highlightAtoms=highlight,
                                        highlightAtomColors=colours)
