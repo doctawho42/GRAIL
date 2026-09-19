@@ -145,7 +145,16 @@ def build():
     # system, and one prefix for two of those is how a number ends up in the wrong sentence.
     ARMS = {"whole bank": "bank", "trained budget": "trained", "metatox": "metatox",
             "sygma": "sygma", "metapredictor": "metapredictor",
-            "biotransformer": "biotransformer", "gloryx": "gxarm"}
+            "biotransformer": "biotransformer", "gloryx": "gxarm",
+            "gloryxr_default": "gloryxrdef", "gloryxr_strict": "gloryxrstr"}
+    # This loop reads the map's keys, so an arm the sweep computes and the map does not name drops
+    # out of every sweep.* macro without a word. That is how a comparator went missing from the
+    # main table once already; the same shape here would put a column in the figure whose recall
+    # the text cannot quote.
+    _unnamed = [a for a in dep["recall_micro"][next(iter(dep["recall_micro"]))] if a not in ARMS]
+    if _unnamed:
+        sys.exit(f"REFUSING: deployment_table.json carries arms this file has no macro prefix "
+                 f"for: {', '.join(sorted(_unnamed))}")
     for k, row in dep["recall_micro"].items():
         for arm, tag in ARMS.items():
             if arm in row:
@@ -619,6 +628,32 @@ def build():
     n["bound.corpusabsentsharemin"] = round(n["bound.corpusabsentmin"] / n["ceiling.novel"], 4)
     n["bound.shortfallsharemin"] = round(n["bound.corpusabsentmin"] / n["ceiling.uncovered"], 4)
     n["bound.shortfallsharemax"] = round(n["ceiling.novel"] / n["ceiling.uncovered"], 4)
+
+    # THE JOIN ITSELF, which is what made the two numbers above a bound rather than a point. The
+    # Supporting Information said so in those words: "it is a bound, not a point, because the join
+    # itself is not reported here". It is reported now. Eight shards of
+    # scripts/typed_edit/containment_on_the_uncovered.py walk the uncovered references of absent
+    # type and ask, of each, whether the training annotation holds its type; the producer refuses
+    # to write unless the run reproduces the published decomposition, so a partial merge cannot
+    # become this number.
+    _cont = art("containment_on_the_uncovered.json")
+    assert _cont["population"]["of_absent_type"] == n["ceiling.novel"], (
+        "the containment run and the census disagree about how many uncovered references are of "
+        "absent type, so the point estimate is over a different population from the bound")
+    n["containment.absent"] = _cont["absent_from_training"]
+    n["containment.present"] = _cont["present_in_training"]
+    n["containment.share"] = _cont["share_absent_from_training"]
+    # Carried to the whole shortfall, which is the population the bound is quoted over. The
+    # untypeable references cannot be judged either way and are counted with the rest of the
+    # denominator, so this is the share of ALL uncovered references, not of the typeable ones.
+    n["containment.shortfallshare"] = round(
+        n["containment.absent"] / n["ceiling.uncovered"], 4)
+    assert (n["bound.shortfallsharemin"] <= n["containment.shortfallshare"]
+            <= n["bound.shortfallsharemax"]), (
+        f"the measured share {n['containment.shortfallshare']} falls outside the bound "
+        f"[{n['bound.shortfallsharemin']}, {n['bound.shortfallsharemax']}] this file derives from "
+        f"the cross-tabulation; one of the two is wrong and neither may be printed until it is "
+        f"known which")
     n["typeoverlap.minersshare"] = round(
         1 - mtt["share_of_the_bank_s_type_gap_the_corpus_also_lacks"], 4)
     n["typeoverlap.corpusshare"] = mtt["share_of_the_bank_s_type_gap_the_corpus_also_lacks"]

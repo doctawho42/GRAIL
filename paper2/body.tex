@@ -262,8 +262,9 @@ The arms are also not held at one enzymatic depth, and no reading here equalises
 a phase-one and a phase-two ruleset, BioTransformer is run for one step, MetaTox's depth is neither
 ours to turn nor readable, and a mined template may perform more than one enzymatic edit in a single
 application, as \numCompositeUnionsharePct{} of this bank's mined templates do
-(Section~\ref{SI-sec:si-singlestep}). The depth is swept for SyGMa, whose scenario is a documented
-setting, and the lead survives it. BioTransformer's step count is also ours to turn and was not
+(Section~\ref{SI-sec:si-singlestep}). GLORYxR returns both phases and its site-of-metabolism
+setting is a documented knob, so both of its settings are run and both are printed. The depth is
+swept for SyGMa, whose scenario is a documented setting, and the lead survives it. BioTransformer's step count is also ours to turn and was not
 swept, a decision taken after the matched-length control, which cuts every arm to the comparator's own
 list length substrate by substrate, had been read, and stated as such
 (Section~\ref{SI-sec:si-comparators}). For those two the difference between the arms stands, and the wide-budget cells should be read with it in view.
@@ -307,10 +308,10 @@ This paper prints more contrasts than that family covers. Applying the same
 correction to every contrast printed anywhere here, \numHolmWidetests{} of them,
 \numHolmWidesurviving{} still separate, and it removes \numHolmWideremovesdeclaredWord{} cells the
 declared family keeps. Of those \numHolmWideremovesdeclaredWord{},
-\numHolmWideleadsremovedWord{} is a lead of this work's, over MetaTox at $k=10$, and the other two
-run against it. So the wider
-reading costs this paper one cell and gains it two, and neither reading changes the wide-budget
-result.
+\numHolmWideleadsremovedWord{} is a lead of this work's, over MetaTox at $k=10$, and the other four
+run against it: the exhaustive arm's trails against SyGMa at $k=1$, $3$ and $5$, and the
+interactive arm's against SyGMa at $k=1$. So the wider reading costs this paper one cell and
+gains it four, and neither reading changes the wide-budget result.
 
 No single budget is privileged. A claim that the system leads is made for a cell only where that
 cell's interval excludes zero, and where an ordering is not established the table says so.
@@ -477,7 +478,8 @@ compared with what; the last row names the arm and the superscripts name the com
 where GRAIL's better arm leads the strongest comparator with the paired interval excluding zero,
 $-$ one where it trails on the same terms, and $\cdot$ one where the interval covers zero. The
 superscript names the comparator the cell is read against, M for MetaTox, S for SyGMa, P for
-MetaPredictor and G for GLORYx. The row beneath names the GRAIL arm, \emph{int.} or \emph{exh.},
+MetaPredictor, G for GLORYx, and Rd or Rs for GLORYxR in its default or strict site-of-metabolism
+setting. The row beneath names the GRAIL arm, \emph{int.} or \emph{exh.},
 with a dash where the better arm is not the same one under all five criteria at that budget.}
 \label{fig:criterion}
 \end{figure*}
@@ -534,7 +536,8 @@ How much a chemist gets from an attribution also depends on the template: \numRs
 \caption{The worked example. Left: the substrate as a chemist draws it, with each atom a
 firing rule reported shaded in the colour of its transformation. Right: the rank of each of the
 four annotated metabolites in each arm's returned list, every returned candidate drawn as a tick,
-under both drawings of the substrate.}
+under both drawings of the substrate. The rank axis compresses above $k=30$, where the ticks are
+closer together than they are wide and read as a block.}
 \label{fig:case}
 \end{figure*}
 
@@ -724,8 +727,10 @@ found settings that decide a number and were not declared. Six of them: the aggr
 \subsection{The ceiling bounds this formulation, not the task}
 
 The shortfall is a property of the corpus the templates are mined from, and it is measured directly: of the \numCeilingUncovered{} references one
-application of this bank fails to reach, between \numBoundShortfallsharemin{} and
-\numBoundShortfallsharemax{} are of a type the training annotation never holds. That is a bound, not a point, and Section~\ref{SI-sec:si-typeoverlap} gives the counts it rests on.
+application of this bank fails to reach, \numContainmentAbsent{} are of a type the training
+annotation never holds, which is \numContainmentShortfallsharePct{}. The join behind that figure is
+measured, and it falls inside the interval its own marginals allow, \numBoundShortfallsharemin{}
+to \numBoundShortfallsharemax{}; Section~\ref{SI-sec:si-typeoverlap} gives the counts both rest on.
 
 Extending coverage therefore requires new reaction corpora, and the census narrows the search.
 Synthetic corpora are excluded by measurement, which leaves enzymatic and regulatory sources. The
@@ -759,8 +764,8 @@ therefore a one-template ceiling, where a single enzymatic step may take several
 application of the bank buys little: a fifth of the mined bank already carries the compositions a
 second pass would have to discover. A depth-two probe put the lift at \numDepthtwoLift{} on
 \numDepthtwoSubstrates{} substrates, at \numDepthtwoCost{} times the candidate cost. Its result
-file names no producer and records no seed, so it stands outside the provenance apparatus the rest
-of this work is held to, and the figure is quoted here with that weakness named.
+file records the producer that wrote it, the seed and sample that drew those substrates and the
+digests of its inputs, and re-running that producer reproduces every figure it carries.
 
 Both learned stages are trained short of what the split allows, on a subsample of it and with early stopping that never engaged, which is an underfitting signature; retraining on the full split is not reported (Section~\ref{SI-sec:si-retrain}).
 
@@ -874,7 +879,11 @@ the matching criteria are decided by, which lets anyone without those licences r
 recall figure and every cell of the criterion sweep; a check reports zero disagreements between the
 two readings. Releasing the checkpoints is the bar this paper applies to others: a system whose weights cannot
 be obtained cannot be compared against, and for that reason one of the \numComparatorsUnavailable{}
-systems of 2025--26 is excluded here.
+systems of 2025--26 is excluded here. GLORYxR is in the comparison and clears that bar for us but
+not for a reader: its weights are undistributed and were supplied privately for this work, so nobody can
+recompute its two columns from public sources. Section~\ref{SI-sec:si-comparators} says so
+beside them and records the digest of every weight file, so a deposit its author intends to make can
+be checked against what ran.
 Section~\ref{SI-sec:si-corpus} states what can and cannot be rebuilt, and the one step that
 cannot be reproduced.
 

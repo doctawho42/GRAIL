@@ -33,12 +33,8 @@
   {
    "artifact": "results/benchmark_report_depth2.json",
    "script": "run_benchmark.py",
-   "inferred": true,
-   "how": "producer at c59756122c8d, the commit that added the artifact",
-   "status": "producer_changed",
-   "detail": "producer was 377354d581e5, is now 045dc873451c",
-   "diff_recovered_by": "source at c59756122c8d",
-   "diff": "--- run_benchmark.py (as recorded)\n+++ run_benchmark.py (now)\n@@ -22,6 +22,9 @@\n \n ROOT = Path(__file__).resolve().parents[1]\n-if str(ROOT) not in sys.path:\n-    sys.path.insert(0, str(ROOT))\n+for _p in (str(ROOT), str(ROOT / \"scripts\")):\n+    if _p not in sys.path:\n+        sys.path.insert(0, _p)\n+\n+from _provenance import record_inputs, stamp  # noqa: E402\n \n from rdkit import Chem, RDLogger\n@@ -185,5 +188,6 @@\n             total_t += tt\n             continue\n-        products = apply_rules_to_molecule(mol, rules, normalization_mode=\"canonical\")\n+        products = apply_rules_to_molecule(mol, rules, normalization_mode=\"canonical\",\n+                                           presentation=\"expanded\")\n         prod_keys = list(products.keys())\n         gen_ik = ik_set(prod_keys)\n@@ -267,5 +271,6 @@\n                     continue\n                 expansions += 1\n-                for p_smi in apply_rules_to_molecule(m, rules, normalization_mode=\"canonical\").keys():\n+                for p_smi in apply_rules_to_molecule(m, rules, normalization_mode=\"canonical\",\n+                                            presentation=\"expanded\").keys():\n                     p_ik = _inchikey(p_smi)\n                     if p_ik not in visited_ik:\n@@ -308,6 +313,8 @@\n         if mol is None:\n             continue\n-        base_ik = ik_set(apply_rules_to_molecule(mol, base_rules, normalization_mode=\"canonical\").keys())\n-        p2_ik = ik_set(apply_rules_to_molecule(mol, phase2_rules, normalization_mode=\"canonical\").keys())\n+        base_ik = ik_set(apply_rules_to_molecule(mol, base_rules, normalization_mode=\"canonical\",\n+                                          presentation=\"expanded\").keys())\n+        p2_ik = ik_set(apply_rules_to_molecule(mol, phase2_rules, normalization_mode=\"canonical\",\n+                                        presentation=\"expanded\").keys())\n         comb_ik = base_ik | p2_ik\n  ... diff truncated"
+   "how": "recorded source digest",
+   "status": "current"
   },
   {
    "artifact": "results/biotransformer_arm.json",
@@ -433,8 +429,8 @@
    "artifact": "results/metatox_outside_submission.json",
    "script": "metatox_outside_ingest.py",
    "how": "recorded source digest",
-   "status": "cosmetic_only",
-   "detail": "the producer changed only in comments, docstrings or layout: the parse tree with docstrings removed is identical, so the numbers cannot have moved",
+   "status": "input_changed",
+   "detail": "input moved: scripts/typed_edit/population_definition.py",
    "diff_recovered_by": "the recorded digest, found in history at c38e7b6aef80",
    "diff": "--- metatox_outside_ingest.py (as recorded)\n+++ metatox_outside_ingest.py (now)\n@@ -16,12 +16,16 @@\n old reason for the arm's absence is not merely stale, it is the wrong reason.\n \n-OUTPUT BUDGET, which is why the arm still does not join the axis. The submission README asked for\n-the same configuration as the first batch, in those words, and said why: two halves at different\n-budgets are two arms reported as one. They are not the same. The first batch returned 10,601 records\n-for 291 substrates; this one returns 229,106 for 879. Both counts are raw records -- the first\n-batch's ingest keeps every parseable record and filters none by score -- so the rates divide, and\n-the second batch emits about seven times more per substrate. Recall at every k moves with output\n-size, so a column half-scored at one budget and half at the other would be an artefact of the\n-budgets. That is measured here and recorded as a blocker rather than argued about.\n+OUTPUT BUDGET was the last ground for keeping the arm out, and it did not survive measurement. The\n+submission README asked for the same configuration as the first batch, in those words, and said why:\n+two halves at different budgets are two arms reported as one. An earlier version of this script put\n+the delivery at 260.64 predictions per substrate against 36.43 in the comparison set, a factor of\n+7.15, and recorded that as a blocker. The factor was an artefact of the comparison. 36.43 counts\n+structures de-duplicated by canonical SMILES inside scripts/metatox_smirks_ingest.py and 260.64\n+counted raw records, so the two numbers were never the same quantity. Measured the same way on both\n+halves the delivery gives 39.1877 against 36.4296, a ratio of 1.076. The same statistic, which no\n+code in this repository computed for any arm until this one was challenged, puts SyGMa at 1.1426 and\n+GLORYx at 1.0919 -- both further from 1.0 than MetaTox, and both already in the axis. All five are in\n+`peer_two_half_ratios`, and the blocker is in `withdrawn_blockers` with the four grounds that retired\n+it. The arm is in the axis, and admitting it costs this work two cells.\n \n THE TWO FILES DISAGREE, so both are recorded. all_meta_smirks returns 229,106 records over all 879"
   },
@@ -808,7 +804,7 @@
  "sweep": {
   "unstamped": 302,
   "producer_changed": 41,
-  "current": 72,
+  "current": 73,
   "producer_unknown": 26,
   "cosmetic_only": 8
  },

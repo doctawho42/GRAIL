@@ -69,7 +69,8 @@ def test_the_table_carries_every_comparator_the_axis_holds():
                    if isinstance(v, dict) and any(k in v for _, k in ARMS))
     assert len(comps) >= 5, f"the axis holds {len(comps)} comparators: {comps}"
     LABELS = {"metatox": "MetaTox", "sygma": "SyGMa", "metapredictor": "MetaPredictor",
-              "biotransformer": "BioTransformer", "gloryx": "GLORYx"}
+              "biotransformer": "BioTransformer", "gloryx": "GLORYx",
+              "gloryxr_default": "GLORYxR def.", "gloryxr_strict": "GLORYxR str."}
     for c in comps:
         assert c in LABELS, f"the axis holds {c!r} and this test has no label for it"
         assert LABELS[c] in t, (
@@ -97,20 +98,29 @@ def test_every_printed_cell_is_the_artifact_s_cell():
     t = _table()
     axis = _axis()
     LABELS = {"metatox": "MetaTox", "sygma": "SyGMa", "metapredictor": "MetaPredictor",
-              "biotransformer": "BioTransformer", "gloryx": "GLORYx"}
+              "biotransformer": "BioTransformer", "gloryx": "GLORYx",
+              "gloryxr_default": "GLORYxR def.", "gloryxr_strict": "GLORYxR str."}
     order = [c for c in LABELS if c in axis]
     # every numeric cell the table prints, in reading order
     printed = re.findall(r"(?:\$-\$|\+)\.\d{3}", t)
+    # Seven comparator columns do not fit a one-column page, so the grid is stacked in blocks of
+    # four and the reading order is block by block: within a block, both arms over every budget.
+    # Reading it as one wide table gave the right multiset in the wrong order and failed here,
+    # which is the gate working: a cell read in the wrong place is a cell attributed to the wrong
+    # comparator.
+    PER_BLOCK = 4
+    chunks = [order[i:i + PER_BLOCK] for i in range(0, len(order), PER_BLOCK)]
     expected = []
-    for _, key in ARMS:
-        ks = sorted({int(k) for c in order for k in (axis[c].get(key) or {})})
-        for k in ks:
-            for c in order:
-                cell = (axis[c].get(key) or {}).get(str(k))
-                if cell is None:
-                    continue
-                for v in (cell["difference"], cell["ci95"][0], cell["ci95"][1]):
-                    expected.append(("$-$" if v < 0 else "+") + f"{abs(v):.3f}".lstrip("0"))
+    for group in chunks:
+        for _, key in ARMS:
+            ks = sorted({int(k) for c in order for k in (axis[c].get(key) or {})})
+            for k in ks:
+                for c in group:
+                    cell = (axis[c].get(key) or {}).get(str(k))
+                    if cell is None:
+                        continue
+                    for v in (cell["difference"], cell["ci95"][0], cell["ci95"][1]):
+                        expected.append(("$-$" if v < 0 else "+") + f"{abs(v):.3f}".lstrip("0"))
     assert printed == expected, (
         f"the table prints {len(printed)} numbers and the axis gives {len(expected)}; first "
         f"disagreement at "

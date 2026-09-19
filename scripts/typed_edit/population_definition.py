@@ -84,11 +84,23 @@ EXHAUSTIVE_FULLTEST = ROOT / "results/widepools_fulltest"
 # 99% of the population, and GLORYx reaches 1,166 of 1,170 -- it was simply never offered.
 # revision/tests/test_population_axis_names_every_whole_split_arm.py now compares this dict
 # against the repository so the next such column cannot go missing in silence.
+#
+# GLORYxR joins with TWO columns, and that is the paper's own rule applied to it. Its
+# site-of-metabolism setting is a declared knob, this work ran both of its settings over the whole
+# evaluated population, and a paper arguing that an undeclared knob invalidates a comparison cannot
+# sweep a comparator's knob and then print one of the two. Both reach 1,170 of 1,170 with 1,169
+# carrying at least one prediction. The tool is unpublished and its weights are not distributed --
+# what identifies the run is a repository revision and the digest of every dump, in
+# results/gloryxr_identity.json -- so the column cannot be rebuilt from public sources alone, which
+# the Supporting Information states beside it. Its absence here was not a decision either: the
+# Supporting Information already described the run and called it a column while no column existed.
 WHOLE_TEST = {"sygma": ROOT / "results/sygma_fulltest_predictions.json",
               "metapredictor": ROOT / "artifacts/tier2_1170/metapredictor_preds.json",
               "biotransformer": ROOT / "results/biotransformer_fulltest_preds.json",
               "gloryx": ROOT / "results/gloryx_service_preds_evaluated1170.json",
-              "metatox": ROOT / "results/metatox_smirks_preds_evaluated1170.json"}
+              "metatox": ROOT / "results/metatox_smirks_preds_evaluated1170.json",
+              "gloryxr_default": ROOT / "results/gloryxr_local_preds_default.json",
+              "gloryxr_strict": ROOT / "results/gloryxr_local_preds_strict.json"}
 
 
 def main() -> int:

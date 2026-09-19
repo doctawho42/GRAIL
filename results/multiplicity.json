@@ -2,8 +2,8 @@
  "provenance": {
   "script": "multiplicity.py",
   "script_path": "scripts/typed_edit/multiplicity.py",
-  "source_sha256": "cc8f7f19f3569a30954551d6d029cfa8972c7caa75b2366defe21c810bcd873e",
-  "git_commit": "6c947921438e46c0002b09650144580460b719fb",
+  "source_sha256": "20625601b115ff98c06f8294e581facad988369ca275a99835f1ade783fef9f3",
+  "git_commit": "74cabe9589bb665e1632e43a5822c4732cc157c7",
   "git_dirty": true
  },
  "family": "every GRAIL-arm-against-comparator contrast in the sweep: 2 arms by 3 comparators by 9 budgets",
@@ -37,12 +37,16 @@
    "sygma",
    "metapredictor",
    "biotransformer",
-   "gloryx"
+   "gloryx",
+   "gloryxr_default",
+   "gloryxr_strict"
   ],
-  "n_tests": 90,
-  "n_separating_after_holm": 29,
+  "n_tests": 126,
+  "n_separating_after_holm": 35,
   "declared_family_cells_it_would_remove": [
+   "trained budget - sygma @ 1",
    "whole bank - metatox @ 10",
+   "whole bank - sygma @ 1",
    "whole bank - sygma @ 3",
    "whole bank - sygma @ 5"
   ],

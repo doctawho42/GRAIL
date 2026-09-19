@@ -1,0 +1,54 @@
+{
+ "provenance": {
+  "script": "containment_on_the_uncovered.py",
+  "script_path": "scripts/typed_edit/containment_on_the_uncovered.py",
+  "source_sha256": "cbb4cd0f31a7d43a644378d509695d4b9108820dcd09df23d0c7eb92a7525351",
+  "git_commit": "74cabe9589bb665e1632e43a5822c4732cc157c7",
+  "git_dirty": true
+ },
+ "question": "of the uncovered test references whose type the bank does not hold, how many carry a type the training annotation does not hold either",
+ "why_it_is_not_the_published_figure": "the published containment is over every reference of absent type, reached or not; this is over the ones the bank also fails to reach, which is the population the Abstract's claim about corpora is about",
+ "typing": "radius-0 reaction type by the mining route, the definition the census uses",
+ "gate": {
+  "reproduces_the_published_decomposition": true,
+  "computed": {
+   "novel_type": 337,
+   "known_type": 98,
+   "untypeable": 40,
+   "uncovered": 475
+  },
+  "committed": {
+   "novel_type": 337,
+   "known_type": 98,
+   "untypeable": 40,
+   "uncovered": 475
+  }
+ },
+ "population": {
+  "substrates": 1170,
+  "uncovered": 475,
+  "of_absent_type": 337
+ },
+ "training_annotation": {
+  "pairs": 17454,
+  "typed": 17062,
+  "distinct_types": 4529
+ },
+ "bank": {
+  "rules": 7581,
+  "distinct_types": 4417
+ },
+ "the_published_cross_tabulation_restated": {
+  "what_this_is": "the four cells missing_types_in_train.json reports, recomputed here under a typing that does not depend on machine load",
+  "cells": {
+   "not in the bank, nor in training": 569,
+   "in the bank and in training": 1922,
+   "not in the bank, in training": 40,
+   "in the bank, not in training": 4
+  }
+ },
+ "absent_from_training": 315,
+ "present_in_training": 22,
+ "share_absent_from_training": 0.9347,
+ "reading": "a share near the published one means the two populations agree and the claim survives its own restatement; a share below it means part of what the bank misses is chemistry the corpus did contain"
+}

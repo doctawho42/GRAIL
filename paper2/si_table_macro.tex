@@ -1,22 +1,22 @@
 \begin{table}[h]
 \centering\footnotesize
 \begin{threeparttable}
-\caption{The aggregation moves 11 verdicts of the 90 contrasts computed under both, marked $^{\mu}$ where micro separates and macro does not and $^{M}$ where the reverse holds: exh.--BioTransformer at $1$$^{\mu}$, exh.--BioTransformer at $3$$^{M}$, int.--GLORYx at $5$$^{M}$, exh.--BioTransformer at $5$$^{M}$, int.--GLORYx at $15$$^{\mu}$, exh.--MetaPredictor at $15$$^{\mu}$, int.--BioTransformer at $20$$^{M}$, int.--GLORYx at $20$$^{\mu}$, int.--MetaTox at $20$$^{\mu}$, int.--BioTransformer at $30$$^{M}$, int.--BioTransformer at $50$$^{M}$. The comparison under macro aggregation, the mean of per-substrate recall, on the same population and with the same conventions as Table~\ref{MS-tab:sweep}; leading zeros are dropped.}
+\caption{The aggregation moves 14 verdicts of the 126 contrasts computed under both, marked $^{\mu}$ where micro separates and macro does not and $^{M}$ where the reverse holds: exh.--BioTransformer at $1$$^{\mu}$, exh.--BioTransformer at $3$$^{M}$, int.--GLORYx at $5$$^{M}$, exh.--BioTransformer at $5$$^{M}$, int.--GLORYx at $15$$^{\mu}$, int.--GLORYxR (default SoM) at $15$$^{\mu}$, exh.--MetaPredictor at $15$$^{\mu}$, int.--BioTransformer at $20$$^{M}$, int.--GLORYx at $20$$^{\mu}$, int.--GLORYxR (default SoM) at $20$$^{\mu}$, int.--GLORYxR (strict SoM) at $20$$^{\mu}$, int.--MetaTox at $20$$^{\mu}$, int.--BioTransformer at $30$$^{M}$, int.--BioTransformer at $50$$^{M}$. The comparison under macro aggregation, the mean of per-substrate recall, on the same population and with the same conventions as Table~\ref{MS-tab:sweep}; leading zeros are dropped.}
 \label{tab:si-macro}
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{rrrrrrrr}
+\setlength{\tabcolsep}{1.5pt}
+\begin{tabular}{rrrrrrrrrr}
 \toprule
-$k$ & GRAIL exh. & GRAIL int. & MetaTox & SyGMa & MetaPred. & BioTrans. & GLORYx \\
+$k$ & GRAIL exh. & GRAIL int. & MetaTox & SyGMa & MetaPred. & BioTrans. & GLORYx & GLORYxR d. & GLORYxR s. \\
 \midrule
-$1$ & .1450 & .1415 & .0660 & .2090 & .1976 & .1030 & .0801 \\
-$3$ & .2872 & .3103 & .1665 & .3614 & .3478 & .2335 & .2244 \\
-$5$ & .3687 & .3922 & .2520 & .4375 & .4317 & .3034 & .3218 \\
-$8$ & .4606 & .4671 & .3504 & .4821 & .5159 & .3618 & .4259 \\
-$10$ & .5064 & .5035 & .4251 & .4969 & .5510 & .3842 & .4663 \\
-$15$ & .5831 & .5543 & .5492 & .5218 & .5545 & .4370 & .5501 \\
-$20$ & .6372 & .5632 & .5907 & .5331 & .5545 & .4412 & .5906 \\
-$30$ & .6943 & .5660 & .6441 & .5387 & .5545 & .4466 & .6315 \\
-$50$ & .7461 & .5660 & .6708 & .5429 & .5545 & .4468 & .6455 \\
+$1$ & .1450 & .1415 & .0660 & .2090 & .1976 & .1030 & .0801 & .1109 & .1298 \\
+$3$ & .2872 & .3103 & .1665 & .3614 & .3478 & .2335 & .2244 & .2803 & .2972 \\
+$5$ & .3687 & .3922 & .2520 & .4375 & .4317 & .3034 & .3218 & .3708 & .3927 \\
+$8$ & .4606 & .4671 & .3504 & .4821 & .5159 & .3618 & .4259 & .4438 & .4602 \\
+$10$ & .5064 & .5035 & .4251 & .4969 & .5510 & .3842 & .4663 & .5002 & .4986 \\
+$15$ & .5831 & .5543 & .5492 & .5218 & .5545 & .4370 & .5501 & .5630 & .5462 \\
+$20$ & .6372 & .5632 & .5907 & .5331 & .5545 & .4412 & .5906 & .5973 & .5816 \\
+$30$ & .6943 & .5660 & .6441 & .5387 & .5545 & .4466 & .6315 & .6270 & .6201 \\
+$50$ & .7461 & .5660 & .6708 & .5429 & .5545 & .4468 & .6455 & .6387 & .6355 \\
 \bottomrule
 \end{tabular}
 

@@ -49,12 +49,16 @@ TE = "scripts/typed_edit"
 # the older pair reads the live pools instead. results/bank_without_selection_full.json was scored
 # with a filter checkpoint the system does not deploy and no figure in either manuscript is drawn
 # from it. Keeping a stale pin would have been a gate that reports currency it cannot check.
-# THREE pins fail, and the count matters because this comment said one for as long as it was
-# wrong. The other two are results/gloryx_service_preds.json, a run of someone else's web service
-# that a re-run would replace rather than reproduce, and results/benchmark_report_depth2.json,
-# which records no seed and would draw a different sample. All three are declared in
-# DECLARED_DEBT in grail_metabolism/tests/test_paper_gates.py with the reason each cannot be made
-# current. The one set out at length below is the one that cannot be regenerated at all, and the
+# TWO pins fail, and the count matters because this comment said one for as long as it was wrong
+# and three for as long as that was. The other is results/gloryx_service_preds.json, a run of
+# someone else's web service that a re-run would replace and not reproduce. The third used to be
+# results/benchmark_report_depth2.json, on the stated ground that it records no seed and would
+# draw a different sample; that ground was never checked and was false. run_benchmark.py takes
+# --seed with a default of 42 and draws with random.Random(seed).shuffle over a pool sorted first,
+# so the draw is fixed by (sample, seed). Re-running it reproduced all 22 recorded fields exactly,
+# and the producer now records its own invocation, so the artifact is current rather than
+# declared. Both survivors are declared in DECLARED_DEBT in
+# grail_metabolism/tests/test_paper_gates.py with the reason each cannot be made current. The one set out at length below is the one that cannot be regenerated at all, and the
 # reason is recorded rather than repaired, because repairing it would mean reporting a currency
 # nothing can check.
 #

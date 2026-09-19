@@ -36,7 +36,12 @@ COMPARATORS = ("metatox", "sygma", "metapredictor")
 # declared family covers, and a correction over part of what is printed controls less than it
 # appears to, so the wider family is computed beside the declared one and neither is hidden behind
 # the other. The declared family is the one the paper's verdicts are read from.
-COMPARATORS_REPORTED = ("metatox", "sygma", "metapredictor", "biotransformer", "gloryx")
+COMPARATORS_REPORTED = ("metatox", "sygma", "metapredictor", "biotransformer", "gloryx",
+                        "gloryxr_default", "gloryxr_strict")
+# GLORYxR joined the same way, in both of its site-of-metabolism settings. This tuple is read
+# against the sweep below and a comparator the sweep carries that this tuple lacks stops the run:
+# a "wider family" that is narrower than what the paper prints reports a correction covering more
+# than it does, which is the opposite of what computing it beside the declared one is for.
 # GLORYx joined after the family was declared, as BioTransformer did. It is in the wider
 # family computed here and not in the declared one, which names its three comparators and
 # does not move; the verdicts the paper reports as corrected are still corrected over what
@@ -86,6 +91,15 @@ def main() -> int:
     # The same procedure over every contrast the paper prints. Only the count of surviving cells
     # and the ones the wider family costs are kept: this is a sensitivity on the declared family,
     # not a second set of verdicts.
+    # Read against the sweep rather than trusted: a comparator the deployment table carries and
+    # this tuple lacks would make the wider family narrower than what the paper prints.
+    _carried = {p.split(" - ")[1] for row in contrasts.values() for p in row
+                if p.startswith("whole bank - ")} - {"trained budget"}
+    _missing = sorted(_carried - set(COMPARATORS_REPORTED))
+    if _missing:
+        sys.exit(f"REFUSING: deployment_table.json carries contrasts against "
+                 f"{', '.join(_missing)} and COMPARATORS_REPORTED does not name them, so the "
+                 f"wider family would be narrower than the set the paper prints.")
     wide = collect(COMPARATORS_REPORTED)
     wide_survives, _ = holm([(n, c["p_bootstrap"]) for n, c in wide.items()])
     lost_to_the_wider_family = sorted(

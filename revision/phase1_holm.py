@@ -48,13 +48,26 @@ ALPHA = 0.05
 ARMS = ("whole bank", "trained budget")
 # The family as the artifact declares it, fixed before the BioTransformer and GLORYx arms existed.
 DECLARED_COMPARATORS = ("metatox", "sygma", "metapredictor")
-# Every comparator the manuscript prints a contrast against on the comparison set. This is the
-# family results/multiplicity.json reports under "over_every_contrast_the_paper_prints": five
-# comparators by two arms by nine budgets, ninety tests. It is recomputed here because it is the
-# widening the paper actually quotes, and because its size coincides with the two-population
-# family below -- ninety either way, over different cells. Coincident counts are why the tests
-# compare membership rather than totals.
-PAPER_COMPARATORS = ("metatox", "sygma", "metapredictor", "biotransformer", "gloryx")
+# Every comparator the manuscript prints a contrast against on the comparison set: the family
+# results/multiplicity.json reports under "over_every_contrast_the_paper_prints". It is READ from
+# that artifact rather than typed beside it. Both were literal tuples and they drifted the moment
+# an arm was added -- one said five comparators and the other seven, so the widening the paper
+# quotes and the widening recomputed here were different families under one name.
+#
+# The sizes of this family and of the two-population one below once coincided, at ninety each over
+# different cells, and the tests compare membership for that reason. The coincidence has since
+# ended; a test that asserted the shared total failed when it did, which is the coincidence
+# charging its rent.
+def _paper_comparators() -> tuple:
+    art = ROOT / "results" / "multiplicity.json"
+    if not art.exists():
+        raise SystemExit("results/multiplicity.json is missing, so the family the paper quotes "
+                         "cannot be read and must not be guessed")
+    got = json.loads(art.read_text())["over_every_contrast_the_paper_prints"]["comparators"]
+    return tuple(got)
+
+
+PAPER_COMPARATORS = _paper_comparators()
 DECLARED_CRITERION = "inchikey_tautomer"
 DECLARED_POPULATION = "comparison291"
 OUT = ROOT / "revision" / "T_holm.json"

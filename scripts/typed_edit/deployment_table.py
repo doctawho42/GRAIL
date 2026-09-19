@@ -55,6 +55,18 @@ COMPARATORS = {
     # the multiplicity family was declared, as BioTransformer did, so the correction is still
     # computed over the family that was declared and this column is read outside it.
     "gloryx": ("results/gloryx_service_preds.json", "predictions"),
+    # GLORYxR, GLORYx's successor, run locally in BOTH of its site-of-metabolism settings. Two
+    # columns and not one because that setting is a declared knob and this paper's whole argument
+    # is that a comparison turning on an undeclared knob is not a comparison: sweeping a
+    # comparator's knob and then printing one of the two settings would be the thing it objects
+    # to. The tool is unpublished and ships no production model; the weights were supplied
+    # privately by its first author, so the column cannot be rebuilt from public sources alone and
+    # what identifies the run is a repository revision with the digest of every dump, recorded in
+    # results/gloryxr_identity.json. Like BioTransformer and GLORYx it entered after the
+    # multiplicity family was declared, so the correction is still computed over the family that
+    # was declared and these columns are read outside it.
+    "gloryxr_default": ("results/gloryxr_local_preds_default.json", "predictions"),
+    "gloryxr_strict": ("results/gloryxr_local_preds_strict.json", "predictions"),
 }
 
 

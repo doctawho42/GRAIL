@@ -117,12 +117,22 @@ def test_the_recorded_decidability_travels_with_every_family():
 
 
 def test_the_paper_s_widening_is_a_different_family_from_the_two_population_one():
-    """Both hold ninety tests over different cells, which is exactly how a coincident count gets
-    mistaken for agreement. Membership decides it, not size."""
+    """Two families under one correction, told apart by MEMBERSHIP and never by size.
+
+    They once held ninety tests each, over different cells, and this asserted the shared total. The
+    coincidence ended twice over: GLORYxR added two comparators to the family the paper prints, and
+    MetaTox's whole-population file, which did not exist when the other family was written, added
+    its cells to the two-population one. A test that pins a coincidence fails when the coincidence
+    does, and reports it as if something had broken. The sizes are read and printed here so a
+    reader of a failure can see them; what is asserted is what the docstring always claimed.
+    """
     paper = holm.recompute(family="every_contrast_the_paper_prints")
     both = holm.recompute(family="declared_across_both_populations")
-    assert paper["n_tests"] == both["n_tests"] == 90
-    assert set(paper["cells"]) != set(both["cells"])
+    assert paper["n_tests"] > 0 and both["n_tests"] > 0, (
+        f"a family is empty: paper={paper['n_tests']}, both={both['n_tests']}")
+    assert set(paper["cells"]) != set(both["cells"]), (
+        f"the two families hold the same cells ({paper['n_tests']} and {both['n_tests']}), so one "
+        f"of the two definitions is not the family it is named for")
     assert set(paper["population_of_each_cell"].values()) == {"comparison291"}
     assert set(both["population_of_each_cell"].values()) == {"comparison291", "evaluated1170"}
 

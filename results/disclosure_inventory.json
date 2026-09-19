@@ -3,7 +3,7 @@
   "script": "disclosure_inventory.py",
   "script_path": "scripts/disclosure_inventory.py",
   "source_sha256": "4e78b4c078f7f4d2f3e68d359d3a3e965a2ad460afc4db7dc9d047faf460cacf",
-  "git_commit": "589da6a271a42f1499276dfc31b586f92be50657",
+  "git_commit": "74cabe9589bb665e1632e43a5822c4732cc157c7",
   "git_dirty": true
  },
  "reviewed_and_accepted": [
@@ -944,6 +944,48 @@
     "paper2/grail_jcim.tex"
    ],
    "reason": "One key moves and nothing is retracted; the key that moves was never prose. _plain() did not know where the document starts, so everything above \\begin{document} in paper2/grail_jcim.tex -- \\usepackage lines, the author list, affiliations, the title -- came through with only its macro names removed, and since none of it ends in a full stop followed by a capital it did not split. It arrived as ONE 92-word, 688-character key with the opening of the abstract glued to its end, and that key was recorded as a disclosure. The harm was not noise: a recorded key is what --check compares against, so the author block was load-bearing, and adding an author or correcting an affiliation would have moved it and reported a retraction for an edit that touched no claim. _plain now cuts at \\begin{document}, conditionally, because the generated table files carry none and taking everything would take them. Paired: 1 gone, 1 new, and the new key is exactly a SUFFIX of the old one -- the abstract's first sentence, keyed on its own text at 42 words instead of behind 50 words of preamble. The claim it carries is unchanged and still recorded. revision/tests/test_the_preamble_is_not_a_disclosure.py holds the cut from both sides: no preamble reaches the inventory, and the abstract still splits into its own sentences."
+  },
+  {
+   "text": "Its result file names no producer and records no seed, so it stands outside the provenance apparatus the rest of this work is held to, and the figure is quoted here with that weakness named",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "A CONCESSION IS RETRACTED, deliberately, because the defect it conceded no longer exists. This is the gone-without-a-paired-new shape the gate exists to force into the open, and it is correct here: the replacement carries no concession marker because it concedes nothing. paper2/body.tex said of the depth-two probe 'Its result file names no producer and records no seed, so it stands outside the provenance apparatus the rest of this work is held to, and the figure is quoted here with that weakness named.' The first half was true of the file and the inference from it was never tested. scripts/run_benchmark.py takes --seed with a default of 42 and draws with random.Random(seed).shuffle(subs) over a pool sorted() fixes first, so the draw is determined by (sample, seed): load_test_map(150, 42) returns 150 substrates and 325 reference pairs against the artifact's recorded true_total of 325, and 231/325 is its recorded recall_ceiling to sixteen digits. Re-running the producer reproduced all 22 recorded fields with nothing differing. The producer now records its own invocation -- stamp, seed, sample, beam, node budget and input digests -- and results/benchmark_report_depth2.json verifies current with its inputs unchanged, so the pinned-artifact gate falls from three failures to two. The sentence is replaced by what is now true: the file records its producer, its draw and its inputs, and re-running reproduces every figure it carries. The same premise had been copied into DECLARED_DEBT, into the comment above PINNED in scripts/audit_artifact_provenance.py, and into the closing sentence of reviewed_and_accepted reason 121, which reads 'no seed was recorded, so a re-run draws a different 150-substrate sample'. That reason is left standing as the record of what was decided at the time and is superseded by this one; the other two are corrected in place."
+  },
+  {
+   "text": "That is what supports the word most , and it is a bound, not a point, because the join itself is not reported here",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "TWO CONCESSIONS ARE RETRACTED and one is added, and the retraction is the point of the change. Both retracted sentences conceded the same thing in the two documents: paper2/body.tex said 'That is a bound, not a point, and Section gives the counts it rests on', and paper2/si.tex said 'it is a bound, not a point, because the join itself is not reported here'. The second names its own condition for expiry, and that condition is now met. The join is scripts/typed_edit/containment_on_the_uncovered.py, run over eight shards: of the 337 uncovered references whose type the bank does not hold, 315 carry a type the training annotation lacks too and 22 do not, which is 0.9347 of them and 0.6632 of the whole 475-reference shortfall. The point falls INSIDE the interval the cross-tabulation's marginals allow, 0.6253 to 0.7095, so the measurement confirms the bound rather than displacing it, and scripts/paper2_numbers.py refuses to emit either number if that ever stops being true. Both documents now print the point and keep the interval beside it as the check. The new key is a concession of its own and replaces neither: the producer refuses to write unless the run reproduces the published decomposition, so a partial merge cannot become this figure, and a four-shard merge was in fact tried and refused at 253 uncovered against the committed 475. revision/tests/test_the_join_that_made_it_a_bound_is_reported.py holds all of it -- that the two populations match, that the point lies inside the bound, and that neither document still explains why it is only a bound."
+  },
+  {
+   "text": "That is a bound, not a point, and Section gives the counts it rests on",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "TWO CONCESSIONS ARE RETRACTED and one is added, and the retraction is the point of the change. Both retracted sentences conceded the same thing in the two documents: paper2/body.tex said 'That is a bound, not a point, and Section gives the counts it rests on', and paper2/si.tex said 'it is a bound, not a point, because the join itself is not reported here'. The second names its own condition for expiry, and that condition is now met. The join is scripts/typed_edit/containment_on_the_uncovered.py, run over eight shards: of the 337 uncovered references whose type the bank does not hold, 315 carry a type the training annotation lacks too and 22 do not, which is 0.9347 of them and 0.6632 of the whole 475-reference shortfall. The point falls INSIDE the interval the cross-tabulation's marginals allow, 0.6253 to 0.7095, so the measurement confirms the bound rather than displacing it, and scripts/paper2_numbers.py refuses to emit either number if that ever stops being true. Both documents now print the point and keep the interval beside it as the check. The new key is a concession of its own and replaces neither: the producer refuses to write unless the run reproduces the published decomposition, so a partial merge cannot become this figure, and a four-shard merge was in fact tried and refused at 253 uncovered against the committed 475. revision/tests/test_the_join_that_made_it_a_bound_is_reported.py holds all of it -- that the two populations match, that the point lies inside the bound, and that neither document still explains why it is only a bound."
+  },
+  {
+   "text": "The tautomer-aware key exists because reproducing a corpus's tautomer is not the question a comparison should be asking, and the paper reports the canonical column because declaring a criterion means printing what it does, not only the one whose behaviour suits the argument",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "A prose pass over paper2/si.tex and paper2/body.tex, nothing retracted: 3 keys move and 3 appear, one for one. Two were sentences split for length. One ran 75 words, which is exactly the ceiling scripts/check_prose_density.py applies, and it now ends at its semicolon; the file's longest sentence falls from 75 words to 62 and its mean from 26.4 to 26.3. The other ran 71 and was a preamble followed by a six-item list, which now begins its own sentence. Splitting a sentence splits its key, so the concession survives in the half that carries the marker and the count stays level. The third change repairs a referent rather than a length: the Supporting Information said 'declaring a criterion means printing what it does, not only the one whose behaviour suits the argument', where 'what it does' and 'the one' point at different things, so the sentence asks a reader to carry a criterion and its behaviour under one pronoun. It now reads 'printing what every criterion does, including the one whose behaviour suits the argument least', which is the same claim with the referents separated. In paper2/body.tex one clause was made active, 'so nobody can recompute its two columns from public sources' for 'so its two columns are ones nobody can recompute', two words shorter against a length criterion that is red. Every replacement was checked against all eight carrier probes before it was applied and none fires; the carrier counts are unchanged at 6 of 407 in the manuscript and 22 of 1161 in the Supporting Information."
+  },
+  {
+   "text": "It adds to each rule's gated identity a second identity shared by every rule of the same reaction type, so a template the gate suppresses can borrow what its type has learned from better-supported templates; a type carried by a single rule contributes nothing, and neither does a rule whose type cann",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "A prose pass over paper2/si.tex and paper2/body.tex, nothing retracted: 3 keys move and 3 appear, one for one. Two were sentences split for length. One ran 75 words, which is exactly the ceiling scripts/check_prose_density.py applies, and it now ends at its semicolon; the file's longest sentence falls from 75 words to 62 and its mean from 26.4 to 26.3. The other ran 71 and was a preamble followed by a six-item list, which now begins its own sentence. Splitting a sentence splits its key, so the concession survives in the half that carries the marker and the count stays level. The third change repairs a referent rather than a length: the Supporting Information said 'declaring a criterion means printing what it does, not only the one whose behaviour suits the argument', where 'what it does' and 'the one' point at different things, so the sentence asks a reader to carry a criterion and its behaviour under one pronoun. It now reads 'printing what every criterion does, including the one whose behaviour suits the argument least', which is the same claim with the referents separated. In paper2/body.tex one clause was made active, 'so nobody can recompute its two columns from public sources' for 'so its two columns are ones nobody can recompute', two words shorter against a length criterion that is red. Every replacement was checked against all eight carrier probes before it was applied and none fires; the carrier counts are unchanged at 6 of 407 in the manuscript and 22 of 1161 in the Supporting Information."
+  },
+  {
+   "text": "The wider sweep is over N files and its parts are printed here, since a total is easier to accept than to add up: N carry no stamp, N have a producer that has changed since, N have a producer the sweep cannot identify, N changed only cosmetically, N are stamped and current without being pinned, and ",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "A prose pass over paper2/si.tex and paper2/body.tex, nothing retracted: 3 keys move and 3 appear, one for one. Two were sentences split for length. One ran 75 words, which is exactly the ceiling scripts/check_prose_density.py applies, and it now ends at its semicolon; the file's longest sentence falls from 75 words to 62 and its mean from 26.4 to 26.3. The other ran 71 and was a preamble followed by a six-item list, which now begins its own sentence. Splitting a sentence splits its key, so the concession survives in the half that carries the marker and the count stays level. The third change repairs a referent rather than a length: the Supporting Information said 'declaring a criterion means printing what it does, not only the one whose behaviour suits the argument', where 'what it does' and 'the one' point at different things, so the sentence asks a reader to carry a criterion and its behaviour under one pronoun. It now reads 'printing what every criterion does, including the one whose behaviour suits the argument least', which is the same claim with the referents separated. In paper2/body.tex one clause was made active, 'so nobody can recompute its two columns from public sources' for 'so its two columns are ones nobody can recompute', two words shorter against a length criterion that is red. Every replacement was checked against all eight carrier probes before it was applied and none fires; the carrier counts are unchanged at 6 of 407 in the manuscript and 22 of 1161 in the Supporting Information."
   }
  ],
  "question": "every sentence in which this work concedes something, recorded before a cut so that what a cut costs is visible rather than invisible",
@@ -984,7 +1026,7 @@
   "paper2/table_hypotheses.tex",
   "paper2/table_grain.tex"
  ],
- "n": 247,
+ "n": 245,
  "reading": "a disclosure counts as present if it survives in ANY of the sources: moving one to the Supporting Information shortens the manuscript without retracting anything, and deleting one shortens it by retracting something",
  "disclosures": {
   "abstract published predictors of metabolite structure cannot be compared with one another because recall depends on how a predicted structure is judged to match a reference and on how many candidates a system may return and papers in this area declare neither": {
@@ -1209,8 +1251,8 @@
     "paper2/si.tex"
    ]
   },
-  "the tautomer aware key exists because reproducing a corpus s tautomer is not the question a comparison should be asking and the paper reports the canonical column because declaring a criterion means printing what it does not only the one whose behaviour suits the argument": {
-   "text": "The tautomer-aware key exists because reproducing a corpus's tautomer is not the question a comparison should be asking, and the paper reports the canonical column because declaring a criterion means printing what it does, not only the one whose behaviour suits the argument",
+  "the tautomer aware key exists because reproducing a corpus s tautomer is not the question a comparison should be asking and the paper reports the canonical column because declaring a criterion means printing what every criterion does including the one whose behaviour suits the argument least": {
+   "text": "The tautomer-aware key exists because reproducing a corpus's tautomer is not the question a comparison should be asking, and the paper reports the canonical column because declaring a criterion means printing what every criterion does, including the one whose behaviour suits the argument least",
    "in": [
     "paper2/si.tex"
    ]
@@ -1365,8 +1407,8 @@
     "paper2/si.tex"
    ]
   },
-  "that is what supports the word most and it is a bound not a point because the join itself is not reported here": {
-   "text": "That is what supports the word most , and it is a bound, not a point, because the join itself is not reported here",
+  "the producer refuses to write unless the run reproduces the published decomposition so a partial merge cannot become this figure a four shard merge was tried and refused": {
+   "text": "The producer refuses to write unless the run reproduces the published decomposition, so a partial merge cannot become this figure; a four-shard merge was tried and refused",
    "in": [
     "paper2/si.tex"
    ]
@@ -1521,8 +1563,8 @@
     "paper2/si.tex"
    ]
   },
-  "it adds to each rule s gated identity a second identity shared by every rule of the same reaction type so a template the gate suppresses can borrow what its type has learned from better supported templates a type carried by a single rule contributes nothing and neither does a rule whose type cannot be assigned because either would hand that rule a second private identity in the one place the gate exists to take one away": {
-   "text": "It adds to each rule's gated identity a second identity shared by every rule of the same reaction type, so a template the gate suppresses can borrow what its type has learned from better-supported templates; a type carried by a single rule contributes nothing, and neither does a rule whose type cann",
+  "a type carried by a single rule contributes nothing and neither does a rule whose type cannot be assigned either would hand that rule a second private identity in the one place the gate exists to take one away": {
+   "text": "A type carried by a single rule contributes nothing, and neither does a rule whose type cannot be assigned: either would hand that rule a second private identity in the one place the gate exists to take one away",
    "in": [
     "paper2/si.tex"
    ]
@@ -1887,8 +1929,8 @@
     "paper2/si.tex"
    ]
   },
-  "the wider sweep is over files and its parts are printed here since a total is easier to accept than to add up carry no stamp have a producer that has changed since have a producer the sweep cannot identify changed only cosmetically are stamped and current without being pinned and are the pinned files that live under the results directory the total names": {
-   "text": "The wider sweep is over N files and its parts are printed here, since a total is easier to accept than to add up: N carry no stamp, N have a producer that has changed since, N have a producer the sweep cannot identify, N changed only cosmetically, N are stamped and current without being pinned, and ",
+  "carry no stamp have a producer that has changed since have a producer the sweep cannot identify changed only cosmetically are stamped and current without being pinned and are the pinned files that live under the results directory the total names": {
+   "text": "N carry no stamp, N have a producer that has changed since, N have a producer the sweep cannot identify, N changed only cosmetically, N are stamped and current without being pinned, and N are the pinned files that live under the results directory the total names",
    "in": [
     "paper2/si.tex"
    ]
@@ -2265,12 +2307,6 @@
     "paper2/body.tex"
    ]
   },
-  "that is a bound not a point and section gives the counts it rests on": {
-   "text": "That is a bound, not a point, and Section gives the counts it rests on",
-   "in": [
-    "paper2/body.tex"
-   ]
-  },
   "whether the same bound binds a predictor that applies no templates at all is not measured here": {
    "text": "Whether the same bound binds a predictor that applies no templates at all is not measured here",
    "in": [
@@ -2297,12 +2333,6 @@
   },
   "limitations applying one template once is not the same as one enzymatic step": {
    "text": "Limitations Applying one template once is not the same as one enzymatic step",
-   "in": [
-    "paper2/body.tex"
-   ]
-  },
-  "its result file names no producer and records no seed so it stands outside the provenance apparatus the rest of this work is held to and the figure is quoted here with that weakness named": {
-   "text": "Its result file names no producer and records no seed, so it stands outside the provenance apparatus the rest of this work is held to, and the figure is quoted here with that weakness named",
    "in": [
     "paper2/body.tex"
    ]

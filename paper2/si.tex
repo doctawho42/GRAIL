@@ -593,8 +593,8 @@ work separates anywhere. Whatever the two ends share, it is not strictness and i
 dialect, and the entanglement is a property of the strict column, not the reason it reads as it
 does. The tautomer-aware key exists because
 reproducing a corpus's tautomer is not the question a comparison should be asking, and the
-paper reports the canonical column because declaring a criterion means printing what it does,
-not only the one whose behaviour suits the argument.
+paper reports the canonical column because declaring a criterion means printing what every
+criterion does, including the one whose behaviour suits the argument least.
 
 The reference row of Figure~\ref{MS-fig:criterion} reproduces the verdicts of the main text's
 comparison exactly, though it is computed by a different script from the same frozen predictions.
@@ -1063,8 +1063,12 @@ does hold, so at most \numTypeoverlapMinerslost{} of the \numCeilingNovel{} can:
 corpus does not contain whatever the cross-tabulation would return. Carried to the whole shortfall,
 between \numBoundShortfallsharemin{} and \numBoundShortfallsharemax{} of the
 \numCeilingUncovered{} references one application of this bank fails to reach are of a type the
-training annotation never holds. That is what supports the word \emph{most}, and it is a bound,
-not a point, because the join itself is not reported here. Template discovery from that
+training annotation never holds. That is what supports the word \emph{most}. The join is now run,
+over eight shards, and it is a point: of the \numCeilingNovel{} uncovered references of absent type,
+\numContainmentAbsent{} carry a type the training annotation lacks too and \numContainmentPresentWord{} do
+not, which is \numContainmentSharePct{} of them and \numContainmentShortfallsharePct{} of the whole
+shortfall. The producer refuses to write unless the run reproduces the published decomposition,
+so a partial merge cannot become this figure; a four-shard merge was tried and refused. Template discovery from that
 corpus is separately unfinished, its rarefaction curve still climbing, so mining harder would yield
 more templates and could not supply a type the corpus does not contain.
 
@@ -1554,10 +1558,10 @@ concatenates the two embeddings; the arm appends their signed difference, so a t
 changes little of the molecule is represented directly, without having to be inferred from two
 absolute encodings. The fourth refines the first, opening no new place. It adds to each
 rule's gated identity a second identity shared by every rule of the same reaction type, so a
-template the gate suppresses can borrow what its type has learned from better-supported templates;
-a type carried by a single rule contributes nothing, and neither does a rule whose type cannot be
-assigned, because either would hand that rule a second private identity in the one place the gate
-exists to take one away.
+template the gate suppresses can borrow what its type has learned from better-supported templates.
+A type carried by a single rule contributes nothing, and neither does a rule whose type cannot be
+assigned: either would hand that rule a second private identity in the one place the gate exists
+to take one away.
 
 On validation, which is the split selection is made on, the matched baseline reaches
 \numSurvivorsBaseOne{} at $k=1$, \numSurvivorsBaseThree{} at $k=3$ and
@@ -2095,8 +2099,8 @@ this work and \numPopdefAgainstthisworkwholeWord{} against it. On the comparison
 \numPopdefSeparatingcomp{} of \numPopdefCellscomp{} separate, \numPopdefForthisworkcompWord{} for
 and \numPopdefAgainstthisworkcompWord{} against. The comparison set's cells can be read one at a
 time from Table~\ref{tab:si-intervals} and the wider population's from
-Table~\ref{tab:si-intervals-whole}, which carries the same grid for the five comparators that
-reach it.
+Table~\ref{tab:si-intervals-whole}, which carries the same grid for the \numPopdefWholearmsWord{}
+comparators that reach it, stacked in blocks because seven columns of intervals do not fit a page.
 \input{si_table_intervals_whole}
 
 Both favourable totals rest on one comparator. Without BioTransformer the wider population reads
@@ -2577,6 +2581,14 @@ ran. Two of the \numGloryxrDumpsWord{} weight files the provider loads are the s
 \numGloryxrDuplicatedmb{}~MB duplicated, which its author confirms is intended: both are Phase 1
 classes the tool scores alike.
 
+What its two columns are carried through, and what they are not. They are in the recall sweep, in
+the contrast grids on both populations and in the criterion sweep, so every verdict this paper
+prints is read against a field that includes them. They are absent from four analyses that were
+run before the columns existed and have not been re-run for them: the per-chemistry-class error
+table, the matched-length control, the drawing-equalised table and the precision table. Those four
+say nothing about GLORYxR in either direction, and this paragraph names the gap so that a reader
+meeting a five-column table beside a seven-column one knows which is which.
+
 What remains is the service the authors themselves operate, which runs the real system. It is used
 here, at module version \numComparatorsGloryxarmVersion{}, over the same
 \numPopulationN{} substrates as every other arm and on the drawing the corpus stores, in
@@ -2632,8 +2644,10 @@ into a correction declared without them. A family fixed in advance is not widene
 which is the whole of what declaring one buys. A reader may reply that the paper then prints more
 tests than its correction covers, and that reply is answered by measurement, not by the argument.
 Running the same Holm procedure over all \numHolmWidetests{} contrasts the paper prints removes
-\numHolmWideremovesWord{} of the cells the declared family licenses, the exhaustive arm's trail
-against SyGMa at a budget of five, which is a trail, not a lead, and is printed either way. And the
+\numHolmWideremovesWord{} of the cells the declared family licenses. Of those \numHolmWideremovesWord{},
+\numHolmWideleadsremovedWord{} is a lead of this work's, over MetaTox at a budget of ten, and the other
+four are trails: three of the exhaustive arm against SyGMa at budgets of one, three and five, and
+one of the interactive arm against SyGMa at a budget of one. All four are printed either way. And the
 deeper scenario is not swept for this comparator
 as it is for SyGMa. That asymmetry was decided after the matched-length control had been read,
 and this paper says so because it is exactly the kind of choice this work asks other papers to
@@ -2704,7 +2718,7 @@ macro runs end to end in a clone, which is not where it started
 (Section~\ref{sec:si-prov}).
 
 The wider sweep is over \numProvFiles{} files and its parts are printed here, since a total is
-easier to accept than to add up: \numProvUnstamped{} carry no stamp, \numProvChanged{} have a
+easier to accept than to add up. \numProvUnstamped{} carry no stamp, \numProvChanged{} have a
 producer that has changed since, \numProvProducerunknown{} have a producer the sweep cannot
 identify, \numProvCosmetic{} changed only cosmetically, \numProvCurrentunpinned{} are stamped and
 current without being pinned, and \numProvPinnedinresults{} are the pinned files that live under

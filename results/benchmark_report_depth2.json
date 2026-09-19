@@ -24,5 +24,41 @@
     "true_total": 325,
     "n_rules": 7581
   },
-  "lift_over_depth1": 0.012307692307692242
+  "lift_over_depth1": 0.012307692307692242,
+  "provenance": {
+    "script": "run_benchmark.py",
+    "script_path": "scripts/run_benchmark.py",
+    "source_sha256": "045dc873451c2e612363f736f21badeff1dc6f44041a578f955c2d378f687e8c",
+    "git_commit": "74cabe9589bb665e1632e43a5822c4732cc157c7",
+    "git_dirty": false
+  },
+  "config": {
+    "split": "test",
+    "sample": 150,
+    "sampling_seed": 42,
+    "depth": 2,
+    "beam": 10,
+    "node_budget": 2500,
+    "n_rules": 7581
+  },
+  "inputs": [
+    {
+      "path": "grail_metabolism/data/test_triples_clean.txt",
+      "exists": true,
+      "sha256_16": "5989734ab81d45ad",
+      "bytes": 636521
+    },
+    {
+      "path": "grail_metabolism/data/test_triples.txt",
+      "exists": true,
+      "sha256_16": "5989734ab81d45ad",
+      "bytes": 636521
+    },
+    {
+      "path": "grail_metabolism/data/test.sdf",
+      "exists": true,
+      "sha256_16": "72dc62b42a6eaec2",
+      "bytes": 138891883
+    }
+  ]
 }

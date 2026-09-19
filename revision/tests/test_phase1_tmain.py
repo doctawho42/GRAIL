@@ -97,4 +97,9 @@ def test_the_comparison_set_cells_reproduce_the_published_table_exactly():
             assert got[(arm, k)] == pytest.approx(value, abs=5e-5), (
                 f"{arm} at k={k}: re-tabulated {got[(arm, k)]} against published {value}")
             checked += 1
-    assert checked == 63, f"expected 7 arms by 9 budgets, compared {checked}"
+    # Nine arms now, not seven: GLORYxR contributes two columns. Read from the artifact rather
+    # than typed, so the next arm cannot pass this by leaving the count alone.
+    expected_cells = sum(len(c) for c in published.values())
+    assert checked == expected_cells, (
+        f"the published table holds {expected_cells} cells and this compared {checked}")
+    assert checked >= 63, f"the table shrank to {checked} cells"

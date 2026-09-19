@@ -2,8 +2,8 @@
  "provenance": {
   "script": "population_definition.py",
   "script_path": "scripts/typed_edit/population_definition.py",
-  "source_sha256": "67a154d80bdde7ecaf9e53cb6d96e6e7fa5593310e92429a1f84ebc351091e96",
-  "git_commit": "b0fb71e43f016725f7efc4d28acdec92d6861f9b",
+  "source_sha256": "b6fa4d46c3040fdca63b661f5b5162b6905d394466569244ed840456ecb5f86e",
+  "git_commit": "74cabe9589bb665e1632e43a5822c4732cc157c7",
   "git_dirty": true
  },
  "inputs": [
@@ -162,6 +162,18 @@
    "exists": true,
    "sha256_16": "0199d268892edc40",
    "bytes": 7275987
+  },
+  {
+   "path": "results/gloryxr_local_preds_default.json",
+   "exists": true,
+   "sha256_16": "9ab7b9b403e05acc",
+   "bytes": 6491506
+  },
+  {
+   "path": "results/gloryxr_local_preds_strict.json",
+   "exists": true,
+   "sha256_16": "ce5e08d8393be100",
+   "bytes": 6490990
   }
  ],
  "what_defines_the_comparison_set": "the intersection of the substrates each method has an entry for; the binding constraint is the 291-substrate submission list sent to the web-service comparator, which returned all 291. No substrate was removed for emitting nothing.",
@@ -173,6 +185,8 @@
    "biotransformer": 21,
    "gloryx": 0,
    "metatox": 0,
+   "gloryxr_default": 0,
+   "gloryxr_strict": 0,
    "grail_deployed": 0
   },
   "whole_test_set": {
@@ -195,6 +209,14 @@
    "metatox": {
     "substrates_with_no_prediction": 0,
     "references_they_carry": 0
+   },
+   "gloryxr_default": {
+    "substrates_with_no_prediction": 1,
+    "references_they_carry": 2
+   },
+   "gloryxr_strict": {
+    "substrates_with_no_prediction": 1,
+    "references_they_carry": 2
    }
   }
  },
@@ -715,6 +737,194 @@
       "excludes_zero": true
      }
     }
+   },
+   "gloryxr_default": {
+    "recall": {
+     "5": 0.3233,
+     "10": 0.4481,
+     "15": 0.5188,
+     "30": 0.5865,
+     "50": 0.603
+    },
+    "substrates_with_no_prediction": 0,
+    "deployed_minus_comparator": {
+     "5": {
+      "difference": -0.003,
+      "ci95": [
+       -0.0465,
+       0.0393
+      ],
+      "excludes_zero": false
+     },
+     "10": {
+      "difference": -0.015,
+      "ci95": [
+       -0.0577,
+       0.0254
+      ],
+      "excludes_zero": false
+     },
+     "15": {
+      "difference": -0.0391,
+      "ci95": [
+       -0.0783,
+       -0.0015
+      ],
+      "excludes_zero": true
+     },
+     "30": {
+      "difference": -0.0962,
+      "ci95": [
+       -0.136,
+       -0.057
+      ],
+      "excludes_zero": true
+     },
+     "50": {
+      "difference": -0.1128,
+      "ci95": [
+       -0.1575,
+       -0.0698
+      ],
+      "excludes_zero": true
+     }
+    },
+    "exhaustive_minus_comparator": {
+     "5": {
+      "difference": -0.012,
+      "ci95": [
+       -0.0563,
+       0.0312
+      ],
+      "excludes_zero": false
+     },
+     "10": {
+      "difference": 0.0075,
+      "ci95": [
+       -0.0356,
+       0.0493
+      ],
+      "excludes_zero": false
+     },
+     "15": {
+      "difference": 0.0165,
+      "ci95": [
+       -0.0244,
+       0.0561
+      ],
+      "excludes_zero": false
+     },
+     "30": {
+      "difference": 0.0662,
+      "ci95": [
+       0.0309,
+       0.1022
+      ],
+      "excludes_zero": true
+     },
+     "50": {
+      "difference": 0.0992,
+      "ci95": [
+       0.068,
+       0.1318
+      ],
+      "excludes_zero": true
+     }
+    }
+   },
+   "gloryxr_strict": {
+    "recall": {
+     "5": 0.3353,
+     "10": 0.4556,
+     "15": 0.5143,
+     "30": 0.582,
+     "50": 0.603
+    },
+    "substrates_with_no_prediction": 0,
+    "deployed_minus_comparator": {
+     "5": {
+      "difference": -0.015,
+      "ci95": [
+       -0.0587,
+       0.0269
+      ],
+      "excludes_zero": false
+     },
+     "10": {
+      "difference": -0.0226,
+      "ci95": [
+       -0.065,
+       0.0182
+      ],
+      "excludes_zero": false
+     },
+     "15": {
+      "difference": -0.0346,
+      "ci95": [
+       -0.0767,
+       0.0048
+      ],
+      "excludes_zero": false
+     },
+     "30": {
+      "difference": -0.0917,
+      "ci95": [
+       -0.1303,
+       -0.0534
+      ],
+      "excludes_zero": true
+     },
+     "50": {
+      "difference": -0.1128,
+      "ci95": [
+       -0.159,
+       -0.0687
+      ],
+      "excludes_zero": true
+     }
+    },
+    "exhaustive_minus_comparator": {
+     "5": {
+      "difference": -0.0241,
+      "ci95": [
+       -0.068,
+       0.0178
+      ],
+      "excludes_zero": false
+     },
+     "10": {
+      "difference": 0.0,
+      "ci95": [
+       -0.0429,
+       0.0413
+      ],
+      "excludes_zero": false
+     },
+     "15": {
+      "difference": 0.0211,
+      "ci95": [
+       -0.0216,
+       0.063
+      ],
+      "excludes_zero": false
+     },
+     "30": {
+      "difference": 0.0707,
+      "ci95": [
+       0.0333,
+       0.1096
+      ],
+      "excludes_zero": true
+     },
+     "50": {
+      "difference": 0.0992,
+      "ci95": [
+       0.0678,
+       0.1318
+      ],
+      "excludes_zero": true
+     }
+    }
    }
   },
   "the whole evaluated test set": {
@@ -1203,6 +1413,194 @@
       "ci95": [
        0.0564,
        0.0912
+      ],
+      "excludes_zero": true
+     }
+    }
+   },
+   "gloryxr_default": {
+    "recall": {
+     "5": 0.3331,
+     "10": 0.4605,
+     "15": 0.5306,
+     "30": 0.6057,
+     "50": 0.6219
+    },
+    "substrates_with_no_prediction": 1,
+    "deployed_minus_comparator": {
+     "5": {
+      "difference": -0.0046,
+      "ci95": [
+       -0.0256,
+       0.0163
+      ],
+      "excludes_zero": false
+     },
+     "10": {
+      "difference": -0.0212,
+      "ci95": [
+       -0.0411,
+       -0.0007
+      ],
+      "excludes_zero": true
+     },
+     "15": {
+      "difference": -0.0431,
+      "ci95": [
+       -0.0626,
+       -0.0235
+      ],
+      "excludes_zero": true
+     },
+     "30": {
+      "difference": -0.0913,
+      "ci95": [
+       -0.1118,
+       -0.0704
+      ],
+      "excludes_zero": true
+     },
+     "50": {
+      "difference": -0.1063,
+      "ci95": [
+       -0.1281,
+       -0.0838
+      ],
+      "excludes_zero": true
+     }
+    },
+    "exhaustive_minus_comparator": {
+     "5": {
+      "difference": -0.0273,
+      "ci95": [
+       -0.049,
+       -0.0055
+      ],
+      "excludes_zero": true
+     },
+     "10": {
+      "difference": -0.0216,
+      "ci95": [
+       -0.0435,
+       0.0004
+      ],
+      "excludes_zero": false
+     },
+     "15": {
+      "difference": -0.0012,
+      "ci95": [
+       -0.0214,
+       0.0185
+      ],
+      "excludes_zero": false
+     },
+     "30": {
+      "difference": 0.0427,
+      "ci95": [
+       0.0242,
+       0.0612
+      ],
+      "excludes_zero": true
+     },
+     "50": {
+      "difference": 0.0955,
+      "ci95": [
+       0.0775,
+       0.1136
+      ],
+      "excludes_zero": true
+     }
+    }
+   },
+   "gloryxr_strict": {
+    "recall": {
+     "5": 0.3577,
+     "10": 0.4771,
+     "15": 0.5306,
+     "30": 0.5961,
+     "50": 0.6203
+    },
+    "substrates_with_no_prediction": 1,
+    "deployed_minus_comparator": {
+     "5": {
+      "difference": -0.0293,
+      "ci95": [
+       -0.0505,
+       -0.0083
+      ],
+      "excludes_zero": true
+     },
+     "10": {
+      "difference": -0.0377,
+      "ci95": [
+       -0.0582,
+       -0.0175
+      ],
+      "excludes_zero": true
+     },
+     "15": {
+      "difference": -0.0431,
+      "ci95": [
+       -0.0635,
+       -0.0224
+      ],
+      "excludes_zero": true
+     },
+     "30": {
+      "difference": -0.0816,
+      "ci95": [
+       -0.1017,
+       -0.0608
+      ],
+      "excludes_zero": true
+     },
+     "50": {
+      "difference": -0.1047,
+      "ci95": [
+       -0.1268,
+       -0.0822
+      ],
+      "excludes_zero": true
+     }
+    },
+    "exhaustive_minus_comparator": {
+     "5": {
+      "difference": -0.052,
+      "ci95": [
+       -0.0733,
+       -0.0307
+      ],
+      "excludes_zero": true
+     },
+     "10": {
+      "difference": -0.0381,
+      "ci95": [
+       -0.0591,
+       -0.017
+      ],
+      "excludes_zero": true
+     },
+     "15": {
+      "difference": -0.0012,
+      "ci95": [
+       -0.0219,
+       0.0189
+      ],
+      "excludes_zero": false
+     },
+     "30": {
+      "difference": 0.0524,
+      "ci95": [
+       0.0337,
+       0.0712
+      ],
+      "excludes_zero": true
+     },
+     "50": {
+      "difference": 0.097,
+      "ci95": [
+       0.079,
+       0.1154
       ],
       "excludes_zero": true
      }

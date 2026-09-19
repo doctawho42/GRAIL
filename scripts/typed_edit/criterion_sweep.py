@@ -55,6 +55,12 @@ COMPARATORS = {
     # GLORYx, from the service its authors operate: see gloryx_via_service.py for why a
     # local build is not possible here.
     "GLORYx": ("results/gloryx_service_preds.json", "predictions"),
+    # GLORYxR in both of its site-of-metabolism settings. The comment above records why an arm
+    # missing from this dict cannot change a sign it never entered; that applies here with force,
+    # because GLORYxR is the strongest comparator against the deployed arm at several budgets, so
+    # leaving it out would have held the grid's verdicts against a field it beats.
+    "GLORYxR default SoM": ("results/gloryxr_local_preds_default.json", "predictions"),
+    "GLORYxR strict SoM": ("results/gloryxr_local_preds_strict.json", "predictions"),
 }
 
 

@@ -14,7 +14,8 @@ from _acs_table import acs_table
 ROOT = Path(__file__).resolve().parent.parent
 LABEL = {"whole bank": "GRAIL exh.", "trained budget": "GRAIL int.",
          "metatox": "MetaTox", "sygma": "SyGMa", "metapredictor": "MetaPred.",
-         "biotransformer": "BioTrans.", "gloryx": "GLORYx"}
+         "biotransformer": "BioTrans.", "gloryx": "GLORYx",
+         "gloryxr_default": "GLxR d.", "gloryxr_strict": "GLxR s."}
 
 
 def blend_column():

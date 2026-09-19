@@ -68,6 +68,11 @@ ARMS = {
         "metapredictor": ("list", "artifacts/tier2_1170/metapredictor_preds.json", None),
         "biotransformer": ("list", "results/biotransformer_allhuman_one_step_preds.json", None),
         "gloryx": ("list", "results/gloryx_service_preds.json", "predictions"),
+        # GLORYxR in both of its site-of-metabolism settings, which is one system under a declared
+        # knob and therefore two columns: printing one of two swept settings is the thing this
+        # work objects to in other comparisons.
+        "gloryxr_default": ("list", "results/gloryxr_local_preds_default.json", "predictions"),
+        "gloryxr_strict": ("list", "results/gloryxr_local_preds_strict.json", "predictions"),
     },
     "evaluated1170": {
         "whole bank": ("pool", "results/widepools_fulltest/w*.json"),
@@ -81,9 +86,15 @@ ARMS = {
         # revision/phase2_gloryx_merge.py refuses a union that does not cover the population, and
         # coverage_gaps() checks the arm as declared.
         "gloryx": ("list", "results/gloryx_service_preds_evaluated1170.json", "predictions"),
-        # metatox still has no file on this population: it is a web service with no programmatic
-        # interface recorded here, so Phase 2 wrote its submission files and stopped. The cells
-        # stay absent rather than being filled from a narrower population.
+        "gloryxr_default": ("list", "results/gloryxr_local_preds_default.json", "predictions"),
+        "gloryxr_strict": ("list", "results/gloryxr_local_preds_strict.json", "predictions"),
+        "metatox": ("list", "results/metatox_smirks_preds_evaluated1170.json", "predictions"),
+        # This said metatox had no file on this population and that its cells stayed absent rather
+        # than being filled from a narrower one. That was true when it was written and is not now:
+        # the second submission was made, both deliveries came back, and
+        # revision/phase2_metatox_merge.py wrote the column over all 1,170. The axis in
+        # scripts/typed_edit/population_definition.py has read it since; leaving this dict behind
+        # would have measured a narrower field here than the paper reports elsewhere.
     },
 }
 

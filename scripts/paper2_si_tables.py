@@ -158,7 +158,8 @@ def si_criterion_levels():
              "inchikey_tautomer": "tautomer (default)"}
     label = {"GRAIL exhaustive": "GRAIL exh.", "GRAIL interactive": "GRAIL int.",
              "MetaTox": "MetaTox", "SyGMa": "SyGMa", "MetaPredictor": "MetaPred.",
-             "BioTransformer": "BioTrans.", "GLORYx": "GLORYx"}
+             "BioTransformer": "BioTrans.", "GLORYx": "GLORYx",
+             "GLORYxR default SoM": "GLORYxR d.", "GLORYxR strict SoM": "GLORYxR s."}
     _present = list(d["by_criterion"][crits[0]]["recall_micro"])
     # Filtering the label list against the artifact drops an arm the artifact no longer has. It
     # cannot notice one the artifact has GAINED, and that is the direction this table lost a
@@ -187,7 +188,9 @@ def si_criterion_levels():
     # MetaPredictor at a budget of eight. The type is smaller and the rows tighter so the table
     # ends above the footer.
     return ("\\begin{table*}[t]\n\\centering\\scriptsize\n\\setlength{\\tabcolsep}{4pt}\n"
-            "\\renewcommand{\\arraystretch}{0.92}\n"
+            # Two more arms per criterion block made this float 10.6 pt taller than the page
+            # allows. The row stretch comes down rather than a criterion coming out.
+            "\\renewcommand{\\arraystretch}{0.82}\n"
             f"\\begin{{tabular}}{{l{'r' * len(ks)}}}\n\\toprule\n"
             f"arm & \\multicolumn{{{len(ks)}}}{{c}}{{output budget $k$}} \\\\\n"
             f"\\cmidrule(lr){{2-{len(ks) + 1}}}\n & {head} \\\\\n"
@@ -882,8 +885,18 @@ def si_macro():
 
     def phrase(k, name, micro_sep):
         a, b = [x.strip() for x in name.split(" - ")]
-        who = {"metatox": "MetaTox", "sygma": "SyGMa", "metapredictor": "MetaPredictor",
-               "biotransformer": "BioTransformer", "gloryx": "GLORYx"}.get(b, b)
+        # .get(b, b) fell back to the artifact's own key, which put "gloryxr_default" into a
+        # CAPTION: an internal identifier in the prose a reader reads, and an underscore LaTeX
+        # takes for a subscript, so the build threw twenty errors from a sentence. A name with no
+        # spelling here stops the build rather than reaching the page as a variable name.
+        WHO = {"metatox": "MetaTox", "sygma": "SyGMa", "metapredictor": "MetaPredictor",
+               "biotransformer": "BioTransformer", "gloryx": "GLORYx",
+               "gloryxr_default": "GLORYxR (default SoM)",
+               "gloryxr_strict": "GLORYxR (strict SoM)"}
+        if b not in WHO:
+            raise SystemExit(f"REFUSING: this caption has no spelling for the arm {b!r} and would "
+                             f"print the artifact's own key in a sentence.")
+        who = WHO[b]
         return (f"{SHORT.get(a, a)}--{who} at ${k}$"
                 + ("$^{\\mu}$" if micro_sep else "$^{M}$"))
     ks = sorted((int(k) for k in macro), key=int)
@@ -894,7 +907,8 @@ def si_macro():
     # hardcoded part is only how each is spelled, so a new one stops the build instead.
     LABELS = {"whole bank": "GRAIL exh.", "trained budget": "GRAIL int.",
               "metatox": "MetaTox", "sygma": "SyGMa", "metapredictor": "MetaPred.",
-              "biotransformer": "BioTrans.", "gloryx": "GLORYx"}
+              "biotransformer": "BioTrans.", "gloryx": "GLORYx",
+              "gloryxr_default": "GLORYxR d.", "gloryxr_strict": "GLORYxR s."}
     present = list(macro[str(ks[0])])
     unlabelled = [a for a in present if a not in LABELS]
     if unlabelled:
@@ -935,8 +949,11 @@ def si_macro():
             " \\\\\n" + "\n".join(rows))
     head = " & ".join(label for _, label in arms)
     chead = " & ".join(lab for _, lab in comps)
+    # Two more comparator columns put this 25 pt over the measure. Ten columns of five-character
+    # numbers have padding to give before the type does, so the column separation comes down and
+    # the type stays readable.
     return ("\\begin{table}[h]\n\\centering\\footnotesize\n"
-            "\\setlength{\\tabcolsep}{3pt}\n"
+            "\\setlength{\\tabcolsep}{1.5pt}\n"
             f"\\begin{{tabular}}{{r{'r' * len(arms)}}}\n\\toprule\n"
             f"$k$ & {head} \\\\\n\\midrule\n"
             + "\n".join(level_rows)
@@ -1051,16 +1068,37 @@ def si_short():
     short = d["substrates_whose_list_is_shorter_than_the_budget"]
     ks = sorted(short, key=int)
     arms = list(short[ks[0]])
+    # label.get(a, a) used to fall back to the raw artifact key, which printed "gloryx" in
+    # lower case beside siblings that print "GLORYx" for as long as nobody looked, and then broke
+    # the build outright when a key with an underscore arrived: LaTeX read gloryxr_default as a
+    # subscript and threw twenty errors. A silent fallback to an internal identifier is not a
+    # label, so an arm with no spelling here stops the build the way it does in every other table
+    # in this file.
     label = {"whole bank": "GRAIL exh.", "trained budget": "GRAIL int.", "metatox": "MetaTox",
-             "sygma": "SyGMa", "metapredictor": "MetaPred.", "biotransformer": "BioTrans."}
-    rows = "\n".join(
-        f"${k}$ & " + " & ".join(str(short[k][a]) for a in arms) + " \\\\" for k in ks)
-    head = " & ".join(label.get(a, a) for a in arms)
+             "sygma": "SyGMa", "metapredictor": "MetaPred.", "biotransformer": "BioTrans.",
+             "gloryx": "GLORYx", "gloryxr_default": "GLORYxR d.",
+             "gloryxr_strict": "GLORYxR s."}
+    _unlabelled = [a for a in arms if a not in label]
+    if _unlabelled:
+        raise SystemExit(
+            f"REFUSING: this table has no spelling for {', '.join(_unlabelled)} and would print "
+            f"the artifact's own key in its place.")
+    # Nine arms across ran 126 pt past a one-column page, so the arms are cut into blocks of five
+    # and stacked. Every arm the artifact holds is still printed.
+    PER_BLOCK = 5
+    chunks = [arms[i:i + PER_BLOCK] for i in range(0, len(arms), PER_BLOCK)]
+
+    def tabular(group):
+        body = "\n".join(
+            f"${k}$ & " + " & ".join(str(short[k][a]) for a in group) + " \\\\" for k in ks)
+        head = " & ".join(label[a] for a in group)
+        return (f"\\begin{{tabular}}{{r{'r' * len(group)}}}\n\\toprule\n"
+                f"$k$ & {head} \\\\\n\\midrule\n" + body
+                + "\n\\bottomrule\n\\end{tabular}\n")
+
     return ("\\begin{table}[h]\n\\centering\\small\n"
-            f"\\begin{{tabular}}{{r{'r' * len(arms)}}}\n\\toprule\n"
-            f"$k$ & {head} \\\\\n\\midrule\n" + rows
-            + "\n\\bottomrule\n\\end{tabular}\n"
-            "\\caption{Substrates whose returned list is shorter than the budget, per arm and per "
+            + "\n\\vspace{5pt}\n\n".join(tabular(g) for g in chunks)
+            + "\\caption{Substrates whose returned list is shorter than the budget, per arm and per "
             f"budget, of the {d['population']['n']} in the comparison set. Where a method has run "
             "out of candidates the budget has stopped measuring ranking and is measuring list "
             "length, so these counts bear directly on how the leads at the widest budgets should "
@@ -1138,7 +1176,8 @@ def si_intervals_whole():
             ("deployed_minus_comparator", "interactive"))
 
     LABELS = {"metatox": "MetaTox", "sygma": "SyGMa", "metapredictor": "MetaPredictor",
-              "biotransformer": "BioTransformer", "gloryx": "GLORYx"}
+              "biotransformer": "BioTransformer", "gloryx": "GLORYx",
+              "gloryxr_default": "GLORYxR def.", "gloryxr_strict": "GLORYxR str."}
     present = sorted(a for a, v in con.items()
                      if isinstance(v, dict) and any(k in v for k, _ in ARMS))
     unlabelled = [c for c in present if c not in LABELS]
@@ -1153,30 +1192,40 @@ def si_intervals_whole():
     def trim(x):
         return ("$-$" if x < 0 else "+") + f"{abs(x):.3f}".lstrip("0")
 
-    blocks = []
-    for arm, label in ARMS:
-        rows = []
-        for k in ks:
-            cells = []
-            for key, _ in comps:
-                c = (con[key].get(arm) or {}).get(str(k))
-                if c is None:
-                    cells.append("---")
-                    continue
-                star = "$^{*}$" if c["excludes_zero"] else "\\phantom{$^{*}$}"
-                cells.append(f"{trim(c['difference'])}{star} "
-                             f"[{trim(c['ci95'][0])}, {trim(c['ci95'][1])}]")
-            rows.append(f"${k}$ & " + " & ".join(cells) + " \\\\")
-        blocks.append(f"\\multicolumn{{{len(comps) + 1}}}{{l}}{{\\emph{{GRAIL {label}}} minus}}"
-                      " \\\\\n" + "\n".join(rows))
-    head = " & ".join(lab for _, lab in comps)
+    # Seven comparator columns ran 154 pt past a one-column page, so the grid is cut into blocks of
+    # at most four and stacked. Every cell the artifact holds is still printed: narrowing the table
+    # by dropping a comparator is the failure this table's own caption forbids, and shrinking the
+    # type further would put a bootstrap interval below six point.
+    PER_BLOCK = 4
+    chunks = [comps[i:i + PER_BLOCK] for i in range(0, len(comps), PER_BLOCK)]
+
+    def tabular(group):
+        blocks = []
+        for arm, label in ARMS:
+            rows = []
+            for k in ks:
+                cells = []
+                for key, _ in group:
+                    c = (con[key].get(arm) or {}).get(str(k))
+                    if c is None:
+                        cells.append("---")
+                        continue
+                    star = "$^{*}$" if c["excludes_zero"] else "\\phantom{$^{*}$}"
+                    cells.append(f"{trim(c['difference'])}{star} "
+                                 f"[{trim(c['ci95'][0])}, {trim(c['ci95'][1])}]")
+                rows.append(f"${k}$ & " + " & ".join(cells) + " \\\\")
+            blocks.append(f"\\multicolumn{{{len(group) + 1}}}{{l}}{{\\emph{{GRAIL {label}}} minus}}"
+                          " \\\\\n" + "\n".join(rows))
+        head = " & ".join(lab for _, lab in group)
+        return ("\\begin{tabular}{r" + "l" * len(group) + "}\n\\toprule\n"
+                f"$k$ & {head} \\\\\n\\midrule\n"
+                + "\n\\midrule\n".join(blocks)
+                + "\n\\bottomrule\n\\end{tabular}\n")
+
     return ("\\begin{table}[h]\n\\centering\\scriptsize\n"
             "\\setlength{\\tabcolsep}{2.5pt}\n"
-            "\\begin{tabular}{r" + "l" * len(comps) + "}\n\\toprule\n"
-            f"$k$ & {head} \\\\\n\\midrule\n"
-            + "\n\\midrule\n".join(blocks)
-            + "\n\\bottomrule\n\\end{tabular}\n"
-            "\\caption{Every difference between a GRAIL arm and a comparator on the whole "
+            + "\n\\vspace{5pt}\n\n".join(tabular(g) for g in chunks)
+            + "\\caption{Every difference between a GRAIL arm and a comparator on the whole "
             "evaluated test set, the companion to Table~\\ref{tab:si-intervals}, in micro recall "
             "with its paired bootstrap 95\\% interval; leading zeros are dropped. $^{*}$ marks an "
             "interval excluding zero. The budgets are the five this axis sweeps rather than the "
@@ -1202,7 +1251,8 @@ def si_intervals():
     # comparator with no heading stops the build: a table that silently prints four of five while
     # the main text reads a verdict off the fifth is worse than one that does not build.
     LABELS = {"metatox": "MetaTox", "sygma": "SyGMa", "metapredictor": "MetaPredictor",
-              "biotransformer": "BioTransformer", "gloryx": "GLORYx"}
+              "biotransformer": "BioTransformer", "gloryx": "GLORYx",
+              "gloryxr_default": "GLORYxR def.", "gloryxr_strict": "GLORYxR str."}
     _present = sorted({pair.split(" - ")[1] for row in con.values() for pair in row
                        if pair.startswith("whole bank - ")} - {"trained budget"})
     _unlabelled = [c for c in _present if c not in LABELS]
@@ -1217,39 +1267,48 @@ def si_intervals():
         """+0.0496 -> +.050, so a cell is a number and not a paragraph."""
         return ("$-$" if x < 0 else "+") + f"{abs(x):.3f}".lstrip("0")
 
-    blocks = []
-    for arm, label in (("whole bank", "exhaustive"), ("trained budget", "interactive")):
-        rows = []
-        for k in ks:
-            cells = []
-            for key, _ in comps:
-                c = con[str(k)].get(f"{arm} - {key}")
-                if c is None:
-                    cells.append("---"); continue
-                # A second mark for the family-wise reading: * separates per comparison,
-                # dagger says it does not survive Holm over the whole sweep.
-                key_cell = f"{arm} - {key} @ {k}"
-                holm = mult["cells"].get(key_cell, {})
-                star = "$^{*}$" if c["excludes_zero"] else "\\phantom{$^{*}$}"
-                if c["excludes_zero"] and holm.get("separates_after_holm") is False:
-                    star += "$^{\\dagger}$"
-                else:
-                    star += "\\phantom{$^{\\dagger}$}"
-                cells.append(f"{trim(c['gap'])}{star} [{trim(c['ci95'][0])}, {trim(c['ci95'][1])}]")
-            rows.append(f"${k}$ & " + " & ".join(cells) + " \\\\")
-        blocks.append(f"\\multicolumn{{{len(comps) + 1}}}{{l}}{{\\emph{{GRAIL {label}}} minus}}"
-                      " \\\\\n" + "\n".join(rows))
-    head = " & ".join(lab for _, lab in comps)
-    # A fifth comparator column put this 78 pt over the measure at \footnotesize. The type and
-    # the column padding come down rather than a column coming out: the caption says the table
-    # holds every difference between a GRAIL arm and a comparator, and it has to.
+    # A fifth comparator column put this 78 pt over the measure at \footnotesize and the type came
+    # down instead of a column coming out, because the caption says the table holds every
+    # difference between a GRAIL arm and a comparator. A seventh put it 182 pt over, which no type
+    # size recovers. The grid is cut into blocks of at most four comparators and stacked; every
+    # cell the artifact holds is still printed.
+    PER_BLOCK = 4
+    chunks = [comps[i:i + PER_BLOCK] for i in range(0, len(comps), PER_BLOCK)]
+
+    def tabular(group):
+        blocks = []
+        for arm, label in (("whole bank", "exhaustive"), ("trained budget", "interactive")):
+            rows = []
+            for k in ks:
+                cells = []
+                for key, _ in group:
+                    c = con[str(k)].get(f"{arm} - {key}")
+                    if c is None:
+                        cells.append("---"); continue
+                    # A second mark for the family-wise reading: * separates per comparison,
+                    # dagger says it does not survive Holm over the whole sweep.
+                    key_cell = f"{arm} - {key} @ {k}"
+                    holm = mult["cells"].get(key_cell, {})
+                    star = "$^{*}$" if c["excludes_zero"] else "\\phantom{$^{*}$}"
+                    if c["excludes_zero"] and holm.get("separates_after_holm") is False:
+                        star += "$^{\\dagger}$"
+                    else:
+                        star += "\\phantom{$^{\\dagger}$}"
+                    cells.append(f"{trim(c['gap'])}{star} "
+                                 f"[{trim(c['ci95'][0])}, {trim(c['ci95'][1])}]")
+                rows.append(f"${k}$ & " + " & ".join(cells) + " \\\\")
+            blocks.append(f"\\multicolumn{{{len(group) + 1}}}{{l}}{{\\emph{{GRAIL {label}}} minus}}"
+                          " \\\\\n" + "\n".join(rows))
+        head = " & ".join(lab for _, lab in group)
+        return ("\\begin{tabular}{r" + "l" * len(group) + "}\n\\toprule\n"
+                f"$k$ & {head} \\\\\n\\midrule\n"
+                + "\n\\midrule\n".join(blocks)
+                + "\n\\bottomrule\n\\end{tabular}\n")
+
     return ("\\begin{table}[h]\n\\centering\\scriptsize\n"
             "\\setlength{\\tabcolsep}{2.5pt}\n"
-            "\\begin{tabular}{r" + "l" * len(comps) + "}\n\\toprule\n"
-            f"$k$ & {head} \\\\\n\\midrule\n"
-            + "\n\\midrule\n".join(blocks)
-            + "\n\\bottomrule\n\\end{tabular}\n"
-            "\\caption{Every difference between a GRAIL arm and a comparator on the comparison "
+            + "\n\\vspace{5pt}\n\n".join(tabular(g) for g in chunks)
+            + "\\caption{Every difference between a GRAIL arm and a comparator on the comparison "
             "set, in micro recall, with its paired bootstrap 95\\% interval; leading zeros are "
             "dropped. $^{*}$ marks an interval excluding zero, which is the condition under which "
             "the paper claims a lead or a trail, and the verdicts in the main text and in "

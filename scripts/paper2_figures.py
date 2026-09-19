@@ -33,7 +33,10 @@ OUT = ROOT / "paper2"
 # pair.
 # Okabe-Ito, colour-blind safe. The seventh entry arrived with the fifth comparator; a
 # modulo into a six-colour list had given it the first arm's blue.
-PALETTE = ["#0072B2", "#D55E00", "#009E73", "#B07A00", "#AD5A87", "#56514C", "#7A5C3E"]
+PALETTE = ["#0072B2", "#D55E00", "#009E73", "#B07A00", "#AD5A87", "#56514C", "#7A5C3E",
+           # An eighth, for GLORYxR's two settings, which share it. Chosen away from the mauve at
+           # index 4 and the blue at index 0, the two it could be confused with.
+           "#5B3FA8"]
 
 # Polarity, for the outcome bands of the sweep. These are regions rather than entities, so
 # they must not wear a series hue: the first draft shaded "GRAIL leads" in the same blue as
@@ -107,7 +110,13 @@ def fig_sweep():
              "sygma": ("SyGMa", "--", "v", PALETTE[3]),
              "metapredictor": ("MetaPredictor", "--", "D", PALETTE[4]),
              "biotransformer": ("BioTransformer", "--", "*", PALETTE[5]),
-             "gloryx": ("GLORYx", "--", "P", PALETTE[6])}
+             "gloryx": ("GLORYx", "--", "P", PALETTE[6]),
+             # GLORYxR's two site-of-metabolism settings share one hue and differ in dash and
+             # marker, because they are one system under one declared knob and not two systems.
+             # Giving them separate hues would say the opposite, and the palette is out of hues
+             # that stay apart in print at this size anyway.
+             "gloryxr_default": ("GLORYxR, default SoM", "--", "X", PALETTE[7]),
+             "gloryxr_strict": ("GLORYxR, strict SoM", ":", "<", PALETTE[7])}
     # An arm the sweep computed and this figure has no style for would be a line the reader never
     # sees while the abstract counts the method: that is how the fifth comparator went missing.
     unstyled = [a for a in rec[str(ks[0])] if a not in style]
@@ -115,7 +124,10 @@ def fig_sweep():
         raise SystemExit(f"deployment_table.json carries arms this figure has no style for: "
                          f"{', '.join(unstyled)}")
 
-    fig, ax = plt.subplots(figsize=(W, 2.5))
+    # Taller than the data needs, because the legend sits under the axes. At seven series it
+    # fitted inside the lower right; at nine it covered the curves it was naming and the curves
+    # ran through its text, and its opaque background also cut a hole in the "leads" band.
+    fig, ax = plt.subplots(figsize=(W, 3.15))
     for arm, (lab, ls, mk, col) in style.items():
         if arm not in rec[str(ks[0])]:
             continue
@@ -164,7 +176,8 @@ def fig_sweep():
                 zip([(a, style[a]) for a in style if a in rec[str(ks[0])]], handles)}
     order = sorted(labels, key=lambda lab: -rec[str(ks[-1])][by_label[lab][0]])
     ax.legend([by_label[lab][1] for lab in order], order,
-              loc="lower right", fontsize=6.4, handlelength=1.8)
+              loc="upper center", bbox_to_anchor=(0.5, -0.19), ncol=3, frameon=False,
+              fontsize=6.2, handlelength=1.8, columnspacing=1.2, handletextpad=0.5)
     ax.set_ylim(0, 0.78)
     # Nine budgets on a logarithmic axis crowd where they are closest together, at 8 and 10.
     ax.tick_params(axis="x", labelsize=6.0)
@@ -186,11 +199,20 @@ def fig_ceiling():
     vals = [g["novel_type"], g["known_type"], g["untypeable"]]
     cols = [PALETTE[1], PALETTE[3], INK_FAINT]
     left = 0
+    handles = []
     for v, c, lab in zip(vals, cols, labels):
-        a1.barh(0, v, left=left, color=c, height=0.5, edgecolor="white", lw=0.6)
+        b = a1.barh(0, v, left=left, color=c, height=0.5, edgecolor="white", lw=0.6)
         a1.text(left + v / 2, 0, str(v), ha="center", va="center", fontsize=7,
                 color="white" if c != INK_FAINT else INK)
+        handles.append((b, lab.replace("\n", " ")))
         left += v
+    # The three segments carried no key. `labels` was written above and never drawn -- the loop
+    # bound `lab` and dropped it -- so the panel showed three numbers in three colours and the
+    # caption named none of them. Drawn above the bar rather than inside it, because the narrowest
+    # segment is forty references wide and no label fits in it.
+    a1.legend([h[0] for h in handles], [h[1] for h in handles], loc="lower left",
+              bbox_to_anchor=(0.0, 1.02), ncol=3, frameon=False, fontsize=6.2,
+              handlelength=1.1, handleheight=0.7, columnspacing=1.1, handletextpad=0.4)
     hit = usp["overlap"]["misses_those_types_carry"]
     a1.barh(-0.75, hit, color=PALETTE[0], height=0.5)
     a1.text(hit + 8, -0.75, f"{hit} recoverable from "
@@ -222,7 +244,11 @@ def fig_ceiling():
     # the eye reads the height from; the type count now rides under the tick where it names the
     # axis position rather than the height.
     for i, c in enumerate(cur):
-        a2.text(i, share[i] + 0.02, f"{share[i]:.2f}", ha="center", fontsize=6.5)
+        # The line that draws the four bars as one sequence passes through its own markers, and
+        # at 0.09 and 0.03 the value label sat on top of it: the marker landed on the digits. The
+        # label is lifted clear and carries an opaque patch, so the line runs behind it either way.
+        a2.text(i, share[i] + 0.055, f"{share[i]:.2f}", ha="center", fontsize=6.5, zorder=5,
+                bbox=dict(boxstyle="round,pad=0.12", fc="white", ec="none"))
     a2.set_xticks(x)
     a2.set_xticklabels([f"exact\nmultiset\n{cur[0]['types']} types",
                         f"counts\ndropped\n{cur[1]['types']} types",
@@ -230,12 +256,21 @@ def fig_ceiling():
                         f"bond\ncount\n{cur[3]['types']} types"],
                        fontsize=6.5)
     a2.set_ylabel("share of misses in singleton types")
-    a2.set_ylim(0, 1.0)
+    # Headroom for the two annotations. Lifting the value labels clear of the connecting line
+    # pushed the tallest of them into "the type definition widens", so the annotations move into a
+    # band of their own above the bars instead of sharing the top of the data area with them.
+    a2.set_ylim(0, 1.15)
+    a2.set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1.0])
     a2.axhline(0.5, color=INK_FAINT, lw=0.6, ls=":")
-    a2.text(-0.35, 0.985, "the type definition widens, left to right", fontsize=6.2, ha="left",
+    # The line marked half and said so nowhere, in the figure or the caption.
+    a2.text(3.45, 0.515, "half the misses", fontsize=5.8, ha="right", va="bottom",
+            color=INK_FAINT)
+    a2.text(-0.35, 1.14, "the type definition widens, left to right", fontsize=6.2, ha="left",
             va="top", color=INK_MUTED)
-    a2.text(3.35, 0.93, "hatched: the type names\na transformation", fontsize=6.2, ha="right",
-            color=PALETTE[1])
+    # Back inside the panel, over the two short bars, where it fits on its own. The header band
+    # is one line wide at this figure's width and the two annotations ran into each other there.
+    a2.text(3.45, 0.95, "hatched: the type names\na transformation", fontsize=6.2, ha="right",
+            va="top", color=PALETTE[1])
     a2.text(3.35, 0.16, "plain: it does not", fontsize=6.2, ha="right", color=INK_MUTED)
     save(fig, "fig_ceiling")
     plt.close(fig)
@@ -448,12 +483,30 @@ def fig_case():
                 dx = NUDGE if nudged % 2 else -NUDGE
             occupied[level] = here
             off = LEVELS[level] if side == "up" else -LEVELS[level]
+            # The text is opaque and sits above every line in the panel. Without that, two
+            # lines ran THROUGH a label: the k=15 guide, which is drawn at zorder 0 but shows
+            # through the gaps in the glyphs, and a neighbour's leader, which has to cross the
+            # inner label band to reach the outer one. On the stored exhaustive row both crossed
+            # "dFdCTP rule 1745" -- the leader struck the P and the 5 -- and a strike-through in
+            # a second colour reads as a correction mark rather than as a connector.
+            # The leader and the label are TWO artists, and that is the whole of the fix. An
+            # annotation draws its text and its arrow together under one zorder, and the arrow is
+            # drawn inside the annotation rather than as a child of the axes, so raising the text
+            # or lowering ann.arrow_patch moves neither past the other -- both were tried. On the
+            # stored exhaustive row dFdU sits at the outer level and dFdCTP at the inner one, so
+            # dFdU's leader has to cross dFdCTP's text; it struck the P and the 5 in a second
+            # colour, which reads as a correction mark and not as a connector. Nudging cannot
+            # help: the leader must reach its point and the point is beyond the inner band. Drawn
+            # apart, every leader is under every label and the labels are opaque.
+            if level or dx:
+                a2.annotate("", (c["rank"], y), textcoords="offset points", xytext=(dx, off),
+                            arrowprops=dict(arrowstyle="-", lw=0.5, color=col,
+                                            shrinkA=1, shrinkB=3), zorder=3)
             a2.annotate(f"{name}\nrule {c['rule_id']}", (c["rank"], y),
                         textcoords="offset points", xytext=(dx, off),
                         ha="center", va="bottom" if side == "up" else "top",
-                        fontsize=6.0, color=col, linespacing=1.15,
-                        arrowprops=dict(arrowstyle="-", lw=0.5, color=col,
-                                        shrinkA=1, shrinkB=3) if (level or dx) else None)
+                        fontsize=6.0, color=col, linespacing=1.15, zorder=6,
+                        bbox=dict(boxstyle="round,pad=0.08", fc="white", ec="none"))
     for k in (15, 30):
         a2.axvline(k, color=INK_FAINT, lw=0.7, ls=":", zorder=0)
         a2.annotate(f"$k={k}$", (k, -1.02), ha="center", fontsize=6.5, color=INK_MUTED)
@@ -510,7 +563,11 @@ def fig_criterion():
     # One letter per comparator, and a name the figure cannot draw is a refusal rather than a
     # blank cell: the grid is read against a different comparator in almost every column.
     LETTER = {"MetaTox": "M", "SyGMa": "S", "MetaPredictor": "P", "GLORYx": "G",
-              "BioTransformer": "B"}
+              "BioTransformer": "B",
+              # Two characters, because GLORYxR contributes two columns and a single letter would
+              # collapse the setting the cell was read against -- which is the knob this paper
+              # asks other papers to declare.
+              "GLORYxR default SoM": "Rd", "GLORYxR strict SoM": "Rs"}
 
     grid, marks = [], []
     for crit in order:

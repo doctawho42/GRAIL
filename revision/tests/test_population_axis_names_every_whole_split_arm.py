@@ -29,6 +29,7 @@ out; it may not be left out silently.
 """
 from __future__ import annotations
 
+import glob
 import json
 import sys
 from pathlib import Path
@@ -51,18 +52,48 @@ import _population as shared  # noqa: E402
 # control raise FileNotFoundError in any clone -- a completeness gate that cannot run is worse
 # than no gate, because its silence reads as a pass.
 
-# Candidate columns: a prediction file is a candidate if it carries per-substrate predictions for
-# the evaluated population. Named explicitly rather than globbed, because a glob over results/
-# would sweep in pools, caches and shards and turn this gate into a survey of the directory.
-CANDIDATES = {
-    "sygma": "results/sygma_fulltest_predictions.json",
-    "metapredictor": "artifacts/tier2_1170/metapredictor_preds.json",
-    "biotransformer": "results/biotransformer_fulltest_preds.json",
-    "gloryx": "results/gloryx_service_preds_evaluated1170.json",
-    "metatox": "results/metatox_1170_preds.json",
-}
+# Candidate columns are DISCOVERED, and the first version of this file typed them into a dict.
+# That dict was hand-maintained, which is the defect this gate exists to catch: the producer's
+# WHOLE_TEST is hand-maintained, a column went missing from it in silence, and the gate written to
+# notice reproduced the same blind spot one level up. It did not notice GLORYxR -- two files, both
+# covering 1,170 of 1,170 -- because nobody added them to the list, which is precisely the failure
+# mode it was written for. A gate whose completeness is maintained by the same hand as the thing it
+# checks is not a completeness gate.
+#
+# The original objection to globbing was that a sweep of results/ would drag in pools, caches and
+# shards. Measured rather than assumed: over results/**/*pred*.json and artifacts/**/*pred*.json,
+# exactly seven files carry per-substrate predictions reaching the floor, and all seven are
+# comparator columns. GRAIL's own pools are not named *pred*, so the naming convention answers the
+# objection that the typed list was defending against.
+GLOBS = ("results/**/*pred*.json", "artifacts/**/*pred*.json")
 
 COVERAGE_FLOOR = 0.99
+
+
+def _candidates() -> dict:
+    """Every prediction file reaching the coverage floor, as repo-relative path -> substrates.
+
+    Compared against WHOLE_TEST by PATH and never by a name derived from the filename: two of the
+    seven differ only by a mode suffix, and a derived name would have collapsed them into one and
+    hidden the second.
+    """
+    pop = _evaluated_population()
+    out = {}
+    for pat in GLOBS:
+        for f in sorted(glob.glob(pat, recursive=True)):
+            rel = str(Path(f).relative_to(ROOT) if Path(f).is_absolute() else f)
+            try:
+                blob = json.loads((ROOT / rel).read_text())
+            except Exception:
+                continue
+            inner = blob.get("predictions") if isinstance(blob, dict) else None
+            d = inner if isinstance(inner, dict) else (blob if isinstance(blob, dict) else None)
+            if not isinstance(d, dict):
+                continue
+            covered = len(set(d) & pop)
+            if covered >= COVERAGE_FLOOR * len(pop):
+                out[rel] = covered
+    return out
 
 
 def _evaluated_population() -> set:
@@ -101,15 +132,11 @@ def test_every_arm_covering_the_population_is_offered_to_the_axis():
     however many such arms exist.
     """
     pop = _evaluated_population()
-    offered = set(P.WHOLE_TEST)
-    missing = []
-    for name, rel in CANDIDATES.items():
-        covered = len(_substrates(rel) & pop)
-        if not covered:
-            continue
-        if covered >= COVERAGE_FLOOR * len(pop) and name not in offered:
-            missing.append(f"{name} covers {covered} of {len(pop)} from {rel} but is not in "
-                           f"WHOLE_TEST")
+    cands = _candidates()
+    assert cands, "no prediction file reaches the coverage floor, so this gate verified nothing"
+    offered = {str(Path(v).resolve()) for v in P.WHOLE_TEST.values()}
+    missing = [f"{rel} covers {n} of {len(pop)} but is not in WHOLE_TEST"
+               for rel, n in sorted(cands.items()) if str((ROOT / rel).resolve()) not in offered]
     assert not missing, ("an arm covers the evaluated population and the axis does not offer it: "
                          + "; ".join(missing))
 
@@ -127,12 +154,13 @@ def test_an_arm_left_out_is_left_out_with_a_reason():
     not read.
     """
     source = (ROOT / "scripts" / "typed_edit" / "population_definition.py").read_text()
+    offered = {str(Path(v).resolve()) for v in P.WHOLE_TEST.values()}
     unexplained = []
-    for name in CANDIDATES:
-        if name in P.WHOLE_TEST:
+    for rel in _candidates():
+        if str((ROOT / rel).resolve()) in offered:
             continue
-        if name not in source:
-            unexplained.append(name)
+        if Path(rel).stem not in source and Path(rel).name not in source:
+            unexplained.append(rel)
     assert not unexplained, ("a candidate arm is neither read nor mentioned by the producer, so "
                              "its absence carries no reason: " + ", ".join(unexplained))
 
