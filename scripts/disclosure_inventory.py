@@ -138,9 +138,16 @@ def collect() -> dict:
         if not p.exists():
             continue
         for s in _sentences(_plain(p.read_text())):
-            if len(s) < 40 or not PAT.search(s):
+            if not PAT.search(s):
                 continue
             k = _norm(s)
+            # Only the word floor. A 40-character floor stood here and discriminated nothing:
+            # measured over both documents it held 244 keys against 249 at every value from 30
+            # down to 0, and the five it excluded were concessions, not fragments. Worse, what
+            # cleared it for a short concession inside a float was the environment names the last
+            # sentence absorbs -- `tablenotes threeparttable table` -- so protection came from
+            # position in the LaTeX. Appending one sentence to a table's notes took that tail
+            # away and --check reported a retraction for a sentence still present verbatim.
             if len(k.split()) < 6:
                 continue
             found.setdefault(k, {"text": s[:300], "in": []})
