@@ -265,8 +265,9 @@ def si_fusion_k():
             "\\caption{Micro recall under each value of the reciprocal-rank-fusion constant $K$, "
             f"on the {d['population']['n_substrates']} substrates of the comparison set carrying "
             f"{d['population']['n_references']} references, with the paired difference against the "
-            f"deployed $K={dep}$ at a budget of 15 and its 95\\% interval; $^{{*}}$ marks an "
-            "interval excluding zero. The lower panel gives the same paired difference at every "
+            f"deployed $K={dep}$ at a budget of 15 and its 95\\% interval. "
+            "$^{*}$ marks an interval excluding zero. "
+            "The lower panel gives the same paired difference at every "
             f"budget for the constants at or above {min(flat)}, which are the ones the flatness "
             "claim is about; the widest endpoint any of those intervals reaches is "
             f"{bound}, and one cell separates. Recomputing the fusion from the stored component "
@@ -370,11 +371,16 @@ def si_population_list():
     # 66pt; at footnote size they fit with room to spare and stay legible.
     return ("{\\footnotesize\n\\begin{longtable}{@{}lll@{}}\n"
             "\\caption{The \\numPopulationN{} substrates of the comparison set, as tautomer-aware "
-            "InChIKeys, which is the key every comparison in this work is scored under. The list "
-            "is here so that the Supporting Information names its own population rather than "
-            "pointing at a repository for it; the structures themselves are in the deposit.}\\\\\n"
+            "InChIKeys, which is the key every comparison in this work is scored under.}\\\\\n"
             "\\label{tab:si-population-list}\\\\\n\\toprule\n\\endfirsthead\n"
-            "\\toprule\n\\endhead\n\\bottomrule\n\\endfoot\n"
+            # A longtable carries no \begin{table}, so _acs_table returns it untouched and a
+            # two-sentence caption would survive the split every other table gets. The second
+            # sentence is placed under the rule here instead.
+            "\\toprule\n\\endhead\n\\bottomrule\n"
+            "\\multicolumn{3}{@{}p{0.92\\textwidth}@{}}{\\footnotesize The list is here so that "
+            "the Supporting Information names its own population rather than pointing at a "
+            "repository for it; the structures themselves are in the deposit.}\\\\\n"
+            "\\endlastfoot\n\\bottomrule\n\\endfoot\n"
             + "\n".join(rows) + "\n\\end{longtable}\n}\n")
 
 
@@ -963,15 +969,22 @@ def si_macro():
             f"$k$ & {chead} \\\\\n\\midrule\n"
             + "\n\\midrule\n".join(contrast_blocks)
             + "\n\\bottomrule\n\\end{tabular}\n"
+            # The title comes FIRST and is one sentence. _acs_table splits a caption at its
+            # first sentence end and carries the rest into the footnotes, which is what ACS asks
+            # for; this caption used to open with the 14-item list of moved verdicts, so the
+            # splitter made a 120-word title of it and the footnote carried the description.
             "\\caption{"
+            # The reference sits inside the sentence rather than at its end: _acs_table splits on a
+            # full stop preceded by a letter or a digit, and a caption ending in a macro's
+            # closing brace is never split, so the title would have swallowed the notes again.
+            + "The comparison of Table~\\ref{MS-tab:sweep} under macro aggregation, which is "
+            "the mean of per-substrate recall, on the same population and conventions. "
             + (f"The aggregation moves {len(moved)} verdicts of the "
                f"{sum(len(v) for v in con.values())} contrasts computed under both, marked "
                "$^{\\mu}$ where micro separates and macro does not and $^{M}$ where the reverse "
                "holds: " + ", ".join(phrase(*m) for m in moved) + ". " if moved else
                "No verdict differs between the two aggregations. ")
-            + "The comparison under macro aggregation, the mean of per-substrate recall, "
-            "on the same population and with the same conventions as Table~\\ref{MS-tab:sweep}; "
-            "leading zeros are dropped. The last column is the paired difference against MetaTox, "
+            + "Leading zeros are dropped. The last column is the paired difference against MetaTox, "
             "with $^{*}$ marking an interval excluding zero. Macro weights a substrate carrying one "
             "reference like one carrying twelve, so it answers a different question from micro and "
             "is not an estimate of it.}\n"
@@ -1333,8 +1346,11 @@ def si_precision():
             f"\\begin{{tabular}}{{r{'r' * len(arms)}}}\n\\toprule\n"
             f"$k$ & {head} \\\\\n\\midrule\n" + "\n".join(rows)
             + "\n\\bottomrule\n\\end{tabular}\n"
+            # Not "... of Table~\\ref{...}." -- the splitter that makes an ACS title out of the
+            # first sentence needs a letter or digit before the period, and a closing brace is
+            # neither, so the whole caption stayed in the title. Same defect, second caption.
             "\\caption{Micro precision at each budget on the comparison set, under the parent-drop "
-            "convention of Table~\\ref{MS-tab:sweep}. Precision under an incomplete annotation is a "
+            "convention Table~\\ref{MS-tab:sweep} uses. Precision under an incomplete annotation is a "
             "lower bound and is not used here to order systems.}"
             "\n\\label{tab:si-precision}\n\\end{table}\n")
 
@@ -1423,9 +1439,9 @@ def si_case():
             "\\midrule\n"
             + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n"
             "\\caption{The first twenty of the "
-            f"{d['n_candidates']} candidates the exhaustive mode returns for the worked example, "
-            "with the rule that produced each, whether that rule was curated or mined, and the "
-            "number of atoms on its reactant side and the "
+            f"{d['n_candidates']} candidates the exhaustive mode returns for the worked example. "
+            "Each row gives the rule that produced the candidate, whether that rule was curated "
+            "or mined, the number of atoms on its reactant side and the "
             "substrate atoms it fired on. $\\star$ marks an annotated metabolite. "
             f"{small} of the twenty come from a template of three reactant atoms or fewer, which "
             "is the count the manuscript quotes and which this column makes checkable. "

@@ -2,8 +2,8 @@
  "provenance": {
   "script": "disclosure_inventory.py",
   "script_path": "scripts/disclosure_inventory.py",
-  "source_sha256": "4e78b4c078f7f4d2f3e68d359d3a3e965a2ad460afc4db7dc9d047faf460cacf",
-  "git_commit": "74cabe9589bb665e1632e43a5822c4732cc157c7",
+  "source_sha256": "f9ed88f68f7ed7ba20ef268b14e13fcc124e5aa4de5f086eb79fe4218a03dc44",
+  "git_commit": "6890dfbbddbad7ca39f728cdc4386fd8752c4681",
   "git_dirty": true
  },
  "reviewed_and_accepted": [
@@ -986,6 +986,13 @@
     "paper2/si.tex"
    ],
    "reason": "A prose pass over paper2/si.tex and paper2/body.tex, nothing retracted: 3 keys move and 3 appear, one for one. Two were sentences split for length. One ran 75 words, which is exactly the ceiling scripts/check_prose_density.py applies, and it now ends at its semicolon; the file's longest sentence falls from 75 words to 62 and its mean from 26.4 to 26.3. The other ran 71 and was a preamble followed by a six-item list, which now begins its own sentence. Splitting a sentence splits its key, so the concession survives in the half that carries the marker and the count stays level. The third change repairs a referent rather than a length: the Supporting Information said 'declaring a criterion means printing what it does, not only the one whose behaviour suits the argument', where 'what it does' and 'the one' point at different things, so the sentence asks a reader to carry a criterion and its behaviour under one pronoun. It now reads 'printing what every criterion does, including the one whose behaviour suits the argument least', which is the same claim with the referents separated. In paper2/body.tex one clause was made active, 'so nobody can recompute its two columns from public sources' for 'so its two columns are ones nobody can recompute', two words shorter against a length criterion that is red. Every replacement was checked against all eight carrier probes before it was applied and none fires; the carrier counts are unchanged at 6 of 407 in the manuscript and 22 of 1161 in the Supporting Information."
+  },
+  {
+   "text": "It is not the released configuration. tablenotes threeparttable table*",
+   "was_in": [
+    "paper2/table_sweep.tex"
+   ],
+   "reason": "Not a retraction: 'It is not the released configuration.' is present verbatim in paper2/table_sweep.tex. It was recorded under the key 'it is not the released configuration tablenotes threeparttable table*' because, standing last in its float, the sentence absorbed the environment names after it and that tail carried it over a 40-character floor. Appending one sentence to the same tablenotes took the tail away and dropped the sentence under the floor. The floor is now gone: measured over both documents it held 244 keys against 249 at every value from 30 down to 0, and the five it excluded were concessions, not fragments -- four of them in the SI, never protected until now. The six-word floor, which is the one that discriminates, is unchanged and still rejects fragments."
   }
  ],
  "question": "every sentence in which this work concedes something, recorded before a cut so that what a cut costs is visible rather than invisible",
@@ -1026,7 +1033,7 @@
   "paper2/table_hypotheses.tex",
   "paper2/table_grain.tex"
  ],
- "n": 245,
+ "n": 249,
  "reading": "a disclosure counts as present if it survives in ANY of the sources: moving one to the Supporting Information shortens the manuscript without retracting anything, and deleting one shortens it by retracting something",
  "disclosures": {
   "abstract published predictors of metabolite structure cannot be compared with one another because recall depends on how a predicted structure is judged to match a reference and on how many candidates a system may return and papers in this area declare neither": {
@@ -1413,6 +1420,12 @@
     "paper2/si.tex"
    ]
   },
+  "the filter was not blind to chemistry": {
+   "text": "The filter was not blind to chemistry",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
   "of the test references whose type neither the bank nor the training annotation holds has a type this source held and the corpus dropped with bond counts ignored the selection removed chemistry and it did not remove this chemistry": {
    "text": "Of the N test references whose type neither the bank nor the training annotation holds, N has a type this source held and the corpus dropped, N ; with bond counts ignored, N , N . The selection removed chemistry, and it did not remove this chemistry",
    "in": [
@@ -1463,6 +1476,12 @@
   },
   "recomputing the fusion from the stored component scores costs no model run so it is swept over values spanning two orders of magnitude on the substrates of the comparison set carrying references": {
    "text": "Recomputing the fusion from the stored component scores costs no model run, so it is swept over N values spanning two orders of magnitude, on the N substrates of the comparison set carrying N references",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "at one budget it is not a null at all": {
+   "text": "At one budget it is not a null at all",
    "in": [
     "paper2/si.tex"
    ]
@@ -1545,6 +1564,12 @@
     "paper2/si.tex"
    ]
   },
+  "the schedule does not transfer whole": {
+   "text": "The schedule does not transfer whole",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
   "under the schedule neither arm trails sygma with an interval excluding zero at any budget of ten or below of the exhaustive arm s five such cells separate and of the interactive arm s the widest trail being the interactive arm s at a budget of the trail section reports at one three and five would become unresolved not established": {
    "text": "Under the schedule neither arm trails SyGMa with an interval excluding zero at any budget of ten or below: N of the exhaustive arm's five such cells separate and N of the interactive arm's, the widest trail being the interactive arm's N [ N , + N ] at a budget of N . The trail Section reports at one",
    "in": [
@@ -1577,6 +1602,12 @@
   },
   "the gate the release applied and the measurement did not one of the settings in that table describes a selection no number here is measured under and this section separates it from the ones that are": {
    "text": "The gate the release applied and the measurement did not One of the settings in that table describes a selection no number here is measured under, and this section separates it from the ones that are",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the two are not the same selection": {
+   "text": "The two are not the same selection",
    "in": [
     "paper2/si.tex"
    ]
@@ -2475,8 +2506,8 @@
     "paper2/si_table_intervals_whole.tex"
    ]
   },
-  "it is not the released configuration tablenotes threeparttable table": {
-   "text": "It is not the released configuration. tablenotes threeparttable table*",
+  "it is not the released configuration": {
+   "text": "It is not the released configuration",
    "in": [
     "paper2/table_sweep.tex"
    ]

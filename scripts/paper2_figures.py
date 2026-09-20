@@ -16,6 +16,11 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 
+# The short names the comparison table prints in its header, imported rather than restated:
+# the figure and the table must name one system once. A second copy of an arm list is the
+# defect this project has now found in eleven files.
+from paper2_tables import LABEL as SWEEP_SHORT  # noqa: E402
+
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "paper2"
 
@@ -108,29 +113,62 @@ def art(name):
     return json.loads((ROOT / "results" / name).read_text())
 
 
+# Hoisted out of fig_sweep so the band-labelling helper and its gate read the same map the plot
+# draws from. Two copies of this map is exactly how a comparator went missing once.
+SWEEP_STYLE = {"whole bank": ("GRAIL exhaustive", "-", "o", PALETTE[0]),
+               "trained budget": ("GRAIL interactive", "-", "s", PALETTE[1]),
+               "metatox": ("MetaTox", "--", "^", PALETTE[2]),
+               "sygma": ("SyGMa", "--", "v", PALETTE[3]),
+               "metapredictor": ("MetaPredictor", "--", "D", PALETTE[4]),
+               "biotransformer": ("BioTransformer", "--", "*", PALETTE[5]),
+               "gloryx": ("GLORYx", "--", "P", PALETTE[6]),
+               # GLORYxR's two site-of-metabolism settings share one hue and differ in dash and
+               # marker, because they are one system under one declared knob and not two systems.
+               # Giving them separate hues would say the opposite, and the palette is out of hues
+               # that stay apart in print at this size anyway.
+               "gloryxr_default": ("GLORYxR, default SoM", "--", "X", PALETTE[7]),
+               "gloryxr_strict": ("GLORYxR, strict SoM", ":", "<", PALETTE[7])}
+
+# Derived from the style map, not restated beside it. Written as a literal pair, a third
+# GRAIL arm would be styled as a curve and silently counted as a COMPARATOR by everything
+# that asks "is this ours", which is the arm-list defect one step further in.
+GRAIL_ARMS = tuple(a for a, (lab, *_) in SWEEP_STYLE.items() if lab.startswith("GRAIL"))
+if not GRAIL_ARMS:
+    raise SystemExit("no arm in SWEEP_STYLE is labelled as ours; the sweep has no GRAIL arm")
+
+
+def strongest_comparator_runs(rec):
+    """Which comparator each shaded band is read against, as contiguous runs of budgets.
+
+    The bands are computed against the strongest comparator *at that budget*, and that is not one
+    method: four hold the position across this sweep and it changes hands three times. Two bands
+    side by side can therefore be verdicts about two different systems, and until these labels
+    the figure did not say so -- a reader had to take the row maximum of Table 2 by hand and hope
+    the figure had taken the same one.
+    """
+    out = []
+    for k in sorted((int(k) for k in rec), key=int):
+        row = rec[str(k)]
+        unstyled = [a for a in row if a not in SWEEP_STYLE]
+        if unstyled:
+            raise SystemExit(f"deployment_table.json carries arms this figure has no style for: "
+                             f"{', '.join(unstyled)}")
+        comp = [a for a in row if a not in GRAIL_ARMS]
+        best = max(comp, key=lambda a: row[a])
+        if out and out[-1]["arm"] == best:
+            out[-1]["budgets"].append(k)
+        else:
+            # The short label the table's header uses, so the two documents name one system once.
+            out.append({"arm": best, "label": SWEEP_SHORT[best], "budgets": [k]})
+    return out
+
+
 def fig_sweep():
     d = art("deployment_table.json")
     rec, con = d["recall_micro"], d["contrasts"]
     ks = sorted((int(k) for k in rec), key=int)
-    style = {"whole bank": ("GRAIL exhaustive", "-", "o", PALETTE[0]),
-             "trained budget": ("GRAIL interactive", "-", "s", PALETTE[1]),
-             "metatox": ("MetaTox", "--", "^", PALETTE[2]),
-             "sygma": ("SyGMa", "--", "v", PALETTE[3]),
-             "metapredictor": ("MetaPredictor", "--", "D", PALETTE[4]),
-             "biotransformer": ("BioTransformer", "--", "*", PALETTE[5]),
-             "gloryx": ("GLORYx", "--", "P", PALETTE[6]),
-             # GLORYxR's two site-of-metabolism settings share one hue and differ in dash and
-             # marker, because they are one system under one declared knob and not two systems.
-             # Giving them separate hues would say the opposite, and the palette is out of hues
-             # that stay apart in print at this size anyway.
-             "gloryxr_default": ("GLORYxR, default SoM", "--", "X", PALETTE[7]),
-             "gloryxr_strict": ("GLORYxR, strict SoM", ":", "<", PALETTE[7])}
-    # An arm the sweep computed and this figure has no style for would be a line the reader never
-    # sees while the abstract counts the method: that is how the fifth comparator went missing.
-    unstyled = [a for a in rec[str(ks[0])] if a not in style]
-    if unstyled:
-        raise SystemExit(f"deployment_table.json carries arms this figure has no style for: "
-                         f"{', '.join(unstyled)}")
+    style = SWEEP_STYLE
+    runs = strongest_comparator_runs(rec)
 
     # Taller than the data needs, because the legend sits under the axes. At seven series it
     # fitted inside the lower right; at nine it covered the curves it was naming and the curves
@@ -144,7 +182,7 @@ def fig_sweep():
                 zorder=3 if arm.startswith(("whole", "trained")) else 2)
 
     # the three regions, from the contrasts rather than from the eye
-    ours = ("whole bank", "trained budget")
+    ours = GRAIL_ARMS
     others = [a for a in style if a not in ours and a in rec[str(ks[0])]]
     band = []
     for k in ks:
@@ -156,10 +194,12 @@ def fig_sweep():
     # Geometric midpoints, because the axis is logarithmic. Arithmetic ones put a band's edge
     # where the eye does not expect it: with budgets at 20 and 30 the arithmetic midpoint 25 sits
     # past the visual centre, and a referee read the band as reaching a budget it does not cover.
+    edges = []
     for i, k in enumerate(ks):
         lo = ks[i - 1] if i else ks[0] * 0.75
         hi = ks[i + 1] if i < len(ks) - 1 else ks[-1] * 1.1
         left, right = (lo * k) ** 0.5, (k * hi) ** 0.5
+        edges.append((left, right))
         if band[i] == "lose":
             ax.axvspan(left, right, color=BAND_TRAILS, alpha=0.10, lw=0, zorder=0)
         elif band[i] == "win":
@@ -170,12 +210,28 @@ def fig_sweep():
     ax.minorticks_off()
     ax.set_xlabel("output budget $k$")
     ax.set_ylabel("micro recall@$k$")
-    # the bands are labelled, so the polarity never rests on colour alone
+    # Along the top, the comparator each stretch of the shading is read against. The bands are
+    # computed against the strongest comparator at each budget and that is four different systems
+    # here, so without this the figure shows verdicts without saying whom they are about.
+    # Each name sits over a rule spanning the budgets it holds. Without the rule the two names in
+    # the unshaded middle, whose runs are two budgets each, read as one label with a gap in it.
+    at = {k: i for i, k in enumerate(ks)}
+    drawn = []
+    for r in runs:
+        lo = edges[at[r["budgets"][0]]][0]
+        hi = edges[at[r["budgets"][-1]]][1]
+        ax.plot([lo * 1.02, hi * 0.98], [0.742, 0.742], "-", lw=0.6, color=INK_FAINT,
+                solid_capstyle="butt", zorder=4, clip_on=False)
+        ax.text((lo * hi) ** 0.5, 0.749, r["label"], ha="center", va="bottom", fontsize=5.6,
+                color=INK_MUTED)
+        drawn.append(r["label"])
+    # ... and the polarity, so it never rests on colour alone. It sits at the foot of the band
+    # rather than the head because the comparator names now hold the head.
     for lab, want in (("trails", "lose"), ("leads", "win")):
         xs = [k for k, b in zip(ks, band) if b == want]
         if xs:
-            ax.text((min(xs) * max(xs)) ** 0.5, 0.755, lab, ha="center", fontsize=6.2,
-                    color=INK_MUTED)
+            ax.text((min(xs) * max(xs)) ** 0.5, 0.012, lab, ha="center", va="bottom",
+                    fontsize=6.2, color=INK_MUTED)
     # The legend is ordered by where the curves finish, so its top-to-bottom order is the order
     # of the lines at the right-hand edge. Declaration order matched no budget on the plot and a
     # reader checking the legend against the curves found neither in the other.
@@ -186,12 +242,12 @@ def fig_sweep():
     ax.legend([by_label[lab][1] for lab in order], order,
               loc="upper center", bbox_to_anchor=(0.5, -0.19), ncol=3, frameon=False,
               fontsize=6.2, handlelength=1.8, columnspacing=1.2, handletextpad=0.5)
-    ax.set_ylim(0, 0.78)
+    ax.set_ylim(0, 0.79)
     # Nine budgets on a logarithmic axis crowd where they are closest together, at 8 and 10.
     ax.tick_params(axis="x", labelsize=6.0)
     save(fig, "fig_sweep")
     plt.close(fig)
-    return band
+    return {"band": band, "comparator_labels": drawn}
 
 
 def fig_ceiling():
@@ -677,64 +733,69 @@ def fig_toc():
     CELL_PT, AXIS_PT, TITLE_PT, KEY_PT = 7.5, 7.0, 8.0, 7.0
     FONTS_PT = (CELL_PT, AXIS_PT, TITLE_PT, KEY_PT)
 
-    d = art("criterion_sweep.json")
-    order = ["canonical", "inchikey", "inchi_no_stereo", "tanimoto1", "inchikey_tautomer"]
-    label = {"canonical": "canonical SMILES", "inchikey": "InChIKey",
-             "inchi_no_stereo": "InChIKey, no stereo", "tanimoto1": "Tanimoto = 1",
-             "inchikey_tautomer": "tautomer-aware key"}
-    missing = [c for c in order if c not in d["by_criterion"]]
-    if missing:
-        raise SystemExit(f"criterion_sweep.json has no column for {', '.join(missing)}")
+    d = art("deployment_table.json")
+    rec = d["recall_micro"]
+    budgets = sorted((int(k) for k in rec), key=int)
+    LABEL = {"whole bank": "GRAIL exh.", "trained budget": "GRAIL int.",
+             "metatox": "MetaTox", "sygma": "SyGMa", "metapredictor": "MetaPred.",
+             "biotransformer": "BioTrans.", "gloryx": "GLORYx",
+             "gloryxr_default": "GLORYxR d.", "gloryxr_strict": "GLORYxR s."}
+    COLOUR = {"whole bank": PALETTE[0], "trained budget": PALETTE[1], "metatox": PALETTE[2],
+              "sygma": PALETTE[3], "metapredictor": PALETTE[4], "biotransformer": PALETTE[5],
+              "gloryx": PALETTE[6], "gloryxr_default": PALETTE[7], "gloryxr_strict": PALETTE[7]}
+    arms = sorted(rec[str(budgets[0])])
+    unlabelled = [a for a in arms if a not in LABEL]
+    if unlabelled:
+        raise SystemExit(f"deployment_table.json carries arms this graphic has no name for: "
+                         f"{', '.join(unlabelled)}")
 
-    budgets = sorted((int(k) for k in d["by_criterion"][order[0]]["verdict_by_budget"]), key=int)
-
-    # The verdicts the artifact records, which are the ones Table 4 prints. Recomputing them from
-    # the recall values would put a second definition of "leads" in the paper, and the two pictures
-    # of one grid would then be free to disagree.
-    CODE = {"trails": -1, "neither": 0, "leads": 1}
-    grid = []
-    for crit in order:
-        v = d["by_criterion"][crit]["verdict_by_budget"]
-        unknown = {x for x in v.values()} - set(CODE)
-        if unknown:
-            raise SystemExit(f"criterion_sweep.json records verdicts this figure cannot draw: "
-                             f"{', '.join(sorted(unknown))}")
-        grid.append([CODE[v[str(b)]] for b in budgets])
-
-    import numpy as np
-    from matplotlib.colors import ListedColormap
+    # Ranks, not recalls. The specification asks for the essence and not for specific results, and
+    # a rank is the essence here: the paper's claim is that the ORDER is an artifact of a declared
+    # choice, so the quantity that carries the claim is position and not level. No recall value is
+    # printed anywhere in this graphic.
+    rank = {a: [] for a in arms}
+    for k in budgets:
+        for i, a in enumerate(sorted(arms, key=lambda x: -rec[str(k)][x]), 1):
+            rank[a].append(i)
+    leaders = {a for a in arms if 1 in rank[a]}
+    if len(leaders) < 2:
+        raise SystemExit("one system holds rank 1 at every budget, so this graphic would assert a "
+                         "reshuffling the sweep does not show; redraw it or drop it")
 
     fig, ax = plt.subplots(figsize=(TOC_W, TOC_H))
-    # three regions, not three series: a muted diverging triple, readable in grey
-    cmap = ListedColormap(["#C7DCEA", "#F2F2F0", "#EBCDB4"])
-    ax.imshow(np.array(grid), cmap=cmap, vmin=-1, vmax=1, aspect="auto")
-    for r, row in enumerate(grid):
-        for c, v in enumerate(row):
-            ax.text(c, r, {-1: "\u2013", 0: "\u00b7", 1: "+"}[v], ha="center", va="center",
-                    fontsize=CELL_PT, color=INK)
-    ax.set_xticks(range(len(budgets)))
-    ax.set_xticklabels([str(b) for b in budgets], fontsize=AXIS_PT)
-    ax.set_yticks(range(len(order)))
-    ax.set_yticklabels([label[c] for c in order], fontsize=AXIS_PT)
+    ours = ("whole bank", "trained budget")
+    for a in arms:
+        # GLORYxR's two settings share a hue and differ in dash, as they do in Figure 1: one
+        # system under one declared knob, not two systems.
+        ax.plot(budgets, rank[a], marker="o", ms=2.0,
+                lw=1.3 if a in ours else 0.8,
+                color=COLOUR[a],
+                ls=":" if a == "gloryxr_strict" else "-",
+                zorder=3 if a in ours else 2)
+        # the name at the end of its own line, so no key is needed and no line is unnamed
+        ax.text(budgets[-1] * 1.09, rank[a][-1], LABEL[a], va="center", ha="left",
+                fontsize=KEY_PT - 1.0, color=COLOUR[a] if a in ours else INK_MUTED)
+    # Where the lead changes hands, marked on the line rather than described beside it.
+    for i, k in enumerate(budgets):
+        top = next(a for a in arms if rank[a][i] == 1)
+        if i == 0 or top != next(a for a in arms if rank[a][i - 1] == 1):
+            ax.plot([k], [1], marker="o", ms=4.2, mfc="none", mew=0.9,
+                    color=COLOUR[top], zorder=4)
+    ax.set_xscale("log")
+    ax.set_xticks([1, 3, 5, 10, 20, 50])
+    ax.set_xticklabels(["1", "3", "5", "10", "20", "50"], fontsize=AXIS_PT)
+    ax.minorticks_off()
+    ax.set_yticks([1, len(arms)])
+    ax.set_yticklabels(["1st", f"{len(arms)}th"], fontsize=AXIS_PT)
+    ax.set_ylim(len(arms) + 0.5, 0.4)
+    ax.set_xlim(0.9, budgets[-1] * 1.06)
     ax.set_xlabel("candidates a system may return", fontsize=AXIS_PT, labelpad=1.5)
-    ax.set_title("one comparison, five ways of judging a match",
+    ax.set_title(f"{len(leaders)} of {len(arms)} systems lead, on one set of substrates",
                  fontsize=TITLE_PT, pad=3.0, color=INK)
-    for spine in ax.spines.values():
-        spine.set_visible(False)
-    ax.tick_params(length=0, pad=1.5)
-
-    # A key, because three colours carrying signs are not self-describing: a reader met this
-    # graphic with blue and orange cells marked "$-$" and "$+$" and nothing saying which way round
-    # they ran. The labels are the artifact's own vocabulary, so the picture and Table 4 cannot
-    # drift apart in what a cell is called.
-    from matplotlib.patches import Patch
-
-    key = [Patch(facecolor=cmap(i), edgecolor="none", label=t) for i, t in
-           enumerate(("GRAIL trails", "neither", "GRAIL leads"))]
-    ax.legend(handles=key, loc="upper center", bbox_to_anchor=(0.5, -0.26), ncol=3,
-              frameon=False, fontsize=KEY_PT, handlelength=1.0, handleheight=0.9,
-              handletextpad=0.35, columnspacing=1.2, borderpad=0.0, borderaxespad=0.0)
-    fig.tight_layout(pad=0.25)
+    for s in ("top", "right"):
+        ax.spines[s].set_visible(False)
+    ax.tick_params(length=2.0, width=0.5, pad=1.5)
+    fig.subplots_adjust(left=0.10, right=0.72, top=0.86, bottom=0.20)
 
     with matplotlib.rc_context({"savefig.bbox": "standard", "savefig.pad_inches": 0.0}):
         # tif and eps are what ACS accepts for this graphic; the pdf exists only so pdflatex can
@@ -919,7 +980,7 @@ def fig_si_external():
 
 
 if __name__ == "__main__":
-    band = fig_sweep()
+    band = fig_sweep()["band"]
     fig_ceiling()
     fig_cost()
     fig_case()

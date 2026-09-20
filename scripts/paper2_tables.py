@@ -113,7 +113,11 @@ def table():
           + ("" if not blend else
              " The last column, \\emph{blend}, re-ranks the exhaustive arm's own pool under the "
              "aggregation a selection on validation chooses. It is not the released "
-             "configuration.") + "}",
+             "configuration.")
+          # The figure prints the same recalls. This table is the levels and the two quantities a
+          # curve cannot carry; the figure is where they separate and against whom.
+          + " Figure~\\ref{fig:sweep} plots these recalls and marks the budgets at which the "
+            "difference from the strongest comparator separates." + "}",
           "\\label{tab:sweep}", "\\end{table*}"]
     return "\n".join(L)
 

@@ -1,7 +1,7 @@
 \begin{table}[h]
 \centering\small
 \begin{threeparttable}
-\caption{Micro recall under each value of the reciprocal-rank-fusion constant $K$, on the 291 substrates of the comparison set carrying 665 references, with the paired difference against the deployed $K=60$ at a budget of 15 and its 95\% interval; $^{*}$ marks an interval excluding zero.}
+\caption{Micro recall under each value of the reciprocal-rank-fusion constant $K$, on the 291 substrates of the comparison set carrying 665 references, with the paired difference against the deployed $K=60$ at a budget of 15 and its 95\% interval.}
 \label{tab:si-fusion-k}
 \begin{tabular}{lrrrrl}
 \toprule
@@ -29,7 +29,7 @@ $300$ & $-0.0030$\phantom{$^{*}$} {\tiny [-0.014,+0.008]} & $+0.0075$\phantom{$^
 \end{tabular}
 \normalsize
 \begin{tablenotes}[flushleft]\footnotesize
-\item The lower panel gives the same paired difference at every budget for the constants at or above 30, which are the ones the flatness claim is about; the widest endpoint any of those intervals reaches is 0.0156 at $k=5$, 0.0222 at $k=15$, 0.0141 at $k=30$, 0.0068 at $k=50$, and one cell separates. Recomputing the fusion from the stored component scores costs no model run, which is why this knob could be swept and the aggregation rule had to be re-derived. The deployed value is the one the method was published with and was not chosen here, so sweeping it on this population adopts nothing: the objection Section~\ref{sec:si-aggregation} raises against selecting a parameter here applies to a parameter that would be changed, and this one is not.
+\item $^{*}$ marks an interval excluding zero. The lower panel gives the same paired difference at every budget for the constants at or above 30, which are the ones the flatness claim is about; the widest endpoint any of those intervals reaches is 0.0156 at $k=5$, 0.0222 at $k=15$, 0.0141 at $k=30$, 0.0068 at $k=50$, and one cell separates. Recomputing the fusion from the stored component scores costs no model run, which is why this knob could be swept and the aggregation rule had to be re-derived. The deployed value is the one the method was published with and was not chosen here, so sweeping it on this population adopts nothing: the objection Section~\ref{sec:si-aggregation} raises against selecting a parameter here applies to a parameter that would be changed, and this one is not.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
