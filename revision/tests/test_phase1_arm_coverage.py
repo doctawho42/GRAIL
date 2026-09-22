@@ -83,11 +83,63 @@ def test_pool_arms_are_not_checked_this_way():
     assert T.coverage_gaps(arms=arms, members={"synthetic": {"a"}}) == []
 
 
-def test_no_arm_declared_today_is_short_of_its_population():
+def _declared_shortfalls() -> dict:
+    """What the deployment table records about each comparator's coverage.
+
+    A short arm still scores misses; that has not changed and is not defensible on its own. What
+    this reads is whether the shortfall was WRITTEN DOWN, so the zeros are a stated treatment
+    instead of an accident nobody counted. BioTransformer crashes deterministically on fifteen of
+    the comparison set and the arm cannot answer for them; writing them into the file as empty
+    lists would make a crash and a prediction of nothing the same record again, which is the
+    defect the arm was replaced to remove.
+    """
+    f = ROOT / "results/deployment_table.json"
+    if not f.exists():
+        return {}
+    cov = json.loads(f.read_text()).get("comparator_coverage") or {}
+    return {a: v.get("scored_zero_for_absence", 0) for a, v in cov.items()}
+
+
+def test_no_arm_is_short_of_its_population_without_saying_so():
     """The real invariant, over the arms T_main actually declares.
 
     Slow: it resolves both populations through the producer's own accessor rather than trusting a
     count, because three comparator files carry 291 keys and one of them is a different 291.
+
+    A gap is admissible only when the deployment table records a shortfall of exactly that size
+    for that arm. An undeclared gap -- the GLORYx case in the module docstring, where a file
+    covering the wrong 879 would have been declared silently -- still fails here.
     """
-    gaps = T.coverage_gaps()
-    assert gaps == [], f"arms short of their population, which would score misses: {gaps}"
+    declared = _declared_shortfalls()
+    undeclared = [g for g in T.coverage_gaps()
+                  if declared.get(g["arm"]) != g["n_missing"]]
+    assert undeclared == [], (
+        "arms short of their population with no shortfall recorded in "
+        f"results/deployment_table.json, which would score misses in silence: {undeclared}")
+
+
+def test_a_shortfall_of_the_wrong_size_is_still_refused(monkeypatch):
+    """The relaxation must not become a pass-through.
+
+    Reading a declaration and comparing it to nothing would accept any gap from any arm that
+    appears in the coverage record at all. The declared number has to MATCH the gap, so an arm
+    that loses more substrates than anyone wrote down still fails, and so does one that appears
+    in the record with a shortfall of zero.
+    """
+    import revision.tests.test_phase1_arm_coverage as M
+    gap = [{"population": "comparison291", "arm": "biotransformer",
+            "file": "x.json", "n_missing": 15, "n_covered": 276, "first_missing": "C"}]
+    monkeypatch.setattr(T, "coverage_gaps", lambda *a, **k: gap)
+
+    for declared, why in (({"biotransformer": 14}, "one fewer than the gap"),
+                          ({"biotransformer": 0}, "recorded as complete"),
+                          ({}, "not in the record at all")):
+        monkeypatch.setattr(M, "_declared_shortfalls", lambda d=declared: d)
+        undeclared = [g for g in T.coverage_gaps()
+                      if M._declared_shortfalls().get(g["arm"]) != g["n_missing"]]
+        assert undeclared, f"a shortfall {why} was accepted"
+
+    monkeypatch.setattr(M, "_declared_shortfalls", lambda: {"biotransformer": 15})
+    undeclared = [g for g in T.coverage_gaps()
+                  if M._declared_shortfalls().get(g["arm"]) != g["n_missing"]]
+    assert undeclared == [], "an exactly declared shortfall must be accepted"

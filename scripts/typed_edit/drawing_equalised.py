@@ -241,6 +241,33 @@ def main() -> int:
         if _arm in stored:
             equalised[_arm] = stored[_arm]
 
+    # PAIRED, so the population is the substrates every re-run answers for in BOTH drawings.
+    # A substrate one drawing crashed on cannot be scored as an empty list here: the delta would
+    # then be that arm's whole output on that substrate and would be attributed to the drawing,
+    # which is the defect the coverage record above exists to catch. BioTransformer crashes
+    # deterministically on a handful in each drawing, five of them substrates the drawing moves.
+    # The set that is dropped, and its size, are recorded so the caption can name them.
+    # ONLY the substrates the drawing MOVES. An unmoved substrate is the same molecule in both
+    # columns, so a re-run is not needed for it and its absence from one is not a gap: an arm may
+    # deliberately re-run only the moved set, and MetaPredictor is such an arm. A first version of
+    # this rule dropped every substrate any re-run did not cover and cut the population from 291
+    # to 76, turning a deliberate design into a reported failure.
+    _drop = sorted({s for name in DRAWN for s in moved_set if s not in covered[name]})
+    if _drop:
+        subs = [s for s in subs if s not in set(_drop)]
+        real = {s: real[s] for s in subs}
+        U = np.array([len(real[s]) for s in subs], dtype=float)
+        print(f"  paired population: {len(subs)} substrates; {len(_drop)} dropped because at "
+              f"least one arm has no answer in one of the two drawings", flush=True)
+    # The union, as a LIST. The coverage record beside it holds per-arm COUNTS, and a gate that
+    # compares a count against a count cannot tell whether the substrates dropped are the same
+    # substrates that were uncovered; it can only tell that two totals agree.
+    excluded = {"uncovered_moved_union": sorted({s for v in uncovered_moved.values() for s in v}),
+                "n_dropped": len(_drop),
+                "n_paired": len(subs),
+                "dropped_because_a_re_run_has_no_answer": _drop,
+                "of_those_the_drawing_moves": sorted(set(_drop) & moved_set)}
+
     rng = np.random.default_rng(SEED)
     idx = rng.integers(0, len(subs), (N_BOOT, len(subs)))
     denom = np.maximum(U[idx].sum(axis=1), 1)
@@ -281,6 +308,7 @@ def main() -> int:
                      "drawing the declared standardiser produces"),
         "population": {"n_substrates": len(subs), "n_references": int(U.sum()),
                        "substrates_the_standardiser_moves": len(moved)},
+        "paired_exclusion": excluded,
         "criterion": "tautomer-aware InChIKey, as everywhere else",
         "convention": "parent dropped, pool capped at 100, references looked up under the corpus "
                       "string in every arm so the two tables are scored against one annotation",

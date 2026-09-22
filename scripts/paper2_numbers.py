@@ -1373,6 +1373,41 @@ def build():
     # the manuscript could previously report for one comparator only.
     n["btarm.drawingdelta"] = round(_drawn["recall"]["30"] - _stored["recall"]["30"], 4)
 
+    # BioTransformer's step count, swept, and what sweeping it found about the arm as published.
+    bts = art("biotransformer_steps.json")
+    _rp, _f2, _s2 = bts["reproduction"], bts["failures"], bts["steps_two"]
+    n["btsteps.whole.identical"] = _rp["whole_test_set"]["list_identical"]
+    n["btsteps.whole.shared"] = _rp["whole_test_set"]["shared"]
+    n["btsteps.comp.setidentical"] = _rp["comparison_set"]["set_identical"]
+    n["btsteps.comp.shared"] = _rp["comparison_set"]["shared"]
+    n["btsteps.comp.deficit"] = (_rp["comparison_set"]["metabolites_fresh"]
+                                 - _rp["comparison_set"]["metabolites_frozen"])
+    n["btsteps.comp.orphans"] = _rp["comparison_set"]["frozen_structures_the_rerun_never_produces"]
+    n["btsteps.crashes"] = _f2["comparison_set"]["failures"]
+    n["btsteps.crashsharepct"] = round(100 * _f2["comparison_set"]["baseline_rate"], 1)
+    n["btsteps.whole.crashes"] = _f2["whole_test_set"]["of_those_a_crash"]
+    n["btsteps.whole.empties"] = _f2["whole_test_set"]["frozen_empties"]
+    n["btsteps.whole.genuine"] = _f2["whole_test_set"]["of_those_a_genuine_empty"]
+    _ph = _f2["comparison_set"]["strata"]["phosphorus"]
+    n["btsteps.phosenrich"] = _ph["enrichment"]
+    n["btsteps.phosceiling"] = _ph["ceiling"]
+    n["btsteps.imidicenrich"] = _f2["comparison_set"]["strata"]["imidic_acid"]["enrichment"]
+    n["btsteps.completed"] = _s2["completed"]
+    n["btsteps.attempted"] = _s2["attempted"]
+    n["btsteps.lost"] = _s2["crashed_or_timed_out"]
+    n["btsteps.paired"] = _s2["paired_with_steps_one"]
+    n["btsteps.contained"] = _s2["steps_one_set_contained_in_steps_two"]
+    n["btsteps.lostgenone"] = _s2["generation_one_structures_lost"]
+    n["btsteps.ratio"] = _s2["emission_ratio"]
+    n["btsteps.gainfifty"] = bts["recall_micro"]["steps_delta"]["50"]
+    n["btsteps.largestcorrection"] = bts["recall_micro"]["largest_correction"]
+    _c = bts["cost"]
+    n["btsteps.cost.twohours"] = _c["steps_two_291"]["hours"]
+    n["btsteps.cost.onehours"] = _c["steps_one_1170"]["hours"]
+    n["btsteps.cost.projected"] = _c["steps_two_1170_projected_hours"]
+    n["btsteps.cost.workers"] = _c["steps_two_291"]["workers"]
+    n["btsteps.cost.timeoutmin"] = _c["steps_two_291"]["timeout_s"] // 60
+
     # The one external check in this paper: whether an independent benchmark's ordering is a
     # budget ordering, computed from that benchmark's own published recall and precision. No
     # measurement of ours enters it, which is the point.

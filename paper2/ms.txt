@@ -69,7 +69,7 @@ how many candidates the system is allowed to
 return, since any system recovers more of the
 answer if permitted to list more guesses. Published predictors differ on both and report them
 inconsistently, and the difference is not small:
-the ones compared here emit between 10.7 and
+the ones compared here emit between 11.3 and
 73 candidates per substrate by default, so a recall figure quoted for one is not on the scale
 of a recall figure quoted for another. Independent evaluations of these tools report the same
 obstacle 12–14 .
@@ -474,14 +474,19 @@ of this bank’s mined templates do (Section S24).
 GLORYxR returns both phases and its site-ofmetabolism setting is a documented knob, so
 both of its settings are run and both are printed.
 The depth is swept for SyGMa, whose scenario
-is a documented setting, and the lead survives it.
-BioTransformer’s step count is also ours to turn
-and was not swept, a decision taken after the
-matched-length control, which cuts every arm
-to the comparator’s own list length substrate
-by substrate, had been read, and stated as such
-(Section S35). For those two the difference between the arms stands, and the wide-budget
-cells should be read with it in view.
+is a documented setting, and the lead survives
+it. BioTransformer’s step count is also ours to
+turn, and it is swept here. A second generation returns a candidate set that contains the
+first’s on every one of the 195 substrates where
+both runs finish, losing none of the structures
+one step found, and emits 12 times as many
+candidates; it adds nothing at the two tightest
+budgets and 0.0394 at the widest. The knob
+does not reach past the output budget, and on
+96 of 291 substrates the second generation does
+not complete at all (Section S35). For those two
+the difference between the arms stands, and the
+wide-budget cells should be read with it in view.
 The number of candidates a system is permitted to return is the output budget, written k,
 and it is the second declared axis. Recall at
 budget k for substrate s with references Ys and
@@ -554,26 +559,47 @@ s |Ys |
 
 and every figure states which it is. Intervals are
 a paired bootstrap over substrates: for each of
-B = 10 000 resamples S (b) drawn with replacement,
+B = 10 000 resamples S (b) drawn with replace6
+
+ment,
+P
+δ (b) =
+
 
-P
-A
 B
-s∈S (b) hs − hs
-(b)
+hA
+−
+h
+s
+s
 P
-δ =
 ,
+|Y
+|
+(b)
+s
+s∈S
+
+s∈S (b)
+
+SyGMa
+
+MetaPred. GLORYx
+
+MetaTox
+
+0.7
+
 (5)
-s∈S (b) |Ys |
+
+0.6
+micro recall@k
+
 B
 with hA
 s and hs the hits of the two arms. The
 reported interval is the empirical 2.5 and 97.5
-
-6
-
-percentiles of {δ (b) }. Table S11 carries precision,
+percentiles of {δ (b) }. Table S11 carries precision,
 which does not order the systems, because under
 incomplete annotation a real but unannotated
 metabolite counts as a false positive against
@@ -613,24 +639,7 @@ and the other four run against it: the exhaustive
 arm’s trails against SyGMa at k = 1, 3 and 5,
 and the interactive arm’s against SyGMa at
 k = 1. So the wider reading costs this paper
-one cell and gains it four, and neither reading
-changes the wide-budget result.
-No single budget is privileged. A claim that
-the system leads is made for a cell only where
-that cell’s interval excludes zero, and where an
-ordering is not established the table says so.
 
-SyGMa
-
-MetaPred. GLORYx
-
-MetaTox
-
-0.7
-
-micro recall@k
-
-0.6
 0.5
 0.4
 0.3
@@ -679,6 +688,12 @@ The shading is read at a nominal budget, which
 is not a list length: of the comparators the green
 region leads, most do not survive matching on
 realised length (Table 3).
+one cell and gains it four, and neither reading
+changes the wide-budget result.
+No single budget is privileged. A claim that
+the system leads is made for a cell only where
+that cell’s interval excludes zero, and where an
+ordering is not established the table says so.
 
 3
 
@@ -691,14 +706,6 @@ predictors
 
 Figure 1 and Table 2 are the comparison on
 the 291 substrates of the comparison set. Read
-against the strongest comparator at each budget
-it divides in three. Every difference behind that
-division, with its paired interval, is Table S12.
-GRAIL trails with the interval excluding zero
-at k = 1, 3 and 5, where SyGMa leads: 0.1053
-against SyGMa’s 0.1534 at k = 1. Two of those
-three, at 3 and 5, do not survive the family-wise
-correction either. 152 of SyGMa’s 175 published
 7
 
 Table 2: Micro recall at each output budget on the 291 substrates of the comparison set, carrying
@@ -785,15 +792,15 @@ blend
 0.4797
 0.4797
 
-0.0722
-0.1940
-0.2752
-0.3414
-0.3759
-0.4286
-0.4421
+0.0692
+0.1850
+0.2647
+0.3338
+0.3684
+0.4271
 0.4466
-0.4481
+0.4541
+0.4556
 
 0.0662
 0.1895
@@ -847,7 +854,7 @@ mean emitted
 
 10.75
 
-10.70
+11.30
 
 28.69
 
@@ -864,6 +871,14 @@ blend, re-ranks the exhaustive arm’s own pool under the aggregation a selectio
 the released configuration. Figure 1 plots these recalls and marks the budgets at which the difference from the
 strongest comparator separates.
 
+against the strongest comparator at each budget
+it divides in three. Every difference behind that
+division, with its paired interval, is Table S12.
+GRAIL trails with the interval excluding zero
+at k = 1, 3 and 5, where SyGMa leads: 0.1053
+against SyGMa’s 0.1534 at k = 1. Two of those
+three, at 3 and 5, do not survive the family-wise
+correction either. 152 of SyGMa’s 175 published
 rules are present in this bank verbatim, so what
 separates at those budgets is an ordering over
 chemistry the two systems largely share. Neither
@@ -882,9 +897,10 @@ is, and it supplies 611 of this bank’s templates,
 more than any other published set. Held to
 BioTransformer’s own list length the exhaustive
 arm does not lead it at all: the difference is
-−0.0045 [−0.0402, +0.0315], an interval covering zero. The corrections that follow concern
+−0.0135 [−0.0481, +0.0217], an interval covering zero. The corrections that follow concern
 the sweep, separately from the matched-length
 table above (Table 3): the fourteen cells in which
+
 the exhaustive arm leads a comparator at k = 30
 or k = 50 with the interval excluding zero. Of
 those, eight were never in the corrected family,
@@ -892,9 +908,7 @@ which was declared over three comparators, so
 the correction runs over the six it covers; of
 those it removes one, the margin over MetaTox
 at k = 30, +0.0511 [+0.0175, +0.0858]. It is
-not the only lead in this paper the correction re-
-
-moves, and the others are named where they are
+not the only lead in this paper the correction removes, and the others are named where they are
 claimed. The second control, matched length,
 removes more: of the seven comparators led
 against, only the lead over SyGMa survives it.
@@ -914,12 +928,6 @@ read here at the comparator’s own length as well
 (Table S9). The largest class is a cleavage losing
 two or more carbons, 151 references, where the
 whole bank earns its size: 0.6159 against 0.4768
-for the best comparator at that budget, a margin of +0.1391. Held to each comparator’s own
-length the lead shrinks but survives against every one of them (Section S8). What the budget
-comparison adds to that class is length; what
-remains is ordering. The second largest, 142
-of the 665 references, is the set of changes this
-vocabulary does not name, and no method here
 8
 
 Table 3: The comparison with the output budget taken from the comparator instead
@@ -968,8 +976,8 @@ SyGMa, standardised
 58.37
 10.75
 10.75
-10.7
-10.7
+11.3
+11.3
 28.61
 28.61
 57.48
@@ -981,8 +989,8 @@ SyGMa, standardised
 .4842
 .4602
 .4436
-.4436
-.4060
+.4421
+.4000
 .6226
 .4887
 .6962
@@ -994,8 +1002,8 @@ SyGMa, standardised
 .5158
 .4797
 .4797
-.4481
-.4481
+.4556
+.4556
 .6090
 .6090
 .5353
@@ -1007,8 +1015,8 @@ SyGMa, standardised
 −.0316 [−.0698, +.0085]
 −.0195 [−.0616, +.0212]
 −.0361 [−.0811, +.0094]
-−.0045 [−.0402, +.0315]
-−.0421 [−.0900, +.0044]
+−.0135 [−.0481, +.0217]
+−.0556∗ [−.1025, −.0100]
 +.0135 [−.0217, +.0491]
 −.1203∗ [−.1685, −.0754]
 +.1609∗ [+.1246, +.1970]
@@ -1030,6 +1038,12 @@ produces rather than the one the corpus stores, which is the form in which that 
 applied to a margin measured over slots. ∗ marks an interval excluding zero. Leading zeros are
 dropped.
 
+for the best comparator at that budget, a margin of +0.1391. Held to each comparator’s own
+length the lead shrinks but survives against every one of them (Section S8). What the budget
+comparison adds to that class is length; what
+remains is ordering. The second largest, 142
+of the 665 references, is the set of changes this
+vocabulary does not name, and no method here
 exceeds 0.2394 on it. A fifth of the annotated
 chemistry therefore falls in a class none of the
 six systems is built for. A headline recall figure
@@ -1038,15 +1052,15 @@ The exhaustive arm is not the best arm on
 10 of the 17 classes, carrying 270 of the 665
 references, and the classes it trails on are classical ones. On the largest functionalisation, one
 oxygen added, 140 references, it reaches 0.7429
-against 0.8000 for the best arm. It is behind
+against 0.8143 for the best arm. It is behind
 on demethylation, sulfation, methylation and
+
 acetylation as well. Those four rows carry 72
 references between them and none is given an
 interval, so they are read as a direction only;
 the caution Section S8 states about short rows
 applies to them. The aggregate advantage is carried by unusual cleavages and by the unnamed
 residue. The exhaustive arm is also below the interactive one on 5 classes, demethylation among
-
 them (0.8333 against 0.9167 on 36 references).
 That is a limit on ranking, not on coverage: the
 wider pool contains candidates the smaller budget never produced, and on those classes they
@@ -1057,12 +1071,6 @@ comparator lists have already ended. Removing
 length as a variable is possible and it is done: on
 each substrate both arms are cut to the number
 of candidates that comparator returned there,
-so the two are read over the same slots on every substrate (Table 3). The result splits the
-wide-budget leads in two. Against SyGMa the
-exhaustive arm keeps +0.182 [+0.1446, +0.2208],
-the largest margin that survives this control and
-an ordering result rather than an emission one.
-Against the other three nothing survives, every interval covering zero and two of the three
 9
 
 Table 4: Micro recall at a budget of 15 within each transformation class, on the comparison set’s
@@ -1211,14 +1219,14 @@ glycine conjugation†
 .80
 1.00
 
-.36
+.34
 .07
-.76
-.63
-.97
+.81
+.58
+.92
 .39
 .60
-.47
+.42
 .00
 .23
 .00
@@ -1251,9 +1259,15 @@ A class is a change in molecular formula, so it groups mechanisms the annotation
 classes holding fewer than 10 references, where one hit moves a cell by more than a tenth and no ordering across a
 row should be read. At this budget the arms differ in how often they have anything left to emit, so a row is in part
 a comparison of list lengths: the exhaustive arm on 0, the interactive arm on 181, MetaTox on 34, SyGMa on 15,
-MetaPredictor on 273, BioTransformer on 220, GLORYx on 48, of 291 (Table S8). Three of the 7 run out on more
+MetaPredictor on 273, BioTransformer on 206, GLORYx on 48, of 291 (Table S8). Three of the 7 run out on more
 than half of the 291. Table S9 repeats the split with each comparator’s own length held instead of the budget.
 
+so the two are read over the same slots on every substrate (Table 3). The result splits the
+wide-budget leads in two. Against SyGMa the
+exhaustive arm keeps +0.182 [+0.1446, +0.2208],
+the largest margin that survives this control and
+an ordering result rather than an emission one.
+Against the other three nothing survives, every interval covering zero and two of the three
 pointing the other way (Table 3). What the
 sweep shows at k = 50 against those three
 is a statement about how much each system
@@ -1273,6 +1287,7 @@ against SyGMa re-run on that drawing. Over
 [+0.1246, +0.1970], a margin 0.0211 narrower
 than on the stored drawing. The correction also
 moves a cell the other way: against the corrected
+
 SyGMa the interactive arm’s deficit separates,
 −0.0511 [−0.0898, −0.0125], where against the
 stored drawing it did not. What is left after
@@ -1280,7 +1295,6 @@ all three is one wide-budget lead: the exhaustive arm over SyGMa, an ordering re
 comparator whose own rules are largely inside
 this bank. That lead also survives the one test
 the comparator’s own settings allow: run at its
-
 deeper scenario SyGMa emits more than five
 times what the exhaustive arm returns and the
 gap does not close (Section S35).
@@ -1298,23 +1312,30 @@ MetaPredictor’s beam is the second comparator setting this work turns, and tur
 narrows the margin at thirty without removing
 it and removes the one at fifteen (Section S35).
 Against MetaTox alone, the incumbent web
-service this work set out to replace, the exhaustive mode leads at all nine budgets and separates
+10
+
+service this work set out to replace, the exhaustive mode leads at all nine budgets and separates
 at seven, and none of those seven survives the
 matched-length control.
 How the per-substrate figures are pooled is a
 third choice, and it is swept. Every figure in
 Table 2 is micro, and the macro grid is Table S10.
-Its caption names the fourteen verdicts of 126
-10
-
-3.3
-
+Its caption names the eleven verdicts of 126
 that the two aggregations disagree on, one of
 them a lead claimed here. The choice does not
 rescue the budget where micro fails to separate
 (Section S10).
 
 3.2
+
+these tables report measures the training noise,
+and against the interactive arm’s spread the
+rank fusion of P1 is 18.3 times it, the pool cap
+of P2 6.5 times it, and the rule budget of P3 2.3
+times it, which places P3 outside that spread.
+The last of these is indicative only (Section S32).
+
+3.3
 
 How much of the verdict is
 the criterion
@@ -1380,12 +1401,6 @@ One trained checkpoint produced every figure
 here, so the intervals quantify the population
 with the training held fixed. Retraining both
 stages under three seeds at the configuration
-these tables report measures the training noise,
-and against the interactive arm’s spread the
-rank fusion of P1 is 18.3 times it, the pool cap
-of P2 6.5 times it, and the rule budget of P3 2.3
-times it, which places P3 outside that spread.
-The last of these is indicative only (Section S32).
 
 3.4
 
@@ -1394,11 +1409,6 @@ the site that changed
 
 Every prediction names the transformation rule
 that produced it and the site at which it fired.
-A candidate can therefore be rejected on mechanistic grounds. Predicting the site alone is a
-task with its own literature and its own tools,
-reactivity-based 27 and learned 28,29 , resting on
-annotation curated for the purpose 30 ; that literature has recently had to confront how its own
-labels are derived 31 . The claim here is narrower
 11
 
 GRAIL trails
@@ -1624,6 +1634,11 @@ names the comparator the cell is read against, M for MetaTox, S for SyGMa, P for
 G for GLORYx, and Rd or Rs for GLORYxR in its default or strict site-of-metabolism setting. The
 row beneath names the GRAIL arm, int. or exh., with a dash where the better arm is not the same
 one under all five criteria at that budget.
+A candidate can therefore be rejected on mechanistic grounds. Predicting the site alone is a
+task with its own literature and its own tools,
+reactivity-based 27 and learned 28,29 , resting on
+annotation curated for the purpose 30 ; that literature has recently had to confront how its own
+labels are derived 31 . The claim here is narrower
 and concerns consistency: the site this system
 names is the site that changed.
 That consistency is measured on the interactive arm. Of 327 correctly predicted metabolites,
@@ -1641,6 +1656,7 @@ independent, agree at 91.1% against 93.1% for
 the mined ones, so the claim does not rest on the
 templates whose provenance would guarantee
 it. The exhaustive arm is not audited this way.
+
 The audit is run at a rule budget of 30, and the
 whole bank would give a different population of
 scored matches.
@@ -1648,7 +1664,6 @@ How much a chemist gets from an attribution
 also depends on the template: 10.8% of the
 parseable templates have three reactant atoms
 or fewer, and there the site discrimination comes
-
 from the learned stages (Section S15).
 
 3.5
@@ -1670,12 +1685,6 @@ only beyond k = 15, so at the reported budget
 this molecule counts as one hit of the four. The
 class it illustrates is the one the bank is weakest
 on. At the reported budget the exhaustive arm
-recovers none of the comparison set’s 5 annotated deaminations and the best comparator
-recovers most of them (Table 4). The division
-the sweep shows across 291 substrates is visible
-on this one molecule: the interactive mode is
-right about what it emits and runs out, and the
-exhaustive mode keeps having candidates.
 12
 
 where the four annotated metabolites land,
@@ -1742,9 +1751,12 @@ firing rule reported shaded in the colour of its transformation. Right: the rank
 annotated metabolites in each arm’s returned list, every returned candidate drawn as a tick, under
 both drawings of the substrate. The rank axis compresses above k = 30, where the ticks are closer
 together than they are wide and read as a block.
-
-3.6
-
+recovers none of the comparison set’s 5 annotated deaminations and the best comparator
+recovers most of them (Table 4). The division
+the sweep shows across 291 substrates is visible
+on this one molecule: the interactive mode is
+right about what it emits and runs out, and the
+exhaustive mode keeps having candidates.
 The attribution is what a score cannot supply.
 All three phosphorylations fire at the same substrate atoms, the 5′ hydroxymethyl, under three
 different rules, and the deamination fires on
@@ -1752,8 +1764,11 @@ the pyrimidine ring, so the output states which
 transformation is claimed and where, and a candidate can be rejected on mechanistic grounds.
 On the stored drawing all four rules are mined,
 so the part of the bank with no expert provenance is what carries this molecule; on the drawing a chemist would use, a curated template
+
 finds the deamination instead, and later in the
 list (Section S14).
+
+3.6
 
 Which design choices were selected on which population
 
@@ -1766,10 +1781,6 @@ its threshold was fixed in advance and its population was not. The remaining six
 against work this paper does not report and
 are stated with their thresholds, so that a later
 result on any of them cannot rest on a threshold
-chosen afterwards. Section 5 states which of
-the six confirmations a stricter reading leaves
-undecided.
-
 13
 
 Table 5: The four annotated metabolites of gemcitabine and the
@@ -1816,10 +1827,16 @@ Rule is the index into the deployed bank. The substrate is drawn as the
 corpus stores it; the same run on the drawing a chemist would submit returns
 different ranks, and both drawings are given in Section S31.
 
+chosen afterwards. Section 5 states which of
+the six confirmations a stricter reading leaves
+undecided.
+
 3.7
 
-Runtime
-
+this paper states on how much of the shortfall is
+chemistry the corpus never contains; the lower
+end, 0.6253, is derived from the marginals and
+both counts are in Section S18.
 On the comparison set the ceiling is 0.8105 and
 the exhaustive arm at a budget of fifty reaches
 0.7023, which is 86.7% of what the bank can
@@ -1845,10 +1862,8 @@ every deployed firing path uses. The three other
 counts are these. A bound that moves with
 the instrument has to be read with that movement beside it. Measured instead through the
 loop that audits both conventions from one code
-path, implicit hydrogens leave 477 uncovered
-and hydrogens made explicit with the templates
-completed to match leave 469. Choosing the
-convention per template, which no caller can
+
+Runtime
 
 The binding constraint is product standardisation, run once per product of every template,
 and the cost it sets is in Section S33. Two registered predictions followed. Standardising only
@@ -1876,11 +1891,6 @@ need a transformation type the bank does not
 hold, 98 need a type it holds whose rule did not
 fire, and 40 cannot be typed. Those 337 are
 0.7095 of the 475, the upper end of the bound
-this paper states on how much of the shortfall is
-chemistry the corpus never contains; the lower
-end, 0.6253, is derived from the marginals and
-both counts are in Section S18.
-
 14
 
 Table 6: Every deployed choice as a prediction fixed before it was checked: what was fixed, the
@@ -2014,6 +2024,10 @@ in micro recall at a budget of 15. † marks the three whose threshold was fixed
 not. The last column carries each row’s identifier in the released register, which numbers the predictions in the order
 they were written rather than the order they are read.
 
+path, implicit hydrogens leave 477 uncovered
+and hydrogens made explicit with the templates
+completed to match leave 469. Choosing the
+convention per template, which no caller can
 request, leaves 460. A fourth arm, hydrogens
 made explicit without completing the templates,
 is an incomplete loop and leaves 688 uncovered,
@@ -2026,11 +2040,11 @@ decide a claim here. The residual dependence
 of the bound on the convention, measured per
 template, is 0.0035, 95% CI [0.0015, 0.0058], an
 interval excluding zero: the bound is conventiondependent, by 9 references in 2,597.
+
 The 337 misses of absent type collapse into
 312 distinct types, of which 294 occur once and
 carry 87.2% of the mass. A reader may put this
 down to how finely a type is defined; varying
-
 the definition answers that. What that answer
 covers should be said exactly: it covers the 337
 misses of absent type, and none of the other
@@ -2046,10 +2060,7 @@ the share itself: 87.2% is read under our own
 definition of a type, and a coarser one collapses
 it. What it supports is the different claim that
 the bound is invariant to the definition across
-the whole range in which that definition is meaningful. That makes the census of the gap a fact
-about the annotation corpus, independent of our
-own choice of definition; what the engine contributes is the hydrogen convention measured
-15
+the whole range in which that definition is mean15
 
 Table 7: The novel-type gap against the definition of a type.
 definition of a type
@@ -2169,6 +2180,9 @@ synthetic templates could supply. Right: the share of the novel-type gap sitting
 once, against four definitions of a type; the label above each bar is that share and the count under
 each tick is how many distinct types the definition yields. The hatched bars are the definitions
 under which a type still names a transformation, so the distinction does not rest on colour.
+ingful. That makes the census of the gap a fact
+about the annotation corpus, independent of our
+own choice of definition; what the engine contributes is the hydrogen convention measured
 above.
 Nor is the missing chemistry available in the
 largest reaction library we hold. Typing 42,554

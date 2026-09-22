@@ -91,7 +91,26 @@ def main() -> int:
     ap.add_argument("--whole-bank", default="results/widepools_implicit/w*.json")
     ap.add_argument("--trained", default=str(ROOT / "results/widepools_k30/all.json"))
     ap.add_argument("--out", default=str(ROOT / "results/deployment_table.json"))
+    # A comparator's predictions path was reachable only by editing the dict above, so the
+    # counterfactual -- what would this table say if that arm's file were corrected --
+    # could not be computed without overwriting the artifact being compared against.
+    ap.add_argument("--comparator", action="append", default=[], metavar="NAME=PATH",
+                    help="override one comparator's predictions file, repeatable")
     args = ap.parse_args()
+
+    # Resolved ONCE and read by both loops below. Two of them iterate COMPARATORS -- one
+    # for recall, one for the mean-emitted row -- and overriding only the first would give
+    # a table whose recall came from one file and whose emission came from another.
+    comparators = dict(COMPARATORS)
+    for spec in args.comparator:
+        if "=" not in spec:
+            sys.exit(f"REFUSING: --comparator wants NAME=PATH, got {spec!r}")
+        nm, pth = spec.split("=", 1)
+        if nm not in comparators:
+            sys.exit(f"REFUSING: {nm!r} is not a comparator this table knows; it has "
+                     + ", ".join(sorted(comparators)))
+        comparators[nm] = (pth, None)
+        print(f"  override: {nm} <- {pth}", file=sys.stderr)
 
     from bank_without_selection import _dedup
 
@@ -123,7 +142,8 @@ def main() -> int:
     arms = {"whole bank": {s: ranked(big[s], s) for s in subs},
             "trained budget": {s: ranked(small[s], s) for s in subs}}
     absent = []
-    for name, (rel, key) in COMPARATORS.items():
+    coverage = {}
+    for name, (rel, key) in comparators.items():
         path = ROOT / rel
         if not path.exists():
             absent.append(name)
@@ -132,6 +152,19 @@ def main() -> int:
         preds = blob[key] if key else blob
         arms[name] = {s: drop_parent(_dedup(preds.get(s, []), max(KS) + 5), s)[:max(KS)]
                       for s in subs}
+        # A substrate absent from a comparator's file becomes an empty list here, which is a zero
+        # in every recall below, and nothing recorded that it had happened. BioTransformer crashes
+        # deterministically on fifteen of these substrates and its arm was scored as though the
+        # tool had answered "none" fifteen times. The share is recorded so the zero is a declared
+        # treatment rather than a silent one, and the drop is named on stderr when it occurs.
+        have = sum(1 for s in subs if preds.get(s))
+        answered = sum(1 for s in subs if s in preds)
+        coverage[name] = {"substrates_in_file": answered, "with_a_prediction": have,
+                          "of_population": len(subs),
+                          "scored_zero_for_absence": len(subs) - answered}
+        if answered < len(subs):
+            print(f"  {name}: answers for {answered} of {len(subs)} substrates; the other "
+                  f"{len(subs) - answered} are scored zero", file=sys.stderr)
     ours = ("whole bank", "trained budget")
     others = [a for a in arms if a not in ours]
 
@@ -221,7 +254,7 @@ def main() -> int:
             [len(drop_parent([c["key"] for c in rrf_order(
                 sorted(pools[s], key=lambda c: -c["generator"])[:CAP])], s)) for s in subs]))
         untruncated[a], untruncated2[a] = round(exact, 1), round(exact, 2)
-    for name, (rel, key) in COMPARATORS.items():
+    for name, (rel, key) in comparators.items():
         path = ROOT / rel
         if not path.exists():
             continue
@@ -235,6 +268,7 @@ def main() -> int:
            # against a shard that has since been rebuilt, renamed or planted can be told from one
            # written against the pools on disk now. A modification time cannot say this: it
            # belongs to the working tree, and any clone or checkout rewrites it.
+           "comparator_coverage": coverage,
            "inputs": record_inputs(read_b + read_s),
            "population": {"n": len(subs), "n_references": N,
                           "source": "the 291 of results/four_method_291.json"},

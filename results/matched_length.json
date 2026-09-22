@@ -3,7 +3,7 @@
   "script": "matched_length.py",
   "script_path": "scripts/typed_edit/matched_length.py",
   "source_sha256": "c6c80439f8ac98f873317cd4d469f8a90e4a32108816e182ec610df157406bd7",
-  "git_commit": "6c947921438e46c0002b09650144580460b719fb",
+  "git_commit": "634c758ec6b3cede7b1d22ba6e10854e3f19fd2f",
   "git_dirty": true
  },
  "inputs": [
@@ -28,8 +28,8 @@
   {
    "path": "results/biotransformer_allhuman_one_step_preds.json",
    "exists": true,
-   "sha256_16": "1cdc5ab9898e0f99",
-   "bytes": 291972
+   "sha256_16": "e214476b40336cdf",
+   "bytes": 291127
   },
   {
    "path": "results/gloryx_service_preds.json",
@@ -215,52 +215,52 @@
    }
   },
   "whole bank - biotransformer": {
-   "recall_ours": 0.4436,
-   "recall_theirs": 0.4481,
-   "gap": -0.0045,
+   "recall_ours": 0.4421,
+   "recall_theirs": 0.4556,
+   "gap": -0.0135,
    "ci95": [
-    -0.0402,
-    0.0315
+    -0.0481,
+    0.0217
    ],
    "excludes_zero": false,
-   "mean_slots": 10.7,
-   "median_slots": 10,
-   "substrates_where_the_comparator_returned_nothing": 7,
+   "mean_slots": 11.3,
+   "median_slots": 11,
+   "substrates_where_the_comparator_returned_nothing": 21,
    "without_the_cap_on_the_comparator": {
-    "gap": -0.0045,
+    "gap": -0.0135,
     "ci95": [
-     -0.0402,
-     0.0315
+     -0.0481,
+     0.0217
     ],
     "excludes_zero": false,
-    "mean_slots": 10.7,
-    "mean_slots_uncapped": 10.7,
+    "mean_slots": 11.3,
+    "mean_slots_uncapped": 11.3,
     "substrates_the_cap_binds_on": 0,
     "annotated_metabolites_the_comparator_placed_past_the_cut": 0,
     "verdict_unchanged": true
    }
   },
   "trained budget - biotransformer": {
-   "recall_ours": 0.406,
-   "recall_theirs": 0.4481,
-   "gap": -0.0421,
+   "recall_ours": 0.4,
+   "recall_theirs": 0.4556,
+   "gap": -0.0556,
    "ci95": [
-    -0.09,
-    0.0044
+    -0.1025,
+    -0.01
    ],
-   "excludes_zero": false,
-   "mean_slots": 10.7,
-   "median_slots": 10,
-   "substrates_where_the_comparator_returned_nothing": 7,
+   "excludes_zero": true,
+   "mean_slots": 11.3,
+   "median_slots": 11,
+   "substrates_where_the_comparator_returned_nothing": 21,
    "without_the_cap_on_the_comparator": {
-    "gap": -0.0421,
+    "gap": -0.0556,
     "ci95": [
-     -0.09,
-     0.0044
+     -0.1025,
+     -0.01
     ],
-    "excludes_zero": false,
-    "mean_slots": 10.7,
-    "mean_slots_uncapped": 10.7,
+    "excludes_zero": true,
+    "mean_slots": 11.3,
+    "mean_slots_uncapped": 11.3,
     "substrates_the_cap_binds_on": 0,
     "annotated_metabolites_the_comparator_placed_past_the_cut": 0,
     "verdict_unchanged": true

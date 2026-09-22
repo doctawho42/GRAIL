@@ -1,0 +1,47 @@
+{
+  "tool": "BioTransformer 3.0.0",
+  "flags": [
+    "-k",
+    "pred",
+    "-b",
+    "allHuman",
+    "-cm",
+    "3",
+    "-s",
+    "1"
+  ],
+  "steps": 1,
+  "java": "/Library/Java/JavaVirtualMachines/temurin-8.jdk/Contents/Home/bin/java",
+  "jar": "/Users/nikitapolomosnov/PycharmProjects/GRAIL/.claude/worktrees/hungry-pasteur-25d746/artifacts/tier2/biotransformer/biotransformer-3.0.0.jar",
+  "host": "macOS-26.5.1-arm64-arm-64bit",
+  "parents_source": "/Users/nikitapolomosnov/PycharmProjects/GRAIL/.claude/worktrees/hungry-pasteur-25d746/results/bt_steps/parents_n291.txt",
+  "n_parents": 291,
+  "workers": 5,
+  "timeout_s": 1800,
+  "started": "2026-09-20T00:56:01+0300",
+  "done": 15,
+  "todo": 15,
+  "elapsed_s": 77.2,
+  "statuses": {
+    "exit1": 15
+  },
+  "failures": {
+    "CC(=O)OCC1=C(C(=O)O)N2C(=O)C(N=C(O)Cc3cccs3)C2SC1": "exit1 | WARNING: Maybe RingTemplateError!",
+    "CC(C)(C)C1CCC(=Cc2c(OP(=O)(O)O)c(O)c3ccccc3c2O)CC1": "exit1 | Exception in thread \"main\" java.lang.NullPointerException",
+    "CC(OC(=O)N(C)c1ccc(F)cc1CO)[n+]1cnn(CC(O)(c2cc(F)ccc2F)C(C)c2nc(-c3ccc(C#N)cc3)cs2)c1": "exit1 | WARNING: Maybe RingTemplateError!",
+    "CC(SC(=O)c1cccs1)C(O)=NCC(=O)O": "exit1 | WARNING: Maybe RingTemplateError!",
+    "CCOP(=O)(OCC)OCCCCOC(=O)C(C)c1ccc(C(O)C(C)C)cc1": "exit1 | Exception in thread \"main\" java.lang.NullPointerException",
+    "COC(=O)C(Cc1ccccc1)NP(=O)(OCC1C=CC(n2cc(C)c(O)nc2=O)O1)Oc1ccccc1": "exit1 | Exception in thread \"main\" java.lang.NullPointerException",
+    "COC(=O)c1sc(C(C)(C)c2c(Cl)cc(-n3ncc(O)nc3=O)cc2Cl)nc1-c1ccccc1": "exit1 | WARNING: Maybe RingTemplateError!",
+    "COc1cc(C)c(C=CC2(C)CCC(=O)O2)c(C)c1C": "exit1 | WARNING: Maybe RingTemplateError!",
+    "COc1cc(C=Cc2ccc(OC)c(OP(=O)(O)O)c2OP(=O)(O)O)cc(OC)c1OC": "exit1 | Exception in thread \"main\" java.lang.NullPointerException",
+    "Cc1cc(-c2ccc3nnc(CNc4ccnc5cc(OCCO)cnc45)n3n2)sn1": "exit1 | WARNING: Maybe RingTemplateError!",
+    "Cc1nc(-[n+]2nc(-c3cccc(OCC(=O)O)c3)nn2-c2ccc(S(=O)(=O)[O-])cc2)sc1C": "exit1 | WARNING: Maybe RingTemplateError!",
+    "O=C(Nc1ccc(OC(F)(F)F)cc1)c1sccc1NCc1ccnc2ccccc12": "exit1 | WARNING: Maybe RingTemplateError!",
+    "O=C(O)CCN1CSC(=S)N(CCc2ccccc2)C1": "exit1 | java.lang.NullPointerException",
+    "O=C(O)Cc1nn(Cc2nc3cc(C(F)(F)F)ccc3s2)c(=O)c2ccccc12": "exit1 | WARNING: Maybe RingTemplateError!",
+    "Oc1ccc2c(Oc3ccc(OCCN4CCCCC4)cc3)c(-c3ccc(F)cc3)sc2c1": "exit1 | WARNING: Maybe RingTemplateError!"
+  },
+  "n_ok": 276,
+  "n_failed": 15
+}

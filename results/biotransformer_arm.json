@@ -3,7 +3,7 @@
   "script": "biotransformer_arm.py",
   "script_path": "scripts/typed_edit/biotransformer_arm.py",
   "source_sha256": "e774f4ddf5d2e21048afd19985e383454460faeff47a34b437b36bca8e9bbbec",
-  "git_commit": "85f8a68ee0d74ba5db9971ecea1ce368449bd2cb",
+  "git_commit": "634c758ec6b3cede7b1d22ba6e10854e3f19fd2f",
   "git_dirty": true
  },
  "inputs": [
@@ -61,105 +61,105 @@
   "allHuman one step": {
    "source_csv": "frozen predictions, not re-parsed",
    "predictions": "results/biotransformer_allhuman_one_step_preds.json",
-   "mean_emitted": 10.7,
-   "substrates_with_no_prediction": 7,
+   "mean_emitted": 11.3,
+   "substrates_with_no_prediction": 21,
    "recall": {
-    "1": 0.0722,
-    "3": 0.194,
-    "5": 0.2752,
-    "8": 0.3414,
-    "10": 0.3759,
-    "15": 0.4286,
-    "20": 0.4421,
-    "30": 0.4466,
-    "50": 0.4481
+    "1": 0.0692,
+    "3": 0.185,
+    "5": 0.2647,
+    "8": 0.3338,
+    "10": 0.3684,
+    "15": 0.4271,
+    "20": 0.4466,
+    "30": 0.4541,
+    "50": 0.4556
    },
    "exhaustive_minus_biotransformer_at_15": {
-    "gap": 0.1068,
+    "gap": 0.1083,
     "ci95": [
-     0.0672,
-     0.1481
+     0.069,
+     0.1501
     ],
     "excludes_zero": true
    },
    "exhaustive_minus_biotransformer_at_30": {
-    "gap": 0.206,
+    "gap": 0.1985,
     "ci95": [
-     0.1678,
-     0.2478
+     0.1588,
+     0.2422
     ],
     "excludes_zero": true
    },
    "exhaustive_minus_biotransformer_at_50": {
-    "gap": 0.2541,
+    "gap": 0.2466,
     "ci95": [
-     0.2166,
-     0.2944
+     0.209,
+     0.2883
     ],
     "excludes_zero": true
    },
    "matched_length": {
-    "recall_ours": 0.4436,
-    "recall_theirs": 0.4481,
-    "gap": -0.0045,
+    "recall_ours": 0.4421,
+    "recall_theirs": 0.4556,
+    "gap": -0.0135,
     "ci95": [
-     -0.0402,
-     0.0315
+     -0.0481,
+     0.0217
     ],
     "excludes_zero": false,
-    "mean_slots": 10.7
+    "mean_slots": 11.3
    }
   },
   "allHuman one step, natural drawing": {
    "source_csv": "frozen predictions, not re-parsed",
    "predictions": "results/biotransformer_allhuman_one_step_natural_drawing_preds.json",
-   "mean_emitted": 10.7,
-   "substrates_with_no_prediction": 10,
+   "mean_emitted": 11.3,
+   "substrates_with_no_prediction": 22,
    "recall": {
-    "1": 0.0707,
-    "3": 0.188,
-    "5": 0.2707,
-    "8": 0.3368,
-    "10": 0.3729,
+    "1": 0.0677,
+    "3": 0.182,
+    "5": 0.2602,
+    "8": 0.3308,
+    "10": 0.3669,
     "15": 0.4271,
-    "20": 0.4406,
-    "30": 0.4451,
-    "50": 0.4466
+    "20": 0.4466,
+    "30": 0.4541,
+    "50": 0.4556
    },
    "exhaustive_minus_biotransformer_at_15": {
     "gap": 0.1083,
     "ci95": [
-     0.0676,
-     0.1497
+     0.0682,
+     0.1496
     ],
     "excludes_zero": true
    },
    "exhaustive_minus_biotransformer_at_30": {
-    "gap": 0.2075,
+    "gap": 0.1985,
     "ci95": [
-     0.1683,
-     0.249
+     0.1589,
+     0.2415
     ],
     "excludes_zero": true
    },
    "exhaustive_minus_biotransformer_at_50": {
-    "gap": 0.2556,
+    "gap": 0.2466,
     "ci95": [
-     0.2182,
-     0.2951
+     0.2088,
+     0.2867
     ],
     "excludes_zero": true
    },
    "matched_length": {
-    "recall_ours": 0.4361,
-    "recall_theirs": 0.4466,
-    "gap": -0.0105,
+    "recall_ours": 0.4376,
+    "recall_theirs": 0.4556,
+    "gap": -0.018,
     "ci95": [
-     -0.0456,
-     0.0249
+     -0.0524,
+     0.0164
     ],
     "excludes_zero": false,
-    "mean_slots": 10.69
+    "mean_slots": 11.32
    }
   }
  },

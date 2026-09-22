@@ -391,20 +391,40 @@ def si_drawing_equalised():
     # artifact can sit where the real one belongs and look like a table. It is refused rather
     # than printed: the population it was computed on has to be the one the comparison uses.
     expected = art("deployment_table.json")["population"]["n"]
-    if d["population"]["n_substrates"] != expected:
+    # The table may be smaller than the comparison set by EXACTLY the exclusion it records, and
+    # by nothing else. A --substrates probe has no such record, so it is still refused; a paired
+    # exclusion accounts for every substrate it removed and is admitted with its count printed.
+    _ex = d.get("paired_exclusion") or {}
+    _short = expected - d["population"]["n_substrates"]
+    if _short != _ex.get("n_dropped", 0):
         raise FileNotFoundError(
-            f"results/drawing_equalised.json holds {d['population']['n_substrates']} substrates, "
-            f"not the comparison set's {expected}; re-run it without --substrates")
+            f"results/drawing_equalised.json holds {d['population']['n_substrates']} substrates "
+            f"against the comparison set's {expected}, a shortfall of {_short}, and records an "
+            f"exclusion of {_ex.get('n_dropped', 0)}; the two must agree or the artifact is a "
+            "probe rather than a paired comparison")
     # The population is not the only way this artifact can be wrong. The first full run read a
     # re-run file that covered 79 of the 291 substrates and scored the rest as empty, which put a
     # comparator's recall at a quarter of its real value and looked like an enormous drawing
     # effect. The instrument now records what its re-runs cover and whether the two runs agree on
     # the substrates the drawing does not move; a table is refused unless both are on record.
     missed = d.get("substrates_the_drawing_moves_that_a_re_run_does_not_cover")
-    if missed is None or any(missed.values()):
+    if missed is None:
         raise FileNotFoundError(
-            "results/drawing_equalised.json does not show every re-run covering the substrates "
-            f"the drawing moves: {missed}")
+            "results/drawing_equalised.json predates the coverage record; re-run it")
+    # An uncovered substrate is admissible only if it was DROPPED from the comparison and the
+    # drop is on record. Scoring it as an empty list is what this refusal exists to prevent: the
+    # delta then carries that arm's whole output on that substrate and reads as a drawing effect.
+    _dropped = set(_ex.get("dropped_because_a_re_run_has_no_answer") or ())
+    # Set equality, not a total: the substrates dropped must BE the substrates uncovered.
+    _uncovered = set(_ex.get("uncovered_moved_union") or ())
+    if _uncovered - _dropped:
+        raise FileNotFoundError(
+            f"results/drawing_equalised.json leaves {len(_uncovered - _dropped)} substrates the "
+            "drawing moves both uncovered by a re-run and inside the comparison")
+    if not _uncovered and any(missed.values()):
+        raise FileNotFoundError(
+            "results/drawing_equalised.json reports uncovered substrates by count but records no "
+            f"list of them, so the exclusion cannot be checked against them: {missed}")
     if "unmoved_substrates_where_the_two_runs_disagree" not in d:
         raise FileNotFoundError(
             "results/drawing_equalised.json predates the coverage record; re-run it")
@@ -458,9 +478,19 @@ def si_drawing_equalised():
             + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n"
             "\\caption{Micro recall with every arm that can be re-run presented with the substrate "
             "as the declared standardiser draws it, which is the drawing a user submits, on the "
-            f"{pop['n_substrates']} substrates of the comparison set; the standardiser changes "
-            f"{pop['substrates_the_standardiser_moves']} of them. "
-            "$^{\\dagger}$ marks a web service with no re-run available to us: "
+            f"{_ex.get('n_paired', pop['n_substrates'])} substrates of the comparison set on "
+            "which every re-run answers in both drawings; the standardiser changes "
+            f"{pop['substrates_the_standardiser_moves']} of the "
+            f"{pop['n_substrates']} in the set. "
+            # The comparison is PAIRED, so a substrate one drawing has no answer for is dropped
+            # rather than scored empty; scoring it empty would put that arm's whole output on
+            # that substrate into the delta and read as an effect of the drawing.
+            + (f"{_ex['n_dropped']} substrates are excluded because at least one arm has no "
+               f"answer in one of the two drawings, "
+               f"{len(_ex.get('of_those_the_drawing_moves', ()))} of them substrates the "
+               "standardiser moves; BioTransformer crashes deterministically on these. "
+               if _ex.get("n_dropped") else "")
+            + "$^{\\dagger}$ marks a web service with no re-run available to us: "
             + " and ".join(sorted(frozen))
             + ". Those columns are the same as in Table~\\ref{MS-tab:sweep} and are the arms "
             "still on their own input, which is the asymmetry this table removes from the rest. "

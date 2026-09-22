@@ -2,8 +2,8 @@
  "provenance": {
   "script": "phase1_tmain.py",
   "script_path": "revision/phase1_tmain.py",
-  "source_sha256": "adce5e917503612a610146049fa56663531177c3d9f4da726de70c569b8413b3",
-  "git_commit": "1d96cfc5965119ced527455b889ff4127b768033",
+  "source_sha256": "7f3f2149df2201bdceae00d1beaf8f0495303e55df42f7280cc1fcb5debb1e07",
+  "git_commit": "634c758ec6b3cede7b1d22ba6e10854e3f19fd2f",
   "git_dirty": true
  },
  "generated_by": "revision/phase1_tmain.py",
@@ -30,7 +30,9 @@
    "sygma": "results/sygma_fulltest_predictions.json",
    "metapredictor": "artifacts/tier2_1170/metapredictor_preds.json",
    "biotransformer": "results/biotransformer_allhuman_one_step_preds.json",
-   "gloryx": "results/gloryx_service_preds.json"
+   "gloryx": "results/gloryx_service_preds.json",
+   "gloryxr_default": "results/gloryxr_local_preds_default.json",
+   "gloryxr_strict": "results/gloryxr_local_preds_strict.json"
   },
   "evaluated1170": {
    "whole bank": "results/widepools_fulltest/w*.json",
@@ -38,7 +40,10 @@
    "sygma": "results/sygma_fulltest_predictions.json",
    "metapredictor": "artifacts/tier2_1170/metapredictor_preds.json",
    "biotransformer": "results/biotransformer_fulltest_preds.json",
-   "gloryx": "results/gloryx_service_preds_evaluated1170.json"
+   "gloryx": "results/gloryx_service_preds_evaluated1170.json",
+   "gloryxr_default": "results/gloryxr_local_preds_default.json",
+   "gloryxr_strict": "results/gloryxr_local_preds_strict.json",
+   "metatox": "results/metatox_smirks_preds_evaluated1170.json"
   }
  },
  "cells_absent_by_construction": {
@@ -92,6 +97,18 @@
   },
   {
    "population": "comparison291",
+   "criterion": "exact",
+   "system": "gloryxr_default",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "exact",
+   "system": "gloryxr_strict",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
    "criterion": "canonical",
    "system": "whole bank",
    "fallbacks": 0
@@ -130,6 +147,18 @@
    "population": "comparison291",
    "criterion": "canonical",
    "system": "gloryx",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "canonical",
+   "system": "gloryxr_default",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "canonical",
+   "system": "gloryxr_strict",
    "fallbacks": 0
   },
   {
@@ -166,12 +195,24 @@
    "population": "comparison291",
    "criterion": "inchikey",
    "system": "biotransformer",
-   "fallbacks": 12
+   "fallbacks": 20
   },
   {
    "population": "comparison291",
    "criterion": "inchikey",
    "system": "gloryx",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "inchikey",
+   "system": "gloryxr_default",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "inchikey",
+   "system": "gloryxr_strict",
    "fallbacks": 0
   },
   {
@@ -208,7 +249,7 @@
    "population": "comparison291",
    "criterion": "inchi_no_stereo",
    "system": "biotransformer",
-   "fallbacks": 12
+   "fallbacks": 18
   },
   {
    "population": "comparison291",
@@ -218,6 +259,18 @@
   },
   {
    "population": "comparison291",
+   "criterion": "inchi_no_stereo",
+   "system": "gloryxr_default",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "inchi_no_stereo",
+   "system": "gloryxr_strict",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
    "criterion": "tanimoto1",
    "system": "whole bank",
    "fallbacks": 0
@@ -250,12 +303,24 @@
    "population": "comparison291",
    "criterion": "tanimoto1",
    "system": "biotransformer",
-   "fallbacks": 12
+   "fallbacks": 20
   },
   {
    "population": "comparison291",
    "criterion": "tanimoto1",
    "system": "gloryx",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "tanimoto1",
+   "system": "gloryxr_default",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "tanimoto1",
+   "system": "gloryxr_strict",
    "fallbacks": 0
   },
   {
@@ -292,7 +357,7 @@
    "population": "comparison291",
    "criterion": "inchikey_tautomer",
    "system": "biotransformer",
-   "fallbacks": 12
+   "fallbacks": 20
   },
   {
    "population": "comparison291",
@@ -301,6 +366,18 @@
    "fallbacks": 0
   },
   {
+   "population": "comparison291",
+   "criterion": "inchikey_tautomer",
+   "system": "gloryxr_default",
+   "fallbacks": 0
+  },
+  {
+   "population": "comparison291",
+   "criterion": "inchikey_tautomer",
+   "system": "gloryxr_strict",
+   "fallbacks": 0
+  },
+  {
    "population": "evaluated1170",
    "criterion": "exact",
    "system": "whole bank",
@@ -338,6 +415,24 @@
   },
   {
    "population": "evaluated1170",
+   "criterion": "exact",
+   "system": "gloryxr_default",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "exact",
+   "system": "gloryxr_strict",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "exact",
+   "system": "metatox",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
    "criterion": "canonical",
    "system": "whole bank",
    "fallbacks": 0
@@ -370,6 +465,24 @@
    "population": "evaluated1170",
    "criterion": "canonical",
    "system": "gloryx",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "canonical",
+   "system": "gloryxr_default",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "canonical",
+   "system": "gloryxr_strict",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "canonical",
+   "system": "metatox",
    "fallbacks": 0
   },
   {
@@ -410,6 +523,24 @@
   },
   {
    "population": "evaluated1170",
+   "criterion": "inchikey",
+   "system": "gloryxr_default",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "inchikey",
+   "system": "gloryxr_strict",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "inchikey",
+   "system": "metatox",
+   "fallbacks": 172
+  },
+  {
+   "population": "evaluated1170",
    "criterion": "inchi_no_stereo",
    "system": "whole bank",
    "fallbacks": 72
@@ -446,6 +577,24 @@
   },
   {
    "population": "evaluated1170",
+   "criterion": "inchi_no_stereo",
+   "system": "gloryxr_default",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "inchi_no_stereo",
+   "system": "gloryxr_strict",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "inchi_no_stereo",
+   "system": "metatox",
+   "fallbacks": 155
+  },
+  {
+   "population": "evaluated1170",
    "criterion": "tanimoto1",
    "system": "whole bank",
    "fallbacks": 0
@@ -482,6 +631,24 @@
   },
   {
    "population": "evaluated1170",
+   "criterion": "tanimoto1",
+   "system": "gloryxr_default",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "tanimoto1",
+   "system": "gloryxr_strict",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "tanimoto1",
+   "system": "metatox",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
    "criterion": "inchikey_tautomer",
    "system": "whole bank",
    "fallbacks": 0
@@ -515,6 +682,24 @@
    "criterion": "inchikey_tautomer",
    "system": "gloryx",
    "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "inchikey_tautomer",
+   "system": "gloryxr_default",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "inchikey_tautomer",
+   "system": "gloryxr_strict",
+   "fallbacks": 0
+  },
+  {
+   "population": "evaluated1170",
+   "criterion": "inchikey_tautomer",
+   "system": "metatox",
+   "fallbacks": 97
   }
  ],
  "reference_keying": [

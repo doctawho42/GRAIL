@@ -15,6 +15,7 @@ count of cells whose verdict the correction changes is the number the manuscript
 """
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -64,7 +65,13 @@ def holm(pairs, alpha=ALPHA):
 
 
 def main() -> int:
-    dep = json.loads((ROOT / "results/deployment_table.json").read_text())
+    # The deployment table was reachable only at its working path, so the correction this file
+    # reports could not be recomputed against a corrected arm without overwriting the artifact.
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--deployment", default=str(ROOT / "results/deployment_table.json"))
+    ap.add_argument("--out", default=str(ROOT / "results/multiplicity.json"))
+    args = ap.parse_args()
+    dep = json.loads(Path(args.deployment).read_text())
     contrasts = dep["contrasts"]
     budgets = sorted(contrasts, key=int)
 
@@ -145,7 +152,7 @@ def main() -> int:
             "prefers that reading has it without recomputing anything. A verdict that changes is "
             "named; the rest stand under both."),
     }
-    (ROOT / "results/multiplicity.json").write_text(json.dumps(report, indent=1))
+    Path(args.out).write_text(json.dumps(report, indent=1))
     print(f"family of {report['n_tests']} tests at alpha {ALPHA}, Holm")
     w = report["over_every_contrast_the_paper_prints"]
     print(f"  over every printed contrast ({w['n_tests']} tests): "
@@ -155,7 +162,7 @@ def main() -> int:
     print(f"  separate after Holm     : {report['n_separating_after_holm']}")
     for name in sorted(changed):
         print(f"  changes verdict: {name}  gap {rows[name]['gap']:+.4f}  p {rows[name]['p']}")
-    print("wrote results/multiplicity.json")
+    print(f"wrote {args.out}")
     return 0
 
 

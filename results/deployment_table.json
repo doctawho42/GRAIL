@@ -2,9 +2,53 @@
  "provenance": {
   "script": "deployment_table.py",
   "script_path": "scripts/typed_edit/deployment_table.py",
-  "source_sha256": "04df5df20ec921fe1ba342a1b39f3464a9423ebb9995ab6d19a1747b825bd77a",
-  "git_commit": "74cabe9589bb665e1632e43a5822c4732cc157c7",
+  "source_sha256": "5513596ea767be84fd66c892209c3570fe21787e052310bd7ffa556aac865299",
+  "git_commit": "634c758ec6b3cede7b1d22ba6e10854e3f19fd2f",
   "git_dirty": true
+ },
+ "comparator_coverage": {
+  "metatox": {
+   "substrates_in_file": 291,
+   "with_a_prediction": 291,
+   "of_population": 291,
+   "scored_zero_for_absence": 0
+  },
+  "sygma": {
+   "substrates_in_file": 291,
+   "with_a_prediction": 290,
+   "of_population": 291,
+   "scored_zero_for_absence": 0
+  },
+  "metapredictor": {
+   "substrates_in_file": 291,
+   "with_a_prediction": 290,
+   "of_population": 291,
+   "scored_zero_for_absence": 0
+  },
+  "biotransformer": {
+   "substrates_in_file": 276,
+   "with_a_prediction": 270,
+   "of_population": 291,
+   "scored_zero_for_absence": 15
+  },
+  "gloryx": {
+   "substrates_in_file": 291,
+   "with_a_prediction": 291,
+   "of_population": 291,
+   "scored_zero_for_absence": 0
+  },
+  "gloryxr_default": {
+   "substrates_in_file": 291,
+   "with_a_prediction": 291,
+   "of_population": 291,
+   "scored_zero_for_absence": 0
+  },
+  "gloryxr_strict": {
+   "substrates_in_file": 291,
+   "with_a_prediction": 291,
+   "of_population": 291,
+   "scored_zero_for_absence": 0
+  }
  },
  "inputs": [
   {
@@ -97,7 +141,7 @@
   "metatox": 30.9,
   "sygma": 40.5,
   "metapredictor": 10.7,
-  "biotransformer": 10.7,
+  "biotransformer": 11.3,
   "gloryx": 27.2,
   "gloryxr_default": 27.0,
   "gloryxr_strict": 27.0
@@ -109,7 +153,7 @@
   "metatox": 33.6,
   "sygma": 73.0,
   "metapredictor": 10.7,
-  "biotransformer": 10.7,
+  "biotransformer": 11.3,
   "gloryx": 28.7,
   "gloryxr_default": 28.5,
   "gloryxr_strict": 28.5
@@ -120,7 +164,7 @@
   "metatox": 33.6,
   "sygma": 72.98,
   "metapredictor": 10.75,
-  "biotransformer": 10.7,
+  "biotransformer": 11.3,
   "gloryx": 28.69,
   "gloryxr_default": 28.47,
   "gloryxr_strict": 28.47
@@ -133,7 +177,7 @@
    "metatox": 0.0406,
    "sygma": 0.1534,
    "metapredictor": 0.1398,
-   "biotransformer": 0.0722,
+   "biotransformer": 0.0692,
    "gloryx": 0.0662,
    "gloryxr_default": 0.0872,
    "gloryxr_strict": 0.1023
@@ -144,7 +188,7 @@
    "metatox": 0.1323,
    "sygma": 0.2887,
    "metapredictor": 0.2767,
-   "biotransformer": 0.194,
+   "biotransformer": 0.185,
    "gloryx": 0.1895,
    "gloryxr_default": 0.2286,
    "gloryxr_strict": 0.2481
@@ -155,7 +199,7 @@
    "metatox": 0.218,
    "sygma": 0.3744,
    "metapredictor": 0.3549,
-   "biotransformer": 0.2752,
+   "biotransformer": 0.2647,
    "gloryx": 0.2872,
    "gloryxr_default": 0.3233,
    "gloryxr_strict": 0.3353
@@ -166,7 +210,7 @@
    "metatox": 0.3113,
    "sygma": 0.4271,
    "metapredictor": 0.4346,
-   "biotransformer": 0.3414,
+   "biotransformer": 0.3338,
    "gloryx": 0.397,
    "gloryxr_default": 0.397,
    "gloryxr_strict": 0.4135
@@ -177,7 +221,7 @@
    "metatox": 0.388,
    "sygma": 0.4556,
    "metapredictor": 0.4707,
-   "biotransformer": 0.3759,
+   "biotransformer": 0.3684,
    "gloryx": 0.4406,
    "gloryxr_default": 0.4481,
    "gloryxr_strict": 0.4556
@@ -188,7 +232,7 @@
    "metatox": 0.5143,
    "sygma": 0.4842,
    "metapredictor": 0.4797,
-   "biotransformer": 0.4286,
+   "biotransformer": 0.4271,
    "gloryx": 0.5233,
    "gloryxr_default": 0.5188,
    "gloryxr_strict": 0.5143
@@ -199,7 +243,7 @@
    "metatox": 0.5519,
    "sygma": 0.4992,
    "metapredictor": 0.4797,
-   "biotransformer": 0.4421,
+   "biotransformer": 0.4466,
    "gloryx": 0.5579,
    "gloryxr_default": 0.5549,
    "gloryxr_strict": 0.5459
@@ -210,7 +254,7 @@
    "metatox": 0.6015,
    "sygma": 0.5068,
    "metapredictor": 0.4797,
-   "biotransformer": 0.4466,
+   "biotransformer": 0.4541,
    "gloryx": 0.5925,
    "gloryxr_default": 0.5865,
    "gloryxr_strict": 0.582
@@ -221,7 +265,7 @@
    "metatox": 0.6271,
    "sygma": 0.5113,
    "metapredictor": 0.4797,
-   "biotransformer": 0.4481,
+   "biotransformer": 0.4556,
    "gloryx": 0.606,
    "gloryxr_default": 0.603,
    "gloryxr_strict": 0.603
@@ -266,13 +310,13 @@
     "p_bootstrap": 0.0042
    },
    "whole bank - biotransformer": {
-    "gap": 0.0271,
+    "gap": 0.0301,
     "ci95": [
-     0.0015,
-     0.0537
+     0.0044,
+     0.0566
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0438
+    "p_bootstrap": 0.0262
    },
    "whole bank - gloryx": {
     "gap": 0.0331,
@@ -329,13 +373,13 @@
     "p_bootstrap": 0.0142
    },
    "trained budget - biotransformer": {
-    "gap": 0.0331,
+    "gap": 0.0361,
     "ci95": [
-     0.0075,
-     0.0593
+     0.0105,
+     0.062
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0122
+    "p_bootstrap": 0.006
    },
    "trained budget - gloryx": {
     "gap": 0.0391,
@@ -403,13 +447,13 @@
     "p_bootstrap": 0.0122
    },
    "whole bank - biotransformer": {
-    "gap": 0.0361,
+    "gap": 0.0451,
     "ci95": [
-     -0.0017,
-     0.0741
+     0.0079,
+     0.0835
     ],
-    "excludes_zero": false,
-    "p_bootstrap": 0.06759
+    "excludes_zero": true,
+    "p_bootstrap": 0.0184
    },
    "whole bank - gloryx": {
     "gap": 0.0406,
@@ -466,13 +510,13 @@
     "p_bootstrap": 0.05539
    },
    "trained budget - biotransformer": {
-    "gap": 0.0466,
+    "gap": 0.0556,
     "ci95": [
-     0.0113,
-     0.0825
+     0.02,
+     0.0921
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.012
+    "p_bootstrap": 0.0018
    },
    "trained budget - gloryx": {
     "gap": 0.0511,
@@ -540,13 +584,13 @@
     "p_bootstrap": 0.0358
    },
    "whole bank - biotransformer": {
-    "gap": 0.0361,
+    "gap": 0.0466,
     "ci95": [
-     -0.0059,
-     0.0786
+     0.0046,
+     0.0901
     ],
-    "excludes_zero": false,
-    "p_bootstrap": 0.09539
+    "excludes_zero": true,
+    "p_bootstrap": 0.032
    },
    "whole bank - gloryx": {
     "gap": 0.0241,
@@ -603,13 +647,13 @@
     "p_bootstrap": 0.11399
    },
    "trained budget - biotransformer": {
-    "gap": 0.0451,
+    "gap": 0.0556,
     "ci95": [
-     0.0051,
-     0.087
+     0.0154,
+     0.0991
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0316
+    "p_bootstrap": 0.0086
    },
    "trained budget - gloryx": {
     "gap": 0.0331,
@@ -677,10 +721,10 @@
     "p_bootstrap": 0.44396
    },
    "whole bank - biotransformer": {
-    "gap": 0.0752,
+    "gap": 0.0827,
     "ci95": [
-     0.0361,
-     0.1152
+     0.0429,
+     0.1235
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
@@ -740,13 +784,13 @@
     "p_bootstrap": 0.16098
    },
    "trained budget - biotransformer": {
-    "gap": 0.0602,
+    "gap": 0.0677,
     "ci95": [
-     0.0194,
-     0.1028
+     0.0265,
+     0.1116
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0048
+    "p_bootstrap": 0.0012
    },
    "trained budget - gloryx": {
     "gap": 0.0045,
@@ -814,10 +858,10 @@
     "p_bootstrap": 0.52435
    },
    "whole bank - biotransformer": {
-    "gap": 0.0797,
+    "gap": 0.0872,
     "ci95": [
-     0.0399,
-     0.1213
+     0.0478,
+     0.1291
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
@@ -877,13 +921,13 @@
     "p_bootstrap": 0.10619
    },
    "trained budget - biotransformer": {
-    "gap": 0.0571,
+    "gap": 0.0647,
     "ci95": [
-     0.015,
-     0.1035
+     0.0218,
+     0.1098
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0096
+    "p_bootstrap": 0.0032
    },
    "trained budget - gloryx": {
     "gap": -0.0075,
@@ -951,10 +995,10 @@
     "p_bootstrap": 0.011
    },
    "whole bank - biotransformer": {
-    "gap": 0.1068,
+    "gap": 0.1083,
     "ci95": [
-     0.0672,
-     0.1481
+     0.069,
+     0.1501
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
@@ -1014,13 +1058,13 @@
     "p_bootstrap": 1.0
    },
    "trained budget - biotransformer": {
-    "gap": 0.0511,
+    "gap": 0.0526,
     "ci95": [
-     0.006,
-     0.0989
+     0.0083,
+     0.0993
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0304
+    "p_bootstrap": 0.0242
    },
    "trained budget - gloryx": {
     "gap": -0.0436,
@@ -1088,10 +1132,10 @@
     "p_bootstrap": 0.0002
    },
    "whole bank - biotransformer": {
-    "gap": 0.1444,
+    "gap": 0.1398,
     "ci95": [
-     0.1006,
-     0.189
+     0.0973,
+     0.1856
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
@@ -1151,13 +1195,13 @@
     "p_bootstrap": 0.77932
    },
    "trained budget - biotransformer": {
-    "gap": 0.0451,
+    "gap": 0.0406,
     "ci95": [
-     -0.0054,
-     0.0971
+     -0.0093,
+     0.0919
     ],
     "excludes_zero": false,
-    "p_bootstrap": 0.08159
+    "p_bootstrap": 0.11479
    },
    "trained budget - gloryx": {
     "gap": -0.0707,
@@ -1225,10 +1269,10 @@
     "p_bootstrap": 0.0002
    },
    "whole bank - biotransformer": {
-    "gap": 0.206,
+    "gap": 0.1985,
     "ci95": [
-     0.1678,
-     0.2478
+     0.1588,
+     0.2422
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
@@ -1288,13 +1332,13 @@
     "p_bootstrap": 0.67513
    },
    "trained budget - biotransformer": {
-    "gap": 0.0436,
+    "gap": 0.0361,
     "ci95": [
-     -0.008,
-     0.0967
+     -0.0159,
+     0.089
     ],
     "excludes_zero": false,
-    "p_bootstrap": 0.09879
+    "p_bootstrap": 0.17878
    },
    "trained budget - gloryx": {
     "gap": -0.1023,
@@ -1362,10 +1406,10 @@
     "p_bootstrap": 0.0002
    },
    "whole bank - biotransformer": {
-    "gap": 0.2541,
+    "gap": 0.2466,
     "ci95": [
-     0.2166,
-     0.2944
+     0.209,
+     0.2883
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
@@ -1425,13 +1469,13 @@
     "p_bootstrap": 0.67513
    },
    "trained budget - biotransformer": {
-    "gap": 0.0421,
+    "gap": 0.0346,
     "ci95": [
-     -0.011,
-     0.096
+     -0.019,
+     0.0887
     ],
     "excludes_zero": false,
-    "p_bootstrap": 0.12679
+    "p_bootstrap": 0.21158
    },
    "trained budget - gloryx": {
     "gap": -0.1158,
@@ -1469,7 +1513,7 @@
    "metatox": 0.066,
    "sygma": 0.209,
    "metapredictor": 0.1976,
-   "biotransformer": 0.103,
+   "biotransformer": 0.0978,
    "gloryx": 0.0801,
    "gloryxr_default": 0.1109,
    "gloryxr_strict": 0.1298
@@ -1480,7 +1524,7 @@
    "metatox": 0.1665,
    "sygma": 0.3614,
    "metapredictor": 0.3478,
-   "biotransformer": 0.2335,
+   "biotransformer": 0.2172,
    "gloryx": 0.2244,
    "gloryxr_default": 0.2803,
    "gloryxr_strict": 0.2972
@@ -1491,7 +1535,7 @@
    "metatox": 0.252,
    "sygma": 0.4375,
    "metapredictor": 0.4317,
-   "biotransformer": 0.3034,
+   "biotransformer": 0.2796,
    "gloryx": 0.3218,
    "gloryxr_default": 0.3708,
    "gloryxr_strict": 0.3927
@@ -1502,7 +1546,7 @@
    "metatox": 0.3504,
    "sygma": 0.4821,
    "metapredictor": 0.5159,
-   "biotransformer": 0.3618,
+   "biotransformer": 0.3442,
    "gloryx": 0.4259,
    "gloryxr_default": 0.4438,
    "gloryxr_strict": 0.4602
@@ -1513,7 +1557,7 @@
    "metatox": 0.4251,
    "sygma": 0.4969,
    "metapredictor": 0.551,
-   "biotransformer": 0.3842,
+   "biotransformer": 0.3716,
    "gloryx": 0.4663,
    "gloryxr_default": 0.5002,
    "gloryxr_strict": 0.4986
@@ -1524,7 +1568,7 @@
    "metatox": 0.5492,
    "sygma": 0.5218,
    "metapredictor": 0.5545,
-   "biotransformer": 0.437,
+   "biotransformer": 0.4301,
    "gloryx": 0.5501,
    "gloryxr_default": 0.563,
    "gloryxr_strict": 0.5462
@@ -1535,7 +1579,7 @@
    "metatox": 0.5907,
    "sygma": 0.5331,
    "metapredictor": 0.5545,
-   "biotransformer": 0.4412,
+   "biotransformer": 0.4393,
    "gloryx": 0.5906,
    "gloryxr_default": 0.5973,
    "gloryxr_strict": 0.5816
@@ -1546,7 +1590,7 @@
    "metatox": 0.6441,
    "sygma": 0.5387,
    "metapredictor": 0.5545,
-   "biotransformer": 0.4466,
+   "biotransformer": 0.445,
    "gloryx": 0.6315,
    "gloryxr_default": 0.627,
    "gloryxr_strict": 0.6201
@@ -1557,7 +1601,7 @@
    "metatox": 0.6708,
    "sygma": 0.5429,
    "metapredictor": 0.5545,
-   "biotransformer": 0.4468,
+   "biotransformer": 0.4452,
    "gloryx": 0.6455,
    "gloryxr_default": 0.6387,
    "gloryxr_strict": 0.6355
@@ -1593,13 +1637,13 @@
     "p_bootstrap": 0.0392
    },
    "whole bank - biotransformer": {
-    "gap": 0.042,
+    "gap": 0.0472,
     "ci95": [
-     -0.0015,
-     0.0867
+     0.0034,
+     0.0909
     ],
-    "excludes_zero": false,
-    "p_bootstrap": 0.05999
+    "excludes_zero": true,
+    "p_bootstrap": 0.0318
    },
    "whole bank - gloryx": {
     "gap": 0.0649,
@@ -1656,13 +1700,13 @@
     "p_bootstrap": 0.0186
    },
    "trained budget - biotransformer": {
-    "gap": 0.0385,
+    "gap": 0.0437,
     "ci95": [
-     0.0003,
-     0.0773
+     0.0057,
+     0.082
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0482
+    "p_bootstrap": 0.0252
    },
    "trained budget - gloryx": {
     "gap": 0.0614,
@@ -1721,13 +1765,13 @@
     "p_bootstrap": 0.0324
    },
    "whole bank - biotransformer": {
-    "gap": 0.0537,
+    "gap": 0.07,
     "ci95": [
-     0.001,
-     0.1068
+     0.0173,
+     0.1227
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0462
+    "p_bootstrap": 0.0082
    },
    "whole bank - gloryx": {
     "gap": 0.0628,
@@ -1784,13 +1828,13 @@
     "p_bootstrap": 0.18398
    },
    "trained budget - biotransformer": {
-    "gap": 0.0768,
+    "gap": 0.0931,
     "ci95": [
-     0.0286,
-     0.1252
+     0.0447,
+     0.1434
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0026
+    "p_bootstrap": 0.0002
    },
    "trained budget - gloryx": {
     "gap": 0.086,
@@ -1849,13 +1893,13 @@
     "p_bootstrap": 0.0278
    },
    "whole bank - biotransformer": {
-    "gap": 0.0652,
+    "gap": 0.0891,
     "ci95": [
-     0.0096,
-     0.1205
+     0.0332,
+     0.1449
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0222
+    "p_bootstrap": 0.0026
    },
    "whole bank - gloryx": {
     "gap": 0.0469,
@@ -1912,13 +1956,13 @@
     "p_bootstrap": 0.16558
    },
    "trained budget - biotransformer": {
-    "gap": 0.0888,
+    "gap": 0.1126,
     "ci95": [
-     0.0365,
-     0.142
+     0.059,
+     0.1676
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0006
+    "p_bootstrap": 0.0002
    },
    "trained budget - gloryx": {
     "gap": 0.0704,
@@ -1977,13 +2021,13 @@
     "p_bootstrap": 0.05239
    },
    "whole bank - biotransformer": {
-    "gap": 0.0988,
+    "gap": 0.1164,
     "ci95": [
-     0.0437,
-     0.1548
+     0.0606,
+     0.1733
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0008
+    "p_bootstrap": 0.0002
    },
    "whole bank - gloryx": {
     "gap": 0.0347,
@@ -2040,13 +2084,13 @@
     "p_bootstrap": 0.08819
    },
    "trained budget - biotransformer": {
-    "gap": 0.1053,
+    "gap": 0.1229,
     "ci95": [
-     0.0494,
-     0.1616
+     0.0665,
+     0.1794
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0006
+    "p_bootstrap": 0.0002
    },
    "trained budget - gloryx": {
     "gap": 0.0412,
@@ -2105,10 +2149,10 @@
     "p_bootstrap": 0.11119
    },
    "whole bank - biotransformer": {
-    "gap": 0.1222,
+    "gap": 0.1348,
     "ci95": [
-     0.066,
-     0.1801
+     0.0772,
+     0.1926
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
@@ -2168,13 +2212,13 @@
     "p_bootstrap": 0.07459
    },
    "trained budget - biotransformer": {
-    "gap": 0.1194,
+    "gap": 0.1319,
     "ci95": [
-     0.0628,
-     0.1777
+     0.0746,
+     0.1893
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0004
+    "p_bootstrap": 0.0002
    },
    "trained budget - gloryx": {
     "gap": 0.0372,
@@ -2233,10 +2277,10 @@
     "p_bootstrap": 0.27557
    },
    "whole bank - biotransformer": {
-    "gap": 0.1461,
+    "gap": 0.153,
     "ci95": [
-     0.0911,
-     0.2032
+     0.0974,
+     0.209
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
@@ -2296,10 +2340,10 @@
     "p_bootstrap": 0.9993
    },
    "trained budget - biotransformer": {
-    "gap": 0.1173,
+    "gap": 0.1242,
     "ci95": [
-     0.0606,
-     0.1752
+     0.0663,
+     0.1827
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0004
@@ -2361,10 +2405,10 @@
     "p_bootstrap": 0.0022
    },
    "whole bank - biotransformer": {
-    "gap": 0.196,
+    "gap": 0.1979,
     "ci95": [
-     0.1429,
-     0.2497
+     0.1428,
+     0.2537
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
@@ -2424,13 +2468,13 @@
     "p_bootstrap": 0.74133
    },
    "trained budget - biotransformer": {
-    "gap": 0.122,
+    "gap": 0.1239,
     "ci95": [
      0.0663,
-     0.1782
+     0.1819
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0002
+    "p_bootstrap": 0.0004
    },
    "trained budget - gloryx": {
     "gap": -0.0274,
@@ -2489,10 +2533,10 @@
     "p_bootstrap": 0.0002
    },
    "whole bank - biotransformer": {
-    "gap": 0.2478,
+    "gap": 0.2494,
     "ci95": [
-     0.1983,
-     0.2984
+     0.1992,
+     0.3018
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
@@ -2552,13 +2596,13 @@
     "p_bootstrap": 0.66473
    },
    "trained budget - biotransformer": {
-    "gap": 0.1194,
+    "gap": 0.121,
     "ci95": [
-     0.0644,
-     0.1747
+     0.0643,
+     0.178
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0002
+    "p_bootstrap": 0.0006
    },
    "trained budget - gloryx": {
     "gap": -0.0654,
@@ -2617,10 +2661,10 @@
     "p_bootstrap": 0.0002
    },
    "whole bank - biotransformer": {
-    "gap": 0.2993,
+    "gap": 0.3009,
     "ci95": [
-     0.2494,
-     0.3493
+     0.2507,
+     0.3522
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
@@ -2680,13 +2724,13 @@
     "p_bootstrap": 0.66473
    },
    "trained budget - biotransformer": {
-    "gap": 0.1192,
+    "gap": 0.1208,
     "ci95": [
-     0.0642,
-     0.1745
+     0.064,
+     0.1778
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0002
+    "p_bootstrap": 0.0006
    },
    "trained budget - gloryx": {
     "gap": -0.0795,
@@ -2725,7 +2769,7 @@
    "metatox": 0,
    "sygma": 1,
    "metapredictor": 1,
-   "biotransformer": 7,
+   "biotransformer": 21,
    "gloryx": 0,
    "gloryxr_default": 0,
    "gloryxr_strict": 0
@@ -2736,7 +2780,7 @@
    "metatox": 0,
    "sygma": 1,
    "metapredictor": 2,
-   "biotransformer": 18,
+   "biotransformer": 28,
    "gloryx": 0,
    "gloryxr_default": 0,
    "gloryxr_strict": 0
@@ -2747,7 +2791,7 @@
    "metatox": 0,
    "sygma": 2,
    "metapredictor": 3,
-   "biotransformer": 35,
+   "biotransformer": 40,
    "gloryx": 0,
    "gloryxr_default": 0,
    "gloryxr_strict": 0
@@ -2758,7 +2802,7 @@
    "metatox": 3,
    "sygma": 8,
    "metapredictor": 18,
-   "biotransformer": 94,
+   "biotransformer": 80,
    "gloryx": 4,
    "gloryxr_default": 4,
    "gloryxr_strict": 4
@@ -2769,7 +2813,7 @@
    "metatox": 7,
    "sygma": 11,
    "metapredictor": 84,
-   "biotransformer": 135,
+   "biotransformer": 118,
    "gloryx": 15,
    "gloryxr_default": 15,
    "gloryxr_strict": 15
@@ -2780,7 +2824,7 @@
    "metatox": 34,
    "sygma": 15,
    "metapredictor": 273,
-   "biotransformer": 220,
+   "biotransformer": 206,
    "gloryx": 48,
    "gloryxr_default": 51,
    "gloryxr_strict": 51
@@ -2791,7 +2835,7 @@
    "metatox": 63,
    "sygma": 26,
    "metapredictor": 291,
-   "biotransformer": 272,
+   "biotransformer": 266,
    "gloryx": 98,
    "gloryxr_default": 101,
    "gloryxr_strict": 101

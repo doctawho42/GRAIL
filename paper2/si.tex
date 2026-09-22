@@ -738,6 +738,15 @@ rebuilt on
 the standardiser's output, MetaPredictor and BioTransformer are scored from their re-runs on the
 natural drawing, and SyGMa is re-run here; MetaTox cannot be moved and is carried unchanged and
 marked, since it is also the one arm that received the natural drawing to begin with.
+BioTransformer's natural-drawing arm was itself re-run for this revision. The one it replaces
+recorded no input: its file was keyed by the same substrate strings as the arm on the corpus
+drawing, so which structures had actually been submitted could not be recovered from it, and a
+comparison between the two was a comparison of two things that were not both described. The re-run
+reads the submission column of the standardiser's own map, so the input is on record; it is a
+replacement of an unrecorded measurement by a recorded one; it does not reproduce the old
+number. The table is paired: a substrate one drawing has no answer for is dropped, because scoring it
+empty puts that arm's whole output on it into the difference and
+reads as an effect of the drawing.
 
 \input{si_table_equalised}
 
@@ -2178,13 +2187,18 @@ in this denominator. Counted over the table's nine instead, the arm holds \numST
 separating leads; the count above is \numPopdefLeadstotal{}, and the larger figure answers a
 different question.
 
-The second is a difference between two runs of one comparator. The columns here are read from the
-predictions that also cover the whole test set, so that the move varies the population and nothing
-else; Table~\ref{tab:si-intervals} reads the declared arm, which exists on the comparison set only.
-For SyGMa and MetaPredictor the two agree. For BioTransformer they do not, and at a budget of
-\numSTwoNineBtdisagreeat{} the disagreement is large enough to change whether the cell
-separates. Each choice is right for its own purpose and neither is the other's, so a figure from
-this section may not be read against one from that table. What does not survive is the
+The second was a difference between two runs of one comparator, and it has been removed rather
+than explained. The columns here are read from the predictions that also cover the whole test set,
+so that the move varies the population and nothing else; Table~\ref{tab:si-intervals} reads the
+declared arm. For SyGMa and MetaPredictor the two agreed. For BioTransformer they did not, and an
+earlier version of this section attributed that to each run being right for its own purpose. That
+was wrong. A per-parent re-run of the declared configuration reproduces the whole-test-set
+predictions on \numBtstepsWholeIdentical{} of \numBtstepsWholeShared{} substrates, list for list,
+and does not reproduce the comparison-set arm: that arm had been assembled by joining an external
+run's table on a precursor identifier and dropping every row that did not join, and it carries
+\numBtstepsCompOrphans{} structures the re-run never produces anywhere, so it came from an
+invocation whose settings are recorded nowhere. The arm is now that re-run, the two columns agree,
+and \numSTwoNineBtdisagreements{} cells disagree between them. What does not survive is the
 narrower one: the lead over SyGMa at a budget of fifteen is
 $+\numPopdefExhcompsygmaOneFive$ $[+\numPopdefExhcompsygmaOneFiveLo,
 +\numPopdefExhcompsygmaOneFiveHi]$ on the comparison set and
@@ -2633,8 +2647,14 @@ closest counterpart to what this work's arms do; this is no claim that every arm
 same enzymatic depth, since SyGMa's deployed scenario composes a phase-one and a phase-two ruleset
 and a mined template may itself perform more than one edit. Its file order is its ranking, which
 is the treatment MetaPredictor's unranked list already receives. It emits \numBtarmEmitted{}
-candidates
-per substrate and returns nothing for \numBtarmSilent{} of \numPopulationN{}. The exhaustive arm
+candidates per substrate and has no answer for \numBtarmSilent{} of \numPopulationN{}. Those
+divide, and the division could not be made before this arm was re-run: on \numBtstepsCrashes{} of
+them the tool exits with an error, the same error every time it is asked, and on the rest it runs
+and returns an empty list. The runner that produced the arm as published caught both and wrote
+both as an empty list, so the comparator was scored zero recall for its own crashes on
+\numBtstepsCrashsharepct{} per cent of this set and nothing could count them. They are scored zero
+here too, because one membership for every arm is the discipline this paper asks for, but the
+count is declared. The exhaustive arm
 leads it by $+\numBtarmGapThreeZero$ $[+\numBtarmGapThreeZeroLo, +\numBtarmGapThreeZeroHi]$ at a
 budget of thirty. Cut to BioTransformer's own list length on every substrate, the same control the
 other comparators receive, the difference is $\numBtarmMatchedgap$ $[\numBtarmMatchedlo,
@@ -2652,13 +2672,32 @@ Running the same Holm procedure over all \numHolmWidetests{} contrasts the paper
 \numHolmWideremovesWord{} of the cells the declared family licenses. Of those \numHolmWideremovesWord{},
 \numHolmWideleadsremovedWord{} is a lead of this work's, over MetaTox at a budget of ten, and the other
 four are trails: three of the exhaustive arm against SyGMa at budgets of one, three and five, and
-one of the interactive arm against SyGMa at a budget of one. All four are printed either way. And the
-deeper scenario is not swept for this comparator
-as it is for SyGMa. That asymmetry was decided after the matched-length control had been read,
-and this paper says so because it is exactly the kind of choice this work asks other papers to
-declare. The control removes list length as a variable and finds no separation, so a scenario that
-emits more would narrow a gap this paper does not claim as an ordering result and would change no
-verdict here. On that basis the absence is unforced.
+one of the interactive arm against SyGMa at a budget of one. All four are printed either way. The deeper scenario is now swept for this comparator as it is for SyGMa. An earlier version of
+this section predicted the outcome it did not measure: it argued that the matched-length
+control removes list length as a variable and finds no separation, so a scenario emitting more
+would narrow a gap this paper does not claim as an ordering result and would change no verdict
+here. The prediction held. Running it changed no verdict, and what it cost to find that out is
+reported here beside the conclusion, because three things the prediction did not
+anticipate came with it. A second generation is a strict superset: on all \numBtstepsPaired{}
+substrates where both runs finish it contains every structure one step returned and loses
+\numBtstepsLostgenoneWord{}, while emitting \numBtstepsRatio{} times as many candidates, so the knob
+cannot lower recall and raises it only by lengthening the list. It does not complete on
+\numBtstepsLost{} of \numBtstepsAttempted{} substrates, by crash or by exceeding half an hour
+each, and the substrates it loses are the productive ones. And the run that produced the one-step
+arm is the one reported above, which is how the arm this section describes came to be replaced.
+
+The sweep was not repeated on the whole evaluated test set, and the reason is a cost that is
+measured. With \numBtstepsCostWorkers{} processes in flight and a
+\numBtstepsCostTimeoutmin{}-minute limit per substrate, the second generation took
+\numBtstepsCostTwohours{} hours over the comparison set and one generation took
+\numBtstepsCostOnehours{} hours over the whole one; at the rate the completed second-generation
+run sustained, the same sweep over the wider population is \numBtstepsCostProjected{} hours. The
+objection to spending them is not the time. It is that
+\numBtstepsLost{} of \numBtstepsAttempted{} substrates do not finish at two steps, and the ones
+that do not are the ones the tool is most productive on, so the arm would be a column with a
+third of its population removed by how much that column had to say. This paper declines to print
+such a column, and the whole-population axis therefore carries no reading of this knob. What the
+knob does is read on the comparison set, where both generations exist for the same substrates.
 
 Its templates are also measured for reach, which is a different quantity from its recall, on the
 same \numBtN{}-substrate subset drawn for the earlier MetaTrans evaluation

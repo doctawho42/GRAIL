@@ -3,7 +3,7 @@
   "script": "disclosure_inventory.py",
   "script_path": "scripts/disclosure_inventory.py",
   "source_sha256": "f9ed88f68f7ed7ba20ef268b14e13fcc124e5aa4de5f086eb79fe4218a03dc44",
-  "git_commit": "6890dfbbddbad7ca39f728cdc4386fd8752c4681",
+  "git_commit": "634c758ec6b3cede7b1d22ba6e10854e3f19fd2f",
   "git_dirty": true
  },
  "reviewed_and_accepted": [
@@ -993,6 +993,27 @@
     "paper2/table_sweep.tex"
    ],
    "reason": "Not a retraction: 'It is not the released configuration.' is present verbatim in paper2/table_sweep.tex. It was recorded under the key 'it is not the released configuration tablenotes threeparttable table*' because, standing last in its float, the sentence absorbed the environment names after it and that tail carried it over a 40-character floor. Appending one sentence to the same tablenotes took the tail away and dropped the sentence under the floor. The floor is now gone: measured over both documents it held 244 keys against 249 at every value from 30 down to 0, and the five it excluded were concessions, not fragments -- four of them in the SI, never protected until now. The six-word floor, which is the one that discriminates, is unchanged and still rejects fragments."
+  },
+  {
+   "text": "BioTransformer's step count is also ours to turn and was not swept, a decision taken after the matched-length control, which cuts every arm to the comparator's own list length substrate by substrate, had been read, and stated as such (Section )",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "Retracted because it stopped being true, and replaced by the measurement it deferred. The concession read that BioTransformer's step count was ours to turn and was not swept. It is swept: a second generation was run over the same 291 substrates, it returns a candidate set containing the one-step set on all 195 substrates where both runs finish, loses none of the structures one step found, and emits 12 times as many candidates, adding nothing at the two tightest budgets and 0.0394 at the widest. The Supporting Information now carries that in place of the prediction it used to carry, together with what running it cost: 96 of 291 substrates do not complete at two steps, by crash or by exceeding a 30-minute limit, and the ones lost are the productive ones. The whole-population arm remains unrun and is declared as such with its measured cost, 48 hours, and the reason -- an arm missing a third of its population, selected by how much it produces, is not a column this paper will print. No concession was removed to save words."
+  },
+  {
+   "text": "Running it changed no verdict, and what it cost to find that out is reported here rather than the conclusion alone, because three things the prediction did not anticipate came with it",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Two re-keyings, not retractions, both paired at 0.94 and 0.91 by symmetric difference over _norm(_sentences(_plain(.))) against the pre-edit file. Both keys are sentences I wrote hours earlier in this same revision and then rewrote, because the text I added to declare the step sweep pushed the Supporting Information's carrier-construction criterion over its ceiling -- 30 of 1179 against 25 -- and six of those carriers were mine. 'reported here rather than the conclusion alone' became 'reported here beside the conclusion'; 'a cost that is measured rather than asserted' became 'a cost that is measured'. Each replacement carries the same claim as the sentence it replaces, word for word apart from the construction removed, and the criterion is now 25 of 1179, at the ceiling and not over it. Nothing was dropped to save words and no concession lost its marker: both sentences are still registered under their new keys."
+  },
+  {
+   "text": "The sweep was not repeated on the whole evaluated test set, and the reason is a cost that is measured rather than asserted",
+   "was_in": [
+    "paper2/si.tex"
+   ],
+   "reason": "Two re-keyings, not retractions, both paired at 0.94 and 0.91 by symmetric difference over _norm(_sentences(_plain(.))) against the pre-edit file. Both keys are sentences I wrote hours earlier in this same revision and then rewrote, because the text I added to declare the step sweep pushed the Supporting Information's carrier-construction criterion over its ceiling -- 30 of 1179 against 25 -- and six of those carriers were mine. 'reported here rather than the conclusion alone' became 'reported here beside the conclusion'; 'a cost that is measured rather than asserted' became 'a cost that is measured'. Each replacement carries the same claim as the sentence it replaces, word for word apart from the construction removed, and the criterion is now 25 of 1179, at the ceiling and not over it. Nothing was dropped to save words and no concession lost its marker: both sentences are still registered under their new keys."
   }
  ],
  "question": "every sentence in which this work concedes something, recorded before a cut so that what a cut costs is visible rather than invisible",
@@ -1033,7 +1054,7 @@
   "paper2/table_hypotheses.tex",
   "paper2/table_grain.tex"
  ],
- "n": 249,
+ "n": 258,
  "reading": "a disclosure counts as present if it survives in ANY of the sources: moving one to the Supporting Information shortens the manuscript without retracting anything, and deleting one shortens it by retracting something",
  "disclosures": {
   "abstract published predictors of metabolite structure cannot be compared with one another because recall depends on how a predicted structure is judged to match a reference and on how many candidates a system may return and papers in this area declare neither": {
@@ -1332,6 +1353,12 @@
   },
   "both of this work s arms are rebuilt on the standardiser s output metapredictor and biotransformer are scored from their re runs on the natural drawing and sygma is re run here metatox cannot be moved and is carried unchanged and marked since it is also the one arm that received the natural drawing to begin with": {
    "text": "Both of this work's arms are rebuilt on the standardiser's output, MetaPredictor and BioTransformer are scored from their re-runs on the natural drawing, and SyGMa is re-run here; MetaTox cannot be moved and is carried unchanged and marked, since it is also the one arm that received the natural draw",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the one it replaces recorded no input its file was keyed by the same substrate strings as the arm on the corpus drawing so which structures had actually been submitted could not be recovered from it and a comparison between the two was a comparison of two things that were not both described": {
+   "text": "The one it replaces recorded no input: its file was keyed by the same substrate strings as the arm on the corpus drawing, so which structures had actually been submitted could not be recovered from it, and a comparison between the two was a comparison of two things that were not both described",
    "in": [
     "paper2/si.tex"
    ]
@@ -1780,6 +1807,18 @@
     "paper2/si.tex"
    ]
   },
+  "for biotransformer they did not and an earlier version of this section attributed that to each run being right for its own purpose": {
+   "text": "For BioTransformer they did not, and an earlier version of this section attributed that to each run being right for its own purpose",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "a per parent re run of the declared configuration reproduces the whole test set predictions on of substrates list for list and does not reproduce the comparison set arm that arm had been assembled by joining an external run s table on a precursor identifier and dropping every row that did not join and it carries structures the re run never produces anywhere so it came from an invocation whose settings are recorded nowhere": {
+   "text": "A per-parent re-run of the declared configuration reproduces the whole-test-set predictions on N of N substrates, list for list, and does not reproduce the comparison-set arm: that arm had been assembled by joining an external run's table on a precursor identifier and dropping every row that did not",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
   "the two are the full and a substrate subset drawn for an earlier evaluation against metatrans which is not a column of the comparison here that subset is named because an unidentifiable population is the defect this section is about": {
    "text": "The two are the full N and a N -substrate subset drawn for an earlier evaluation against MetaTrans , which is not a column of the comparison here; that subset is named because an unidentifiable population is the defect this section is about",
    "in": [
@@ -1920,6 +1959,42 @@
   },
   "it is run at allhuman for one step which is one application of its own rules and the closest counterpart to what this work s arms do this is no claim that every arm is allowed the same enzymatic depth since sygma s deployed scenario composes a phase one and a phase two ruleset and a mined template may itself perform more than one edit": {
    "text": "It is run at allHuman for one step, which is one application of its own rules and the closest counterpart to what this work's arms do; this is no claim that every arm is allowed the same enzymatic depth, since SyGMa's deployed scenario composes a phase-one and a phase-two ruleset and a mined templat",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "it emits candidates per substrate and has no answer for of those divide and the division could not be made before this arm was re run on of them the tool exits with an error the same error every time it is asked and on the rest it runs and returns an empty list": {
+   "text": "It emits N candidates per substrate and has no answer for N of N . Those divide, and the division could not be made before this arm was re-run: on N of them the tool exits with an error, the same error every time it is asked, and on the rest it runs and returns an empty list",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "an earlier version of this section predicted the outcome it did not measure it argued that the matched length control removes list length as a variable and finds no separation so a scenario emitting more would narrow a gap this paper does not claim as an ordering result and would change no verdict here": {
+   "text": "An earlier version of this section predicted the outcome it did not measure: it argued that the matched-length control removes list length as a variable and finds no separation, so a scenario emitting more would narrow a gap this paper does not claim as an ordering result and would change no verdict",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "running it changed no verdict and what it cost to find that out is reported here beside the conclusion because three things the prediction did not anticipate came with it": {
+   "text": "Running it changed no verdict, and what it cost to find that out is reported here beside the conclusion, because three things the prediction did not anticipate came with it",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "a second generation is a strict superset on all substrates where both runs finish it contains every structure one step returned and loses while emitting times as many candidates so the knob cannot lower recall and raises it only by lengthening the list": {
+   "text": "A second generation is a strict superset: on all N substrates where both runs finish it contains every structure one step returned and loses N , while emitting N times as many candidates, so the knob cannot lower recall and raises it only by lengthening the list",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the sweep was not repeated on the whole evaluated test set and the reason is a cost that is measured": {
+   "text": "The sweep was not repeated on the whole evaluated test set, and the reason is a cost that is measured",
+   "in": [
+    "paper2/si.tex"
+   ]
+  },
+  "the objection to spending them is not the time": {
+   "text": "The objection to spending them is not the time",
    "in": [
     "paper2/si.tex"
    ]
@@ -2188,8 +2263,8 @@
     "paper2/body.tex"
    ]
   },
-  "biotransformer s step count is also ours to turn and was not swept a decision taken after the matched length control which cuts every arm to the comparator s own list length substrate by substrate had been read and stated as such section": {
-   "text": "BioTransformer's step count is also ours to turn and was not swept, a decision taken after the matched-length control, which cuts every arm to the comparator's own list length substrate by substrate, had been read, and stated as such (Section )",
+  "the knob does not reach past the output budget and on of substrates the second generation does not complete at all section": {
+   "text": "The knob does not reach past the output budget, and on N of N substrates the second generation does not complete at all (Section )",
    "in": [
     "paper2/body.tex"
    ]

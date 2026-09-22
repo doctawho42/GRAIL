@@ -3,7 +3,7 @@
   "script": "phase2_comparators.py",
   "script_path": "revision/phase2_comparators.py",
   "source_sha256": "a9977a6de5c5b52cff89a8042685e9723a29091267f93a1774e73d0cd069c5ff",
-  "git_commit": "8d341458e385d9fe5a081ea4219b11073e0f0f9e",
+  "git_commit": "634c758ec6b3cede7b1d22ba6e10854e3f19fd2f",
   "git_dirty": true
  },
  "what_this_is": "the Phase 2 comparator record: coverage counted from files, the submission sets, and the evidence under every absence",
@@ -144,8 +144,8 @@
    "population": "comparison291",
    "arm": "biotransformer",
    "file": "results/biotransformer_allhuman_one_step_preds.json",
-   "substrates": 291,
-   "in_population": 291,
+   "substrates": 276,
+   "in_population": 276,
    "absent": false
   },
   {
@@ -216,66 +216,11 @@
   }
  },
  "model_archive": {
-  "present": true,
-  "identified_by": "digest rather than path: the archive was delivered out of band and the location it arrived at is not reachable by a reader",
-  "manifest_sha256": "353a2666252f2c6cad098cdbf8578a6bd6d763ab99ac9127e734ea6fd504bedf",
-  "manifest_sha256_is": "sha256 of the sorted 'name:sha256' lines below, newline separated",
-  "tarball_sha256": "6936ec996d5455a96bf85c51f48cc89396c5c1c205cfa48e5d5e26087229e511",
-  "models": [
-   {
-    "name": "multi_models/CYP rules from GLORY (phase 1).joblib",
-    "bytes": 59522568,
-    "sha256": "2c186eb6f3e35fa99885d5ea96d706de1f17300b4cecb96c33d4e942bb57a1dc"
-   },
-   {
-    "name": "multi_models/GST rules (phase 2).joblib",
-    "bytes": 6392854,
-    "sha256": "f09663e0f11e50a094b920233f597bed6edc0d6a897af74442b11ae28628d926"
-   },
-   {
-    "name": "multi_models/MT rules (phase 2).joblib",
-    "bytes": 1074385,
-    "sha256": "0310ecbd901fbb1e39cd14ef4800fae4ddbe38d49993a170dc2ee037bb60bdc2"
-   },
-   {
-    "name": "multi_models/NAT rules (phase 2).joblib",
-    "bytes": 980481,
-    "sha256": "db1c170f23ecbd7bb4b1a2e086b488de9a881568b8161d72f67dc9881ca47cd3"
-   },
-   {
-    "name": "multi_models/Other phase 2 rules.joblib",
-    "bytes": 18849914,
-    "sha256": "8feaf9b7c3d759d89aa4103a5ec059e1b7c702e720906b9baa9b76b2db9002a2"
-   },
-   {
-    "name": "multi_models/Phase 1 SyGMa rules.joblib",
-    "bytes": 59522568,
-    "sha256": "2c186eb6f3e35fa99885d5ea96d706de1f17300b4cecb96c33d4e942bb57a1dc"
-   },
-   {
-    "name": "multi_models/SULT rules (phase 2).joblib",
-    "bytes": 1743291,
-    "sha256": "1a9fcdae90326c946887d23269fa9e65966c4985580b6f229fe00822e8cbcf51"
-   },
-   {
-    "name": "multi_models/UGT rules (phase 2).joblib",
-    "bytes": 7082036,
-    "sha256": "f1509731665036e485760b4fa16f294bbfa89f1762a1879690ab2a59e3393bb6"
-   },
-   {
-    "name": "single_model.joblib",
-    "bytes": 142032905,
-    "sha256": "68969cdeb1bf3770f581ffd3c0021af6099bbe4166e87d1b085a58608cb48b7b"
-   }
-  ],
-  "n_models": 9,
-  "byte_identical_groups": [
-   [
-    "multi_models/CYP rules from GLORY (phase 1).joblib",
-    "multi_models/Phase 1 SyGMa rules.joblib"
-   ]
-  ],
-  "carries_code_or_featuriser": false
+  "present": false,
+  "checked_path": "/Users/nikitapolomosnov/PycharmProjects/GRAIL/.claude/worktrees/hungry-pasteur-25d746/external/gloryxr/models",
+  "models": [],
+  "manifest_sha256": null,
+  "note": "not present at this path; the archive was delivered out of band"
  },
  "service": {
   "read_live": true,
